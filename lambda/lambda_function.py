@@ -1,7 +1,7 @@
 import json
 import logging
 import os
-from aws_lambda_powertools import Logger
+from aws_lambda_powertools import Logger, Tracer
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver
 from aws_lambda_powertools.logging import correlation_paths
 from aws_lambda_powertools.utilities.typing import LambdaContext
@@ -15,16 +15,7 @@ from openweather_service import WeatherAPIService
 
 # Configurar Powertools
 logger = Logger()
-
-# Tracer só em produção (requer aws-xray-sdk)
-if os.environ.get('AWS_EXECUTION_ENV'):
-    from aws_lambda_powertools import Tracer
-    tracer = Tracer()
-    def trace_method(func):
-        return tracer.capture_method(func)
-else:
-    def trace_method(func):
-        return func
+tracer = Tracer()
 
 app = APIGatewayRestResolver()
 
@@ -34,7 +25,7 @@ weather_service = WeatherAPIService()
 
 
 @app.get("/api/cities/neighbors/<city_id>")
-@trace_method
+@tracer.capture_method
 def get_neighbors_route(city_id: str):
     """
     GET /api/cities/neighbors/{cityId}?radius=50
@@ -88,7 +79,7 @@ def get_neighbors_route(city_id: str):
 
 
 @app.get("/api/weather/city/<city_id>")
-@trace_method
+@tracer.capture_method
 def get_city_weather_route(city_id: str):
     """
     GET /api/weather/city/{cityId}
@@ -139,7 +130,7 @@ def get_city_weather_route(city_id: str):
 
 
 @app.post("/api/weather/regional")
-@trace_method
+@tracer.capture_method
 def post_regional_weather_route():
     """
     POST /api/weather/regional
@@ -197,6 +188,7 @@ def post_regional_weather_route():
 
 
 @logger.inject_lambda_context(correlation_id_path=correlation_paths.API_GATEWAY_REST)
+@tracer.capture_lambda_handler
 def lambda_handler(event, context: LambdaContext):
     """
     Função Lambda principal
