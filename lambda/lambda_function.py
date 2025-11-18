@@ -10,6 +10,8 @@ from cities_data import get_city_by_id, get_all_cities, CITIES_DATABASE
 from cities_service import get_neighbors, validate_radius
 from weather_service import get_weather_for_city, get_regional_weather
 from config import DEFAULT_RADIUS
+from municipalities_db import get_db
+from openweather_service import WeatherAPIService
 
 # Configurar Powertools
 logger = Logger()
@@ -26,6 +28,10 @@ else:
 
 app = APIGatewayRestResolver()
 
+# Inicializar banco de dados (singleton, carrega apenas uma vez)
+db = get_db()
+weather_service = WeatherAPIService()
+
 
 @app.get("/api/cities/neighbors/<city_id>")
 @trace_method
@@ -37,8 +43,8 @@ def get_neighbors_route(city_id: str):
     """
     logger.info(f"Buscando vizinhos de {city_id}")
     
-    # Buscar cidade centro
-    center_city = get_city_by_id(city_id)
+    # Buscar cidade centro no banco de dados
+    center_city = db.get_by_id(city_id)
     if not center_city:
         return {
             'statusCode': 404,
@@ -48,17 +54,28 @@ def get_neighbors_route(city_id: str):
             }
         }
     
+    # Validar se tem coordenadas
+    if not center_city.get('latitude') or not center_city.get('longitude'):
+        return {
+            'statusCode': 400,
+            'body': {
+                'error': 'Bad Request',
+                'message': f'Cidade {city_id} não possui coordenadas'
+            }
+        }
+    
     # Extrair e validar raio
     radius = validate_radius(app.current_event.get_query_string_value(name="radius", default_value=str(DEFAULT_RADIUS)))
     
-    # Buscar cidades vizinhas
-    all_cities = get_all_cities()
+    # Buscar cidades vizinhas (apenas com coordenadas)
+    all_cities = db.get_with_coordinates()
     neighbors = get_neighbors(center_city, all_cities, radius)
     
     response = {
         'centerCity': {
             'id': center_city['id'],
             'name': center_city['name'],
+            'state': center_city['state'],
             'latitude': center_city['latitude'],
             'longitude': center_city['longitude']
         },
@@ -80,8 +97,8 @@ def get_city_weather_route(city_id: str):
     """
     logger.info(f"Buscando dados climáticos de {city_id}")
     
-    # Buscar dados da cidade
-    city = get_city_by_id(city_id)
+    # Buscar dados da cidade no banco
+    city = db.get_by_id(city_id)
     if not city:
         return {
             'statusCode': 404,
@@ -91,15 +108,32 @@ def get_city_weather_route(city_id: str):
             }
         }
     
-    # Buscar dados climáticos
-    weather = get_weather_for_city(
-        city_id=city['id'],
-        city_name=city['name'],
-        lat=city['latitude'],
-        lon=city['longitude']
+    # Validar coordenadas
+    if not city.get('latitude') or not city.get('longitude'):
+        return {
+            'statusCode': 400,
+            'body': {
+                'error': 'Bad Request',
+                'message': f'Cidade {city_id} não possui coordenadas'
+            }
+        }
+    
+    # Buscar dados climáticos do OpenWeatherMap
+    weather = weather_service.get_current_weather(
+        city['latitude'],
+        city['longitude'],
+        city['name']
     )
     
-    logger.info(f"Dados climáticos de {city['name']}: {weather}")
+    # Adicionar informações da cidade
+    weather.update({
+        'cityId': city['id'],
+        'cityName': city['name'],
+        'state': city['state'],
+        'region': city['region']
+    })
+    
+    logger.info(f"Dados climáticos de {city['name']}: {weather['temperature']}°C")
     
     return weather
 
@@ -129,7 +163,33 @@ def post_regional_weather_route():
         }
     
     # Buscar dados climáticos de todas as cidades
-    weather_data = get_regional_weather(city_ids, CITIES_DATABASE)
+    weather_data = []
+    
+    for city_id in city_ids:
+        city = db.get_by_id(city_id)
+        
+        if not city or not city.get('latitude') or not city.get('longitude'):
+            logger.warning(f"Cidade {city_id} não encontrada ou sem coordenadas")
+            continue
+        
+        try:
+            weather = weather_service.get_current_weather(
+                city['latitude'],
+                city['longitude'],
+                city['name']
+            )
+            
+            weather.update({
+                'cityId': city['id'],
+                'cityName': city['name'],
+                'state': city['state']
+            })
+            
+            weather_data.append(weather)
+            
+        except Exception as e:
+            logger.error(f"Erro ao buscar clima de {city['name']}: {e}")
+            continue
     
     logger.info(f"Dados climáticos regionais: {len(weather_data)} cidades")
     

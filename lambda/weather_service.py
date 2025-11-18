@@ -1,6 +1,22 @@
 """
-Serviço para buscar dados climáticos
+Serviço de dados climáticos para os municípios.
+Usa OpenWeatherMap API ou mock data.
 """
+import random
+from datetime import datetime, timezone
+from typing import Dict, Optional
+import os
+
+try:
+    from openweather_service import OpenWeatherService
+    OPENWEATHER_AVAILABLE = True
+except ImportError:
+    OPENWEATHER_AVAILABLE = False
+    print("⚠️  OpenWeatherService não disponível")
+
+# Configuração
+USE_OPENWEATHER = os.environ.get('USE_OPENWEATHER', 'false').lower() == 'true'
+OPENWEATHER_API_KEY = os.environ.get('OPENWEATHER_API_KEY', '')
 import requests
 import random
 from datetime import datetime
@@ -8,50 +24,35 @@ from typing import Dict, Any, List
 from config import OPENWEATHER_API_KEY, OPENWEATHER_BASE_URL
 
 
-def get_weather_for_city(city_id: str, city_name: str, lat: float, lon: float) -> Dict[str, Any]:
+def get_weather_from_openweather(lat: float, lon: float) -> Optional[Dict]:
     """
-    Busca dados climáticos para uma cidade
-    
-    Se OPENWEATHER_API_KEY não estiver configurada, retorna dados mockados
+    Busca dados reais do OpenWeatherMap usando o serviço dedicado.
     
     Args:
-        city_id: Código IBGE da cidade
-        city_name: Nome da cidade
         lat: Latitude
         lon: Longitude
     
     Returns:
-        dict: Dados climáticos da cidade
+        Dict com dados climáticos ou None se falhar
     """
-    
-    # Se não tiver API key, retorna dados mockados
-    if not OPENWEATHER_API_KEY or OPENWEATHER_API_KEY == '':
-        return _generate_mock_weather(city_id, city_name)
+    if not OPENWEATHER_AVAILABLE or not OPENWEATHER_API_KEY:
+        return None
     
     try:
-        # Chamada real para OpenWeatherMap API
-        response = requests.get(
-            OPENWEATHER_BASE_URL,
-            params={
-                'lat': lat,
-                'lon': lon,
-                'appid': OPENWEATHER_API_KEY,
-                'units': 'metric',
-                'lang': 'pt_br'
-            },
-            timeout=5
-        )
+        service = OpenWeatherService(OPENWEATHER_API_KEY)
+        weather = service.get_current_weather(lat, lon)
         
-        if response.status_code == 200:
-            data = response.json()
-            return _parse_openweather_response(city_id, city_name, data)
-        else:
-            # Em caso de erro, retorna dados mockados
-            return _generate_mock_weather(city_id, city_name)
-            
+        # Converter para formato esperado pelo Lambda
+        return {
+            'temperature': weather['temperature'],
+            'humidity': weather['humidity'],
+            'windSpeed': weather['wind_speed'],
+            'rainfallIntensity': min(weather['rain_1h'] * 10, 100),  # mm para percentual aproximado
+        }
+        
     except Exception as e:
-        print(f"Erro ao buscar dados climáticos: {e}")
-        return _generate_mock_weather(city_id, city_name)
+        print(f"Erro ao buscar OpenWeather: {e}")
+        return None
 
 
 def _parse_openweather_response(city_id: str, city_name: str, data: Dict[str, Any]) -> Dict[str, Any]:
@@ -92,7 +93,45 @@ def _generate_mock_weather(city_id: str, city_name: str) -> Dict[str, Any]:
     }
 
 
-def get_regional_weather(city_ids: List[str], cities_db: Dict[str, Dict]) -> List[Dict[str, Any]]:
+def get_weather_for_city(city_id: str, cities_db: Dict[str, Dict]) -> Optional[Dict]:
+    """
+    Busca dados climáticos para uma cidade
+    
+    Args:
+        city_id: Código IBGE da cidade
+        cities_db: Dicionário com dados das cidades
+    
+    Returns:
+        dict: Dados climáticos ou None se cidade não encontrada
+    """
+    city = cities_db.get(city_id)
+    
+    if not city:
+        return None
+    
+    # Tentar OpenWeather primeiro se configurado
+    if USE_OPENWEATHER and city.get('latitude') and city.get('longitude'):
+        weather_data = get_weather_from_openweather(city['latitude'], city['longitude'])
+        
+        if weather_data:
+            weather_data['cityId'] = city_id
+            weather_data['cityName'] = city['name']
+            weather_data['timestamp'] = datetime.now(timezone.utc).isoformat()
+            return weather_data
+    
+    # Fallback para mock
+    return {
+        'cityId': city_id,
+        'cityName': city['name'],
+        'temperature': round(random.uniform(18.0, 30.0), 1),
+        'humidity': round(random.uniform(40.0, 85.0), 1),
+        'windSpeed': round(random.uniform(5.0, 25.0), 1),
+        'rainfallIntensity': round(random.uniform(0.0, 100.0), 1),
+        'timestamp': datetime.now(timezone.utc).isoformat()
+    }
+
+
+def get_regional_weather(city_ids: List[str], cities_db: Dict[str, Dict]) -> List[Dict]:
     """
     Busca dados climáticos para múltiplas cidades
     
