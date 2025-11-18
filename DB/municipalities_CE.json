@@ -1,0 +1,1658 @@
+[
+  {
+    "id": "2300101",
+    "name": "Abaiara",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Brejo Santo",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2300150",
+    "name": "Acarape",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baturité",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2300200",
+    "name": "Acaraú",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Litoral de Camocim e Acaraú",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2300309",
+    "name": "Acopiara",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Senador Pompeu",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2300408",
+    "name": "Aiuaba",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Inhamuns",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2300507",
+    "name": "Alcântaras",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Meruoca",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2300606",
+    "name": "Altaneira",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Caririaçu",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2300705",
+    "name": "Alto Santo",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baixo Jaguaribe",
+    "mesoregion": "Jaguaribe",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2300754",
+    "name": "Amontada",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Itapipoca",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2300804",
+    "name": "Antonina do Norte",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Várzea Alegre",
+    "mesoregion": "Centro-Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2300903",
+    "name": "Apuiarés",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Médio Curu",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2301000",
+    "name": "Aquiraz",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Fortaleza",
+    "mesoregion": "Metropolitana de Fortaleza",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2301109",
+    "name": "Aracati",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Litoral de Aracati",
+    "mesoregion": "Jaguaribe",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2301208",
+    "name": "Aracoiaba",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baturité",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2301257",
+    "name": "Ararendá",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Cratéus",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2301307",
+    "name": "Araripe",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Chapada do Araripe",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2301406",
+    "name": "Aratuba",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baturité",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2301505",
+    "name": "Arneiroz",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Inhamuns",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2301604",
+    "name": "Assaré",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Chapada do Araripe",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2301703",
+    "name": "Aurora",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Barro",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2301802",
+    "name": "Baixio",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Lavras da Mangabeira",
+    "mesoregion": "Centro-Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2301851",
+    "name": "Banabuiú",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Quixeramobim",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2301901",
+    "name": "Barbalha",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Cariri",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2301950",
+    "name": "Barreira",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Chorozinho",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2302008",
+    "name": "Barro",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Barro",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2302057",
+    "name": "Barroquinha",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Litoral de Camocim e Acaraú",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2302107",
+    "name": "Baturité",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baturité",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2302206",
+    "name": "Beberibe",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Cascavel",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2302305",
+    "name": "Bela Cruz",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Litoral de Camocim e Acaraú",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2302404",
+    "name": "Boa Viagem",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Quixeramobim",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2302503",
+    "name": "Brejo Santo",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Brejo Santo",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2302602",
+    "name": "Camocim",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Litoral de Camocim e Acaraú",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2302701",
+    "name": "Campos Sales",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Chapada do Araripe",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2302800",
+    "name": "Canindé",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Canindé",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2302909",
+    "name": "Capistrano",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baturité",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2303006",
+    "name": "Caridade",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Canindé",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2303105",
+    "name": "Cariré",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sobral",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2303204",
+    "name": "Caririaçu",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Caririaçu",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2303303",
+    "name": "Cariús",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Várzea Alegre",
+    "mesoregion": "Centro-Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2303402",
+    "name": "Carnaubal",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Ibiapaba",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2303501",
+    "name": "Cascavel",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Cascavel",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2303600",
+    "name": "Catarina",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Inhamuns",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2303659",
+    "name": "Catunda",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Santa Quitéria",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2303709",
+    "name": "Caucaia",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Fortaleza",
+    "mesoregion": "Metropolitana de Fortaleza",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2303808",
+    "name": "Cedro",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Iguatu",
+    "mesoregion": "Centro-Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2303907",
+    "name": "Chaval",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Litoral de Camocim e Acaraú",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2303931",
+    "name": "Choró",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Quixeramobim",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2303956",
+    "name": "Chorozinho",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Chorozinho",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2304004",
+    "name": "Coreaú",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Coreaú",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2304103",
+    "name": "Crateús",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Cratéus",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2304202",
+    "name": "Crato",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Cariri",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2304236",
+    "name": "Croatá",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Ibiapaba",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2304251",
+    "name": "Cruz",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Litoral de Camocim e Acaraú",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2304269",
+    "name": "Deputado Irapuan Pinheiro",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Senador Pompeu",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2304277",
+    "name": "Ereré",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Serra do Pereiro",
+    "mesoregion": "Jaguaribe",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2304285",
+    "name": "Eusébio",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Fortaleza",
+    "mesoregion": "Metropolitana de Fortaleza",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2304301",
+    "name": "Farias Brito",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Caririaçu",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2304350",
+    "name": "Forquilha",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sobral",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2304400",
+    "name": "Fortaleza",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Fortaleza",
+    "mesoregion": "Metropolitana de Fortaleza",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2304459",
+    "name": "Fortim",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Litoral de Aracati",
+    "mesoregion": "Jaguaribe",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2304509",
+    "name": "Frecheirinha",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Coreaú",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2304608",
+    "name": "General Sampaio",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Médio Curu",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2304657",
+    "name": "Graça",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sobral",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2304707",
+    "name": "Granja",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Litoral de Camocim e Acaraú",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2304806",
+    "name": "Granjeiro",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Caririaçu",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2304905",
+    "name": "Groaíras",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sobral",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2304954",
+    "name": "Guaiúba",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Fortaleza",
+    "mesoregion": "Metropolitana de Fortaleza",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2305001",
+    "name": "Guaraciaba do Norte",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Ibiapaba",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2305100",
+    "name": "Guaramiranga",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baturité",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2305209",
+    "name": "Hidrolândia",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Santa Quitéria",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2305233",
+    "name": "Horizonte",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Pacajus",
+    "mesoregion": "Metropolitana de Fortaleza",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2305266",
+    "name": "Ibaretama",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Quixeramobim",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2305308",
+    "name": "Ibiapina",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Ibiapaba",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2305332",
+    "name": "Ibicuitinga",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baixo Jaguaribe",
+    "mesoregion": "Jaguaribe",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2305357",
+    "name": "Icapuí",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Litoral de Aracati",
+    "mesoregion": "Jaguaribe",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2305407",
+    "name": "Icó",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Iguatu",
+    "mesoregion": "Centro-Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2305506",
+    "name": "Iguatu",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Iguatu",
+    "mesoregion": "Centro-Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2305605",
+    "name": "Independência",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Cratéus",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2305654",
+    "name": "Ipaporanga",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Cratéus",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2305704",
+    "name": "Ipaumirim",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Lavras da Mangabeira",
+    "mesoregion": "Centro-Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2305803",
+    "name": "Ipu",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Ipu",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2305902",
+    "name": "Ipueiras",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Ipu",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2306009",
+    "name": "Iracema",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Serra do Pereiro",
+    "mesoregion": "Jaguaribe",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2306108",
+    "name": "Irauçuba",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sobral",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2306207",
+    "name": "Itaiçaba",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Litoral de Aracati",
+    "mesoregion": "Jaguaribe",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2306256",
+    "name": "Itaitinga",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Fortaleza",
+    "mesoregion": "Metropolitana de Fortaleza",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2306306",
+    "name": "Itapajé",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Uruburetama",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2306405",
+    "name": "Itapipoca",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Itapipoca",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2306504",
+    "name": "Itapiúna",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baturité",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2306553",
+    "name": "Itarema",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Litoral de Camocim e Acaraú",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2306603",
+    "name": "Itatira",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Canindé",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2306702",
+    "name": "Jaguaretama",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Médio Jaguaribe",
+    "mesoregion": "Jaguaribe",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2306801",
+    "name": "Jaguaribara",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Médio Jaguaribe",
+    "mesoregion": "Jaguaribe",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2306900",
+    "name": "Jaguaribe",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Médio Jaguaribe",
+    "mesoregion": "Jaguaribe",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2307007",
+    "name": "Jaguaruana",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baixo Jaguaribe",
+    "mesoregion": "Jaguaribe",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2307106",
+    "name": "Jardim",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Cariri",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2307205",
+    "name": "Jati",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Brejo Santo",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2307254",
+    "name": "Jijoca de Jericoacoara",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Litoral de Camocim e Acaraú",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2307304",
+    "name": "Juazeiro do Norte",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Cariri",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2307403",
+    "name": "Jucás",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Várzea Alegre",
+    "mesoregion": "Centro-Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2307502",
+    "name": "Lavras da Mangabeira",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Lavras da Mangabeira",
+    "mesoregion": "Centro-Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2307601",
+    "name": "Limoeiro do Norte",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baixo Jaguaribe",
+    "mesoregion": "Jaguaribe",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2307635",
+    "name": "Madalena",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Quixeramobim",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2307650",
+    "name": "Maracanaú",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Fortaleza",
+    "mesoregion": "Metropolitana de Fortaleza",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2307700",
+    "name": "Maranguape",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Fortaleza",
+    "mesoregion": "Metropolitana de Fortaleza",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2307809",
+    "name": "Marco",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Litoral de Camocim e Acaraú",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2307908",
+    "name": "Martinópole",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Litoral de Camocim e Acaraú",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2308005",
+    "name": "Massapê",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sobral",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2308104",
+    "name": "Mauriti",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Barro",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2308203",
+    "name": "Meruoca",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Meruoca",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2308302",
+    "name": "Milagres",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Brejo Santo",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2308351",
+    "name": "Milhã",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Senador Pompeu",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2308377",
+    "name": "Miraíma",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sobral",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2308401",
+    "name": "Missão Velha",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Cariri",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2308500",
+    "name": "Mombaça",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Senador Pompeu",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2308609",
+    "name": "Monsenhor Tabosa",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Cratéus",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2308708",
+    "name": "Morada Nova",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baixo Jaguaribe",
+    "mesoregion": "Jaguaribe",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2308807",
+    "name": "Moraújo",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Coreaú",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2308906",
+    "name": "Morrinhos",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Litoral de Camocim e Acaraú",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2309003",
+    "name": "Mucambo",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sobral",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2309102",
+    "name": "Mulungu",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baturité",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2309201",
+    "name": "Nova Olinda",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Cariri",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2309300",
+    "name": "Nova Russas",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Cratéus",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2309409",
+    "name": "Novo Oriente",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Cratéus",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2309458",
+    "name": "Ocara",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Chorozinho",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2309508",
+    "name": "Orós",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Iguatu",
+    "mesoregion": "Centro-Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2309607",
+    "name": "Pacajus",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Pacajus",
+    "mesoregion": "Metropolitana de Fortaleza",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2309706",
+    "name": "Pacatuba",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Fortaleza",
+    "mesoregion": "Metropolitana de Fortaleza",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2309805",
+    "name": "Pacoti",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baturité",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2309904",
+    "name": "Pacujá",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sobral",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2310001",
+    "name": "Palhano",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baixo Jaguaribe",
+    "mesoregion": "Jaguaribe",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2310100",
+    "name": "Palmácia",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baturité",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2310209",
+    "name": "Paracuru",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baixo Curu",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2310258",
+    "name": "Paraipaba",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baixo Curu",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2310308",
+    "name": "Parambu",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Inhamuns",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2310407",
+    "name": "Paramoti",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Canindé",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2310506",
+    "name": "Pedra Branca",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Senador Pompeu",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2310605",
+    "name": "Penaforte",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Brejo Santo",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2310704",
+    "name": "Pentecoste",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Médio Curu",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2310803",
+    "name": "Pereiro",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Serra do Pereiro",
+    "mesoregion": "Jaguaribe",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2310852",
+    "name": "Pindoretama",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Cascavel",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2310902",
+    "name": "Piquet Carneiro",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Senador Pompeu",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2310951",
+    "name": "Pires Ferreira",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Ipu",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2311009",
+    "name": "Poranga",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Ipu",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2311108",
+    "name": "Porteiras",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Cariri",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2311207",
+    "name": "Potengi",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Chapada do Araripe",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2311231",
+    "name": "Potiretama",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Serra do Pereiro",
+    "mesoregion": "Jaguaribe",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2311264",
+    "name": "Quiterianópolis",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Cratéus",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2311306",
+    "name": "Quixadá",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Quixeramobim",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2311355",
+    "name": "Quixelô",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Iguatu",
+    "mesoregion": "Centro-Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2311405",
+    "name": "Quixeramobim",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Quixeramobim",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2311504",
+    "name": "Quixeré",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baixo Jaguaribe",
+    "mesoregion": "Jaguaribe",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2311603",
+    "name": "Redenção",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baturité",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2311702",
+    "name": "Reriutaba",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Ipu",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2311801",
+    "name": "Russas",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baixo Jaguaribe",
+    "mesoregion": "Jaguaribe",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2311900",
+    "name": "Saboeiro",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Inhamuns",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2311959",
+    "name": "Salitre",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Chapada do Araripe",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2312007",
+    "name": "Santana do Acaraú",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sobral",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2312106",
+    "name": "Santana do Cariri",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Cariri",
+    "mesoregion": "Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2312205",
+    "name": "Santa Quitéria",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Santa Quitéria",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2312304",
+    "name": "São Benedito",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Ibiapaba",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2312403",
+    "name": "São Gonçalo do Amarante",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baixo Curu",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2312502",
+    "name": "São João do Jaguaribe",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baixo Jaguaribe",
+    "mesoregion": "Jaguaribe",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2312601",
+    "name": "São Luís do Curu",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Médio Curu",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2312700",
+    "name": "Senador Pompeu",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Senador Pompeu",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2312809",
+    "name": "Senador Sá",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sobral",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2312908",
+    "name": "Sobral",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sobral",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2313005",
+    "name": "Solonópole",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Senador Pompeu",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2313104",
+    "name": "Tabuleiro do Norte",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Baixo Jaguaribe",
+    "mesoregion": "Jaguaribe",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2313203",
+    "name": "Tamboril",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Cratéus",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2313252",
+    "name": "Tarrafas",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Várzea Alegre",
+    "mesoregion": "Centro-Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2313302",
+    "name": "Tauá",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Sertão de Inhamuns",
+    "mesoregion": "Sertões Cearenses",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2313351",
+    "name": "Tejuçuoca",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Médio Curu",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2313401",
+    "name": "Tianguá",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Ibiapaba",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2313500",
+    "name": "Trairi",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Itapipoca",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2313559",
+    "name": "Tururu",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Uruburetama",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2313609",
+    "name": "Ubajara",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Ibiapaba",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2313708",
+    "name": "Umari",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Lavras da Mangabeira",
+    "mesoregion": "Centro-Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2313757",
+    "name": "Umirim",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Uruburetama",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2313807",
+    "name": "Uruburetama",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Uruburetama",
+    "mesoregion": "Norte Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2313906",
+    "name": "Uruoca",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Coreaú",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2313955",
+    "name": "Varjota",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Ipu",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2314003",
+    "name": "Várzea Alegre",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Várzea Alegre",
+    "mesoregion": "Centro-Sul Cearense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2314102",
+    "name": "Viçosa do Ceará",
+    "state": "CE",
+    "state_name": "Ceará",
+    "microregion": "Ibiapaba",
+    "mesoregion": "Noroeste Cearense",
+    "region": "Nordeste"
+  }
+]

@@ -1,0 +1,2657 @@
+[
+  {
+    "id": "4200051",
+    "name": "Abdon Batista",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Curitibanos",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4200101",
+    "name": "Abelardo Luz",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Xanxerê",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4200200",
+    "name": "Agrolândia",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Ituporanga",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4200309",
+    "name": "Agronômica",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Rio do Sul",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4200408",
+    "name": "Água Doce",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4200507",
+    "name": "Águas de Chapecó",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4200556",
+    "name": "Águas Frias",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4200606",
+    "name": "Águas Mornas",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tabuleiro",
+    "mesoregion": "Grande Florianópolis",
+    "region": "Sul"
+  },
+  {
+    "id": "4200705",
+    "name": "Alfredo Wagner",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tabuleiro",
+    "mesoregion": "Grande Florianópolis",
+    "region": "Sul"
+  },
+  {
+    "id": "4200754",
+    "name": "Alto Bela Vista",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Concórdia",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4200804",
+    "name": "Anchieta",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Miguel do Oeste",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4200903",
+    "name": "Angelina",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tijucas",
+    "mesoregion": "Grande Florianópolis",
+    "region": "Sul"
+  },
+  {
+    "id": "4201000",
+    "name": "Anita Garibaldi",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Campos de Lages",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4201109",
+    "name": "Anitápolis",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tabuleiro",
+    "mesoregion": "Grande Florianópolis",
+    "region": "Sul"
+  },
+  {
+    "id": "4201208",
+    "name": "Antônio Carlos",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Florianópolis",
+    "mesoregion": "Grande Florianópolis",
+    "region": "Sul"
+  },
+  {
+    "id": "4201257",
+    "name": "Apiúna",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Blumenau",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4201273",
+    "name": "Arabutã",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Concórdia",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4201307",
+    "name": "Araquari",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joinville",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4201406",
+    "name": "Araranguá",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Araranguá",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4201505",
+    "name": "Armazém",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tubarão",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4201604",
+    "name": "Arroio Trinta",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4201653",
+    "name": "Arvoredo",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Concórdia",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4201703",
+    "name": "Ascurra",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Blumenau",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4201802",
+    "name": "Atalanta",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Ituporanga",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4201901",
+    "name": "Aurora",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Rio do Sul",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4201950",
+    "name": "Balneário Arroio do Silva",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Araranguá",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4202008",
+    "name": "Balneário Camboriú",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Itajaí",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4202057",
+    "name": "Balneário Barra do Sul",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joinville",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4202073",
+    "name": "Balneário Gaivota",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Araranguá",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4202081",
+    "name": "Bandeirante",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Miguel do Oeste",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4202099",
+    "name": "Barra Bonita",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Miguel do Oeste",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4202107",
+    "name": "Barra Velha",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Itajaí",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4202131",
+    "name": "Bela Vista do Toldo",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Canoinhas",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4202156",
+    "name": "Belmonte",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Miguel do Oeste",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4202206",
+    "name": "Benedito Novo",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Blumenau",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4202305",
+    "name": "Biguaçu",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Florianópolis",
+    "mesoregion": "Grande Florianópolis",
+    "region": "Sul"
+  },
+  {
+    "id": "4202404",
+    "name": "Blumenau",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Blumenau",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4202438",
+    "name": "Bocaina do Sul",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Campos de Lages",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4202453",
+    "name": "Bombinhas",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Itajaí",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4202503",
+    "name": "Bom Jardim da Serra",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Campos de Lages",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4202537",
+    "name": "Bom Jesus",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Xanxerê",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4202578",
+    "name": "Bom Jesus do Oeste",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4202602",
+    "name": "Bom Retiro",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Campos de Lages",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4202701",
+    "name": "Botuverá",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Blumenau",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4202800",
+    "name": "Braço do Norte",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tubarão",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4202859",
+    "name": "Braço do Trombudo",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Rio do Sul",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4202875",
+    "name": "Brunópolis",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Curitibanos",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4202909",
+    "name": "Brusque",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Blumenau",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4203006",
+    "name": "Caçador",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4203105",
+    "name": "Caibi",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4203154",
+    "name": "Calmon",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4203204",
+    "name": "Camboriú",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Itajaí",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4203253",
+    "name": "Capão Alto",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Campos de Lages",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4203303",
+    "name": "Campo Alegre",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Bento do Sul",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4203402",
+    "name": "Campo Belo do Sul",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Campos de Lages",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4203501",
+    "name": "Campo Erê",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4203600",
+    "name": "Campos Novos",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Curitibanos",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4203709",
+    "name": "Canelinha",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tijucas",
+    "mesoregion": "Grande Florianópolis",
+    "region": "Sul"
+  },
+  {
+    "id": "4203808",
+    "name": "Canoinhas",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Canoinhas",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4203907",
+    "name": "Capinzal",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4203956",
+    "name": "Capivari de Baixo",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tubarão",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4204004",
+    "name": "Catanduvas",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4204103",
+    "name": "Caxambu do Sul",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4204152",
+    "name": "Celso Ramos",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Campos de Lages",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4204178",
+    "name": "Cerro Negro",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Campos de Lages",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4204194",
+    "name": "Chapadão do Lageado",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Ituporanga",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4204202",
+    "name": "Chapecó",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4204251",
+    "name": "Cocal do Sul",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Criciúma",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4204301",
+    "name": "Concórdia",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Concórdia",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4204350",
+    "name": "Cordilheira Alta",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4204400",
+    "name": "Coronel Freitas",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4204459",
+    "name": "Coronel Martins",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Xanxerê",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4204509",
+    "name": "Corupá",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joinville",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4204558",
+    "name": "Correia Pinto",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Campos de Lages",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4204608",
+    "name": "Criciúma",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Criciúma",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4204707",
+    "name": "Cunha Porã",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4204756",
+    "name": "Cunhataí",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4204806",
+    "name": "Curitibanos",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Curitibanos",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4204905",
+    "name": "Descanso",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Miguel do Oeste",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4205001",
+    "name": "Dionísio Cerqueira",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Miguel do Oeste",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4205100",
+    "name": "Dona Emma",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Rio do Sul",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4205159",
+    "name": "Doutor Pedrinho",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Blumenau",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4205175",
+    "name": "Entre Rios",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Xanxerê",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4205191",
+    "name": "Ermo",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Araranguá",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4205209",
+    "name": "Erval Velho",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4205308",
+    "name": "Faxinal dos Guedes",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Xanxerê",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4205357",
+    "name": "Flor do Sertão",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4205407",
+    "name": "Florianópolis",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Florianópolis",
+    "mesoregion": "Grande Florianópolis",
+    "region": "Sul"
+  },
+  {
+    "id": "4205431",
+    "name": "Formosa do Sul",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4205456",
+    "name": "Forquilhinha",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Criciúma",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4205506",
+    "name": "Fraiburgo",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4205555",
+    "name": "Frei Rogério",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Curitibanos",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4205605",
+    "name": "Galvão",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Xanxerê",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4205704",
+    "name": "Garopaba",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tubarão",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4205803",
+    "name": "Garuva",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joinville",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4205902",
+    "name": "Gaspar",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Blumenau",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4206009",
+    "name": "Governador Celso Ramos",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Florianópolis",
+    "mesoregion": "Grande Florianópolis",
+    "region": "Sul"
+  },
+  {
+    "id": "4206108",
+    "name": "Grão-Pará",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tubarão",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4206207",
+    "name": "Gravatal",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tubarão",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4206306",
+    "name": "Guabiruba",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Blumenau",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4206405",
+    "name": "Guaraciaba",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Miguel do Oeste",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4206504",
+    "name": "Guaramirim",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joinville",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4206603",
+    "name": "Guarujá do Sul",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Miguel do Oeste",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4206652",
+    "name": "Guatambú",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4206702",
+    "name": "Herval d'Oeste",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4206751",
+    "name": "Ibiam",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4206801",
+    "name": "Ibicaré",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4206900",
+    "name": "Ibirama",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Rio do Sul",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4207007",
+    "name": "Içara",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Criciúma",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4207106",
+    "name": "Ilhota",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Itajaí",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4207205",
+    "name": "Imaruí",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tubarão",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4207304",
+    "name": "Imbituba",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tubarão",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4207403",
+    "name": "Imbuia",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Ituporanga",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4207502",
+    "name": "Indaial",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Blumenau",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4207577",
+    "name": "Iomerê",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4207601",
+    "name": "Ipira",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Concórdia",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4207650",
+    "name": "Iporã do Oeste",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Miguel do Oeste",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4207684",
+    "name": "Ipuaçu",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Xanxerê",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4207700",
+    "name": "Ipumirim",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Concórdia",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4207759",
+    "name": "Iraceminha",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4207809",
+    "name": "Irani",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Concórdia",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4207858",
+    "name": "Irati",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4207908",
+    "name": "Irineópolis",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Canoinhas",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4208005",
+    "name": "Itá",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Concórdia",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4208104",
+    "name": "Itaiópolis",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Canoinhas",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4208203",
+    "name": "Itajaí",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Itajaí",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4208302",
+    "name": "Itapema",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Itajaí",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4208401",
+    "name": "Itapiranga",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Miguel do Oeste",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4208450",
+    "name": "Itapoá",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joinville",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4208500",
+    "name": "Ituporanga",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Ituporanga",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4208609",
+    "name": "Jaborá",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4208708",
+    "name": "Jacinto Machado",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Araranguá",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4208807",
+    "name": "Jaguaruna",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tubarão",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4208906",
+    "name": "Jaraguá do Sul",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joinville",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4208955",
+    "name": "Jardinópolis",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4209003",
+    "name": "Joaçaba",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4209102",
+    "name": "Joinville",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joinville",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4209151",
+    "name": "José Boiteux",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Rio do Sul",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4209177",
+    "name": "Jupiá",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Xanxerê",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4209201",
+    "name": "Lacerdópolis",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4209300",
+    "name": "Lages",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Campos de Lages",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4209409",
+    "name": "Laguna",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tubarão",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4209458",
+    "name": "Lajeado Grande",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Xanxerê",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4209508",
+    "name": "Laurentino",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Rio do Sul",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4209607",
+    "name": "Lauro Müller",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Criciúma",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4209706",
+    "name": "Lebon Régis",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4209805",
+    "name": "Leoberto Leal",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tijucas",
+    "mesoregion": "Grande Florianópolis",
+    "region": "Sul"
+  },
+  {
+    "id": "4209854",
+    "name": "Lindóia do Sul",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Concórdia",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4209904",
+    "name": "Lontras",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Rio do Sul",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4210001",
+    "name": "Luiz Alves",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Blumenau",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4210035",
+    "name": "Luzerna",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4210050",
+    "name": "Macieira",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4210100",
+    "name": "Mafra",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Canoinhas",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4210209",
+    "name": "Major Gercino",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tijucas",
+    "mesoregion": "Grande Florianópolis",
+    "region": "Sul"
+  },
+  {
+    "id": "4210308",
+    "name": "Major Vieira",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Canoinhas",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4210407",
+    "name": "Maracajá",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Araranguá",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4210506",
+    "name": "Maravilha",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4210555",
+    "name": "Marema",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Xanxerê",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4210605",
+    "name": "Massaranduba",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joinville",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4210704",
+    "name": "Matos Costa",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4210803",
+    "name": "Meleiro",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Araranguá",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4210852",
+    "name": "Mirim Doce",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Rio do Sul",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4210902",
+    "name": "Modelo",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4211009",
+    "name": "Mondaí",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Miguel do Oeste",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4211058",
+    "name": "Monte Carlo",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Curitibanos",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4211108",
+    "name": "Monte Castelo",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Canoinhas",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4211207",
+    "name": "Morro da Fumaça",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Criciúma",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4211256",
+    "name": "Morro Grande",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Araranguá",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4211306",
+    "name": "Navegantes",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Itajaí",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4211405",
+    "name": "Nova Erechim",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4211454",
+    "name": "Nova Itaberaba",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4211504",
+    "name": "Nova Trento",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tijucas",
+    "mesoregion": "Grande Florianópolis",
+    "region": "Sul"
+  },
+  {
+    "id": "4211603",
+    "name": "Nova Veneza",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Criciúma",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4211652",
+    "name": "Novo Horizonte",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4211702",
+    "name": "Orleans",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tubarão",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4211751",
+    "name": "Otacílio Costa",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Campos de Lages",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4211801",
+    "name": "Ouro",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4211850",
+    "name": "Ouro Verde",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Xanxerê",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4211876",
+    "name": "Paial",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Concórdia",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4211892",
+    "name": "Painel",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Campos de Lages",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4211900",
+    "name": "Palhoça",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Florianópolis",
+    "mesoregion": "Grande Florianópolis",
+    "region": "Sul"
+  },
+  {
+    "id": "4212007",
+    "name": "Palma Sola",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Miguel do Oeste",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4212056",
+    "name": "Palmeira",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Campos de Lages",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4212106",
+    "name": "Palmitos",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4212205",
+    "name": "Papanduva",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Canoinhas",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4212239",
+    "name": "Paraíso",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Miguel do Oeste",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4212254",
+    "name": "Passo de Torres",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Araranguá",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4212270",
+    "name": "Passos Maia",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Xanxerê",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4212304",
+    "name": "Paulo Lopes",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Florianópolis",
+    "mesoregion": "Grande Florianópolis",
+    "region": "Sul"
+  },
+  {
+    "id": "4212403",
+    "name": "Pedras Grandes",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tubarão",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4212502",
+    "name": "Penha",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Itajaí",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4212601",
+    "name": "Peritiba",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Concórdia",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4212650",
+    "name": "Pescaria Brava",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tubarão",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4212700",
+    "name": "Petrolândia",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Ituporanga",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4212809",
+    "name": "Balneário Piçarras",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Itajaí",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4212908",
+    "name": "Pinhalzinho",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4213005",
+    "name": "Pinheiro Preto",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4213104",
+    "name": "Piratuba",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Concórdia",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4213153",
+    "name": "Planalto Alegre",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4213203",
+    "name": "Pomerode",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Blumenau",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4213302",
+    "name": "Ponte Alta",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Curitibanos",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4213351",
+    "name": "Ponte Alta do Norte",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Curitibanos",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4213401",
+    "name": "Ponte Serrada",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Xanxerê",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4213500",
+    "name": "Porto Belo",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Itajaí",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4213609",
+    "name": "Porto União",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Canoinhas",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4213708",
+    "name": "Pouso Redondo",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Rio do Sul",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4213807",
+    "name": "Praia Grande",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Araranguá",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4213906",
+    "name": "Presidente Castello Branco",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Concórdia",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4214003",
+    "name": "Presidente Getúlio",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Rio do Sul",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4214102",
+    "name": "Presidente Nereu",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Rio do Sul",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4214151",
+    "name": "Princesa",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Miguel do Oeste",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4214201",
+    "name": "Quilombo",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4214300",
+    "name": "Rancho Queimado",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tabuleiro",
+    "mesoregion": "Grande Florianópolis",
+    "region": "Sul"
+  },
+  {
+    "id": "4214409",
+    "name": "Rio das Antas",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4214508",
+    "name": "Rio do Campo",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Rio do Sul",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4214607",
+    "name": "Rio do Oeste",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Rio do Sul",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4214706",
+    "name": "Rio dos Cedros",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Blumenau",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4214805",
+    "name": "Rio do Sul",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Rio do Sul",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4214904",
+    "name": "Rio Fortuna",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tubarão",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4215000",
+    "name": "Rio Negrinho",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Bento do Sul",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4215059",
+    "name": "Rio Rufino",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Campos de Lages",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4215075",
+    "name": "Riqueza",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Miguel do Oeste",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4215109",
+    "name": "Rodeio",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Blumenau",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4215208",
+    "name": "Romelândia",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Miguel do Oeste",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4215307",
+    "name": "Salete",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Rio do Sul",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4215356",
+    "name": "Saltinho",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4215406",
+    "name": "Salto Veloso",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4215455",
+    "name": "Sangão",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tubarão",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4215505",
+    "name": "Santa Cecília",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Curitibanos",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4215554",
+    "name": "Santa Helena",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Miguel do Oeste",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4215604",
+    "name": "Santa Rosa de Lima",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tubarão",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4215653",
+    "name": "Santa Rosa do Sul",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Araranguá",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4215679",
+    "name": "Santa Terezinha",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Canoinhas",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4215687",
+    "name": "Santa Terezinha do Progresso",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4215695",
+    "name": "Santiago do Sul",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4215703",
+    "name": "Santo Amaro da Imperatriz",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Florianópolis",
+    "mesoregion": "Grande Florianópolis",
+    "region": "Sul"
+  },
+  {
+    "id": "4215752",
+    "name": "São Bernardino",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4215802",
+    "name": "São Bento do Sul",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Bento do Sul",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4215901",
+    "name": "São Bonifácio",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tabuleiro",
+    "mesoregion": "Grande Florianópolis",
+    "region": "Sul"
+  },
+  {
+    "id": "4216008",
+    "name": "São Carlos",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4216057",
+    "name": "São Cristóvão do Sul",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Curitibanos",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4216107",
+    "name": "São Domingos",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Xanxerê",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4216206",
+    "name": "São Francisco do Sul",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joinville",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4216255",
+    "name": "São João do Oeste",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Miguel do Oeste",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4216305",
+    "name": "São João Batista",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tijucas",
+    "mesoregion": "Grande Florianópolis",
+    "region": "Sul"
+  },
+  {
+    "id": "4216354",
+    "name": "São João do Itaperiú",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Itajaí",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4216404",
+    "name": "São João do Sul",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Araranguá",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4216503",
+    "name": "São Joaquim",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Campos de Lages",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4216602",
+    "name": "São José",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Florianópolis",
+    "mesoregion": "Grande Florianópolis",
+    "region": "Sul"
+  },
+  {
+    "id": "4216701",
+    "name": "São José do Cedro",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Miguel do Oeste",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4216800",
+    "name": "São José do Cerrito",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Campos de Lages",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4216909",
+    "name": "São Lourenço do Oeste",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4217006",
+    "name": "São Ludgero",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tubarão",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4217105",
+    "name": "São Martinho",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tubarão",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4217154",
+    "name": "São Miguel da Boa Vista",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4217204",
+    "name": "São Miguel do Oeste",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Miguel do Oeste",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4217253",
+    "name": "São Pedro de Alcântara",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Florianópolis",
+    "mesoregion": "Grande Florianópolis",
+    "region": "Sul"
+  },
+  {
+    "id": "4217303",
+    "name": "Saudades",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4217402",
+    "name": "Schroeder",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joinville",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4217501",
+    "name": "Seara",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Concórdia",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4217550",
+    "name": "Serra Alta",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4217600",
+    "name": "Siderópolis",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Criciúma",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4217709",
+    "name": "Sombrio",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Araranguá",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4217758",
+    "name": "Sul Brasil",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4217808",
+    "name": "Taió",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Rio do Sul",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4217907",
+    "name": "Tangará",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4217956",
+    "name": "Tigrinhos",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4218004",
+    "name": "Tijucas",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tijucas",
+    "mesoregion": "Grande Florianópolis",
+    "region": "Sul"
+  },
+  {
+    "id": "4218103",
+    "name": "Timbé do Sul",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Araranguá",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4218202",
+    "name": "Timbó",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Blumenau",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4218251",
+    "name": "Timbó Grande",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Canoinhas",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4218301",
+    "name": "Três Barras",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Canoinhas",
+    "mesoregion": "Norte Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4218350",
+    "name": "Treviso",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Criciúma",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4218400",
+    "name": "Treze de Maio",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tubarão",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4218509",
+    "name": "Treze Tílias",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4218608",
+    "name": "Trombudo Central",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Rio do Sul",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4218707",
+    "name": "Tubarão",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Tubarão",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4218756",
+    "name": "Tunápolis",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "São Miguel do Oeste",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4218806",
+    "name": "Turvo",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Araranguá",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4218855",
+    "name": "União do Oeste",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Chapecó",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4218905",
+    "name": "Urubici",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Campos de Lages",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4218954",
+    "name": "Urupema",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Campos de Lages",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4219002",
+    "name": "Urussanga",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Criciúma",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4219101",
+    "name": "Vargeão",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Xanxerê",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4219150",
+    "name": "Vargem",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Curitibanos",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4219176",
+    "name": "Vargem Bonita",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4219200",
+    "name": "Vidal Ramos",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Ituporanga",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4219309",
+    "name": "Videira",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Joaçaba",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4219358",
+    "name": "Vitor Meireles",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Rio do Sul",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4219408",
+    "name": "Witmarsum",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Rio do Sul",
+    "mesoregion": "Vale do Itajaí",
+    "region": "Sul"
+  },
+  {
+    "id": "4219507",
+    "name": "Xanxerê",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Xanxerê",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4219606",
+    "name": "Xavantina",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Concórdia",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4219705",
+    "name": "Xaxim",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Xanxerê",
+    "mesoregion": "Oeste Catarinense",
+    "region": "Sul"
+  },
+  {
+    "id": "4219853",
+    "name": "Zortéa",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Curitibanos",
+    "mesoregion": "Serrana",
+    "region": "Sul"
+  },
+  {
+    "id": "4220000",
+    "name": "Balneário Rincão",
+    "state": "SC",
+    "state_name": "Santa Catarina",
+    "microregion": "Criciúma",
+    "mesoregion": "Sul Catarinense",
+    "region": "Sul"
+  }
+]

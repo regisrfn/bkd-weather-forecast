@@ -1,0 +1,560 @@
+[
+  {
+    "id": "1300029",
+    "name": "Alvarães",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Tefé",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1300060",
+    "name": "Amaturá",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Alto Solimões",
+    "mesoregion": "Sudoeste Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1300086",
+    "name": "Anamã",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Coari",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1300102",
+    "name": "Anori",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Coari",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1300144",
+    "name": "Apuí",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Madeira",
+    "mesoregion": "Sul Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1300201",
+    "name": "Atalaia do Norte",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Alto Solimões",
+    "mesoregion": "Sudoeste Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1300300",
+    "name": "Autazes",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Manaus",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1300409",
+    "name": "Barcelos",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Rio Negro",
+    "mesoregion": "Norte Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1300508",
+    "name": "Barreirinha",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Parintins",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1300607",
+    "name": "Benjamin Constant",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Alto Solimões",
+    "mesoregion": "Sudoeste Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1300631",
+    "name": "Beruri",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Coari",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1300680",
+    "name": "Boa Vista do Ramos",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Parintins",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1300706",
+    "name": "Boca do Acre",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Boca do Acre",
+    "mesoregion": "Sul Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1300805",
+    "name": "Borba",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Madeira",
+    "mesoregion": "Sul Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1300839",
+    "name": "Caapiranga",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Coari",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1300904",
+    "name": "Canutama",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Purus",
+    "mesoregion": "Sul Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1301001",
+    "name": "Carauari",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Juruá",
+    "mesoregion": "Sudoeste Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1301100",
+    "name": "Careiro",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Manaus",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1301159",
+    "name": "Careiro da Várzea",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Manaus",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1301209",
+    "name": "Coari",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Coari",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1301308",
+    "name": "Codajás",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Coari",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1301407",
+    "name": "Eirunepé",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Juruá",
+    "mesoregion": "Sudoeste Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1301506",
+    "name": "Envira",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Juruá",
+    "mesoregion": "Sudoeste Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1301605",
+    "name": "Fonte Boa",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Alto Solimões",
+    "mesoregion": "Sudoeste Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1301654",
+    "name": "Guajará",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Juruá",
+    "mesoregion": "Sudoeste Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1301704",
+    "name": "Humaitá",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Madeira",
+    "mesoregion": "Sul Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1301803",
+    "name": "Ipixuna",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Juruá",
+    "mesoregion": "Sudoeste Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1301852",
+    "name": "Iranduba",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Manaus",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1301902",
+    "name": "Itacoatiara",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Itacoatiara",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1301951",
+    "name": "Itamarati",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Juruá",
+    "mesoregion": "Sudoeste Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1302009",
+    "name": "Itapiranga",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Itacoatiara",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1302108",
+    "name": "Japurá",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Japurá",
+    "mesoregion": "Norte Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1302207",
+    "name": "Juruá",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Juruá",
+    "mesoregion": "Sudoeste Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1302306",
+    "name": "Jutaí",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Alto Solimões",
+    "mesoregion": "Sudoeste Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1302405",
+    "name": "Lábrea",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Purus",
+    "mesoregion": "Sul Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1302504",
+    "name": "Manacapuru",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Manaus",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1302553",
+    "name": "Manaquiri",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Manaus",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1302603",
+    "name": "Manaus",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Manaus",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1302702",
+    "name": "Manicoré",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Madeira",
+    "mesoregion": "Sul Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1302801",
+    "name": "Maraã",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Japurá",
+    "mesoregion": "Norte Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1302900",
+    "name": "Maués",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Parintins",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1303007",
+    "name": "Nhamundá",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Parintins",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1303106",
+    "name": "Nova Olinda do Norte",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Itacoatiara",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1303205",
+    "name": "Novo Airão",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Rio Negro",
+    "mesoregion": "Norte Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1303304",
+    "name": "Novo Aripuanã",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Madeira",
+    "mesoregion": "Sul Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1303403",
+    "name": "Parintins",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Parintins",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1303502",
+    "name": "Pauini",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Boca do Acre",
+    "mesoregion": "Sul Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1303536",
+    "name": "Presidente Figueiredo",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Rio Preto da Eva",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1303569",
+    "name": "Rio Preto da Eva",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Rio Preto da Eva",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1303601",
+    "name": "Santa Isabel do Rio Negro",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Rio Negro",
+    "mesoregion": "Norte Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1303700",
+    "name": "Santo Antônio do Içá",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Alto Solimões",
+    "mesoregion": "Sudoeste Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1303809",
+    "name": "São Gabriel da Cachoeira",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Rio Negro",
+    "mesoregion": "Norte Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1303908",
+    "name": "São Paulo de Olivença",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Alto Solimões",
+    "mesoregion": "Sudoeste Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1303957",
+    "name": "São Sebastião do Uatumã",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Parintins",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1304005",
+    "name": "Silves",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Itacoatiara",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1304062",
+    "name": "Tabatinga",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Alto Solimões",
+    "mesoregion": "Sudoeste Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1304104",
+    "name": "Tapauá",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Purus",
+    "mesoregion": "Sul Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1304203",
+    "name": "Tefé",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Tefé",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1304237",
+    "name": "Tonantins",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Alto Solimões",
+    "mesoregion": "Sudoeste Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1304260",
+    "name": "Uarini",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Tefé",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1304302",
+    "name": "Urucará",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Parintins",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  },
+  {
+    "id": "1304401",
+    "name": "Urucurituba",
+    "state": "AM",
+    "state_name": "Amazonas",
+    "microregion": "Itacoatiara",
+    "mesoregion": "Centro Amazonense",
+    "region": "Norte"
+  }
+]

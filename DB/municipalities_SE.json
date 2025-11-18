@@ -1,0 +1,677 @@
+[
+  {
+    "id": "2800100",
+    "name": "Amparo do São Francisco",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Propriá",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2800209",
+    "name": "Aquidabã",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Nossa Senhora das Dores",
+    "mesoregion": "Agreste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2800308",
+    "name": "Aracaju",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Aracaju",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2800407",
+    "name": "Arauá",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Boquim",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2800506",
+    "name": "Areia Branca",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Agreste de Itabaiana",
+    "mesoregion": "Agreste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2800605",
+    "name": "Barra dos Coqueiros",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Aracaju",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2800670",
+    "name": "Boquim",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Boquim",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2800704",
+    "name": "Brejo Grande",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Propriá",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2801009",
+    "name": "Campo do Brito",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Agreste de Itabaiana",
+    "mesoregion": "Agreste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2801108",
+    "name": "Canhoba",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Propriá",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2801207",
+    "name": "Canindé de São Francisco",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Sergipana do Sertão do São Francisco",
+    "mesoregion": "Sertão Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2801306",
+    "name": "Capela",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Cotinguiba",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2801405",
+    "name": "Carira",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Carira",
+    "mesoregion": "Sertão Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2801504",
+    "name": "Carmópolis",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Baixo Cotinguiba",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2801603",
+    "name": "Cedro de São João",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Propriá",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2801702",
+    "name": "Cristinápolis",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Boquim",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2801900",
+    "name": "Cumbe",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Nossa Senhora das Dores",
+    "mesoregion": "Agreste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2802007",
+    "name": "Divina Pastora",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Cotinguiba",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2802106",
+    "name": "Estância",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Estância",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2802205",
+    "name": "Feira Nova",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Sergipana do Sertão do São Francisco",
+    "mesoregion": "Sertão Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2802304",
+    "name": "Frei Paulo",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Carira",
+    "mesoregion": "Sertão Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2802403",
+    "name": "Gararu",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Sergipana do Sertão do São Francisco",
+    "mesoregion": "Sertão Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2802502",
+    "name": "General Maynard",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Baixo Cotinguiba",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2802601",
+    "name": "Graccho Cardoso",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Sergipana do Sertão do São Francisco",
+    "mesoregion": "Sertão Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2802700",
+    "name": "Ilha das Flores",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Propriá",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2802809",
+    "name": "Indiaroba",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Estância",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2802908",
+    "name": "Itabaiana",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Agreste de Itabaiana",
+    "mesoregion": "Agreste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2803005",
+    "name": "Itabaianinha",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Boquim",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2803104",
+    "name": "Itabi",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Sergipana do Sertão do São Francisco",
+    "mesoregion": "Sertão Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2803203",
+    "name": "Itaporanga d'Ajuda",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Estância",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2803302",
+    "name": "Japaratuba",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Japaratuba",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2803401",
+    "name": "Japoatã",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Japaratuba",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2803500",
+    "name": "Lagarto",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Agreste de Lagarto",
+    "mesoregion": "Agreste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2803609",
+    "name": "Laranjeiras",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Baixo Cotinguiba",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2803708",
+    "name": "Macambira",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Agreste de Itabaiana",
+    "mesoregion": "Agreste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2803807",
+    "name": "Malhada dos Bois",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Nossa Senhora das Dores",
+    "mesoregion": "Agreste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2803906",
+    "name": "Malhador",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Agreste de Itabaiana",
+    "mesoregion": "Agreste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2804003",
+    "name": "Maruim",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Baixo Cotinguiba",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2804102",
+    "name": "Moita Bonita",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Agreste de Itabaiana",
+    "mesoregion": "Agreste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2804201",
+    "name": "Monte Alegre de Sergipe",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Sergipana do Sertão do São Francisco",
+    "mesoregion": "Sertão Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2804300",
+    "name": "Muribeca",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Nossa Senhora das Dores",
+    "mesoregion": "Agreste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2804409",
+    "name": "Neópolis",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Propriá",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2804458",
+    "name": "Nossa Senhora Aparecida",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Carira",
+    "mesoregion": "Sertão Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2804508",
+    "name": "Nossa Senhora da Glória",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Sergipana do Sertão do São Francisco",
+    "mesoregion": "Sertão Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2804607",
+    "name": "Nossa Senhora das Dores",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Nossa Senhora das Dores",
+    "mesoregion": "Agreste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2804706",
+    "name": "Nossa Senhora de Lourdes",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Propriá",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2804805",
+    "name": "Nossa Senhora do Socorro",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Aracaju",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2804904",
+    "name": "Pacatuba",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Japaratuba",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2805000",
+    "name": "Pedra Mole",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Carira",
+    "mesoregion": "Sertão Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2805109",
+    "name": "Pedrinhas",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Boquim",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2805208",
+    "name": "Pinhão",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Carira",
+    "mesoregion": "Sertão Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2805307",
+    "name": "Pirambu",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Japaratuba",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2805406",
+    "name": "Poço Redondo",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Sergipana do Sertão do São Francisco",
+    "mesoregion": "Sertão Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2805505",
+    "name": "Poço Verde",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Tobias Barreto",
+    "mesoregion": "Agreste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2805604",
+    "name": "Porto da Folha",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Sergipana do Sertão do São Francisco",
+    "mesoregion": "Sertão Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2805703",
+    "name": "Propriá",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Propriá",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2805802",
+    "name": "Riachão do Dantas",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Agreste de Lagarto",
+    "mesoregion": "Agreste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2805901",
+    "name": "Riachuelo",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Baixo Cotinguiba",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2806008",
+    "name": "Ribeirópolis",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Carira",
+    "mesoregion": "Sertão Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2806107",
+    "name": "Rosário do Catete",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Baixo Cotinguiba",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2806206",
+    "name": "Salgado",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Boquim",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2806305",
+    "name": "Santa Luzia do Itanhy",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Estância",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2806404",
+    "name": "Santana do São Francisco",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Propriá",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2806503",
+    "name": "Santa Rosa de Lima",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Cotinguiba",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2806602",
+    "name": "Santo Amaro das Brotas",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Baixo Cotinguiba",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2806701",
+    "name": "São Cristóvão",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Aracaju",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2806800",
+    "name": "São Domingos",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Agreste de Itabaiana",
+    "mesoregion": "Agreste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2806909",
+    "name": "São Francisco",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Japaratuba",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2807006",
+    "name": "São Miguel do Aleixo",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Nossa Senhora das Dores",
+    "mesoregion": "Agreste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2807105",
+    "name": "Simão Dias",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Tobias Barreto",
+    "mesoregion": "Agreste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2807204",
+    "name": "Siriri",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Cotinguiba",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2807303",
+    "name": "Telha",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Propriá",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2807402",
+    "name": "Tobias Barreto",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Tobias Barreto",
+    "mesoregion": "Agreste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2807501",
+    "name": "Tomar do Geru",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Boquim",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2807600",
+    "name": "Umbaúba",
+    "state": "SE",
+    "state_name": "Sergipe",
+    "microregion": "Boquim",
+    "mesoregion": "Leste Sergipano",
+    "region": "Nordeste"
+  }
+]

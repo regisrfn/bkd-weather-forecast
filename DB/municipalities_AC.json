@@ -1,0 +1,200 @@
+[
+  {
+    "id": "1200013",
+    "name": "Acrelândia",
+    "state": "AC",
+    "state_name": "Acre",
+    "microregion": "Rio Branco",
+    "mesoregion": "Vale do Acre",
+    "region": "Norte"
+  },
+  {
+    "id": "1200054",
+    "name": "Assis Brasil",
+    "state": "AC",
+    "state_name": "Acre",
+    "microregion": "Brasiléia",
+    "mesoregion": "Vale do Acre",
+    "region": "Norte"
+  },
+  {
+    "id": "1200104",
+    "name": "Brasiléia",
+    "state": "AC",
+    "state_name": "Acre",
+    "microregion": "Brasiléia",
+    "mesoregion": "Vale do Acre",
+    "region": "Norte"
+  },
+  {
+    "id": "1200138",
+    "name": "Bujari",
+    "state": "AC",
+    "state_name": "Acre",
+    "microregion": "Rio Branco",
+    "mesoregion": "Vale do Acre",
+    "region": "Norte"
+  },
+  {
+    "id": "1200179",
+    "name": "Capixaba",
+    "state": "AC",
+    "state_name": "Acre",
+    "microregion": "Rio Branco",
+    "mesoregion": "Vale do Acre",
+    "region": "Norte"
+  },
+  {
+    "id": "1200203",
+    "name": "Cruzeiro do Sul",
+    "state": "AC",
+    "state_name": "Acre",
+    "microregion": "Cruzeiro do Sul",
+    "mesoregion": "Vale do Juruá",
+    "region": "Norte"
+  },
+  {
+    "id": "1200252",
+    "name": "Epitaciolândia",
+    "state": "AC",
+    "state_name": "Acre",
+    "microregion": "Brasiléia",
+    "mesoregion": "Vale do Acre",
+    "region": "Norte"
+  },
+  {
+    "id": "1200302",
+    "name": "Feijó",
+    "state": "AC",
+    "state_name": "Acre",
+    "microregion": "Tarauacá",
+    "mesoregion": "Vale do Juruá",
+    "region": "Norte"
+  },
+  {
+    "id": "1200328",
+    "name": "Jordão",
+    "state": "AC",
+    "state_name": "Acre",
+    "microregion": "Tarauacá",
+    "mesoregion": "Vale do Juruá",
+    "region": "Norte"
+  },
+  {
+    "id": "1200336",
+    "name": "Mâncio Lima",
+    "state": "AC",
+    "state_name": "Acre",
+    "microregion": "Cruzeiro do Sul",
+    "mesoregion": "Vale do Juruá",
+    "region": "Norte"
+  },
+  {
+    "id": "1200344",
+    "name": "Manoel Urbano",
+    "state": "AC",
+    "state_name": "Acre",
+    "microregion": "Sena Madureira",
+    "mesoregion": "Vale do Acre",
+    "region": "Norte"
+  },
+  {
+    "id": "1200351",
+    "name": "Marechal Thaumaturgo",
+    "state": "AC",
+    "state_name": "Acre",
+    "microregion": "Cruzeiro do Sul",
+    "mesoregion": "Vale do Juruá",
+    "region": "Norte"
+  },
+  {
+    "id": "1200385",
+    "name": "Plácido de Castro",
+    "state": "AC",
+    "state_name": "Acre",
+    "microregion": "Rio Branco",
+    "mesoregion": "Vale do Acre",
+    "region": "Norte"
+  },
+  {
+    "id": "1200393",
+    "name": "Porto Walter",
+    "state": "AC",
+    "state_name": "Acre",
+    "microregion": "Cruzeiro do Sul",
+    "mesoregion": "Vale do Juruá",
+    "region": "Norte"
+  },
+  {
+    "id": "1200401",
+    "name": "Rio Branco",
+    "state": "AC",
+    "state_name": "Acre",
+    "microregion": "Rio Branco",
+    "mesoregion": "Vale do Acre",
+    "region": "Norte"
+  },
+  {
+    "id": "1200427",
+    "name": "Rodrigues Alves",
+    "state": "AC",
+    "state_name": "Acre",
+    "microregion": "Cruzeiro do Sul",
+    "mesoregion": "Vale do Juruá",
+    "region": "Norte"
+  },
+  {
+    "id": "1200435",
+    "name": "Santa Rosa do Purus",
+    "state": "AC",
+    "state_name": "Acre",
+    "microregion": "Sena Madureira",
+    "mesoregion": "Vale do Acre",
+    "region": "Norte"
+  },
+  {
+    "id": "1200450",
+    "name": "Senador Guiomard",
+    "state": "AC",
+    "state_name": "Acre",
+    "microregion": "Rio Branco",
+    "mesoregion": "Vale do Acre",
+    "region": "Norte"
+  },
+  {
+    "id": "1200500",
+    "name": "Sena Madureira",
+    "state": "AC",
+    "state_name": "Acre",
+    "microregion": "Sena Madureira",
+    "mesoregion": "Vale do Acre",
+    "region": "Norte"
+  },
+  {
+    "id": "1200609",
+    "name": "Tarauacá",
+    "state": "AC",
+    "state_name": "Acre",
+    "microregion": "Tarauacá",
+    "mesoregion": "Vale do Juruá",
+    "region": "Norte"
+  },
+  {
+    "id": "1200708",
+    "name": "Xapuri",
+    "state": "AC",
+    "state_name": "Acre",
+    "microregion": "Brasiléia",
+    "mesoregion": "Vale do Acre",
+    "region": "Norte"
+  },
+  {
+    "id": "1200807",
+    "name": "Porto Acre",
+    "state": "AC",
+    "state_name": "Acre",
+    "microregion": "Rio Branco",
+    "mesoregion": "Vale do Acre",
+    "region": "Norte"
+  }
+]

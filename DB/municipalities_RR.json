@@ -1,0 +1,137 @@
+[
+  {
+    "id": "1400027",
+    "name": "Amajari",
+    "state": "RR",
+    "state_name": "Roraima",
+    "microregion": "Boa Vista",
+    "mesoregion": "Norte de Roraima",
+    "region": "Norte"
+  },
+  {
+    "id": "1400050",
+    "name": "Alto Alegre",
+    "state": "RR",
+    "state_name": "Roraima",
+    "microregion": "Boa Vista",
+    "mesoregion": "Norte de Roraima",
+    "region": "Norte"
+  },
+  {
+    "id": "1400100",
+    "name": "Boa Vista",
+    "state": "RR",
+    "state_name": "Roraima",
+    "microregion": "Boa Vista",
+    "mesoregion": "Norte de Roraima",
+    "region": "Norte"
+  },
+  {
+    "id": "1400159",
+    "name": "Bonfim",
+    "state": "RR",
+    "state_name": "Roraima",
+    "microregion": "Nordeste de Roraima",
+    "mesoregion": "Norte de Roraima",
+    "region": "Norte"
+  },
+  {
+    "id": "1400175",
+    "name": "Cantá",
+    "state": "RR",
+    "state_name": "Roraima",
+    "microregion": "Nordeste de Roraima",
+    "mesoregion": "Norte de Roraima",
+    "region": "Norte"
+  },
+  {
+    "id": "1400209",
+    "name": "Caracaraí",
+    "state": "RR",
+    "state_name": "Roraima",
+    "microregion": "Caracaraí",
+    "mesoregion": "Sul de Roraima",
+    "region": "Norte"
+  },
+  {
+    "id": "1400233",
+    "name": "Caroebe",
+    "state": "RR",
+    "state_name": "Roraima",
+    "microregion": "Sudeste de Roraima",
+    "mesoregion": "Sul de Roraima",
+    "region": "Norte"
+  },
+  {
+    "id": "1400282",
+    "name": "Iracema",
+    "state": "RR",
+    "state_name": "Roraima",
+    "microregion": "Caracaraí",
+    "mesoregion": "Sul de Roraima",
+    "region": "Norte"
+  },
+  {
+    "id": "1400308",
+    "name": "Mucajaí",
+    "state": "RR",
+    "state_name": "Roraima",
+    "microregion": "Caracaraí",
+    "mesoregion": "Sul de Roraima",
+    "region": "Norte"
+  },
+  {
+    "id": "1400407",
+    "name": "Normandia",
+    "state": "RR",
+    "state_name": "Roraima",
+    "microregion": "Nordeste de Roraima",
+    "mesoregion": "Norte de Roraima",
+    "region": "Norte"
+  },
+  {
+    "id": "1400456",
+    "name": "Pacaraima",
+    "state": "RR",
+    "state_name": "Roraima",
+    "microregion": "Boa Vista",
+    "mesoregion": "Norte de Roraima",
+    "region": "Norte"
+  },
+  {
+    "id": "1400472",
+    "name": "Rorainópolis",
+    "state": "RR",
+    "state_name": "Roraima",
+    "microregion": "Sudeste de Roraima",
+    "mesoregion": "Sul de Roraima",
+    "region": "Norte"
+  },
+  {
+    "id": "1400506",
+    "name": "São João da Baliza",
+    "state": "RR",
+    "state_name": "Roraima",
+    "microregion": "Sudeste de Roraima",
+    "mesoregion": "Sul de Roraima",
+    "region": "Norte"
+  },
+  {
+    "id": "1400605",
+    "name": "São Luiz",
+    "state": "RR",
+    "state_name": "Roraima",
+    "microregion": "Sudeste de Roraima",
+    "mesoregion": "Sul de Roraima",
+    "region": "Norte"
+  },
+  {
+    "id": "1400704",
+    "name": "Uiramutã",
+    "state": "RR",
+    "state_name": "Roraima",
+    "microregion": "Nordeste de Roraima",
+    "mesoregion": "Norte de Roraima",
+    "region": "Norte"
+  }
+]

@@ -1,0 +1,920 @@
+[
+  {
+    "id": "2700102",
+    "name": "Água Branca",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Serrana do Sertão Alagoano",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2700201",
+    "name": "Anadia",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "São Miguel dos Campos",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2700300",
+    "name": "Arapiraca",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Arapiraca",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2700409",
+    "name": "Atalaia",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Mata Alagoana",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2700508",
+    "name": "Barra de Santo Antônio",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Maceió",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2700607",
+    "name": "Barra de São Miguel",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Maceió",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2700706",
+    "name": "Batalha",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Batalha",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2700805",
+    "name": "Belém",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Palmeira dos Índios",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2700904",
+    "name": "Belo Monte",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Batalha",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2701001",
+    "name": "Boca da Mata",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "São Miguel dos Campos",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2701100",
+    "name": "Branquinha",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Mata Alagoana",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2701209",
+    "name": "Cacimbinhas",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Palmeira dos Índios",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2701308",
+    "name": "Cajueiro",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Mata Alagoana",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2701357",
+    "name": "Campestre",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Mata Alagoana",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2701407",
+    "name": "Campo Alegre",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "São Miguel dos Campos",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2701506",
+    "name": "Campo Grande",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Arapiraca",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2701605",
+    "name": "Canapi",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Serrana do Sertão Alagoano",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2701704",
+    "name": "Capela",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Mata Alagoana",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2701803",
+    "name": "Carneiros",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Santana do Ipanema",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2701902",
+    "name": "Chã Preta",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Serrana dos Quilombos",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2702009",
+    "name": "Coité do Nóia",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Arapiraca",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2702108",
+    "name": "Colônia Leopoldina",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Mata Alagoana",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2702207",
+    "name": "Coqueiro Seco",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Maceió",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2702306",
+    "name": "Coruripe",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "São Miguel dos Campos",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2702355",
+    "name": "Craíbas",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Arapiraca",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2702405",
+    "name": "Delmiro Gouveia",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Alagoana do Sertão do São Francisco",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2702504",
+    "name": "Dois Riachos",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Santana do Ipanema",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2702553",
+    "name": "Estrela de Alagoas",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Palmeira dos Índios",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2702603",
+    "name": "Feira Grande",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Arapiraca",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2702702",
+    "name": "Feliz Deserto",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Penedo",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2702801",
+    "name": "Flexeiras",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Mata Alagoana",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2702900",
+    "name": "Girau do Ponciano",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Arapiraca",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2703007",
+    "name": "Ibateguara",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Serrana dos Quilombos",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2703106",
+    "name": "Igaci",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Palmeira dos Índios",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2703205",
+    "name": "Igreja Nova",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Penedo",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2703304",
+    "name": "Inhapi",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Serrana do Sertão Alagoano",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2703403",
+    "name": "Jacaré dos Homens",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Batalha",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2703502",
+    "name": "Jacuípe",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Mata Alagoana",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2703601",
+    "name": "Japaratinga",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Litoral Norte Alagoano",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2703700",
+    "name": "Jaramataia",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Batalha",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2703759",
+    "name": "Jequiá da Praia",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "São Miguel dos Campos",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2703809",
+    "name": "Joaquim Gomes",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Mata Alagoana",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2703908",
+    "name": "Jundiá",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Mata Alagoana",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2704005",
+    "name": "Junqueiro",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "São Miguel dos Campos",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2704104",
+    "name": "Lagoa da Canoa",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Arapiraca",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2704203",
+    "name": "Limoeiro de Anadia",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Arapiraca",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2704302",
+    "name": "Maceió",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Maceió",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2704401",
+    "name": "Major Isidoro",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Batalha",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2704500",
+    "name": "Maragogi",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Litoral Norte Alagoano",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2704609",
+    "name": "Maravilha",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Santana do Ipanema",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2704708",
+    "name": "Marechal Deodoro",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Maceió",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2704807",
+    "name": "Maribondo",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Palmeira dos Índios",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2704906",
+    "name": "Mar Vermelho",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Palmeira dos Índios",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2705002",
+    "name": "Mata Grande",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Serrana do Sertão Alagoano",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2705101",
+    "name": "Matriz de Camaragibe",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Mata Alagoana",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2705200",
+    "name": "Messias",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Mata Alagoana",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2705309",
+    "name": "Minador do Negrão",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Palmeira dos Índios",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2705408",
+    "name": "Monteirópolis",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Batalha",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2705507",
+    "name": "Murici",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Mata Alagoana",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2705606",
+    "name": "Novo Lino",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Mata Alagoana",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2705705",
+    "name": "Olho d'Água das Flores",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Batalha",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2705804",
+    "name": "Olho d'Água do Casado",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Alagoana do Sertão do São Francisco",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2705903",
+    "name": "Olho d'Água Grande",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Traipu",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2706000",
+    "name": "Olivença",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Batalha",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2706109",
+    "name": "Ouro Branco",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Santana do Ipanema",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2706208",
+    "name": "Palestina",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Santana do Ipanema",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2706307",
+    "name": "Palmeira dos Índios",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Palmeira dos Índios",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2706406",
+    "name": "Pão de Açúcar",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Santana do Ipanema",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2706422",
+    "name": "Pariconha",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Serrana do Sertão Alagoano",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2706448",
+    "name": "Paripueira",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Maceió",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2706505",
+    "name": "Passo de Camaragibe",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Litoral Norte Alagoano",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2706604",
+    "name": "Paulo Jacinto",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Palmeira dos Índios",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2706703",
+    "name": "Penedo",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Penedo",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2706802",
+    "name": "Piaçabuçu",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Penedo",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2706901",
+    "name": "Pilar",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Maceió",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2707008",
+    "name": "Pindoba",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Serrana dos Quilombos",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2707107",
+    "name": "Piranhas",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Alagoana do Sertão do São Francisco",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2707206",
+    "name": "Poço das Trincheiras",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Santana do Ipanema",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2707305",
+    "name": "Porto Calvo",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Mata Alagoana",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2707404",
+    "name": "Porto de Pedras",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Litoral Norte Alagoano",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2707503",
+    "name": "Porto Real do Colégio",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Penedo",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2707602",
+    "name": "Quebrangulo",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Palmeira dos Índios",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2707701",
+    "name": "Rio Largo",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Maceió",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2707800",
+    "name": "Roteiro",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "São Miguel dos Campos",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2707909",
+    "name": "Santa Luzia do Norte",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Maceió",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2708006",
+    "name": "Santana do Ipanema",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Santana do Ipanema",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2708105",
+    "name": "Santana do Mundaú",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Serrana dos Quilombos",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2708204",
+    "name": "São Brás",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Traipu",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2708303",
+    "name": "São José da Laje",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Serrana dos Quilombos",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2708402",
+    "name": "São José da Tapera",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Santana do Ipanema",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2708501",
+    "name": "São Luís do Quitunde",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Mata Alagoana",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2708600",
+    "name": "São Miguel dos Campos",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "São Miguel dos Campos",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2708709",
+    "name": "São Miguel dos Milagres",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Litoral Norte Alagoano",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2708808",
+    "name": "São Sebastião",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Arapiraca",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2708907",
+    "name": "Satuba",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Maceió",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2708956",
+    "name": "Senador Rui Palmeira",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Santana do Ipanema",
+    "mesoregion": "Sertão Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2709004",
+    "name": "Tanque d'Arca",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Palmeira dos Índios",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2709103",
+    "name": "Taquarana",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Arapiraca",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2709152",
+    "name": "Teotônio Vilela",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "São Miguel dos Campos",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2709202",
+    "name": "Traipu",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Traipu",
+    "mesoregion": "Agreste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2709301",
+    "name": "União dos Palmares",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Serrana dos Quilombos",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2709400",
+    "name": "Viçosa",
+    "state": "AL",
+    "state_name": "Alagoas",
+    "microregion": "Serrana dos Quilombos",
+    "mesoregion": "Leste Alagoano",
+    "region": "Nordeste"
+  }
+]

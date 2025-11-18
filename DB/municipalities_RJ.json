@@ -1,0 +1,830 @@
+[
+  {
+    "id": "3300100",
+    "name": "Angra dos Reis",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Baía da Ilha Grande",
+    "mesoregion": "Sul Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3300159",
+    "name": "Aperibé",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Santo Antônio de Pádua",
+    "mesoregion": "Noroeste Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3300209",
+    "name": "Araruama",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Lagos",
+    "mesoregion": "Baixadas",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3300225",
+    "name": "Areal",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Três Rios",
+    "mesoregion": "Centro Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3300233",
+    "name": "Armação dos Búzios",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Lagos",
+    "mesoregion": "Baixadas",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3300258",
+    "name": "Arraial do Cabo",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Lagos",
+    "mesoregion": "Baixadas",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3300308",
+    "name": "Barra do Piraí",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Barra do Piraí",
+    "mesoregion": "Sul Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3300407",
+    "name": "Barra Mansa",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Vale do Paraíba Fluminense",
+    "mesoregion": "Sul Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3300456",
+    "name": "Belford Roxo",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Rio de Janeiro",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3300506",
+    "name": "Bom Jardim",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Nova Friburgo",
+    "mesoregion": "Centro Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3300605",
+    "name": "Bom Jesus do Itabapoana",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Itaperuna",
+    "mesoregion": "Noroeste Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3300704",
+    "name": "Cabo Frio",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Lagos",
+    "mesoregion": "Baixadas",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3300803",
+    "name": "Cachoeiras de Macacu",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Macacu-Caceribu",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3300902",
+    "name": "Cambuci",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Santo Antônio de Pádua",
+    "mesoregion": "Noroeste Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3300936",
+    "name": "Carapebus",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Macaé",
+    "mesoregion": "Norte Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3300951",
+    "name": "Comendador Levy Gasparian",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Três Rios",
+    "mesoregion": "Centro Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3301009",
+    "name": "Campos dos Goytacazes",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Campos dos Goytacazes",
+    "mesoregion": "Norte Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3301108",
+    "name": "Cantagalo",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Cantagalo-Cordeiro",
+    "mesoregion": "Centro Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3301157",
+    "name": "Cardoso Moreira",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Campos dos Goytacazes",
+    "mesoregion": "Norte Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3301207",
+    "name": "Carmo",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Cantagalo-Cordeiro",
+    "mesoregion": "Centro Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3301306",
+    "name": "Casimiro de Abreu",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Bacia de São João",
+    "mesoregion": "Baixadas",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3301405",
+    "name": "Conceição de Macabu",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Macaé",
+    "mesoregion": "Norte Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3301504",
+    "name": "Cordeiro",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Cantagalo-Cordeiro",
+    "mesoregion": "Centro Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3301603",
+    "name": "Duas Barras",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Nova Friburgo",
+    "mesoregion": "Centro Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3301702",
+    "name": "Duque de Caxias",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Rio de Janeiro",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3301801",
+    "name": "Engenheiro Paulo de Frontin",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Vassouras",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3301850",
+    "name": "Guapimirim",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Rio de Janeiro",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3301876",
+    "name": "Iguaba Grande",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Lagos",
+    "mesoregion": "Baixadas",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3301900",
+    "name": "Itaboraí",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Rio de Janeiro",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3302007",
+    "name": "Itaguaí",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Itaguaí",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3302056",
+    "name": "Italva",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Itaperuna",
+    "mesoregion": "Noroeste Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3302106",
+    "name": "Itaocara",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Santo Antônio de Pádua",
+    "mesoregion": "Noroeste Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3302205",
+    "name": "Itaperuna",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Itaperuna",
+    "mesoregion": "Noroeste Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3302254",
+    "name": "Itatiaia",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Vale do Paraíba Fluminense",
+    "mesoregion": "Sul Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3302270",
+    "name": "Japeri",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Rio de Janeiro",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3302304",
+    "name": "Laje do Muriaé",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Itaperuna",
+    "mesoregion": "Noroeste Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3302403",
+    "name": "Macaé",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Macaé",
+    "mesoregion": "Norte Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3302452",
+    "name": "Macuco",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Cantagalo-Cordeiro",
+    "mesoregion": "Centro Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3302502",
+    "name": "Magé",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Rio de Janeiro",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3302601",
+    "name": "Mangaratiba",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Itaguaí",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3302700",
+    "name": "Maricá",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Rio de Janeiro",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3302809",
+    "name": "Mendes",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Vassouras",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3302858",
+    "name": "Mesquita",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Rio de Janeiro",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3302908",
+    "name": "Miguel Pereira",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Vassouras",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3303005",
+    "name": "Miracema",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Santo Antônio de Pádua",
+    "mesoregion": "Noroeste Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3303104",
+    "name": "Natividade",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Itaperuna",
+    "mesoregion": "Noroeste Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3303203",
+    "name": "Nilópolis",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Rio de Janeiro",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3303302",
+    "name": "Niterói",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Rio de Janeiro",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3303401",
+    "name": "Nova Friburgo",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Nova Friburgo",
+    "mesoregion": "Centro Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3303500",
+    "name": "Nova Iguaçu",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Rio de Janeiro",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3303609",
+    "name": "Paracambi",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Vassouras",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3303708",
+    "name": "Paraíba do Sul",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Três Rios",
+    "mesoregion": "Centro Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3303807",
+    "name": "Paraty",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Baía da Ilha Grande",
+    "mesoregion": "Sul Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3303856",
+    "name": "Paty do Alferes",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Vassouras",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3303906",
+    "name": "Petrópolis",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Serrana",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3303955",
+    "name": "Pinheiral",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Vale do Paraíba Fluminense",
+    "mesoregion": "Sul Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3304003",
+    "name": "Piraí",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Vale do Paraíba Fluminense",
+    "mesoregion": "Sul Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3304102",
+    "name": "Porciúncula",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Itaperuna",
+    "mesoregion": "Noroeste Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3304110",
+    "name": "Porto Real",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Vale do Paraíba Fluminense",
+    "mesoregion": "Sul Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3304128",
+    "name": "Quatis",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Vale do Paraíba Fluminense",
+    "mesoregion": "Sul Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3304144",
+    "name": "Queimados",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Rio de Janeiro",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3304151",
+    "name": "Quissamã",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Macaé",
+    "mesoregion": "Norte Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3304201",
+    "name": "Resende",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Vale do Paraíba Fluminense",
+    "mesoregion": "Sul Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3304300",
+    "name": "Rio Bonito",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Macacu-Caceribu",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3304409",
+    "name": "Rio Claro",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Vale do Paraíba Fluminense",
+    "mesoregion": "Sul Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3304508",
+    "name": "Rio das Flores",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Barra do Piraí",
+    "mesoregion": "Sul Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3304524",
+    "name": "Rio das Ostras",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Bacia de São João",
+    "mesoregion": "Baixadas",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3304557",
+    "name": "Rio de Janeiro",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Rio de Janeiro",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3304607",
+    "name": "Santa Maria Madalena",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Santa Maria Madalena",
+    "mesoregion": "Centro Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3304706",
+    "name": "Santo Antônio de Pádua",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Santo Antônio de Pádua",
+    "mesoregion": "Noroeste Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3304755",
+    "name": "São Francisco de Itabapoana",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Campos dos Goytacazes",
+    "mesoregion": "Norte Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3304805",
+    "name": "São Fidélis",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Campos dos Goytacazes",
+    "mesoregion": "Norte Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3304904",
+    "name": "São Gonçalo",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Rio de Janeiro",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3305000",
+    "name": "São João da Barra",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Campos dos Goytacazes",
+    "mesoregion": "Norte Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3305109",
+    "name": "São João de Meriti",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Rio de Janeiro",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3305133",
+    "name": "São José de Ubá",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Santo Antônio de Pádua",
+    "mesoregion": "Noroeste Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3305158",
+    "name": "São José do Vale do Rio Preto",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Serrana",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3305208",
+    "name": "São Pedro da Aldeia",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Lagos",
+    "mesoregion": "Baixadas",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3305307",
+    "name": "São Sebastião do Alto",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Santa Maria Madalena",
+    "mesoregion": "Centro Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3305406",
+    "name": "Sapucaia",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Três Rios",
+    "mesoregion": "Centro Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3305505",
+    "name": "Saquarema",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Lagos",
+    "mesoregion": "Baixadas",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3305554",
+    "name": "Seropédica",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Itaguaí",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3305604",
+    "name": "Silva Jardim",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Bacia de São João",
+    "mesoregion": "Baixadas",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3305703",
+    "name": "Sumidouro",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Nova Friburgo",
+    "mesoregion": "Centro Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3305752",
+    "name": "Tanguá",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Rio de Janeiro",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3305802",
+    "name": "Teresópolis",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Serrana",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3305901",
+    "name": "Trajano de Moraes",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Santa Maria Madalena",
+    "mesoregion": "Centro Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3306008",
+    "name": "Três Rios",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Três Rios",
+    "mesoregion": "Centro Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3306107",
+    "name": "Valença",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Barra do Piraí",
+    "mesoregion": "Sul Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3306156",
+    "name": "Varre-Sai",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Itaperuna",
+    "mesoregion": "Noroeste Fluminense",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3306206",
+    "name": "Vassouras",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Vassouras",
+    "mesoregion": "Metropolitana do Rio de Janeiro",
+    "region": "Sudeste"
+  },
+  {
+    "id": "3306305",
+    "name": "Volta Redonda",
+    "state": "RJ",
+    "state_name": "Rio de Janeiro",
+    "microregion": "Vale do Paraíba Fluminense",
+    "mesoregion": "Sul Fluminense",
+    "region": "Sudeste"
+  }
+]

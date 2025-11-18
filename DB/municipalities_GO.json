@@ -1,0 +1,2216 @@
+[
+  {
+    "id": "5200050",
+    "name": "Abadia de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Goiânia",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5200100",
+    "name": "Abadiânia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Entorno de Brasília",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5200134",
+    "name": "Acreúna",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vale do Rio dos Bois",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5200159",
+    "name": "Adelândia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anicuns",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5200175",
+    "name": "Água Fria de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Entorno de Brasília",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5200209",
+    "name": "Água Limpa",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Meia Ponte",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5200258",
+    "name": "Águas Lindas de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Entorno de Brasília",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5200308",
+    "name": "Alexânia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Entorno de Brasília",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5200506",
+    "name": "Aloândia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Meia Ponte",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5200555",
+    "name": "Alto Horizonte",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Porangatu",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5200605",
+    "name": "Alto Paraíso de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Chapada dos Veadeiros",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5200803",
+    "name": "Alvorada do Norte",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vão do Paranã",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5200829",
+    "name": "Amaralina",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Porangatu",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5200852",
+    "name": "Americano do Brasil",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anicuns",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5200902",
+    "name": "Amorinópolis",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Iporá",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5201108",
+    "name": "Anápolis",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anápolis",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5201207",
+    "name": "Anhanguera",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Catalão",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5201306",
+    "name": "Anicuns",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anicuns",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5201405",
+    "name": "Aparecida de Goiânia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Goiânia",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5201454",
+    "name": "Aparecida do Rio Doce",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Sudoeste de Goiás",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5201504",
+    "name": "Aporé",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Sudoeste de Goiás",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5201603",
+    "name": "Araçu",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anápolis",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5201702",
+    "name": "Aragarças",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Aragarças",
+    "mesoregion": "Noroeste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5201801",
+    "name": "Aragoiânia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Goiânia",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5202155",
+    "name": "Araguapaz",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Rio Vermelho",
+    "mesoregion": "Noroeste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5202353",
+    "name": "Arenópolis",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Aragarças",
+    "mesoregion": "Noroeste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5202502",
+    "name": "Aruanã",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Rio Vermelho",
+    "mesoregion": "Noroeste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5202601",
+    "name": "Aurilândia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anicuns",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5202809",
+    "name": "Avelinópolis",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anicuns",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5203104",
+    "name": "Baliza",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Aragarças",
+    "mesoregion": "Noroeste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5203203",
+    "name": "Barro Alto",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Ceres",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5203302",
+    "name": "Bela Vista de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Goiânia",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5203401",
+    "name": "Bom Jardim de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Aragarças",
+    "mesoregion": "Noroeste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5203500",
+    "name": "Bom Jesus de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Meia Ponte",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5203559",
+    "name": "Bonfinópolis",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Goiânia",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5203575",
+    "name": "Bonópolis",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Porangatu",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5203609",
+    "name": "Brazabrantes",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anápolis",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5203807",
+    "name": "Britânia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Rio Vermelho",
+    "mesoregion": "Noroeste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5203906",
+    "name": "Buriti Alegre",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Meia Ponte",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5203939",
+    "name": "Buriti de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anicuns",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5203962",
+    "name": "Buritinópolis",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vão do Paranã",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5204003",
+    "name": "Cabeceiras",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Entorno de Brasília",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5204102",
+    "name": "Cachoeira Alta",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Quirinópolis",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5204201",
+    "name": "Cachoeira de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Iporá",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5204250",
+    "name": "Cachoeira Dourada",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Meia Ponte",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5204300",
+    "name": "Caçu",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Quirinópolis",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5204409",
+    "name": "Caiapônia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Sudoeste de Goiás",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5204508",
+    "name": "Caldas Novas",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Meia Ponte",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5204557",
+    "name": "Caldazinha",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Goiânia",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5204607",
+    "name": "Campestre de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vale do Rio dos Bois",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5204656",
+    "name": "Campinaçu",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Porangatu",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5204706",
+    "name": "Campinorte",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Porangatu",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5204805",
+    "name": "Campo Alegre de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Catalão",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5204854",
+    "name": "Campo Limpo de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anápolis",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5204904",
+    "name": "Campos Belos",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Chapada dos Veadeiros",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5204953",
+    "name": "Campos Verdes",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Porangatu",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5205000",
+    "name": "Carmo do Rio Verde",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Ceres",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5205059",
+    "name": "Castelândia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Sudoeste de Goiás",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5205109",
+    "name": "Catalão",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Catalão",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5205208",
+    "name": "Caturaí",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anápolis",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5205307",
+    "name": "Cavalcante",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Chapada dos Veadeiros",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5205406",
+    "name": "Ceres",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Ceres",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5205455",
+    "name": "Cezarina",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vale do Rio dos Bois",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5205471",
+    "name": "Chapadão do Céu",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Sudoeste de Goiás",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5205497",
+    "name": "Cidade Ocidental",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Entorno de Brasília",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5205513",
+    "name": "Cocalzinho de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Entorno de Brasília",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5205521",
+    "name": "Colinas do Sul",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Chapada dos Veadeiros",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5205703",
+    "name": "Córrego do Ouro",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Iporá",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5205802",
+    "name": "Corumbá de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Entorno de Brasília",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5205901",
+    "name": "Corumbaíba",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Catalão",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5206206",
+    "name": "Cristalina",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Entorno de Brasília",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5206305",
+    "name": "Cristianópolis",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Pires do Rio",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5206404",
+    "name": "Crixás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "São Miguel do Araguaia",
+    "mesoregion": "Noroeste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5206503",
+    "name": "Cromínia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Meia Ponte",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5206602",
+    "name": "Cumari",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Catalão",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5206701",
+    "name": "Damianópolis",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vão do Paranã",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5206800",
+    "name": "Damolândia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anápolis",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5206909",
+    "name": "Davinópolis",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Catalão",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5207105",
+    "name": "Diorama",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Aragarças",
+    "mesoregion": "Noroeste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5207253",
+    "name": "Doverlândia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Sudoeste de Goiás",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5207352",
+    "name": "Edealina",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vale do Rio dos Bois",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5207402",
+    "name": "Edéia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vale do Rio dos Bois",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5207501",
+    "name": "Estrela do Norte",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Porangatu",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5207535",
+    "name": "Faina",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Rio Vermelho",
+    "mesoregion": "Noroeste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5207600",
+    "name": "Fazenda Nova",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Iporá",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5207808",
+    "name": "Firminópolis",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anicuns",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5207907",
+    "name": "Flores de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vão do Paranã",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5208004",
+    "name": "Formosa",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Entorno de Brasília",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5208103",
+    "name": "Formoso",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Porangatu",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5208152",
+    "name": "Gameleira de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Pires do Rio",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5208301",
+    "name": "Divinópolis de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vão do Paranã",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5208400",
+    "name": "Goianápolis",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Goiânia",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5208509",
+    "name": "Goiandira",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Catalão",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5208608",
+    "name": "Goianésia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Ceres",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5208707",
+    "name": "Goiânia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Goiânia",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5208806",
+    "name": "Goianira",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Goiânia",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5208905",
+    "name": "Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Rio Vermelho",
+    "mesoregion": "Noroeste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5209101",
+    "name": "Goiatuba",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Meia Ponte",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5209150",
+    "name": "Gouvelândia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Quirinópolis",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5209200",
+    "name": "Guapó",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Goiânia",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5209291",
+    "name": "Guaraíta",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Ceres",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5209408",
+    "name": "Guarani de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vão do Paranã",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5209457",
+    "name": "Guarinos",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Ceres",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5209606",
+    "name": "Heitoraí",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anápolis",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5209705",
+    "name": "Hidrolândia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Goiânia",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5209804",
+    "name": "Hidrolina",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Ceres",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5209903",
+    "name": "Iaciara",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vão do Paranã",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5209937",
+    "name": "Inaciolândia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Meia Ponte",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5209952",
+    "name": "Indiara",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vale do Rio dos Bois",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5210000",
+    "name": "Inhumas",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anápolis",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5210109",
+    "name": "Ipameri",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Catalão",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5210158",
+    "name": "Ipiranga de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Ceres",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5210208",
+    "name": "Iporá",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Iporá",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5210307",
+    "name": "Israelândia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Iporá",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5210406",
+    "name": "Itaberaí",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anápolis",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5210562",
+    "name": "Itaguari",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anápolis",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5210604",
+    "name": "Itaguaru",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anápolis",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5210802",
+    "name": "Itajá",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Quirinópolis",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5210901",
+    "name": "Itapaci",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Ceres",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5211008",
+    "name": "Itapirapuã",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Rio Vermelho",
+    "mesoregion": "Noroeste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5211206",
+    "name": "Itapuranga",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Ceres",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5211305",
+    "name": "Itarumã",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Quirinópolis",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5211404",
+    "name": "Itauçu",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anápolis",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5211503",
+    "name": "Itumbiara",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Meia Ponte",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5211602",
+    "name": "Ivolândia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Iporá",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5211701",
+    "name": "Jandaia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vale do Rio dos Bois",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5211800",
+    "name": "Jaraguá",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anápolis",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5211909",
+    "name": "Jataí",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Sudoeste de Goiás",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5212006",
+    "name": "Jaupaci",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Iporá",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5212055",
+    "name": "Jesúpolis",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anápolis",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5212105",
+    "name": "Joviânia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Meia Ponte",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5212204",
+    "name": "Jussara",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Rio Vermelho",
+    "mesoregion": "Noroeste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5212253",
+    "name": "Lagoa Santa",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Quirinópolis",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5212303",
+    "name": "Leopoldo de Bulhões",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Goiânia",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5212501",
+    "name": "Luziânia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Entorno de Brasília",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5212600",
+    "name": "Mairipotaba",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Meia Ponte",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5212709",
+    "name": "Mambaí",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vão do Paranã",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5212808",
+    "name": "Mara Rosa",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Porangatu",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5212907",
+    "name": "Marzagão",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Meia Ponte",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5212956",
+    "name": "Matrinchã",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Rio Vermelho",
+    "mesoregion": "Noroeste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5213004",
+    "name": "Maurilândia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Sudoeste de Goiás",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5213053",
+    "name": "Mimoso de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Entorno de Brasília",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5213087",
+    "name": "Minaçu",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Porangatu",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5213103",
+    "name": "Mineiros",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Sudoeste de Goiás",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5213400",
+    "name": "Moiporá",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Iporá",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5213509",
+    "name": "Monte Alegre de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Chapada dos Veadeiros",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5213707",
+    "name": "Montes Claros de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Aragarças",
+    "mesoregion": "Noroeste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5213756",
+    "name": "Montividiu",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Sudoeste de Goiás",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5213772",
+    "name": "Montividiu do Norte",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Porangatu",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5213806",
+    "name": "Morrinhos",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Meia Ponte",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5213855",
+    "name": "Morro Agudo de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Ceres",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5213905",
+    "name": "Mossâmedes",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anicuns",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5214002",
+    "name": "Mozarlândia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "São Miguel do Araguaia",
+    "mesoregion": "Noroeste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5214051",
+    "name": "Mundo Novo",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "São Miguel do Araguaia",
+    "mesoregion": "Noroeste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5214101",
+    "name": "Mutunópolis",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Porangatu",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5214408",
+    "name": "Nazário",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anicuns",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5214507",
+    "name": "Nerópolis",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Goiânia",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5214606",
+    "name": "Niquelândia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Porangatu",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5214705",
+    "name": "Nova América",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Ceres",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5214804",
+    "name": "Nova Aurora",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Catalão",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5214838",
+    "name": "Nova Crixás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "São Miguel do Araguaia",
+    "mesoregion": "Noroeste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5214861",
+    "name": "Nova Glória",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Ceres",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5214879",
+    "name": "Nova Iguaçu de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Porangatu",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5214903",
+    "name": "Nova Roma",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Chapada dos Veadeiros",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5215009",
+    "name": "Nova Veneza",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anápolis",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5215207",
+    "name": "Novo Brasil",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Iporá",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5215231",
+    "name": "Novo Gama",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Entorno de Brasília",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5215256",
+    "name": "Novo Planalto",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "São Miguel do Araguaia",
+    "mesoregion": "Noroeste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5215306",
+    "name": "Orizona",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Pires do Rio",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5215405",
+    "name": "Ouro Verde de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anápolis",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5215504",
+    "name": "Ouvidor",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Catalão",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5215603",
+    "name": "Padre Bernardo",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Entorno de Brasília",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5215652",
+    "name": "Palestina de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Sudoeste de Goiás",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5215702",
+    "name": "Palmeiras de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vale do Rio dos Bois",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5215801",
+    "name": "Palmelo",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Pires do Rio",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5215900",
+    "name": "Palminópolis",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vale do Rio dos Bois",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5216007",
+    "name": "Panamá",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Meia Ponte",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5216304",
+    "name": "Paranaiguara",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Quirinópolis",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5216403",
+    "name": "Paraúna",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vale do Rio dos Bois",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5216452",
+    "name": "Perolândia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Sudoeste de Goiás",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5216809",
+    "name": "Petrolina de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anápolis",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5216908",
+    "name": "Pilar de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Ceres",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5217104",
+    "name": "Piracanjuba",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Meia Ponte",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5217203",
+    "name": "Piranhas",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Aragarças",
+    "mesoregion": "Noroeste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5217302",
+    "name": "Pirenópolis",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Entorno de Brasília",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5217401",
+    "name": "Pires do Rio",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Pires do Rio",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5217609",
+    "name": "Planaltina",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Entorno de Brasília",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5217708",
+    "name": "Pontalina",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Meia Ponte",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5218003",
+    "name": "Porangatu",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Porangatu",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5218052",
+    "name": "Porteirão",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Meia Ponte",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5218102",
+    "name": "Portelândia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Sudoeste de Goiás",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5218300",
+    "name": "Posse",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vão do Paranã",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5218391",
+    "name": "Professor Jamil",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Meia Ponte",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5218508",
+    "name": "Quirinópolis",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Quirinópolis",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5218607",
+    "name": "Rialma",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Ceres",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5218706",
+    "name": "Rianápolis",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Ceres",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5218789",
+    "name": "Rio Quente",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Meia Ponte",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5218805",
+    "name": "Rio Verde",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Sudoeste de Goiás",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5218904",
+    "name": "Rubiataba",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Ceres",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5219001",
+    "name": "Sanclerlândia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anicuns",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5219100",
+    "name": "Santa Bárbara de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anicuns",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5219209",
+    "name": "Santa Cruz de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Pires do Rio",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5219258",
+    "name": "Santa Fé de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Rio Vermelho",
+    "mesoregion": "Noroeste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5219308",
+    "name": "Santa Helena de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Sudoeste de Goiás",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5219357",
+    "name": "Santa Isabel",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Ceres",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5219407",
+    "name": "Santa Rita do Araguaia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Sudoeste de Goiás",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5219456",
+    "name": "Santa Rita do Novo Destino",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Ceres",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5219506",
+    "name": "Santa Rosa de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anápolis",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5219605",
+    "name": "Santa Tereza de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Porangatu",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5219704",
+    "name": "Santa Terezinha de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Porangatu",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5219712",
+    "name": "Santo Antônio da Barra",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Sudoeste de Goiás",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5219738",
+    "name": "Santo Antônio de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Goiânia",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5219753",
+    "name": "Santo Antônio do Descoberto",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Entorno de Brasília",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5219803",
+    "name": "São Domingos",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vão do Paranã",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5219902",
+    "name": "São Francisco de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anápolis",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5220009",
+    "name": "São João d'Aliança",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Chapada dos Veadeiros",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5220058",
+    "name": "São João da Paraúna",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vale do Rio dos Bois",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5220108",
+    "name": "São Luís de Montes Belos",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anicuns",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5220157",
+    "name": "São Luiz do Norte",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Ceres",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5220207",
+    "name": "São Miguel do Araguaia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "São Miguel do Araguaia",
+    "mesoregion": "Noroeste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5220264",
+    "name": "São Miguel do Passa Quatro",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Pires do Rio",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5220280",
+    "name": "São Patrício",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Ceres",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5220405",
+    "name": "São Simão",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Quirinópolis",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5220454",
+    "name": "Senador Canedo",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Goiânia",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5220504",
+    "name": "Serranópolis",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Sudoeste de Goiás",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5220603",
+    "name": "Silvânia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Pires do Rio",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5220686",
+    "name": "Simolândia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vão do Paranã",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5220702",
+    "name": "Sítio d'Abadia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vão do Paranã",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5221007",
+    "name": "Taquaral de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anápolis",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5221080",
+    "name": "Teresina de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Chapada dos Veadeiros",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5221197",
+    "name": "Terezópolis de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Goiânia",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5221304",
+    "name": "Três Ranchos",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Catalão",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5221403",
+    "name": "Trindade",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Goiânia",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5221452",
+    "name": "Trombas",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Porangatu",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5221502",
+    "name": "Turvânia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Anicuns",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5221551",
+    "name": "Turvelândia",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vale do Rio dos Bois",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5221577",
+    "name": "Uirapuru",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "São Miguel do Araguaia",
+    "mesoregion": "Noroeste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5221601",
+    "name": "Uruaçu",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Porangatu",
+    "mesoregion": "Norte Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5221700",
+    "name": "Uruana",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Ceres",
+    "mesoregion": "Centro Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5221809",
+    "name": "Urutaí",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Pires do Rio",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5221858",
+    "name": "Valparaíso de Goiás",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Entorno de Brasília",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5221908",
+    "name": "Varjão",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Vale do Rio dos Bois",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5222005",
+    "name": "Vianópolis",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Pires do Rio",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5222054",
+    "name": "Vicentinópolis",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Meia Ponte",
+    "mesoregion": "Sul Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5222203",
+    "name": "Vila Boa",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Entorno de Brasília",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  },
+  {
+    "id": "5222302",
+    "name": "Vila Propício",
+    "state": "GO",
+    "state_name": "Goiás",
+    "microregion": "Entorno de Brasília",
+    "mesoregion": "Leste Goiano",
+    "region": "Centro-Oeste"
+  }
+]

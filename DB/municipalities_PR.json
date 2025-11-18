@@ -1,0 +1,3593 @@
+[
+  {
+    "id": "4100103",
+    "name": "Abatiá",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cornélio Procópio",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4100202",
+    "name": "Adrianópolis",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cerro Azul",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4100301",
+    "name": "Agudos do Sul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Rio Negro",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4100400",
+    "name": "Almirante Tamandaré",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Curitiba",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4100459",
+    "name": "Altamira do Paraná",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Goioerê",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4100509",
+    "name": "Altônia",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Umuarama",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4100608",
+    "name": "Alto Paraná",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4100707",
+    "name": "Alto Piquiri",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Umuarama",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4100806",
+    "name": "Alvorada do Sul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Porecatu",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4100905",
+    "name": "Amaporã",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4101002",
+    "name": "Ampére",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Capanema",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4101051",
+    "name": "Anahy",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cascavel",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4101101",
+    "name": "Andirá",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cornélio Procópio",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4101150",
+    "name": "Ângulo",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Astorga",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4101200",
+    "name": "Antonina",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranaguá",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4101309",
+    "name": "Antônio Olinto",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "São Mateus do Sul",
+    "mesoregion": "Sudeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4101408",
+    "name": "Apucarana",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Apucarana",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4101507",
+    "name": "Arapongas",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Apucarana",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4101606",
+    "name": "Arapoti",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Jaguariaíva",
+    "mesoregion": "Centro Oriental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4101655",
+    "name": "Arapuã",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ivaiporã",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4101705",
+    "name": "Araruna",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Campo Mourão",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4101804",
+    "name": "Araucária",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Curitiba",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4101853",
+    "name": "Ariranha do Ivaí",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ivaiporã",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4101903",
+    "name": "Assaí",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Assaí",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4102000",
+    "name": "Assis Chateaubriand",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Toledo",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4102109",
+    "name": "Astorga",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Astorga",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4102208",
+    "name": "Atalaia",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Astorga",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4102307",
+    "name": "Balsa Nova",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Curitiba",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4102406",
+    "name": "Bandeirantes",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cornélio Procópio",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4102505",
+    "name": "Barbosa Ferraz",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Campo Mourão",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4102604",
+    "name": "Barracão",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Francisco Beltrão",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4102703",
+    "name": "Barra do Jacaré",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Jacarezinho",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4102752",
+    "name": "Bela Vista da Caroba",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Capanema",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4102802",
+    "name": "Bela Vista do Paraíso",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Porecatu",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4102901",
+    "name": "Bituruna",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "União da Vitória",
+    "mesoregion": "Sudeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4103008",
+    "name": "Boa Esperança",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Goioerê",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4103024",
+    "name": "Boa Esperança do Iguaçu",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Francisco Beltrão",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4103040",
+    "name": "Boa Ventura de São Roque",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Pitanga",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4103057",
+    "name": "Boa Vista da Aparecida",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cascavel",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4103107",
+    "name": "Bocaiúva do Sul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Curitiba",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4103156",
+    "name": "Bom Jesus do Sul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Francisco Beltrão",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4103206",
+    "name": "Bom Sucesso",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Faxinal",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4103222",
+    "name": "Bom Sucesso do Sul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Pato Branco",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4103305",
+    "name": "Borrazópolis",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Faxinal",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4103354",
+    "name": "Braganey",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cascavel",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4103370",
+    "name": "Brasilândia do Sul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Umuarama",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4103404",
+    "name": "Cafeara",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Astorga",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4103453",
+    "name": "Cafelândia",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cascavel",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4103479",
+    "name": "Cafezal do Sul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Umuarama",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4103503",
+    "name": "Califórnia",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Apucarana",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4103602",
+    "name": "Cambará",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Jacarezinho",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4103701",
+    "name": "Cambé",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Londrina",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4103800",
+    "name": "Cambira",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Apucarana",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4103909",
+    "name": "Campina da Lagoa",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Goioerê",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4103958",
+    "name": "Campina do Simão",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Guarapuava",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4104006",
+    "name": "Campina Grande do Sul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Curitiba",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4104055",
+    "name": "Campo Bonito",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cascavel",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4104105",
+    "name": "Campo do Tenente",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Rio Negro",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4104204",
+    "name": "Campo Largo",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Curitiba",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4104253",
+    "name": "Campo Magro",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Curitiba",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4104303",
+    "name": "Campo Mourão",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Campo Mourão",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4104402",
+    "name": "Cândido de Abreu",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ivaiporã",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4104428",
+    "name": "Candói",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Guarapuava",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4104451",
+    "name": "Cantagalo",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Guarapuava",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4104501",
+    "name": "Capanema",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Capanema",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4104600",
+    "name": "Capitão Leônidas Marques",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cascavel",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4104659",
+    "name": "Carambeí",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ponta Grossa",
+    "mesoregion": "Centro Oriental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4104709",
+    "name": "Carlópolis",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Wenceslau Braz",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4104808",
+    "name": "Cascavel",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cascavel",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4104907",
+    "name": "Castro",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ponta Grossa",
+    "mesoregion": "Centro Oriental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4105003",
+    "name": "Catanduvas",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cascavel",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4105102",
+    "name": "Centenário do Sul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Astorga",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4105201",
+    "name": "Cerro Azul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cerro Azul",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4105300",
+    "name": "Céu Azul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Foz do Iguaçu",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4105409",
+    "name": "Chopinzinho",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Pato Branco",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4105508",
+    "name": "Cianorte",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cianorte",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4105607",
+    "name": "Cidade Gaúcha",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cianorte",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4105706",
+    "name": "Clevelândia",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Palmas",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4105805",
+    "name": "Colombo",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Curitiba",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4105904",
+    "name": "Colorado",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Astorga",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4106001",
+    "name": "Congonhinhas",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cornélio Procópio",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4106100",
+    "name": "Conselheiro Mairinck",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ibaiti",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4106209",
+    "name": "Contenda",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Curitiba",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4106308",
+    "name": "Corbélia",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cascavel",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4106407",
+    "name": "Cornélio Procópio",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cornélio Procópio",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4106456",
+    "name": "Coronel Domingos Soares",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Palmas",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4106506",
+    "name": "Coronel Vivida",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Pato Branco",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4106555",
+    "name": "Corumbataí do Sul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Campo Mourão",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4106571",
+    "name": "Cruzeiro do Iguaçu",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Francisco Beltrão",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4106605",
+    "name": "Cruzeiro do Oeste",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Umuarama",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4106704",
+    "name": "Cruzeiro do Sul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4106803",
+    "name": "Cruz Machado",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "União da Vitória",
+    "mesoregion": "Sudeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4106852",
+    "name": "Cruzmaltina",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Faxinal",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4106902",
+    "name": "Curitiba",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Curitiba",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4107009",
+    "name": "Curiúva",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ibaiti",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4107108",
+    "name": "Diamante do Norte",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4107124",
+    "name": "Diamante do Sul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cascavel",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4107157",
+    "name": "Diamante D'Oeste",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Toledo",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4107207",
+    "name": "Dois Vizinhos",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Francisco Beltrão",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4107256",
+    "name": "Douradina",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Umuarama",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4107306",
+    "name": "Doutor Camargo",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Floraí",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4107405",
+    "name": "Enéas Marques",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Francisco Beltrão",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4107504",
+    "name": "Engenheiro Beltrão",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Campo Mourão",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4107520",
+    "name": "Esperança Nova",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Umuarama",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4107538",
+    "name": "Entre Rios do Oeste",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Toledo",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4107546",
+    "name": "Espigão Alto do Iguaçu",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Guarapuava",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4107553",
+    "name": "Farol",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Campo Mourão",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4107603",
+    "name": "Faxinal",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Faxinal",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4107652",
+    "name": "Fazenda Rio Grande",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Curitiba",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4107702",
+    "name": "Fênix",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Campo Mourão",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4107736",
+    "name": "Fernandes Pinheiro",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Prudentópolis",
+    "mesoregion": "Sudeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4107751",
+    "name": "Figueira",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ibaiti",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4107801",
+    "name": "Floraí",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Floraí",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4107850",
+    "name": "Flor da Serra do Sul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Francisco Beltrão",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4107900",
+    "name": "Floresta",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Floraí",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4108007",
+    "name": "Florestópolis",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Porecatu",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4108106",
+    "name": "Flórida",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Astorga",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4108205",
+    "name": "Formosa do Oeste",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Toledo",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4108304",
+    "name": "Foz do Iguaçu",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Foz do Iguaçu",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4108320",
+    "name": "Francisco Alves",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Umuarama",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4108403",
+    "name": "Francisco Beltrão",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Francisco Beltrão",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4108452",
+    "name": "Foz do Jordão",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Guarapuava",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4108502",
+    "name": "General Carneiro",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "União da Vitória",
+    "mesoregion": "Sudeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4108551",
+    "name": "Godoy Moreira",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ivaiporã",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4108601",
+    "name": "Goioerê",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Goioerê",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4108650",
+    "name": "Goioxim",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Guarapuava",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4108700",
+    "name": "Grandes Rios",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ivaiporã",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4108809",
+    "name": "Guaíra",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Toledo",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4108908",
+    "name": "Guairaçá",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4108957",
+    "name": "Guamiranga",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Prudentópolis",
+    "mesoregion": "Sudeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4109005",
+    "name": "Guapirama",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Wenceslau Braz",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4109104",
+    "name": "Guaporema",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cianorte",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4109203",
+    "name": "Guaraci",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Astorga",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4109302",
+    "name": "Guaraniaçu",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cascavel",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4109401",
+    "name": "Guarapuava",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Guarapuava",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4109500",
+    "name": "Guaraqueçaba",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranaguá",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4109609",
+    "name": "Guaratuba",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranaguá",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4109658",
+    "name": "Honório Serpa",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Palmas",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4109708",
+    "name": "Ibaiti",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ibaiti",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4109757",
+    "name": "Ibema",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cascavel",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4109807",
+    "name": "Ibiporã",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Londrina",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4109906",
+    "name": "Icaraíma",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Umuarama",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4110003",
+    "name": "Iguaraçu",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Astorga",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4110052",
+    "name": "Iguatu",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cascavel",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4110078",
+    "name": "Imbaú",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Telêmaco Borba",
+    "mesoregion": "Centro Oriental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4110102",
+    "name": "Imbituva",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Prudentópolis",
+    "mesoregion": "Sudeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4110201",
+    "name": "Inácio Martins",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Guarapuava",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4110300",
+    "name": "Inajá",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4110409",
+    "name": "Indianópolis",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cianorte",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4110508",
+    "name": "Ipiranga",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Prudentópolis",
+    "mesoregion": "Sudeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4110607",
+    "name": "Iporã",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Umuarama",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4110656",
+    "name": "Iracema do Oeste",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Toledo",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4110706",
+    "name": "Irati",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Irati",
+    "mesoregion": "Sudeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4110805",
+    "name": "Iretama",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Campo Mourão",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4110904",
+    "name": "Itaguajé",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Astorga",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4110953",
+    "name": "Itaipulândia",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Foz do Iguaçu",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4111001",
+    "name": "Itambaracá",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cornélio Procópio",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4111100",
+    "name": "Itambé",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Floraí",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4111209",
+    "name": "Itapejara d'Oeste",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Pato Branco",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4111258",
+    "name": "Itaperuçu",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Curitiba",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4111308",
+    "name": "Itaúna do Sul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4111407",
+    "name": "Ivaí",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Prudentópolis",
+    "mesoregion": "Sudeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4111506",
+    "name": "Ivaiporã",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ivaiporã",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4111555",
+    "name": "Ivaté",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Umuarama",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4111605",
+    "name": "Ivatuba",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Floraí",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4111704",
+    "name": "Jaboti",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ibaiti",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4111803",
+    "name": "Jacarezinho",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Jacarezinho",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4111902",
+    "name": "Jaguapitã",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Astorga",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4112009",
+    "name": "Jaguariaíva",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Jaguariaíva",
+    "mesoregion": "Centro Oriental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4112108",
+    "name": "Jandaia do Sul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Apucarana",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4112207",
+    "name": "Janiópolis",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Goioerê",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4112306",
+    "name": "Japira",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ibaiti",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4112405",
+    "name": "Japurá",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cianorte",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4112504",
+    "name": "Jardim Alegre",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ivaiporã",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4112603",
+    "name": "Jardim Olinda",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4112702",
+    "name": "Jataizinho",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Assaí",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4112751",
+    "name": "Jesuítas",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Toledo",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4112801",
+    "name": "Joaquim Távora",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Wenceslau Braz",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4112900",
+    "name": "Jundiaí do Sul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Jacarezinho",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4112959",
+    "name": "Juranda",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Goioerê",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4113007",
+    "name": "Jussara",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cianorte",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4113106",
+    "name": "Kaloré",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Faxinal",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4113205",
+    "name": "Lapa",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Lapa",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4113254",
+    "name": "Laranjal",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Pitanga",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4113304",
+    "name": "Laranjeiras do Sul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Guarapuava",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4113403",
+    "name": "Leópolis",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cornélio Procópio",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4113429",
+    "name": "Lidianópolis",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ivaiporã",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4113452",
+    "name": "Lindoeste",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cascavel",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4113502",
+    "name": "Loanda",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4113601",
+    "name": "Lobato",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Astorga",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4113700",
+    "name": "Londrina",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Londrina",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4113734",
+    "name": "Luiziana",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Campo Mourão",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4113759",
+    "name": "Lunardelli",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ivaiporã",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4113809",
+    "name": "Lupionópolis",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Astorga",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4113908",
+    "name": "Mallet",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Irati",
+    "mesoregion": "Sudeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4114005",
+    "name": "Mamborê",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Campo Mourão",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4114104",
+    "name": "Mandaguaçu",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Astorga",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4114203",
+    "name": "Mandaguari",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Maringá",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4114302",
+    "name": "Mandirituba",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Curitiba",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4114351",
+    "name": "Manfrinópolis",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Francisco Beltrão",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4114401",
+    "name": "Mangueirinha",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Palmas",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4114500",
+    "name": "Manoel Ribas",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ivaiporã",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4114609",
+    "name": "Marechal Cândido Rondon",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Toledo",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4114708",
+    "name": "Maria Helena",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Umuarama",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4114807",
+    "name": "Marialva",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Maringá",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4114906",
+    "name": "Marilândia do Sul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Apucarana",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4115002",
+    "name": "Marilena",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4115101",
+    "name": "Mariluz",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Umuarama",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4115200",
+    "name": "Maringá",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Maringá",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4115309",
+    "name": "Mariópolis",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Pato Branco",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4115358",
+    "name": "Maripá",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Toledo",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4115408",
+    "name": "Marmeleiro",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Francisco Beltrão",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4115457",
+    "name": "Marquinho",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Guarapuava",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4115507",
+    "name": "Marumbi",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Faxinal",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4115606",
+    "name": "Matelândia",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Foz do Iguaçu",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4115705",
+    "name": "Matinhos",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranaguá",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4115739",
+    "name": "Mato Rico",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Pitanga",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4115754",
+    "name": "Mauá da Serra",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Apucarana",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4115804",
+    "name": "Medianeira",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Foz do Iguaçu",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4115853",
+    "name": "Mercedes",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Toledo",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4115903",
+    "name": "Mirador",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4116000",
+    "name": "Miraselva",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Porecatu",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4116059",
+    "name": "Missal",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Foz do Iguaçu",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4116109",
+    "name": "Moreira Sales",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Goioerê",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4116208",
+    "name": "Morretes",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranaguá",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4116307",
+    "name": "Munhoz de Melo",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Astorga",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4116406",
+    "name": "Nossa Senhora das Graças",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Astorga",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4116505",
+    "name": "Nova Aliança do Ivaí",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4116604",
+    "name": "Nova América da Colina",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cornélio Procópio",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4116703",
+    "name": "Nova Aurora",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cascavel",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4116802",
+    "name": "Nova Cantu",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Goioerê",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4116901",
+    "name": "Nova Esperança",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Astorga",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4116950",
+    "name": "Nova Esperança do Sudoeste",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Francisco Beltrão",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4117008",
+    "name": "Nova Fátima",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cornélio Procópio",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4117057",
+    "name": "Nova Laranjeiras",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Guarapuava",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4117107",
+    "name": "Nova Londrina",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4117206",
+    "name": "Nova Olímpia",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Umuarama",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4117214",
+    "name": "Nova Santa Bárbara",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Assaí",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4117222",
+    "name": "Nova Santa Rosa",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Toledo",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4117255",
+    "name": "Nova Prata do Iguaçu",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Francisco Beltrão",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4117271",
+    "name": "Nova Tebas",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ivaiporã",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4117297",
+    "name": "Novo Itacolomi",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Apucarana",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4117305",
+    "name": "Ortigueira",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Telêmaco Borba",
+    "mesoregion": "Centro Oriental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4117404",
+    "name": "Ourizona",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Floraí",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4117453",
+    "name": "Ouro Verde do Oeste",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Toledo",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4117503",
+    "name": "Paiçandu",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Maringá",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4117602",
+    "name": "Palmas",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Palmas",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4117701",
+    "name": "Palmeira",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ponta Grossa",
+    "mesoregion": "Centro Oriental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4117800",
+    "name": "Palmital",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Pitanga",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4117909",
+    "name": "Palotina",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Toledo",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4118006",
+    "name": "Paraíso do Norte",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4118105",
+    "name": "Paranacity",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4118204",
+    "name": "Paranaguá",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranaguá",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4118303",
+    "name": "Paranapoema",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4118402",
+    "name": "Paranavaí",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4118451",
+    "name": "Pato Bragado",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Toledo",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4118501",
+    "name": "Pato Branco",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Pato Branco",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4118600",
+    "name": "Paula Freitas",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "União da Vitória",
+    "mesoregion": "Sudeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4118709",
+    "name": "Paulo Frontin",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "União da Vitória",
+    "mesoregion": "Sudeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4118808",
+    "name": "Peabiru",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Campo Mourão",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4118857",
+    "name": "Perobal",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Umuarama",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4118907",
+    "name": "Pérola",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Umuarama",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4119004",
+    "name": "Pérola d'Oeste",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Capanema",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4119103",
+    "name": "Piên",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Rio Negro",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4119152",
+    "name": "Pinhais",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Curitiba",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4119202",
+    "name": "Pinhalão",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ibaiti",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4119251",
+    "name": "Pinhal de São Bento",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Francisco Beltrão",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4119301",
+    "name": "Pinhão",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Guarapuava",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4119400",
+    "name": "Piraí do Sul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Jaguariaíva",
+    "mesoregion": "Centro Oriental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4119509",
+    "name": "Piraquara",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Curitiba",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4119608",
+    "name": "Pitanga",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Pitanga",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4119657",
+    "name": "Pitangueiras",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Londrina",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4119707",
+    "name": "Planaltina do Paraná",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4119806",
+    "name": "Planalto",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Capanema",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4119905",
+    "name": "Ponta Grossa",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ponta Grossa",
+    "mesoregion": "Centro Oriental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4119954",
+    "name": "Pontal do Paraná",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranaguá",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4120002",
+    "name": "Porecatu",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Porecatu",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4120101",
+    "name": "Porto Amazonas",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Lapa",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4120150",
+    "name": "Porto Barreiro",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Guarapuava",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4120200",
+    "name": "Porto Rico",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4120309",
+    "name": "Porto Vitória",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "União da Vitória",
+    "mesoregion": "Sudeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4120333",
+    "name": "Prado Ferreira",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Porecatu",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4120358",
+    "name": "Pranchita",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Capanema",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4120408",
+    "name": "Presidente Castelo Branco",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Astorga",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4120507",
+    "name": "Primeiro de Maio",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Porecatu",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4120606",
+    "name": "Prudentópolis",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Prudentópolis",
+    "mesoregion": "Sudeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4120655",
+    "name": "Quarto Centenário",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Goioerê",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4120705",
+    "name": "Quatiguá",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Wenceslau Braz",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4120804",
+    "name": "Quatro Barras",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Curitiba",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4120853",
+    "name": "Quatro Pontes",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Toledo",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4120903",
+    "name": "Quedas do Iguaçu",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Guarapuava",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4121000",
+    "name": "Querência do Norte",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4121109",
+    "name": "Quinta do Sol",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Campo Mourão",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4121208",
+    "name": "Quitandinha",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Rio Negro",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4121257",
+    "name": "Ramilândia",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Foz do Iguaçu",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4121307",
+    "name": "Rancho Alegre",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Assaí",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4121356",
+    "name": "Rancho Alegre D'Oeste",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Goioerê",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4121406",
+    "name": "Realeza",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Capanema",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4121505",
+    "name": "Rebouças",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Irati",
+    "mesoregion": "Sudeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4121604",
+    "name": "Renascença",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Francisco Beltrão",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4121703",
+    "name": "Reserva",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Telêmaco Borba",
+    "mesoregion": "Centro Oriental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4121752",
+    "name": "Reserva do Iguaçu",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Guarapuava",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4121802",
+    "name": "Ribeirão Claro",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Jacarezinho",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4121901",
+    "name": "Ribeirão do Pinhal",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cornélio Procópio",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4122008",
+    "name": "Rio Azul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Irati",
+    "mesoregion": "Sudeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4122107",
+    "name": "Rio Bom",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Faxinal",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4122156",
+    "name": "Rio Bonito do Iguaçu",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Guarapuava",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4122172",
+    "name": "Rio Branco do Ivaí",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ivaiporã",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4122206",
+    "name": "Rio Branco do Sul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Curitiba",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4122305",
+    "name": "Rio Negro",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Rio Negro",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4122404",
+    "name": "Rolândia",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Londrina",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4122503",
+    "name": "Roncador",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Campo Mourão",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4122602",
+    "name": "Rondon",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cianorte",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4122651",
+    "name": "Rosário do Ivaí",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ivaiporã",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4122701",
+    "name": "Sabáudia",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Apucarana",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4122800",
+    "name": "Salgado Filho",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Francisco Beltrão",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4122909",
+    "name": "Salto do Itararé",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Wenceslau Braz",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4123006",
+    "name": "Salto do Lontra",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Francisco Beltrão",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4123105",
+    "name": "Santa Amélia",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cornélio Procópio",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4123204",
+    "name": "Santa Cecília do Pavão",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Assaí",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4123303",
+    "name": "Santa Cruz de Monte Castelo",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4123402",
+    "name": "Santa Fé",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Astorga",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4123501",
+    "name": "Santa Helena",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Toledo",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4123600",
+    "name": "Santa Inês",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Astorga",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4123709",
+    "name": "Santa Isabel do Ivaí",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4123808",
+    "name": "Santa Izabel do Oeste",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Capanema",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4123824",
+    "name": "Santa Lúcia",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cascavel",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4123857",
+    "name": "Santa Maria do Oeste",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Pitanga",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4123907",
+    "name": "Santa Mariana",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cornélio Procópio",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4123956",
+    "name": "Santa Mônica",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4124004",
+    "name": "Santana do Itararé",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Wenceslau Braz",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4124020",
+    "name": "Santa Tereza do Oeste",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cascavel",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4124053",
+    "name": "Santa Terezinha de Itaipu",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Foz do Iguaçu",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4124103",
+    "name": "Santo Antônio da Platina",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Jacarezinho",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4124202",
+    "name": "Santo Antônio do Caiuá",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4124301",
+    "name": "Santo Antônio do Paraíso",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cornélio Procópio",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4124400",
+    "name": "Santo Antônio do Sudoeste",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Francisco Beltrão",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4124509",
+    "name": "Santo Inácio",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Astorga",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4124608",
+    "name": "São Carlos do Ivaí",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4124707",
+    "name": "São Jerônimo da Serra",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Assaí",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4124806",
+    "name": "São João",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Pato Branco",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4124905",
+    "name": "São João do Caiuá",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4125001",
+    "name": "São João do Ivaí",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ivaiporã",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4125100",
+    "name": "São João do Triunfo",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "São Mateus do Sul",
+    "mesoregion": "Sudeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4125209",
+    "name": "São Jorge d'Oeste",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Francisco Beltrão",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4125308",
+    "name": "São Jorge do Ivaí",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Floraí",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4125357",
+    "name": "São Jorge do Patrocínio",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Umuarama",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4125407",
+    "name": "São José da Boa Vista",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Wenceslau Braz",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4125456",
+    "name": "São José das Palmeiras",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Toledo",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4125506",
+    "name": "São José dos Pinhais",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Curitiba",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4125555",
+    "name": "São Manoel do Paraná",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cianorte",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4125605",
+    "name": "São Mateus do Sul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "São Mateus do Sul",
+    "mesoregion": "Sudeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4125704",
+    "name": "São Miguel do Iguaçu",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Foz do Iguaçu",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4125753",
+    "name": "São Pedro do Iguaçu",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Toledo",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4125803",
+    "name": "São Pedro do Ivaí",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ivaiporã",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4125902",
+    "name": "São Pedro do Paraná",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4126009",
+    "name": "São Sebastião da Amoreira",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Assaí",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4126108",
+    "name": "São Tomé",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cianorte",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4126207",
+    "name": "Sapopema",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Ibaiti",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4126256",
+    "name": "Sarandi",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Maringá",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4126272",
+    "name": "Saudade do Iguaçu",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Pato Branco",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4126306",
+    "name": "Sengés",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Jaguariaíva",
+    "mesoregion": "Centro Oriental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4126355",
+    "name": "Serranópolis do Iguaçu",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Foz do Iguaçu",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4126405",
+    "name": "Sertaneja",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cornélio Procópio",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4126504",
+    "name": "Sertanópolis",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Porecatu",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4126603",
+    "name": "Siqueira Campos",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Wenceslau Braz",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4126652",
+    "name": "Sulina",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Pato Branco",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4126678",
+    "name": "Tamarana",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Londrina",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4126702",
+    "name": "Tamboara",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4126801",
+    "name": "Tapejara",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cianorte",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4126900",
+    "name": "Tapira",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Umuarama",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4127007",
+    "name": "Teixeira Soares",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Prudentópolis",
+    "mesoregion": "Sudeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4127106",
+    "name": "Telêmaco Borba",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Telêmaco Borba",
+    "mesoregion": "Centro Oriental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4127205",
+    "name": "Terra Boa",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Campo Mourão",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4127304",
+    "name": "Terra Rica",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Paranavaí",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4127403",
+    "name": "Terra Roxa",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Toledo",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4127502",
+    "name": "Tibagi",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Telêmaco Borba",
+    "mesoregion": "Centro Oriental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4127601",
+    "name": "Tijucas do Sul",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Rio Negro",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4127700",
+    "name": "Toledo",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Toledo",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4127809",
+    "name": "Tomazina",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Wenceslau Braz",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4127858",
+    "name": "Três Barras do Paraná",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cascavel",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4127882",
+    "name": "Tunas do Paraná",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Curitiba",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4127908",
+    "name": "Tuneiras do Oeste",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cianorte",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4127957",
+    "name": "Tupãssi",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Toledo",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4127965",
+    "name": "Turvo",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Guarapuava",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4128005",
+    "name": "Ubiratã",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Goioerê",
+    "mesoregion": "Centro Ocidental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4128104",
+    "name": "Umuarama",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Umuarama",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4128203",
+    "name": "União da Vitória",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "União da Vitória",
+    "mesoregion": "Sudeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4128302",
+    "name": "Uniflor",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Astorga",
+    "mesoregion": "Norte Central Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4128401",
+    "name": "Uraí",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Assaí",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4128500",
+    "name": "Wenceslau Braz",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Wenceslau Braz",
+    "mesoregion": "Norte Pioneiro Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4128534",
+    "name": "Ventania",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Telêmaco Borba",
+    "mesoregion": "Centro Oriental Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4128559",
+    "name": "Vera Cruz do Oeste",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Foz do Iguaçu",
+    "mesoregion": "Oeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4128609",
+    "name": "Verê",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Francisco Beltrão",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4128625",
+    "name": "Alto Paraíso",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Umuarama",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4128633",
+    "name": "Doutor Ulysses",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Cerro Azul",
+    "mesoregion": "Metropolitana de Curitiba",
+    "region": "Sul"
+  },
+  {
+    "id": "4128658",
+    "name": "Virmond",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Guarapuava",
+    "mesoregion": "Centro-Sul Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4128708",
+    "name": "Vitorino",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Pato Branco",
+    "mesoregion": "Sudoeste Paranaense",
+    "region": "Sul"
+  },
+  {
+    "id": "4128807",
+    "name": "Xambrê",
+    "state": "PR",
+    "state_name": "Paraná",
+    "microregion": "Umuarama",
+    "mesoregion": "Noroeste Paranaense",
+    "region": "Sul"
+  }
+]

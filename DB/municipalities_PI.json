@@ -1,0 +1,2018 @@
+[
+  {
+    "id": "2200053",
+    "name": "Acauã",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2200103",
+    "name": "Agricolândia",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Médio Parnaíba Piauiense",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2200202",
+    "name": "Água Branca",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Médio Parnaíba Piauiense",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2200251",
+    "name": "Alagoinha do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Pio IX",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2200277",
+    "name": "Alegrete do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Pio IX",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2200301",
+    "name": "Alto Longá",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Campo Maior",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2200400",
+    "name": "Altos",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Teresina",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2200459",
+    "name": "Alvorada do Gurguéia",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Gurguéia",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2200509",
+    "name": "Amarante",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Médio Parnaíba Piauiense",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2200608",
+    "name": "Angical do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Médio Parnaíba Piauiense",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2200707",
+    "name": "Anísio de Abreu",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "São Raimundo Nonato",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2200806",
+    "name": "Antônio Almeida",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Bertolínia",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2200905",
+    "name": "Aroazes",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Valença do Piauí",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2200954",
+    "name": "Aroeiras do Itaim",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Picos",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2201002",
+    "name": "Arraial",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Médio Parnaíba Piauiense",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2201051",
+    "name": "Assunção do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Campo Maior",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2201101",
+    "name": "Avelino Lopes",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Chapadas do Extremo Sul Piauiense",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2201150",
+    "name": "Baixa Grande do Ribeiro",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Parnaíba Piauiense",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2201176",
+    "name": "Barra D'Alcântara",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Valença do Piauí",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2201200",
+    "name": "Barras",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Baixo Parnaíba Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2201309",
+    "name": "Barreiras do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Gurguéia",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2201408",
+    "name": "Barro Duro",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Médio Parnaíba Piauiense",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2201507",
+    "name": "Batalha",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Baixo Parnaíba Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2201556",
+    "name": "Bela Vista do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2201572",
+    "name": "Belém do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2201606",
+    "name": "Beneditinos",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Teresina",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2201705",
+    "name": "Bertolínia",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Bertolínia",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2201739",
+    "name": "Betânia do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2201770",
+    "name": "Boa Hora",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Baixo Parnaíba Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2201804",
+    "name": "Bocaina",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Picos",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2201903",
+    "name": "Bom Jesus",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Gurguéia",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2201919",
+    "name": "Bom Princípio do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Litoral Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2201929",
+    "name": "Bonfim do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "São Raimundo Nonato",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2201945",
+    "name": "Boqueirão do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Campo Maior",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2201960",
+    "name": "Brasileira",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Baixo Parnaíba Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2201988",
+    "name": "Brejo do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "São Raimundo Nonato",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202000",
+    "name": "Buriti dos Lopes",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Litoral Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202026",
+    "name": "Buriti dos Montes",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Campo Maior",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202059",
+    "name": "Cabeceiras do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Baixo Parnaíba Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202075",
+    "name": "Cajazeiras do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Picos",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202083",
+    "name": "Cajueiro da Praia",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Litoral Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202091",
+    "name": "Caldeirão Grande do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202109",
+    "name": "Campinas do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202117",
+    "name": "Campo Alegre do Fidalgo",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202133",
+    "name": "Campo Grande do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202174",
+    "name": "Campo Largo do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Baixo Parnaíba Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202208",
+    "name": "Campo Maior",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Campo Maior",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202251",
+    "name": "Canavieira",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Floriano",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202307",
+    "name": "Canto do Buriti",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "São Raimundo Nonato",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202406",
+    "name": "Capitão de Campos",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Campo Maior",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202455",
+    "name": "Capitão Gervásio Oliveira",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202505",
+    "name": "Caracol",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "São Raimundo Nonato",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202539",
+    "name": "Caraúbas do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Litoral Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202554",
+    "name": "Caridade do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202604",
+    "name": "Castelo do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Campo Maior",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202653",
+    "name": "Caxingó",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Litoral Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202703",
+    "name": "Cocal",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Litoral Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202711",
+    "name": "Cocal de Telha",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Campo Maior",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202729",
+    "name": "Cocal dos Alves",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Litoral Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202737",
+    "name": "Coivaras",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Teresina",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202752",
+    "name": "Colônia do Gurguéia",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Bertolínia",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202778",
+    "name": "Colônia do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Picos",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202802",
+    "name": "Conceição do Canindé",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202851",
+    "name": "Coronel José Dias",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "São Raimundo Nonato",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2202901",
+    "name": "Corrente",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Chapadas do Extremo Sul Piauiense",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2203008",
+    "name": "Cristalândia do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Chapadas do Extremo Sul Piauiense",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2203107",
+    "name": "Cristino Castro",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Gurguéia",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2203206",
+    "name": "Curimatá",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Chapadas do Extremo Sul Piauiense",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2203230",
+    "name": "Currais",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Gurguéia",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2203255",
+    "name": "Curralinhos",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Teresina",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2203271",
+    "name": "Curral Novo do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2203305",
+    "name": "Demerval Lobão",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Teresina",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2203354",
+    "name": "Dirceu Arcoverde",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "São Raimundo Nonato",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2203404",
+    "name": "Dom Expedito Lopes",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Picos",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2203420",
+    "name": "Domingos Mourão",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Campo Maior",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2203453",
+    "name": "Dom Inocêncio",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "São Raimundo Nonato",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2203503",
+    "name": "Elesbão Veloso",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Valença do Piauí",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2203602",
+    "name": "Eliseu Martins",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Bertolínia",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2203701",
+    "name": "Esperantina",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Baixo Parnaíba Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2203750",
+    "name": "Fartura do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "São Raimundo Nonato",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2203800",
+    "name": "Flores do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Floriano",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2203859",
+    "name": "Floresta do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2203909",
+    "name": "Floriano",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Floriano",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2204006",
+    "name": "Francinópolis",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Valença do Piauí",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2204105",
+    "name": "Francisco Ayres",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Médio Parnaíba Piauiense",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2204154",
+    "name": "Francisco Macedo",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2204204",
+    "name": "Francisco Santos",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Pio IX",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2204303",
+    "name": "Fronteiras",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2204352",
+    "name": "Geminiano",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Picos",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2204402",
+    "name": "Gilbués",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Gurguéia",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2204501",
+    "name": "Guadalupe",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Floriano",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2204550",
+    "name": "Guaribas",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "São Raimundo Nonato",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2204600",
+    "name": "Hugo Napoleão",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Médio Parnaíba Piauiense",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2204659",
+    "name": "Ilha Grande",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Litoral Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2204709",
+    "name": "Inhuma",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Valença do Piauí",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2204808",
+    "name": "Ipiranga do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Picos",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2204907",
+    "name": "Isaías Coelho",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205003",
+    "name": "Itainópolis",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205102",
+    "name": "Itaueira",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Floriano",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205151",
+    "name": "Jacobina do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205201",
+    "name": "Jaicós",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205250",
+    "name": "Jardim do Mulato",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Médio Parnaíba Piauiense",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205276",
+    "name": "Jatobá do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Campo Maior",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205300",
+    "name": "Jerumenha",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Floriano",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205359",
+    "name": "João Costa",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205409",
+    "name": "Joaquim Pires",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Baixo Parnaíba Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205458",
+    "name": "Joca Marques",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Baixo Parnaíba Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205508",
+    "name": "José de Freitas",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Teresina",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205516",
+    "name": "Juazeiro do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Campo Maior",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205524",
+    "name": "Júlio Borges",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Chapadas do Extremo Sul Piauiense",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205532",
+    "name": "Jurema",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "São Raimundo Nonato",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205540",
+    "name": "Lagoinha do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Médio Parnaíba Piauiense",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205557",
+    "name": "Lagoa Alegre",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Teresina",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205565",
+    "name": "Lagoa do Barro do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205573",
+    "name": "Lagoa de São Francisco",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Campo Maior",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205581",
+    "name": "Lagoa do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Teresina",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205599",
+    "name": "Lagoa do Sítio",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Valença do Piauí",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205607",
+    "name": "Landri Sales",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Bertolínia",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205706",
+    "name": "Luís Correia",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Litoral Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205805",
+    "name": "Luzilândia",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Baixo Parnaíba Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205854",
+    "name": "Madeiro",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Baixo Parnaíba Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205904",
+    "name": "Manoel Emídio",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Bertolínia",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2205953",
+    "name": "Marcolândia",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2206001",
+    "name": "Marcos Parente",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Bertolínia",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2206050",
+    "name": "Massapê do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2206100",
+    "name": "Matias Olímpio",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Baixo Parnaíba Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2206209",
+    "name": "Miguel Alves",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Baixo Parnaíba Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2206308",
+    "name": "Miguel Leão",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Teresina",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2206357",
+    "name": "Milton Brandão",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Campo Maior",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2206407",
+    "name": "Monsenhor Gil",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Teresina",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2206506",
+    "name": "Monsenhor Hipólito",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Pio IX",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2206605",
+    "name": "Monte Alegre do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Gurguéia",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2206654",
+    "name": "Morro Cabeça no Tempo",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Chapadas do Extremo Sul Piauiense",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2206670",
+    "name": "Morro do Chapéu do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Baixo Parnaíba Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2206696",
+    "name": "Murici dos Portelas",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Litoral Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2206704",
+    "name": "Nazaré do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Floriano",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2206720",
+    "name": "Nazária",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Teresina",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2206753",
+    "name": "Nossa Senhora de Nazaré",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Campo Maior",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2206803",
+    "name": "Nossa Senhora dos Remédios",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Baixo Parnaíba Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2206902",
+    "name": "Novo Oriente do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Valença do Piauí",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2206951",
+    "name": "Novo Santo Antônio",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Campo Maior",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2207009",
+    "name": "Oeiras",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Picos",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2207108",
+    "name": "Olho D'Água do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Médio Parnaíba Piauiense",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2207207",
+    "name": "Padre Marcos",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2207306",
+    "name": "Paes Landim",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2207355",
+    "name": "Pajeú do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "São Raimundo Nonato",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2207405",
+    "name": "Palmeira do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Gurguéia",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2207504",
+    "name": "Palmeirais",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Médio Parnaíba Piauiense",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2207553",
+    "name": "Paquetá",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Picos",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2207603",
+    "name": "Parnaguá",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Chapadas do Extremo Sul Piauiense",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2207702",
+    "name": "Parnaíba",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Litoral Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2207751",
+    "name": "Passagem Franca do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Médio Parnaíba Piauiense",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2207777",
+    "name": "Patos do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2207793",
+    "name": "Pau D'Arco do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Teresina",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2207801",
+    "name": "Paulistana",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2207850",
+    "name": "Pavussu",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Floriano",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2207900",
+    "name": "Pedro II",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Campo Maior",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2207934",
+    "name": "Pedro Laurentino",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2207959",
+    "name": "Nova Santa Rita",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2208007",
+    "name": "Picos",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Picos",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2208106",
+    "name": "Pimenteiras",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Valença do Piauí",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2208205",
+    "name": "Pio IX",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Pio IX",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2208304",
+    "name": "Piracuruca",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Litoral Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2208403",
+    "name": "Piripiri",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Baixo Parnaíba Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2208502",
+    "name": "Porto",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Baixo Parnaíba Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2208551",
+    "name": "Porto Alegre do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Bertolínia",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2208601",
+    "name": "Prata do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Valença do Piauí",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2208650",
+    "name": "Queimada Nova",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2208700",
+    "name": "Redenção do Gurguéia",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Gurguéia",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2208809",
+    "name": "Regeneração",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Médio Parnaíba Piauiense",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2208858",
+    "name": "Riacho Frio",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Chapadas do Extremo Sul Piauiense",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2208874",
+    "name": "Ribeira do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2208908",
+    "name": "Ribeiro Gonçalves",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Parnaíba Piauiense",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2209005",
+    "name": "Rio Grande do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Floriano",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2209104",
+    "name": "Santa Cruz do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Picos",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2209153",
+    "name": "Santa Cruz dos Milagres",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Valença do Piauí",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2209203",
+    "name": "Santa Filomena",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Parnaíba Piauiense",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2209302",
+    "name": "Santa Luz",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Gurguéia",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2209351",
+    "name": "Santana do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Picos",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2209377",
+    "name": "Santa Rosa do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Picos",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2209401",
+    "name": "Santo Antônio de Lisboa",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Pio IX",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2209450",
+    "name": "Santo Antônio dos Milagres",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Médio Parnaíba Piauiense",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2209500",
+    "name": "Santo Inácio do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2209559",
+    "name": "São Braz do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "São Raimundo Nonato",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2209609",
+    "name": "São Félix do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Valença do Piauí",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2209658",
+    "name": "São Francisco de Assis do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2209708",
+    "name": "São Francisco do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Floriano",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2209757",
+    "name": "São Gonçalo do Gurguéia",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Gurguéia",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2209807",
+    "name": "São Gonçalo do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Médio Parnaíba Piauiense",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2209856",
+    "name": "São João da Canabrava",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Picos",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2209872",
+    "name": "São João da Fronteira",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Litoral Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2209906",
+    "name": "São João da Serra",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Campo Maior",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2209955",
+    "name": "São João da Varjota",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Picos",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2209971",
+    "name": "São João do Arraial",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Baixo Parnaíba Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2210003",
+    "name": "São João do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2210052",
+    "name": "São José do Divino",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Litoral Piauiense",
+    "mesoregion": "Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2210102",
+    "name": "São José do Peixe",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Floriano",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2210201",
+    "name": "São José do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Picos",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2210300",
+    "name": "São Julião",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Pio IX",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2210359",
+    "name": "São Lourenço do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "São Raimundo Nonato",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2210375",
+    "name": "São Luis do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Picos",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2210383",
+    "name": "São Miguel da Baixa Grande",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Valença do Piauí",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2210391",
+    "name": "São Miguel do Fidalgo",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Floriano",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2210409",
+    "name": "São Miguel do Tapuio",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Campo Maior",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2210508",
+    "name": "São Pedro do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Médio Parnaíba Piauiense",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2210607",
+    "name": "São Raimundo Nonato",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "São Raimundo Nonato",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2210623",
+    "name": "Sebastião Barros",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Chapadas do Extremo Sul Piauiense",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2210631",
+    "name": "Sebastião Leal",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Bertolínia",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2210656",
+    "name": "Sigefredo Pacheco",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Campo Maior",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2210706",
+    "name": "Simões",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2210805",
+    "name": "Simplício Mendes",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2210904",
+    "name": "Socorro do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2210938",
+    "name": "Sussuapara",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Picos",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2210953",
+    "name": "Tamboril do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "São Raimundo Nonato",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2210979",
+    "name": "Tanque do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Picos",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2211001",
+    "name": "Teresina",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Teresina",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2211100",
+    "name": "União",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Teresina",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2211209",
+    "name": "Uruçuí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Parnaíba Piauiense",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2211308",
+    "name": "Valença do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Valença do Piauí",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2211357",
+    "name": "Várzea Branca",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "São Raimundo Nonato",
+    "mesoregion": "Sudoeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2211407",
+    "name": "Várzea Grande",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Valença do Piauí",
+    "mesoregion": "Centro-Norte Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2211506",
+    "name": "Vera Mendes",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2211605",
+    "name": "Vila Nova do Piauí",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Alto Médio Canindé",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  },
+  {
+    "id": "2211704",
+    "name": "Wall Ferraz",
+    "state": "PI",
+    "state_name": "Piauí",
+    "microregion": "Picos",
+    "mesoregion": "Sudeste Piauiense",
+    "region": "Nordeste"
+  }
+]
