@@ -144,7 +144,15 @@ def get_db(json_path: str = 'data/municipalities_db.json') -> MunicipalitiesDB:
 
 if __name__ == '__main__':
     # Testes
-    db = get_db('/home/regis/GIT/data-weather-forecast/db/national/municipalities_db.json')
+    import sys
+    
+    # Usar caminho relativo ou absoluto correto
+    if len(sys.argv) > 1:
+        json_path = sys.argv[1]
+    else:
+        json_path = 'data/municipalities_db.json'
+    
+    db = get_db(json_path)
     
     print("\n" + "="*70)
     print("🧪 TESTES DO BANCO DE DADOS")
