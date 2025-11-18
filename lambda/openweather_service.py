@@ -33,17 +33,15 @@ class WeatherAPIService:
         
         Returns:
             dict: Dados do clima atual
-        """
-        if self.openweather_key:
-            try:
-                return self._get_openweather_current(lat, lon, municipality_name)
-            except Exception as e:
-                print(f"⚠️  OpenWeatherMap falhou: {e}")
-                # Retornar dados mockados em caso de erro
-                return self._generate_mock_weather(lat, lon, municipality_name)
         
-        # Se não houver API key, retornar dados mockados
-        return self._generate_mock_weather(lat, lon, municipality_name)
+        Raises:
+            ValueError: Se a API key não estiver configurada
+            Exception: Se a chamada à API falhar
+        """
+        if not self.openweather_key:
+            raise ValueError("OPENWEATHER_API_KEY não configurada")
+        
+        return self._get_openweather_current(lat, lon, municipality_name)
     
     
     def get_forecast(self, lat: float, lon: float, days: int = 5) -> List[Dict]:
@@ -57,10 +55,12 @@ class WeatherAPIService:
         
         Returns:
             list: Lista com previsão diária
+        
+        Raises:
+            ValueError: Se a API key não estiver configurada
         """
         if not self.openweather_key:
-            print("⚠️  API key do OpenWeatherMap não configurada")
-            return []
+            raise ValueError("OPENWEATHER_API_KEY não configurada")
         
         try:
             url = f"{self.openweather_base}/forecast"
@@ -125,39 +125,6 @@ class WeatherAPIService:
             'weather_main': data['weather'][0]['main'],
             'weather_description': data['weather'][0]['description'],
             'weather_icon': data['weather'][0]['icon']
-        }
-    
-    
-    
-    def _generate_mock_weather(self, lat: float, lon: float, name: str = None, 
-                               source: str = 'Mock') -> Dict:
-        """Gera dados climáticos mockados para testes"""
-        import random
-        
-        # Usar coordenadas como seed para consistência
-        random.seed(int(abs(lat * 1000) + abs(lon * 1000)))
-        
-        temp = random.uniform(18, 32)
-        
-        return {
-            'source': source,
-            'municipality_name': name,
-            'latitude': lat,
-            'longitude': lon,
-            'timestamp': datetime.now().isoformat(),
-            'temperature': round(temp, 1),
-            'feels_like': round(temp + random.uniform(-2, 2), 1),
-            'temp_min': round(temp - random.uniform(2, 5), 1),
-            'temp_max': round(temp + random.uniform(2, 5), 1),
-            'humidity': random.randint(40, 90),
-            'pressure': random.randint(1010, 1025),
-            'wind_speed': round(random.uniform(5, 25), 1),
-            'wind_deg': random.randint(0, 360),
-            'clouds': random.randint(0, 100),
-            'rain_1h': round(random.uniform(0, 10), 1) if random.random() > 0.7 else 0,
-            'weather_main': random.choice(['Clear', 'Clouds', 'Rain', 'Drizzle']),
-            'weather_description': random.choice(['céu limpo', 'nublado', 'chuva leve', 'parcialmente nublado']),
-            'weather_icon': '01d'
         }
     
     
