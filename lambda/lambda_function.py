@@ -66,7 +66,6 @@ def get_neighbors_route(city_id: str):
         'centerCity': {
             'id': center_city['id'],
             'name': center_city['name'],
-            'state': center_city['state'],
             'latitude': center_city['latitude'],
             'longitude': center_city['longitude']
         },
@@ -116,17 +115,24 @@ def get_city_weather_route(city_id: str):
         city['name']
     )
     
-    # Adicionar informações da cidade
-    weather.update({
+    # Calcular intensidade de chuva (0-100%)
+    rain_1h = weather.get('rain_1h', 0)  # mm de chuva na última hora
+    rainfall_intensity = min((rain_1h / 10) * 100, 100)  # Normalizar para 0-100%
+    
+    # Retornar apenas os campos esperados pelo frontend
+    response = {
         'cityId': city['id'],
         'cityName': city['name'],
-        'state': city['state'],
-        'region': city['region']
-    })
+        'timestamp': weather['timestamp'],
+        'rainfallIntensity': round(rainfall_intensity, 1),
+        'temperature': round(weather['temperature'], 1),
+        'humidity': round(weather['humidity'], 1),
+        'windSpeed': round(weather['wind_speed'], 1)
+    }
     
-    logger.info(f"Dados climáticos de {city['name']}: {weather['temperature']}°C")
+    logger.info(f"Dados climáticos de {city['name']}: {response['temperature']}°C")
     
-    return weather
+    return response
 
 
 @app.post("/api/weather/regional")
@@ -170,13 +176,22 @@ def post_regional_weather_route():
                 city['name']
             )
             
-            weather.update({
+            # Calcular intensidade de chuva (0-100%)
+            rain_1h = weather.get('rain_1h', 0)  # mm de chuva na última hora
+            rainfall_intensity = min((rain_1h / 10) * 100, 100)  # Normalizar para 0-100%
+            
+            # Retornar apenas os campos esperados pelo frontend
+            city_weather = {
                 'cityId': city['id'],
                 'cityName': city['name'],
-                'state': city['state']
-            })
+                'timestamp': weather['timestamp'],
+                'rainfallIntensity': round(rainfall_intensity, 1),
+                'temperature': round(weather['temperature'], 1),
+                'humidity': round(weather['humidity'], 1),
+                'windSpeed': round(weather['wind_speed'], 1)
+            }
             
-            weather_data.append(weather)
+            weather_data.append(city_weather)
             
         except Exception as e:
             logger.error(f"Erro ao buscar clima de {city['name']}: {e}")
