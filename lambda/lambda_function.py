@@ -1,17 +1,24 @@
+"""
+Lambda Function Handler - Clean Architecture
+Presentation Layer: gerencia requisições HTTP e delega para use cases
+"""
 import json
 import logging
-import os
 from aws_lambda_powertools import Logger, Tracer
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver
 from aws_lambda_powertools.logging import correlation_paths
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
-from cities_data import get_city_by_id, get_all_cities, CITIES_DATABASE
-from cities_service import get_neighbors, validate_radius
-from weather_service import get_weather_for_city, get_regional_weather
+# Application Layer
+from application.use_cases.get_neighbor_cities import GetNeighborCitiesUseCase
+from application.use_cases.get_city_weather import GetCityWeatherUseCase
+from application.use_cases.get_regional_weather import GetRegionalWeatherUseCase
+
+# Infrastructure Layer
+from infrastructure.repositories.municipalities_repository import get_repository
+from infrastructure.repositories.weather_repository import get_weather_repository
+
 from config import DEFAULT_RADIUS
-from municipalities_db import get_db
-from openweather_service import WeatherAPIService
 
 # Configurar Powertools
 logger = Logger()
@@ -19,9 +26,14 @@ tracer = Tracer()
 
 app = APIGatewayRestResolver()
 
-# Inicializar banco de dados (singleton, carrega apenas uma vez)
-db = get_db()
-weather_service = WeatherAPIService()
+# Dependency Injection: inicializar repositórios (singleton, carrega apenas uma vez)
+city_repository = get_repository()
+weather_repository = get_weather_repository()
+
+# Inicializar use cases
+get_neighbors_use_case = GetNeighborCitiesUseCase(city_repository)
+get_city_weather_use_case = GetCityWeatherUseCase(city_repository, weather_repository)
+get_regional_weather_use_case = GetRegionalWeatherUseCase(city_repository, weather_repository)
 
 
 @app.get("/api/cities/neighbors/<city_id>")
@@ -34,47 +46,34 @@ def get_neighbors_route(city_id: str):
     """
     logger.info(f"Buscando vizinhos de {city_id}")
     
-    # Buscar cidade centro no banco de dados
-    center_city = db.get_by_id(city_id)
-    if not center_city:
+    # Extrair raio da query string
+    radius = float(app.current_event.get_query_string_value(
+        name="radius",
+        default_value=str(DEFAULT_RADIUS)
+    ))
+    
+    try:
+        # Executar use case
+        result = get_neighbors_use_case.execute(city_id, radius)
+        
+        # Converter entidades para formato API
+        response = {
+            'centerCity': result['centerCity'].to_api_response(),
+            'neighbors': [n.to_api_response() for n in result['neighbors']]
+        }
+        
+        logger.info(f"Encontradas {len(response['neighbors'])} cidades vizinhas de {result['centerCity'].name}")
+        
+        return response
+        
+    except ValueError as e:
         return {
-            'statusCode': 404,
+            'statusCode': 404 if 'não encontrada' in str(e) else 400,
             'body': {
-                'error': 'Not Found',
-                'message': f'Cidade {city_id} não encontrada'
+                'error': 'Not Found' if 'não encontrada' in str(e) else 'Bad Request',
+                'message': str(e)
             }
         }
-    
-    # Validar se tem coordenadas
-    if not center_city.get('latitude') or not center_city.get('longitude'):
-        return {
-            'statusCode': 400,
-            'body': {
-                'error': 'Bad Request',
-                'message': f'Cidade {city_id} não possui coordenadas'
-            }
-        }
-    
-    # Extrair e validar raio
-    radius = validate_radius(app.current_event.get_query_string_value(name="radius", default_value=str(DEFAULT_RADIUS)))
-    
-    # Buscar cidades vizinhas (apenas com coordenadas)
-    all_cities = db.get_with_coordinates()
-    neighbors = get_neighbors(center_city, all_cities, radius)
-    
-    response = {
-        'centerCity': {
-            'id': center_city['id'],
-            'name': center_city['name'],
-            'latitude': center_city['latitude'],
-            'longitude': center_city['longitude']
-        },
-        'neighbors': neighbors
-    }
-    
-    logger.info(f"Encontradas {len(neighbors)} cidades vizinhas de {center_city['name']}")
-    
-    return response
 
 
 @app.get("/api/weather/city/<city_id>")
@@ -87,52 +86,37 @@ def get_city_weather_route(city_id: str):
     """
     logger.info(f"Buscando dados climáticos de {city_id}")
     
-    # Buscar dados da cidade no banco
-    city = db.get_by_id(city_id)
-    if not city:
+    try:
+        # Executar use case
+        weather = get_city_weather_use_case.execute(city_id)
+        
+        # Atualizar city_id na entidade Weather
+        weather.city_id = city_id
+        
+        # Converter entidade para formato API
+        response = weather.to_api_response()
+        
+        logger.info(f"Dados climáticos de {weather.city_name}: {weather.temperature}°C")
+        
+        return response
+        
+    except ValueError as e:
         return {
-            'statusCode': 404,
+            'statusCode': 404 if 'não encontrada' in str(e) else 400,
             'body': {
-                'error': 'Not Found',
-                'message': f'Cidade {city_id} não encontrada'
+                'error': 'Not Found' if 'não encontrada' in str(e) else 'Bad Request',
+                'message': str(e)
             }
         }
-    
-    # Validar coordenadas
-    if not city.get('latitude') or not city.get('longitude'):
+    except Exception as e:
+        logger.error(f"Erro ao buscar clima: {e}")
         return {
-            'statusCode': 400,
+            'statusCode': 500,
             'body': {
-                'error': 'Bad Request',
-                'message': f'Cidade {city_id} não possui coordenadas'
+                'error': 'Internal Server Error',
+                'message': 'Erro ao buscar dados meteorológicos'
             }
         }
-    
-    # Buscar dados climáticos do OpenWeatherMap
-    weather = weather_service.get_current_weather(
-        city['latitude'],
-        city['longitude'],
-        city['name']
-    )
-    
-    # Calcular intensidade de chuva (0-100%)
-    rain_1h = weather.get('rain_1h', 0)  # mm de chuva na última hora
-    rainfall_intensity = min((rain_1h / 10) * 100, 100)  # Normalizar para 0-100%
-    
-    # Retornar apenas os campos esperados pelo frontend
-    response = {
-        'cityId': city['id'],
-        'cityName': city['name'],
-        'timestamp': weather['timestamp'],
-        'rainfallIntensity': round(rainfall_intensity, 1),
-        'temperature': round(weather['temperature'], 1),
-        'humidity': round(weather['humidity'], 1),
-        'windSpeed': round(weather['wind_speed'], 1)
-    }
-    
-    logger.info(f"Dados climáticos de {city['name']}: {response['temperature']}°C")
-    
-    return response
 
 
 @app.post("/api/weather/regional")
@@ -159,47 +143,26 @@ def post_regional_weather_route():
             }
         }
     
-    # Buscar dados climáticos de todas as cidades
-    weather_data = []
-    
-    for city_id in city_ids:
-        city = db.get_by_id(city_id)
+    try:
+        # Executar use case
+        weather_list = get_regional_weather_use_case.execute(city_ids)
         
-        if not city or not city.get('latitude') or not city.get('longitude'):
-            logger.warning(f"Cidade {city_id} não encontrada ou sem coordenadas")
-            continue
+        # Converter para formato API
+        response = [weather.to_api_response() for weather in weather_list]
         
-        try:
-            weather = weather_service.get_current_weather(
-                city['latitude'],
-                city['longitude'],
-                city['name']
-            )
-            
-            # Calcular intensidade de chuva (0-100%)
-            rain_1h = weather.get('rain_1h', 0)  # mm de chuva na última hora
-            rainfall_intensity = min((rain_1h / 10) * 100, 100)  # Normalizar para 0-100%
-            
-            # Retornar apenas os campos esperados pelo frontend
-            city_weather = {
-                'cityId': city['id'],
-                'cityName': city['name'],
-                'timestamp': weather['timestamp'],
-                'rainfallIntensity': round(rainfall_intensity, 1),
-                'temperature': round(weather['temperature'], 1),
-                'humidity': round(weather['humidity'], 1),
-                'windSpeed': round(weather['wind_speed'], 1)
+        logger.info(f"Dados climáticos regionais: {len(response)} cidades")
+        
+        return response
+        
+    except Exception as e:
+        logger.error(f"Erro ao buscar clima regional: {e}")
+        return {
+            'statusCode': 500,
+            'body': {
+                'error': 'Internal Server Error',
+                'message': 'Erro ao buscar dados meteorológicos'
             }
-            
-            weather_data.append(city_weather)
-            
-        except Exception as e:
-            logger.error(f"Erro ao buscar clima de {city['name']}: {e}")
-            continue
-    
-    logger.info(f"Dados climáticos regionais: {len(weather_data)} cidades")
-    
-    return weather_data
+        }
 
 
 @logger.inject_lambda_context(correlation_id_path=correlation_paths.API_GATEWAY_REST)
@@ -222,5 +185,3 @@ def lambda_handler(event, context: LambdaContext):
     - POST /api/weather/regional
     """
     return app.resolve(event, context)
-
-

@@ -1,0 +1,49 @@
+"""
+Use Case: Buscar Dados Climáticos de Uma Cidade
+"""
+from domain.entities.weather import Weather
+from domain.repositories.city_repository import ICityRepository
+from domain.repositories.weather_repository import IWeatherRepository
+
+
+class GetCityWeatherUseCase:
+    """Caso de uso: Buscar dados climáticos de uma cidade"""
+    
+    def __init__(
+        self,
+        city_repository: ICityRepository,
+        weather_repository: IWeatherRepository
+    ):
+        self.city_repository = city_repository
+        self.weather_repository = weather_repository
+    
+    def execute(self, city_id: str) -> Weather:
+        """
+        Executa o caso de uso
+        
+        Args:
+            city_id: ID da cidade
+        
+        Returns:
+            Weather: Dados meteorológicos
+        
+        Raises:
+            ValueError: Se cidade não encontrada ou sem coordenadas
+        """
+        # Buscar cidade
+        city = self.city_repository.get_by_id(city_id)
+        if not city:
+            raise ValueError(f'Cidade {city_id} não encontrada')
+        
+        # Validar coordenadas
+        if not city.has_coordinates():
+            raise ValueError(f'Cidade {city_id} não possui coordenadas')
+        
+        # Buscar dados climáticos
+        weather = self.weather_repository.get_current_weather(
+            city.latitude,
+            city.longitude,
+            city.name
+        )
+        
+        return weather
