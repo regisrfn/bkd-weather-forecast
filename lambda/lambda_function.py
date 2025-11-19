@@ -5,6 +5,8 @@ Presentation Layer: gerencia requisições HTTP e delega para use cases
 import json
 import logging
 import os
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from aws_lambda_powertools import Logger, Tracer
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, CORSConfig, Response
 from aws_lambda_powertools.logging import correlation_paths
@@ -97,23 +99,25 @@ def get_city_weather_route(city_id: str):
     
     target_datetime = None
     
+    # Timezone do Brasil (São Paulo)
+    brazil_tz = ZoneInfo("America/Sao_Paulo")
+    
     # Parsear data/hora se fornecidas
     if date_str or time_str:
         try:
-            from datetime import datetime
             # Se apenas data, usa meio-dia
             if date_str and not time_str:
-                target_datetime = datetime.strptime(date_str, "%Y-%m-%d").replace(hour=12)
+                target_datetime = datetime.strptime(date_str, "%Y-%m-%d").replace(hour=12, tzinfo=brazil_tz)
             # Se apenas hora, usa hoje
             elif time_str and not date_str:
                 from datetime import date
                 today = date.today()
                 time_obj = datetime.strptime(time_str, "%H:%M").time()
-                target_datetime = datetime.combine(today, time_obj)
+                target_datetime = datetime.combine(today, time_obj, tzinfo=brazil_tz)
             # Se ambos fornecidos
             else:
                 datetime_str = f"{date_str} {time_str}"
-                target_datetime = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
+                target_datetime = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M").replace(tzinfo=brazil_tz)
         except ValueError as e:
             return {
                 'statusCode': 400,
@@ -190,22 +194,25 @@ def post_regional_weather_route():
     
     target_datetime = None
     
+    # Timezone do Brasil (São Paulo)
+    brazil_tz = ZoneInfo("America/Sao_Paulo")
+    
     # Parsear data/hora se fornecidas
     if date_str or time_str:
         try:
-            from datetime import datetime, date
+            from datetime import date
             # Se apenas data, usa meio-dia
             if date_str and not time_str:
-                target_datetime = datetime.strptime(date_str, "%Y-%m-%d").replace(hour=12)
+                target_datetime = datetime.strptime(date_str, "%Y-%m-%d").replace(hour=12, tzinfo=brazil_tz)
             # Se apenas hora, usa hoje
             elif time_str and not date_str:
                 today = date.today()
                 time_obj = datetime.strptime(time_str, "%H:%M").time()
-                target_datetime = datetime.combine(today, time_obj)
+                target_datetime = datetime.combine(today, time_obj, tzinfo=brazil_tz)
             # Se ambos fornecidos
             else:
                 datetime_str = f"{date_str} {time_str}"
-                target_datetime = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
+                target_datetime = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M").replace(tzinfo=brazil_tz)
         except ValueError as e:
             return {
                 'statusCode': 400,

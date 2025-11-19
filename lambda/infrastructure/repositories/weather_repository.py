@@ -4,6 +4,7 @@ Integração com OpenWeatherMap API (Forecast)
 """
 import requests
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from typing import Optional, List
 from domain.entities.weather import Weather
 from domain.repositories.weather_repository import IWeatherRepository
@@ -94,12 +95,17 @@ class OpenWeatherRepository(IWeatherRepository):
         if target_datetime is None:
             return forecasts[0]
         
+        # Converter target_datetime para UTC se tiver timezone
+        if target_datetime.tzinfo is not None:
+            target_datetime = target_datetime.astimezone(ZoneInfo("UTC"))
+        
         # Encontra previsão mais próxima da data alvo
         closest_forecast = None
         min_diff = float('inf')
         
         for forecast in forecasts:
-            forecast_dt = datetime.fromtimestamp(forecast['dt'])
+            # OpenWeather retorna timestamps em UTC
+            forecast_dt = datetime.fromtimestamp(forecast['dt'], tz=ZoneInfo("UTC"))
             diff = abs((forecast_dt - target_datetime).total_seconds())
             
             if diff < min_diff:
