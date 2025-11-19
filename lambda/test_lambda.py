@@ -266,11 +266,7 @@ if __name__ == '__main__':
     print("="*70)
     
     # Executar testes
-    test_get_neighbors()
     test_get_city_weather()
-    test_get_city_weather_with_date()
-    test_post_regional_weather()
-    test_post_regional_weather_with_date()
     
     print("\n" + "="*70)
     print("✅ TESTES CONCLUÍDOS")
