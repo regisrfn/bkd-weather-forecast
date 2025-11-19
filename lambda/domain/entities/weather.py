@@ -15,15 +15,16 @@ class Weather:
     temperature: float  # °C
     humidity: float  # %
     wind_speed: float  # km/h
-    rain_1h: float = 0.0  # mm na última hora
+    rain_probability: float = 0.0  # Probabilidade de chuva (0-100%)
+    rain_1h: float = 0.0  # mm na última hora (opcional, para dados históricos)
     
     @property
     def rainfall_intensity(self) -> float:
         """
-        Calcula intensidade de chuva (0-100%)
-        Baseado em: https://www.weather.gov/bgm/forecast_terms
+        Retorna probabilidade de chuva (0-100%)
+        Agora baseado no campo 'pop' (Probability of Precipitation) da API
         """
-        return min((self.rain_1h / 10) * 100, 100)
+        return self.rain_probability
     
     def to_api_response(self) -> dict:
         """Converte para formato de resposta da API"""

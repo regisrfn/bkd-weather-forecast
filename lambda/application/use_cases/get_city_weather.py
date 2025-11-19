@@ -1,6 +1,8 @@
 """
 Use Case: Buscar Dados Climáticos de Uma Cidade
 """
+from typing import Optional
+from datetime import datetime
 from domain.entities.weather import Weather
 from domain.repositories.city_repository import ICityRepository
 from domain.repositories.weather_repository import IWeatherRepository
@@ -17,15 +19,16 @@ class GetCityWeatherUseCase:
         self.city_repository = city_repository
         self.weather_repository = weather_repository
     
-    def execute(self, city_id: str) -> Weather:
+    def execute(self, city_id: str, target_datetime: Optional[datetime] = None) -> Weather:
         """
         Executa o caso de uso
         
         Args:
             city_id: ID da cidade
+            target_datetime: Data/hora específica para previsão (opcional)
         
         Returns:
-            Weather: Dados meteorológicos
+            Weather: Dados meteorológicos com previsão
         
         Raises:
             ValueError: Se cidade não encontrada ou sem coordenadas
@@ -43,7 +46,8 @@ class GetCityWeatherUseCase:
         weather = self.weather_repository.get_current_weather(
             city.latitude,
             city.longitude,
-            city.name
+            city.name,
+            target_datetime
         )
         
         return weather

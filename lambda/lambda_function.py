@@ -80,15 +80,51 @@ def get_neighbors_route(city_id: str):
 @tracer.capture_method
 def get_city_weather_route(city_id: str):
     """
-    GET /api/weather/city/{cityId}
+    GET /api/weather/city/{cityId}?date=2025-11-20&time=15:00
     
-    Retorna dados climáticos de uma cidade específica
+    Retorna dados climáticos (previsão) de uma cidade específica
+    
+    Query params opcionais:
+    - date: Data no formato YYYY-MM-DD (ex: 2025-11-20)
+    - time: Hora no formato HH:MM (ex: 15:00)
     """
     logger.info(f"Buscando dados climáticos de {city_id}")
     
+    # Extrair data e hora da query string (opcional)
+    date_str = app.current_event.get_query_string_value(name="date", default_value=None)
+    time_str = app.current_event.get_query_string_value(name="time", default_value=None)
+    
+    target_datetime = None
+    
+    # Parsear data/hora se fornecidas
+    if date_str or time_str:
+        try:
+            from datetime import datetime
+            # Se apenas data, usa meio-dia
+            if date_str and not time_str:
+                target_datetime = datetime.strptime(date_str, "%Y-%m-%d").replace(hour=12)
+            # Se apenas hora, usa hoje
+            elif time_str and not date_str:
+                from datetime import date
+                today = date.today()
+                time_obj = datetime.strptime(time_str, "%H:%M").time()
+                target_datetime = datetime.combine(today, time_obj)
+            # Se ambos fornecidos
+            else:
+                datetime_str = f"{date_str} {time_str}"
+                target_datetime = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
+        except ValueError as e:
+            return {
+                'statusCode': 400,
+                'body': {
+                    'error': 'Bad Request',
+                    'message': f'Formato de data/hora inválido. Use date=YYYY-MM-DD e time=HH:MM. Erro: {str(e)}'
+                }
+            }
+    
     try:
         # Executar use case
-        weather = get_city_weather_use_case.execute(city_id)
+        weather = get_city_weather_use_case.execute(city_id, target_datetime)
         
         # Atualizar city_id na entidade Weather
         weather.city_id = city_id
@@ -96,7 +132,7 @@ def get_city_weather_route(city_id: str):
         # Converter entidade para formato API
         response = weather.to_api_response()
         
-        logger.info(f"Dados climáticos de {weather.city_name}: {weather.temperature}°C")
+        logger.info(f"Dados climáticos de {weather.city_name}: {weather.temperature}°C, probabilidade de chuva: {weather.rain_probability}%")
         
         return response
         
@@ -123,10 +159,14 @@ def get_city_weather_route(city_id: str):
 @tracer.capture_method
 def post_regional_weather_route():
     """
-    POST /api/weather/regional
+    POST /api/weather/regional?date=2025-11-20&time=15:00
     Body: { "cityIds": ["3543204", "3550506", ...] }
     
-    Retorna dados climáticos de múltiplas cidades
+    Retorna dados climáticos (previsão) de múltiplas cidades
+    
+    Query params opcionais:
+    - date: Data no formato YYYY-MM-DD (ex: 2025-11-20)
+    - time: Hora no formato HH:MM (ex: 15:00)
     """
     logger.info("Buscando dados climáticos regionais")
     
@@ -143,9 +183,40 @@ def post_regional_weather_route():
             }
         }
     
+    # Extrair data e hora da query string (opcional)
+    date_str = app.current_event.get_query_string_value(name="date", default_value=None)
+    time_str = app.current_event.get_query_string_value(name="time", default_value=None)
+    
+    target_datetime = None
+    
+    # Parsear data/hora se fornecidas
+    if date_str or time_str:
+        try:
+            from datetime import datetime, date
+            # Se apenas data, usa meio-dia
+            if date_str and not time_str:
+                target_datetime = datetime.strptime(date_str, "%Y-%m-%d").replace(hour=12)
+            # Se apenas hora, usa hoje
+            elif time_str and not date_str:
+                today = date.today()
+                time_obj = datetime.strptime(time_str, "%H:%M").time()
+                target_datetime = datetime.combine(today, time_obj)
+            # Se ambos fornecidos
+            else:
+                datetime_str = f"{date_str} {time_str}"
+                target_datetime = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
+        except ValueError as e:
+            return {
+                'statusCode': 400,
+                'body': {
+                    'error': 'Bad Request',
+                    'message': f'Formato de data/hora inválido. Use date=YYYY-MM-DD e time=HH:MM. Erro: {str(e)}'
+                }
+            }
+    
     try:
         # Executar use case
-        weather_list = get_regional_weather_use_case.execute(city_ids)
+        weather_list = get_regional_weather_use_case.execute(city_ids, target_datetime)
         
         # Converter para formato API
         response = [weather.to_api_response() for weather in weather_list]
@@ -181,7 +252,12 @@ def lambda_handler(event, context: LambdaContext):
     
     Rotas disponíveis:
     - GET  /api/cities/neighbors/{cityId}?radius=50
-    - GET  /api/weather/city/{cityId}
-    - POST /api/weather/regional
+    - GET  /api/weather/city/{cityId}?date=2025-11-20&time=15:00
+    - POST /api/weather/regional?date=2025-11-20&time=15:00
+    
+    Parâmetros de data/hora (opcionais):
+    - date: YYYY-MM-DD (ex: 2025-11-20)
+    - time: HH:MM (ex: 15:00)
+    - Se omitidos, retorna próxima previsão disponível
     """
     return app.resolve(event, context)

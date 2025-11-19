@@ -1,17 +1,17 @@
 """
 Implementação do Repositório de Dados Meteorológicos
-Integração com OpenWeatherMap API
+Integração com OpenWeatherMap API (Forecast)
 """
 import requests
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 from domain.entities.weather import Weather
 from domain.repositories.weather_repository import IWeatherRepository
 import os
 
 
 class OpenWeatherRepository(IWeatherRepository):
-    """Repositório de dados meteorológicos usando OpenWeatherMap"""
+    """Repositório de dados meteorológicos usando OpenWeatherMap Forecast API"""
     
     def __init__(self, api_key: Optional[str] = None):
         """
@@ -26,22 +26,24 @@ class OpenWeatherRepository(IWeatherRepository):
         if not self.api_key:
             raise ValueError("OPENWEATHER_API_KEY não configurada")
     
-    def get_current_weather(self, latitude: float, longitude: float, city_name: str) -> Weather:
+    def get_current_weather(self, latitude: float, longitude: float, city_name: str, 
+                           target_datetime: Optional[datetime] = None) -> Weather:
         """
-        Busca dados meteorológicos atuais do OpenWeatherMap
+        Busca dados meteorológicos (previsão) do OpenWeatherMap
         
         Args:
             latitude: Latitude da cidade
             longitude: Longitude da cidade
             city_name: Nome da cidade
+            target_datetime: Data/hora específica para previsão (opcional, usa próxima disponível se None)
         
         Returns:
-            Weather: Dados meteorológicos
+            Weather: Dados meteorológicos com probabilidade de chuva
         
         Raises:
-            Exception: Se a chamada à API falhar
+            Exception: Se a chamada à API falhar ou não houver dados para a data solicitada
         """
-        url = f"{self.base_url}/weather"
+        url = f"{self.base_url}/forecast"
         
         params = {
             'lat': latitude,
@@ -56,16 +58,55 @@ class OpenWeatherRepository(IWeatherRepository):
         
         data = response.json()
         
+        # Selecionar previsão mais próxima da data/hora solicitada
+        forecast_item = self._select_forecast(data['list'], target_datetime)
+        
+        if not forecast_item:
+            raise ValueError("Nenhuma previsão disponível para a data/hora solicitada")
+        
         # Converter resposta da API para entidade Weather
         return Weather(
             city_id='',  # Será preenchido pelo use case
             city_name=city_name,
-            timestamp=datetime.now(),
-            temperature=data['main']['temp'],
-            humidity=data['main']['humidity'],
-            wind_speed=data['wind']['speed'] * 3.6,  # m/s para km/h
-            rain_1h=data.get('rain', {}).get('1h', 0)
+            timestamp=datetime.fromtimestamp(forecast_item['dt']),
+            temperature=forecast_item['main']['temp'],
+            humidity=forecast_item['main']['humidity'],
+            wind_speed=forecast_item['wind']['speed'] * 3.6,  # m/s para km/h
+            rain_probability=forecast_item.get('pop', 0) * 100,  # 0-1 para 0-100%
+            rain_1h=forecast_item.get('rain', {}).get('3h', 0) / 3  # Aproximação de 3h para 1h
         )
+    
+    def _select_forecast(self, forecasts: List[dict], target_datetime: Optional[datetime]) -> Optional[dict]:
+        """
+        Seleciona a previsão mais próxima da data/hora solicitada
+        
+        Args:
+            forecasts: Lista de previsões da API
+            target_datetime: Data/hora alvo (None = primeira disponível)
+        
+        Returns:
+            Previsão selecionada ou None se não houver
+        """
+        if not forecasts:
+            return None
+        
+        # Se não há data alvo, retorna a primeira previsão
+        if target_datetime is None:
+            return forecasts[0]
+        
+        # Encontra previsão mais próxima da data alvo
+        closest_forecast = None
+        min_diff = float('inf')
+        
+        for forecast in forecasts:
+            forecast_dt = datetime.fromtimestamp(forecast['dt'])
+            diff = abs((forecast_dt - target_datetime).total_seconds())
+            
+            if diff < min_diff:
+                min_diff = diff
+                closest_forecast = forecast
+        
+        return closest_forecast
 
 
 def get_weather_repository(api_key: Optional[str] = None) -> IWeatherRepository:
