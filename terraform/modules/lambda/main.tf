@@ -1,8 +1,7 @@
-# Criar zip do código Lambda
-data "archive_file" "lambda_zip" {
-  type        = "zip"
-  source_dir  = var.source_dir
-  output_path = "${path.module}/lambda_function.zip"
+# Usar zip pré-construído com dependências
+# Execute: bash ../build-lambda.sh antes do terraform apply
+locals {
+  lambda_zip_path = "${path.module}/../../build/lambda_function.zip"
 }
 
 # IAM Role para Lambda
@@ -49,11 +48,11 @@ resource "aws_cloudwatch_log_group" "lambda_logs" {
 
 # Lambda Function
 resource "aws_lambda_function" "main" {
-  filename         = data.archive_file.lambda_zip.output_path
+  filename         = local.lambda_zip_path
   function_name    = var.function_name
   role            = aws_iam_role.lambda_role.arn
   handler         = var.handler
-  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+  source_code_hash = filebase64sha256(local.lambda_zip_path)
   runtime         = var.runtime
   timeout         = var.timeout
   memory_size     = var.memory_size
