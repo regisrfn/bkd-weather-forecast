@@ -619,6 +619,104 @@ cd lambda
 pip install -r requirements.txt
 ```
 
+## 🧪 Testes
+
+### Estrutura de Testes
+
+O projeto possui dois níveis de testes automatizados:
+
+#### 1. Testes Locais (Pré-Deploy)
+**Arquivo:** `lambda/test_lambda.py`
+
+Testa a função Lambda localmente **antes** do deploy, simulando eventos do API Gateway.
+
+**Executar:**
+```bash
+# Entrar no diretório lambda
+cd lambda
+
+# Executar com Python
+python test_lambda.py
+
+# Ou com pytest (recomendado)
+pytest test_lambda.py -v
+```
+
+**Cobertura:**
+- ✅ GET /api/cities/neighbors/{cityId}
+- ✅ GET /api/weather/city/{cityId}
+- ✅ GET /api/weather/city/{cityId}?date=...&time=...
+- ✅ POST /api/weather/regional
+- ✅ POST /api/weather/regional?date=...
+- ✅ Validações de estrutura de resposta
+- ✅ Validações de ranges (temperatura, umidade, etc.)
+- ✅ Validações de timestamps
+
+**Quando falham:** O deploy é **cancelado** automaticamente.
+
+#### 2. Testes de Integração (Pós-Deploy)
+**Arquivo:** `lambda/test_api_gateway.py`
+
+Testa a API real no API Gateway **após** o deploy na AWS.
+
+**Executar:**
+```bash
+# Exportar URL da API (obtida do terraform output)
+export API_GATEWAY_URL="https://sua-api.execute-api.sa-east-1.amazonaws.com/dev"
+
+# Entrar no diretório lambda
+cd lambda
+
+# Executar
+python test_api_gateway.py
+
+# Ou com pytest
+pytest test_api_gateway.py -v
+```
+
+**Cobertura:**
+- ✅ Health check (conectividade com API Gateway)
+- ✅ Todos os endpoints (GET e POST)
+- ✅ Validações CORS
+- ✅ Validações de performance (< 10s para regional)
+- ✅ Tratamento de erros (cidades inválidas, body malformado)
+- ✅ Previsões com data/hora específica
+- ✅ Medição de tempo de resposta
+
+**Quando falham:** O deploy continua, mas um aviso é exibido.
+
+### Deploy Automatizado com Testes
+
+O script `terraform/deploy.sh` executa testes automaticamente:
+
+```bash
+cd terraform
+bash deploy.sh
+```
+
+**Fluxo de Deploy:**
+1. 🧪 **Testes Locais** - Valida código antes de buildar
+2. 📦 **Build** - Cria pacote Lambda com dependências
+3. 🔧 **Terraform** - Valida e planeja mudanças
+4. 🚀 **Deploy** - Aplica mudanças na AWS
+5. 🧪 **Testes de Integração** - Valida API real no Gateway
+
+**Se testes locais falham:** Deploy é **cancelado**.  
+**Se testes de integração falham:** Deploy continua, mas você é **alertado**.
+
+### Testes Manuais com pytest
+
+```bash
+# Instalar dependências de teste
+pip install pytest pytest-cov
+
+# Executar todos os testes locais com cobertura
+pytest lambda/test_lambda.py -v --cov=lambda
+
+# Executar testes de integração (após deploy)
+pytest lambda/test_api_gateway.py -v
+```
+
 ### Lambda Cold Start Lento
 
 **Otimizações aplicadas:**
@@ -699,8 +797,15 @@ print(json.dumps(response, indent=2))
 - [ ] API de histórico meteorológico
 - [ ] Suporte a múltiplos idiomas
 - [ ] Métricas e dashboards (CloudWatch)
-- [ ] Testes unitários completos
 - [ ] CI/CD com GitHub Actions
+
+### ✅ Testes Implementados
+- [x] Testes unitários locais (pré-deploy)
+- [x] Testes de integração (pós-deploy)
+- [x] Validações com asserts e pytest
+- [x] Deploy automatizado com testes
+- [x] Validações de performance
+- [x] Tratamento de erros
 
 ---
 
