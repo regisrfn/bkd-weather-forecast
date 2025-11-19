@@ -3,6 +3,7 @@ Use Case: Buscar Dados Climáticos de Múltiplas Cidades
 """
 from typing import List, Optional
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from domain.entities.weather import Weather
 from domain.repositories.city_repository import ICityRepository
 from domain.repositories.weather_repository import IWeatherRepository
@@ -32,15 +33,16 @@ class GetRegionalWeatherUseCase:
         """
         weather_data: List[Weather] = []
         
-        for city_id in city_ids:
-            # Buscar cidade
-            city = self.city_repository.get_by_id(city_id)
-            
-            # Ignorar cidades não encontradas ou sem coordenadas
-            if not city or not city.has_coordinates():
-                continue
-            
+        # Função auxiliar para buscar dados de uma cidade
+        def fetch_city_weather(city_id: str) -> Optional[Weather]:
             try:
+                # Buscar cidade
+                city = self.city_repository.get_by_id(city_id)
+                
+                # Ignorar cidades não encontradas ou sem coordenadas
+                if not city or not city.has_coordinates():
+                    return None
+                
                 # Buscar dados climáticos
                 weather = self.weather_repository.get_current_weather(
                     city.latitude,
@@ -50,10 +52,22 @@ class GetRegionalWeatherUseCase:
                 )
                 # Definir city_id da entidade
                 weather.city_id = city.id
-                weather_data.append(weather)
+                return weather
                 
             except Exception:
-                # Ignorar erros individuais e continuar
-                continue
+                # Ignorar erros individuais
+                return None
+        
+        # Executar requisições em paralelo (máximo 10 threads simultâneas)
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            # Submeter todas as tarefas
+            future_to_city = {executor.submit(fetch_city_weather, city_id): city_id 
+                             for city_id in city_ids}
+            
+            # Coletar resultados conforme completam
+            for future in as_completed(future_to_city):
+                result = future.result()
+                if result is not None:
+                    weather_data.append(result)
         
         return weather_data

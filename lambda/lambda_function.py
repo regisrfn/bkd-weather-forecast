@@ -4,8 +4,9 @@ Presentation Layer: gerencia requisições HTTP e delega para use cases
 """
 import json
 import logging
+import os
 from aws_lambda_powertools import Logger, Tracer
-from aws_lambda_powertools.event_handler import APIGatewayRestResolver
+from aws_lambda_powertools.event_handler import APIGatewayRestResolver, CORSConfig, Response
 from aws_lambda_powertools.logging import correlation_paths
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
@@ -18,13 +19,13 @@ from application.use_cases.get_regional_weather import GetRegionalWeatherUseCase
 from infrastructure.repositories.municipalities_repository import get_repository
 from infrastructure.repositories.weather_repository import get_weather_repository
 
-from config import DEFAULT_RADIUS
+from config import DEFAULT_RADIUS, CORS_ORIGIN
 
 # Configurar Powertools
 logger = Logger()
 tracer = Tracer()
 
-app = APIGatewayRestResolver()
+app = APIGatewayRestResolver(cors=CORSConfig(allow_origin="*"))
 
 # Dependency Injection: inicializar repositórios (singleton, carrega apenas uma vez)
 city_repository = get_repository()
@@ -260,4 +261,14 @@ def lambda_handler(event, context: LambdaContext):
     - time: HH:MM (ex: 15:00)
     - Se omitidos, retorna próxima previsão disponível
     """
-    return app.resolve(event, context)
+    response = app.resolve(event, context)
+    
+    # Adicionar headers CORS manualmente
+    if 'headers' not in response:
+        response['headers'] = {}
+    
+    response['headers']['Access-Control-Allow-Origin'] = '*'
+    response['headers']['Access-Control-Allow-Headers'] = 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'
+    response['headers']['Access-Control-Allow-Methods'] = 'GET,POST,OPTIONS'
+    
+    return response
