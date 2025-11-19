@@ -3,6 +3,8 @@ Implementação do Repositório de Cidades
 Usa o municipalities_db.json como fonte de dados
 """
 import json
+import os
+from pathlib import Path
 from typing import Dict, List, Optional
 from domain.entities.city import City
 from domain.repositories.city_repository import ICityRepository
@@ -11,17 +13,27 @@ from domain.repositories.city_repository import ICityRepository
 class MunicipalitiesRepository(ICityRepository):
     """Repositório de municípios em memória com índices"""
     
-    def __init__(self, json_path: str = 'data/municipalities_db.json'):
+    def __init__(self, json_path: str = None):
         """
         Inicializa o repositório
         
         Args:
-            json_path: Caminho para o arquivo JSON com municípios
+            json_path: Caminho para o arquivo JSON com municípios.
+                      Se None, usa o caminho padrão relativo a este arquivo.
         """
         self._data: Optional[List[Dict]] = None
         self._index_by_id: Optional[Dict[str, Dict]] = None
         self._index_by_state: Optional[Dict[str, List[Dict]]] = None
-        self.json_path = json_path
+        
+        # Se json_path não fornecido, usar caminho relativo ao diretório lambda/
+        if json_path is None:
+            # Obtém o diretório do arquivo atual (infrastructure/repositories/)
+            current_file = Path(__file__)
+            # Sobe até lambda/ e desce para data/
+            lambda_dir = current_file.parent.parent.parent
+            json_path = lambda_dir / 'data' / 'municipalities_db.json'
+        
+        self.json_path = str(json_path)
         
         # Carregar dados na inicialização
         self._load_data()
@@ -105,12 +117,15 @@ class MunicipalitiesRepository(ICityRepository):
 _repository_instance = None
 
 
-def get_repository(json_path: str = 'data/municipalities_db.json') -> MunicipalitiesRepository:
+def get_repository(json_path: str = None) -> MunicipalitiesRepository:
     """
     Retorna instância singleton do repositório
     
     Em Lambda, a variável global persiste entre warm starts,
     evitando recarregar o JSON a cada invocação.
+    
+    Args:
+        json_path: Caminho customizado para o JSON. Se None, usa o caminho padrão.
     """
     global _repository_instance
     
