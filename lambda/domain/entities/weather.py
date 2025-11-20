@@ -66,6 +66,8 @@ class Weather:
         """
         Identifica alertas climáticos baseado no código da condição e outros parâmetros
         
+        Retorna apenas UM alerta por code, priorizando pelo timestamp mais próximo.
+        
         Códigos OpenWeatherMap:
         - 2xx: Tempestade
         - 3xx: Garoa
@@ -82,7 +84,8 @@ class Weather:
             forecast_time: Data/hora da previsão
         
         Returns:
-            Lista de alertas estruturados (array vazio se não houver alertas)
+            Lista de alertas estruturados (array vazio se não houver alertas).
+            Cada code aparece apenas uma vez, com prioridade para o timestamp mais próximo.
         """
         alerts = []
         
@@ -113,6 +116,7 @@ class Weather:
         # CHUVAS
         elif 500 <= weather_code < 600:
             if weather_code in [502, 503, 504, 522, 531]:
+                # Chuva forte
                 alerts.append(WeatherAlert(
                     code="HEAVY_RAIN",
                     severity=AlertSeverity.ALERT,
@@ -120,6 +124,7 @@ class Weather:
                     timestamp=alert_time
                 ))
             elif rain_prob >= 70:
+                # Chuva moderada com alta probabilidade
                 alerts.append(WeatherAlert(
                     code="RAIN_EXPECTED",
                     severity=AlertSeverity.WARNING,
@@ -136,7 +141,17 @@ class Weather:
                 timestamp=alert_time
             ))
         
-        # Alerta de VENTO FORTE
+        # Alerta de chuva pela PROBABILIDADE apenas (se não houver outros alertas de chuva)
+        # Consolida em um único alerta de chuva
+        elif rain_prob >= 70 and not any(a.code in ["STORM", "STORM_RAIN", "HEAVY_RAIN", "RAIN_EXPECTED"] for a in alerts):
+            alerts.append(WeatherAlert(
+                code="RAIN_EXPECTED",
+                severity=AlertSeverity.WARNING,
+                description="🌧️ Alta probabilidade de chuva",
+                timestamp=alert_time
+            ))
+        
+        # Alertas de VENTO FORTE
         if wind_speed >= 50:
             alerts.append(WeatherAlert(
                 code="STRONG_WIND",
@@ -152,16 +167,18 @@ class Weather:
                 timestamp=alert_time
             ))
         
-        # Alerta de chuva pela PROBABILIDADE (se não houver outros alertas de chuva)
-        if rain_prob >= 80 and not any(a.code in ["STORM", "STORM_RAIN", "HEAVY_RAIN"] for a in alerts):
-            alerts.append(WeatherAlert(
-                code="RAIN_LIKELY",
-                severity=AlertSeverity.INFO,
-                description="🌧️ Chuva prevista",
-                timestamp=alert_time
-            ))
+        # Deduplica alertas: mantém apenas um alerta por code
+        # Prioriza pelo timestamp mais próximo (menor timestamp = mais urgente)
+        unique_alerts = {}
+        for alert in alerts:
+            if alert.code not in unique_alerts:
+                unique_alerts[alert.code] = alert
+            else:
+                # Mantém o alerta com timestamp mais próximo (menor)
+                if alert.timestamp < unique_alerts[alert.code].timestamp:
+                    unique_alerts[alert.code] = alert
         
-        return alerts
+        return list(unique_alerts.values())
     
     def to_api_response(self) -> dict:
         """

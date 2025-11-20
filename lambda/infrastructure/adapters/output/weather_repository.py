@@ -65,17 +65,68 @@ class OpenWeatherRepository(IWeatherRepository):
         if not forecast_item:
             raise ValueError("Nenhuma previsão disponível para a data/hora solicitada")
         
+        # Extrair dados da previsão selecionada
+        weather_code = forecast_item['weather'][0]['id']
+        rain_prob = forecast_item.get('pop', 0) * 100  # 0-1 para 0-100%
+        wind_speed = forecast_item['wind']['speed'] * 3.6  # m/s para km/h
+        forecast_time = datetime.fromtimestamp(forecast_item['dt'], tz=ZoneInfo("UTC"))
+        
+        # Gerar alertas de TODAS as previsões futuras (não apenas da selecionada)
+        weather_alerts = self._collect_all_alerts(data['list'])
+        
         # Converter resposta da API para entidade Weather
         return Weather(
             city_id='',  # Será preenchido pelo use case
             city_name=city_name,
-            timestamp=datetime.fromtimestamp(forecast_item['dt']),
+            timestamp=forecast_time,
             temperature=forecast_item['main']['temp'],
             humidity=forecast_item['main']['humidity'],
-            wind_speed=forecast_item['wind']['speed'] * 3.6,  # m/s para km/h
-            rain_probability=forecast_item.get('pop', 0) * 100,  # 0-1 para 0-100%
-            rain_1h=forecast_item.get('rain', {}).get('3h', 0) / 3  # Aproximação de 3h para 1h
+            wind_speed=wind_speed,
+            rain_probability=rain_prob,
+            rain_1h=forecast_item.get('rain', {}).get('3h', 0) / 3,  # Aproximação de 3h para 1h
+            description=forecast_item['weather'][0].get('description', ''),
+            feels_like=forecast_item['main'].get('feels_like', 0),
+            pressure=forecast_item['main'].get('pressure', 0),
+            visibility=forecast_item.get('visibility', 0),
+            weather_alert=weather_alerts,  # Alertas de todas as previsões
+            weather_code=weather_code
         )
+    
+    def _collect_all_alerts(self, forecasts: List[dict]) -> List:
+        """
+        Coleta alertas de TODAS as previsões futuras
+        Útil para mostrar alertas importantes dos próximos dias
+        
+        Args:
+            forecasts: Lista completa de previsões da API
+        
+        Returns:
+            Lista consolidada de alertas únicos (sem duplicatas por code)
+        """
+        all_alerts = []
+        seen_codes = set()
+        
+        for forecast_item in forecasts:
+            weather_code = forecast_item['weather'][0]['id']
+            rain_prob = forecast_item.get('pop', 0) * 100
+            wind_speed = forecast_item['wind']['speed'] * 3.6
+            forecast_time = datetime.fromtimestamp(forecast_item['dt'], tz=ZoneInfo("UTC"))
+            
+            # Gerar alertas desta previsão
+            alerts = Weather.get_weather_alert(
+                weather_code=weather_code,
+                rain_prob=rain_prob,
+                wind_speed=wind_speed,
+                forecast_time=forecast_time
+            )
+            
+            # Adicionar apenas alertas que ainda não vimos (por code)
+            for alert in alerts:
+                if alert.code not in seen_codes:
+                    all_alerts.append(alert)
+                    seen_codes.add(alert.code)
+        
+        return all_alerts
     
     def _select_forecast(self, forecasts: List[dict], target_datetime: Optional[datetime]) -> Optional[dict]:
         """

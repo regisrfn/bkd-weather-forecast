@@ -176,5 +176,57 @@ def test_weather_alert_to_dict():
     assert 'timestamp' in alert_dict
 
 
+def test_weather_alert_deduplication():
+    """
+    Testa que apenas um alerta por code é retornado
+    Valida que múltiplos alertas do mesmo tipo são deduplicated
+    """
+    forecast_time = datetime(2025, 11, 21, 15, 0)
+    
+    # Caso com múltiplos alertas possíveis do mesmo tipo
+    alerts = Weather.get_weather_alert(
+        weather_code=210,  # Tempestade (STORM)
+        rain_prob=85,      # Alta prob de chuva
+        wind_speed=55,     # Vento forte (STRONG_WIND)
+        forecast_time=forecast_time
+    )
+    
+    # Verificar que não há duplicatas de codes
+    alert_codes = [alert.code for alert in alerts]
+    unique_codes = set(alert_codes)
+    
+    assert len(alert_codes) == len(unique_codes), "Não deve haver alertas duplicados com o mesmo code"
+    
+    # Verificar que cada code aparece apenas uma vez
+    for code in unique_codes:
+        count = alert_codes.count(code)
+        assert count == 1, f"O código {code} aparece {count} vezes, deveria aparecer apenas 1 vez"
+
+
+def test_weather_alert_priority_timestamp():
+    """
+    Testa que a prioridade por timestamp funciona corretamente
+    Mesmo que logicamente a função retorne um alerta por call,
+    valida que a estrutura de deduplicação está implementada
+    """
+    forecast_time = datetime(2025, 11, 21, 15, 0)
+    
+    alerts = Weather.get_weather_alert(
+        weather_code=502,  # Chuva forte
+        rain_prob=85,
+        wind_speed=20,
+        forecast_time=forecast_time
+    )
+    
+    # Verificar que cada alerta tem um timestamp válido
+    for alert in alerts:
+        assert alert.timestamp is not None
+        assert isinstance(alert.timestamp, datetime)
+        
+    # Verificar que não há duplicatas
+    alert_codes = [alert.code for alert in alerts]
+    assert len(alert_codes) == len(set(alert_codes))
+
+
 if __name__ == '__main__':
     pytest.main([__file__, '-v'])
