@@ -4,12 +4,13 @@ Regras de negócio para encontrar cidades dentro de um raio
 """
 from typing import List
 from domain.entities.city import City, NeighborCity
-from domain.repositories.city_repository import ICityRepository
+from application.ports.input.get_neighbor_cities_port import IGetNeighborCitiesUseCase
+from application.ports.output.city_repository_port import ICityRepository
 from shared.utils.haversine import calculate_distance
 from config import MIN_RADIUS, MAX_RADIUS, DEFAULT_RADIUS
 
 
-class GetNeighborCitiesUseCase:
+class GetNeighborCitiesUseCase(IGetNeighborCitiesUseCase):
     """Caso de uso: Buscar cidades vizinhas"""
     
     def __init__(self, city_repository: ICityRepository):

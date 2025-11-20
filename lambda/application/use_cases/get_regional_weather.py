@@ -5,11 +5,12 @@ from typing import List, Optional
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from domain.entities.weather import Weather
-from domain.repositories.city_repository import ICityRepository
-from domain.repositories.weather_repository import IWeatherRepository
+from application.ports.input.get_regional_weather_port import IGetRegionalWeatherUseCase
+from application.ports.output.city_repository_port import ICityRepository
+from application.ports.output.weather_repository_port import IWeatherRepository
 
 
-class GetRegionalWeatherUseCase:
+class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
     """Caso de uso: Buscar dados climáticos regionais"""
     
     def __init__(

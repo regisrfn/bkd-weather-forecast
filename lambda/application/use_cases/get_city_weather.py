@@ -4,11 +4,12 @@ Use Case: Buscar Dados Climáticos de Uma Cidade
 from typing import Optional
 from datetime import datetime
 from domain.entities.weather import Weather
-from domain.repositories.city_repository import ICityRepository
-from domain.repositories.weather_repository import IWeatherRepository
+from application.ports.input.get_city_weather_port import IGetCityWeatherUseCase
+from application.ports.output.city_repository_port import ICityRepository
+from application.ports.output.weather_repository_port import IWeatherRepository
 
 
-class GetCityWeatherUseCase:
+class GetCityWeatherUseCase(IGetCityWeatherUseCase):
     """Caso de uso: Buscar dados climáticos de uma cidade"""
     
     def __init__(

@@ -1,15 +1,59 @@
-````markdown
-# Backend Weather Forecast - Lambda AWS
+# Backend Weather Forecast - Clean Architecture
 
-Backend API em Python para fornecer dados meteorológicos e previsões do tempo usando Clean Architecture.
+Backend API em Python para fornecer dados meteorológicos com arquitetura hexagonal (Ports and Adapters) para AWS Lambda.
 
-## 🚀 Arquitetura
+## � Estrutura do Projeto
 
-- **AWS Lambda**: Função serverless em Python 3.11+
-- **API Gateway**: Gerenciamento de rotas REST
-- **Terraform**: Infraestrutura como código
-- **Clean Architecture**: Separação de responsabilidades em camadas
-- **OpenWeather Forecast API**: Previsões meteorológicas de até 5 dias
+```
+bkd-weather-forecast/
+├── lambda/                    # Código da aplicação
+│   ├── application/           # Camada de Aplicação
+│   │   ├── ports/            # Interfaces (input/output)
+│   │   └── use_cases/        # Lógica de negócio
+│   ├── domain/               # Entidades de domínio
+│   ├── infrastructure/       # Adapters (HTTP, DB, APIs)
+│   └── data/                 # Dados estáticos
+├── tests/                    # Testes unit e integration
+├── scripts/                  # Scripts utilitários (.sh)
+├── docs/                     # Documentação completa
+└── terraform/                # IaC AWS
+```
+
+## 🚀 Quick Start
+
+### 1. Setup
+
+```bash
+# Ativar ambiente virtual
+source .venv/bin/activate
+
+# Instalar dependências
+pip install -r lambda/requirements.txt
+```
+
+### 2. Configurar .env
+
+```bash
+OPENWEATHER_API_KEY=sua_chave
+CORS_ORIGIN=http://seu-dominio.com
+ENVIRONMENT=development
+```
+
+### 3. Executar Testes
+
+```bash
+# Todos os testes (unit + integration)
+bash scripts/run_tests.sh all
+
+# Apenas unitários
+bash scripts/run_tests.sh unit
+```
+
+### 4. Deploy
+
+```bash
+bash scripts/deploy.sh
+```
 
 ## 📡 Endpoints
 

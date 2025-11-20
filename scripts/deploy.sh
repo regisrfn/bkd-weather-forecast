@@ -1,6 +1,6 @@
 #!/bin/bash
 # Script de Deploy da Lambda Weather Forecast
-# Execute: bash deploy.sh
+# Execute da raiz: bash scripts/deploy.sh
 # Inclui testes locais (pré-deploy) e testes de integração (pós-deploy)
 
 set -e  # Parar em caso de erro
@@ -15,40 +15,42 @@ RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# 1. Verificar se está no diretório correto
-if [ ! -f "terraform.tfvars" ]; then
-    echo -e "${RED}❌ Erro: Execute este script do diretório terraform/${NC}"
+# Ir para o diretório raiz do projeto
+cd "$(dirname "$0")/.."
+PROJECT_ROOT="$(pwd)"
+
+# 1. Verificar se terraform.tfvars existe
+if [ ! -f "terraform/terraform.tfvars" ]; then
+    echo -e "${RED}❌ Erro: terraform/terraform.tfvars não encontrado!${NC}"
     exit 1
 fi
 
-# 2. Executar testes locais ANTES do build
-echo -e "\n${YELLOW}🧪 FASE 1: Testes Locais (Pré-Deploy)${NC}"
+# 2. Executar testes unitários ANTES do build
+echo -e "\n${YELLOW}🧪 FASE 1: Testes Unitários (Pré-Build)${NC}"
 echo "========================================"
-echo -e "${BLUE}Executando testes unitários do Lambda...${NC}"
-
-cd ../lambda
+echo -e "${BLUE}Executando testes unitários antes do build...${NC}"
 
 # Carregar variáveis de ambiente do .env
-if [ -f "../.env" ]; then
+if [ -f ".env" ]; then
     echo -e "${BLUE}Carregando variáveis de ambiente...${NC}"
-    export $(grep -v '^#' ../.env | xargs)
+    export $(grep -v '^#' .env | xargs)
 fi
 
-# Executar testes locais
-if python test_lambda.py; then
-    echo -e "${GREEN}✅ Todos os testes locais passaram!${NC}"
+# Executar apenas testes unitários no pré-build
+if bash scripts/run_tests.sh unit; then
+    echo -e "${GREEN}✅ Todos os testes unitários passaram!${NC}"
 else
-    echo -e "${RED}❌ Testes locais falharam! Deploy cancelado.${NC}"
+    echo -e "${RED}❌ Testes unitários falharam! Deploy cancelado.${NC}"
     exit 1
 fi
-
-cd ../terraform
 
 # 3. Build Lambda com dependências
 echo -e "\n${YELLOW}📦 FASE 2: Build do Pacote Lambda${NC}"
 echo "===================================="
 echo -e "${BLUE}Criando pacote Lambda com dependências...${NC}"
-bash build-lambda.sh
+
+cd terraform
+bash ../scripts/build-lambda.sh
 
 if [ ! -f "build/lambda_function.zip" ]; then
     echo -e "${RED}❌ Erro: Falha ao criar pacote Lambda${NC}"
@@ -69,38 +71,29 @@ terraform validate
 echo -e "\n${BLUE}Gerando plano de execução...${NC}"
 terraform plan -out=tfplan
 
-# 7. Perguntar confirmação
-echo -e "\n${BLUE}Revisar o plano acima${NC}"
-read -p "Deseja aplicar as mudanças? (yes/no): " confirm
-
-if [ "$confirm" != "yes" ]; then
-    echo -e "${RED}❌ Deploy cancelado${NC}"
-    rm -f tfplan
-    exit 0
-fi
-
-# 8. Terraform Apply
+# 7. Terraform Apply (sem confirmação manual para automação)
 echo -e "\n${YELLOW}🚀 FASE 4: Deploy na AWS${NC}"
 echo "=========================="
-echo -e "${BLUE}Aplicando mudanças...${NC}"
+echo -e "${BLUE}Aplicando mudanças automaticamente...${NC}"
 terraform apply tfplan
 
-# 9. Limpar arquivo de plano
+# 8. Limpar arquivo de plano
 rm -f tfplan
 
-# 10. Mostrar outputs
+# 9. Mostrar outputs
 echo -e "\n${GREEN}✅ Deploy na AWS concluído!${NC}"
 echo -e "\n${BLUE}📊 Outputs:${NC}"
 terraform output
 
-# 11. Salvar API URL
+# 10. Salvar API URL
 if terraform output -raw api_gateway_url 2>/dev/null; then
     API_URL=$(terraform output -raw api_gateway_url)
     echo -e "\n${GREEN}🌐 API URL: ${API_URL}${NC}"
-    echo "$API_URL" > ../API_URL.txt
+    cd "$PROJECT_ROOT"
+    echo "$API_URL" > API_URL.txt
     echo -e "${GREEN}   (Salvo em API_URL.txt)${NC}"
     
-    # 12. Executar testes de integração DEPOIS do deploy
+    # 11. Executar testes de integração DEPOIS do deploy
     echo -e "\n${YELLOW}🧪 FASE 5: Testes de Integração (Pós-Deploy)${NC}"
     echo "=============================================="
     echo -e "${BLUE}Aguardando 5 segundos para API ficar disponível...${NC}"
@@ -108,25 +101,27 @@ if terraform output -raw api_gateway_url 2>/dev/null; then
     
     echo -e "${BLUE}Executando testes de integração no API Gateway...${NC}"
     
-    cd ../lambda
-    
     # Exportar URL para o script de teste
     export API_GATEWAY_URL="$API_URL"
     
-    if python test_api_gateway.py; then
+    # Ativar ambiente virtual e executar testes de integração
+    source "$PROJECT_ROOT/.venv/bin/activate"
+    bash "$PROJECT_ROOT/scripts/load_env.sh"
+    
+    if python -m pytest "$PROJECT_ROOT/lambda/tests/integration/test_api_gateway.py" -v; then
         echo -e "${GREEN}✅ Todos os testes de integração passaram!${NC}"
     else
         echo -e "${RED}⚠️  Alguns testes de integração falharam.${NC}"
         echo -e "${YELLOW}   Deploy foi concluído, mas verifique os logs acima.${NC}"
     fi
-    
-    cd ../terraform
 else
     echo -e "${YELLOW}⚠️  Não foi possível obter a URL da API${NC}"
 fi
 
+cd "$PROJECT_ROOT"
+
 echo -e "\n${GREEN}🎉 Deploy finalizado com sucesso!${NC}"
-echo -e "${GREEN}   Testes locais: ✅${NC}"
+echo -e "${GREEN}   Testes unitários (pré-build): ✅${NC}"
 echo -e "${GREEN}   Deploy AWS: ✅${NC}"
-echo -e "${GREEN}   Testes integração: Verifique logs acima${NC}"
+echo -e "${GREEN}   Testes integração (pós-deploy): Verifique logs acima${NC}"
 

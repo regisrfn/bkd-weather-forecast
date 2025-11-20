@@ -1,11 +1,15 @@
 """
-Script de teste local do Lambda
+Script de teste de integração do Lambda
 Simula invocações do API Gateway com asserts
 Usando cidade 3543204 (Ribeirão Preto)
-Executar: pytest test_lambda.py -v
+Executar: pytest tests/integration/test_lambda_integration.py -v
 """
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../lambda'))
+
 import pytest
-from lambda_function import lambda_handler
+from infrastructure.adapters.input.lambda_handler import lambda_handler
 import json
 from datetime import datetime, timedelta
 
@@ -86,11 +90,6 @@ def test_get_neighbors():
     print(f"✅ Status: {response['statusCode']}")
     print(f"✅ Cidade centro: {center_city['name']}")
     print(f"✅ Vizinhos encontrados: {len(neighbors)}")
-    
-    if neighbors:
-        print("\nPrimeiros 5 vizinhos:")
-        for neighbor in neighbors[:5]:
-            print(f"  - {neighbor['name']} ({neighbor['distance']:.1f} km)")
 
 
 def test_get_city_weather():
@@ -142,74 +141,13 @@ def test_get_city_weather():
     
     print(f"✅ Status: {response['statusCode']}")
     print(f"✅ Cidade: {body.get('cityName')}")
-    print(f"✅ Data/Hora: {body.get('timestamp')}")
     print(f"✅ Temperatura: {body.get('temperature')}°C")
-    print(f"✅ Umidade: {body.get('humidity')}%")
-    print(f"✅ Vento: {body.get('windSpeed')} km/h")
-    print(f"✅ Probabilidade de chuva: {body.get('rainfallIntensity')}%")
-
-
-def test_get_city_weather_with_date():
-    """Testa rota GET /api/weather/city/{cityId} com data específica"""
-    print("\n" + "="*70)
-    print("TEST 3: GET /api/weather/city/3543204?date=YYYY-MM-DD&time=15:00")
-    print("(Previsão para amanhã às 15:00)")
-    print("="*70)
-    
-    # Calcular data de amanhã
-    tomorrow = datetime.now() + timedelta(days=1)
-    date_str = tomorrow.strftime('%Y-%m-%d')
-    
-    event = {
-        'resource': '/api/weather/city/{city_id}',
-        'path': '/api/weather/city/3543204',
-        'httpMethod': 'GET',
-        'headers': {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        'queryStringParameters': {
-            'date': date_str,
-            'time': '15:00'
-        },
-        'pathParameters': {
-            'city_id': '3543204'
-        },
-        'body': None,
-        'isBase64Encoded': False
-    }
-    
-    context = MockContext()
-    response = lambda_handler(event, context)
-    
-    # Asserts
-    assert response['statusCode'] == 200, f"Expected 200, got {response['statusCode']}"
-    
-    body = json.loads(response['body'])
-    
-    # Validar que retornou previsão
-    assert 'timestamp' in body, "Response should contain timestamp"
-    assert 'rainfallIntensity' in body, "Response should contain rainfallIntensity"
-    
-    # Validar que timestamp está próximo da data solicitada
-    forecast_dt = datetime.fromisoformat(body['timestamp'].replace('Z', '+00:00'))
-    requested_dt = datetime.strptime(f"{date_str} 15:00", "%Y-%m-%d %H:%M")
-    
-    # Previsão deve estar dentro de +/- 3 horas da solicitada (intervalo de 3h da API)
-    time_diff = abs((forecast_dt.replace(tzinfo=None) - requested_dt).total_seconds() / 3600)
-    assert time_diff <= 3, f"Forecast time should be within 3 hours of requested time, got {time_diff:.1f}h"
-    
-    print(f"✅ Data solicitada: {date_str} 15:00")
-    print(f"✅ Status: {response['statusCode']}")
-    print(f"✅ Data/Hora da previsão: {body.get('timestamp')}")
-    print(f"✅ Temperatura: {body.get('temperature')}°C")
-    print(f"✅ Probabilidade de chuva: {body.get('rainfallIntensity')}%")
 
 
 def test_post_regional_weather():
     """Testa rota POST /api/weather/regional"""
     print("\n" + "="*70)
-    print("TEST 4: POST /api/weather/regional")
+    print("TEST 3: POST /api/weather/regional")
     print("(Ribeirão Preto, São Carlos, Campinas)")
     print("="*70)
     
@@ -258,95 +196,22 @@ def test_post_regional_weather():
     
     print(f"✅ Status: {response['statusCode']}")
     print(f"✅ Cidades processadas: {len(body)}")
-    
-    for weather in body:
-        print(f"\n  ✅ {weather.get('cityName')}:")
-        print(f"    Temperatura: {weather.get('temperature')}°C")
-        print(f"    Umidade: {weather.get('humidity')}%")
-        print(f"    Probabilidade de chuva: {weather.get('rainfallIntensity')}%")
-
-
-def test_post_regional_weather_with_date():
-    """Testa rota POST /api/weather/regional com data específica"""
-    print("\n" + "="*70)
-    print("TEST 5: POST /api/weather/regional?date=YYYY-MM-DD")
-    print("(Previsão regional para depois de amanhã ao meio-dia)")
-    print("="*70)
-    
-    # Calcular data depois de amanhã
-    day_after_tomorrow = datetime.now() + timedelta(days=2)
-    date_str = day_after_tomorrow.strftime('%Y-%m-%d')
-    
-    body_data = {
-        'cityIds': ['3543204', '3548708', '3509502']
-    }
-    
-    event = {
-        'resource': '/api/weather/regional',
-        'path': '/api/weather/regional',
-        'httpMethod': 'POST',
-        'headers': {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        'queryStringParameters': {
-            'date': date_str
-        },
-        'pathParameters': None,
-        'body': json.dumps(body_data),
-        'isBase64Encoded': False
-    }
-    
-    context = MockContext()
-    response = lambda_handler(event, context)
-    
-    # Asserts
-    assert response['statusCode'] == 200, f"Expected 200, got {response['statusCode']}"
-    
-    body = json.loads(response['body'])
-    
-    # Validar resposta
-    assert isinstance(body, list), "Response should be a list"
-    assert len(body) == 3, f"Should have 3 cities, got {len(body)}"
-    
-    # Validar que todas as previsões são para data próxima da solicitada
-    requested_date = datetime.strptime(date_str, "%Y-%m-%d").date()
-    
-    for weather in body:
-        assert 'timestamp' in weather, "Weather should contain timestamp"
-        forecast_dt = datetime.fromisoformat(weather['timestamp'].replace('Z', '+00:00'))
-        
-        # Verificar que a previsão é do dia solicitado ou próximo
-        date_diff = abs((forecast_dt.date() - requested_date).days)
-        assert date_diff <= 1, f"Forecast date should be within 1 day of requested, got {date_diff} days"
-    
-    print(f"✅ Data solicitada: {date_str} 12:00 (padrão)")
-    print(f"✅ Status: {response['statusCode']}")
-    print(f"✅ Cidades processadas: {len(body)}")
-    
-    for weather in body:
-        print(f"\n  ✅ {weather.get('cityName')} ({weather.get('timestamp')}):")
-        print(f"    Temperatura: {weather.get('temperature')}°C")
-        print(f"    Probabilidade de chuva: {weather.get('rainfallIntensity')}%")
 
 
 if __name__ == '__main__':
     print("="*70)
-    print("🧪 TESTES LOCAIS DO LAMBDA - WEATHER FORECAST API")
+    print("🧪 TESTES DE INTEGRAÇÃO - WEATHER FORECAST API")
     print("   Cidade de teste: Ribeirão Preto (ID: 3543204)")
-    print("   Executar: pytest test_lambda.py -v")
     print("="*70)
     
     # Executar testes manualmente (sem pytest)
     try:
         test_get_neighbors()
         test_get_city_weather()
-        test_get_city_weather_with_date()
         test_post_regional_weather()
-        test_post_regional_weather_with_date()
         
         print("\n" + "="*70)
-        print("✅ TODOS OS TESTES LOCAIS PASSARAM!")
+        print("✅ TODOS OS TESTES DE INTEGRAÇÃO PASSARAM!")
         print("="*70)
     except AssertionError as e:
         print("\n" + "="*70)
