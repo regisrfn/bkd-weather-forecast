@@ -7,7 +7,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from typing import Optional, List
 from domain.entities.weather import Weather
-from domain.repositories.weather_repository import IWeatherRepository
+from application.ports.output.weather_repository_port import IWeatherRepository
 import os
 
 

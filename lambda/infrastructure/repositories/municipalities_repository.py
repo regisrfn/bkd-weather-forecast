@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 from typing import Dict, List, Optional
 from domain.entities.city import City
-from domain.repositories.city_repository import ICityRepository
+from application.ports.output.city_repository_port import ICityRepository
 
 
 class MunicipalitiesRepository(ICityRepository):
