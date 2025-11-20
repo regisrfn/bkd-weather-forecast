@@ -88,6 +88,7 @@ class OpenWeatherRepository(IWeatherRepository):
             feels_like=forecast_item['main'].get('feels_like', 0),
             pressure=forecast_item['main'].get('pressure', 0),
             visibility=forecast_item.get('visibility', 0),
+            clouds=forecast_item.get('clouds', {}).get('all', 0),  # Cobertura de nuvens (0-100%)
             weather_alert=weather_alerts,  # Alertas de todas as previsões
             weather_code=weather_code
         )
