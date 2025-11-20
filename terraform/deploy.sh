@@ -28,6 +28,12 @@ echo -e "${BLUE}Executando testes unitários do Lambda...${NC}"
 
 cd ../lambda
 
+# Carregar variáveis de ambiente do .env
+if [ -f "../.env" ]; then
+    echo -e "${BLUE}Carregando variáveis de ambiente...${NC}"
+    export $(grep -v '^#' ../.env | xargs)
+fi
+
 # Executar testes locais
 if python test_lambda.py; then
     echo -e "${GREEN}✅ Todos os testes locais passaram!${NC}"
