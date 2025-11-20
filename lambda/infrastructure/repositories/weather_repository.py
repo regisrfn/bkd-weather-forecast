@@ -65,16 +65,44 @@ class OpenWeatherRepository(IWeatherRepository):
         if not forecast_item:
             raise ValueError("Nenhuma previsão disponível para a data/hora solicitada")
         
+        # Extrair descrição do clima (já vem em português com lang=pt_br)
+        weather_description = forecast_item.get('weather', [{}])[0].get('description', 'Sem informação')
+        weather_code = forecast_item.get('weather', [{}])[0].get('id', 0)
+        
+        # Extrair dados adicionais
+        feels_like = forecast_item['main'].get('feels_like', forecast_item['main']['temp'])
+        pressure = forecast_item['main'].get('pressure', 0)
+        visibility = forecast_item.get('visibility', 10000)  # API retorna em metros, default 10km
+        wind_speed_kmh = forecast_item['wind']['speed'] * 3.6  # m/s para km/h
+        rain_probability = forecast_item.get('pop', 0) * 100  # 0-1 para 0-100%
+        
+        # Timestamp da previsão
+        forecast_timestamp = datetime.fromtimestamp(forecast_item['dt'])
+        
+        # Gerar alerta climático (passa timestamp para identificar quando o alerta se aplica)
+        weather_alert = Weather.get_weather_alert(
+            weather_code, 
+            rain_probability, 
+            wind_speed_kmh,
+            forecast_timestamp
+        )
+        
         # Converter resposta da API para entidade Weather
         return Weather(
             city_id='',  # Será preenchido pelo use case
             city_name=city_name,
-            timestamp=datetime.fromtimestamp(forecast_item['dt']),
+            timestamp=forecast_timestamp,
             temperature=forecast_item['main']['temp'],
             humidity=forecast_item['main']['humidity'],
-            wind_speed=forecast_item['wind']['speed'] * 3.6,  # m/s para km/h
-            rain_probability=forecast_item.get('pop', 0) * 100,  # 0-1 para 0-100%
-            rain_1h=forecast_item.get('rain', {}).get('3h', 0) / 3  # Aproximação de 3h para 1h
+            wind_speed=wind_speed_kmh,
+            rain_probability=rain_probability,
+            rain_1h=forecast_item.get('rain', {}).get('3h', 0) / 3,  # Aproximação de 3h para 1h
+            description=weather_description,
+            feels_like=feels_like,
+            pressure=pressure,
+            visibility=visibility,
+            weather_alert=weather_alert,
+            weather_code=weather_code
         )
     
     def _select_forecast(self, forecasts: List[dict], target_datetime: Optional[datetime]) -> Optional[dict]:
