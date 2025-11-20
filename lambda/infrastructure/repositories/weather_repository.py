@@ -73,6 +73,7 @@ class OpenWeatherRepository(IWeatherRepository):
         feels_like = forecast_item['main'].get('feels_like', forecast_item['main']['temp'])
         pressure = forecast_item['main'].get('pressure', 0)
         visibility = forecast_item.get('visibility', 10000)  # API retorna em metros, default 10km
+        clouds = forecast_item.get('clouds', {}).get('all', 0)  # Cobertura de nuvens (0-100%)
         wind_speed_kmh = forecast_item['wind']['speed'] * 3.6  # m/s para km/h
         rain_probability = forecast_item.get('pop', 0) * 100  # 0-1 para 0-100%
         
@@ -101,6 +102,7 @@ class OpenWeatherRepository(IWeatherRepository):
             feels_like=feels_like,
             pressure=pressure,
             visibility=visibility,
+            clouds=clouds,
             weather_alert=weather_alert,
             weather_code=weather_code
         )

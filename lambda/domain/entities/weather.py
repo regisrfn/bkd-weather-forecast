@@ -16,6 +16,15 @@ class AlertSeverity(Enum):
     DANGER = "danger"  # Perigo
 
 
+class CloudCoverage(Enum):
+    """Descrições de cobertura de nuvens baseadas na porcentagem"""
+    CLEAR = "Céu limpo"  # 0-10%
+    FEW_CLOUDS = "Poucas nuvens"  # 11-25%
+    SCATTERED_CLOUDS = "Parcialmente nublado"  # 26-50%
+    BROKEN_CLOUDS = "Nublado"  # 51-84%
+    OVERCAST = "Céu encoberto"  # 85-100%
+
+
 @dataclass
 class WeatherAlert:
     """Alerta climático estruturado"""
@@ -49,6 +58,7 @@ class Weather:
     feels_like: float = 0.0  # Sensação térmica (°C)
     pressure: float = 0.0  # Pressão atmosférica (hPa)
     visibility: float = 0.0  # Visibilidade (metros)
+    clouds: float = 0.0  # Cobertura de nuvens (0-100%)
     weather_alert: List[WeatherAlert] = field(default_factory=list)  # Lista de alertas estruturados
     weather_code: int = 0  # Código da condição climática da API
     
@@ -59,6 +69,25 @@ class Weather:
         Agora baseado no campo 'pop' (Probability of Precipitation) da API
         """
         return self.rain_probability
+    
+    @property
+    def clouds_description(self) -> str:
+        """
+        Retorna descrição da cobertura de nuvens baseada na porcentagem
+        
+        Returns:
+            Descrição em português da cobertura de nuvens
+        """
+        if self.clouds <= 10:
+            return CloudCoverage.CLEAR.value
+        elif self.clouds <= 25:
+            return CloudCoverage.FEW_CLOUDS.value
+        elif self.clouds <= 50:
+            return CloudCoverage.SCATTERED_CLOUDS.value
+        elif self.clouds <= 84:
+            return CloudCoverage.BROKEN_CLOUDS.value
+        else:
+            return CloudCoverage.OVERCAST.value
     
     @staticmethod
     def get_weather_alert(weather_code: int, rain_prob: float, wind_speed: float, 
@@ -208,5 +237,7 @@ class Weather:
             'feelsLike': round(self.feels_like, 1),
             'pressure': round(self.pressure, 1),
             'visibility': round(self.visibility),
+            'clouds': round(self.clouds, 1),
+            'cloudsDescription': self.clouds_description,
             'weatherAlert': [alert.to_dict() for alert in self.weather_alert]  # Array de alertas estruturados
         }
