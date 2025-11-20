@@ -52,7 +52,7 @@ bash scripts/run_tests.sh unit
 ### 4. Deploy
 
 ```bash
-bash scripts/deploy.sh
+bash scripts/deploy-main.sh
 ```
 
 ## 📡 Endpoints
