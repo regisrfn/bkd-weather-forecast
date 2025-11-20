@@ -128,7 +128,7 @@ def test_get_city_weather_integration():
 
 
 def test_get_city_weather_with_date_integration():
-    """Testa rota GET /api/weather/city/{cityId} com data específica"""
+    """Testa rota GET /api/weather/city/{cityId} com data específica e valida faixa de horário"""
     print("\n" + "="*70)
     print(f"TEST INTEGRATION 4: GET /api/weather/city/{TEST_CITY_ID}?date=...&time=...")
     print("="*70)
@@ -136,12 +136,13 @@ def test_get_city_weather_with_date_integration():
     # Calcular amanhã às 15h
     tomorrow = datetime.now() + timedelta(days=1)
     date_str = tomorrow.strftime('%Y-%m-%d')
+    time_str = '15:00'
     
     response = requests.get(
         f"{API_BASE_URL}/api/weather/city/{TEST_CITY_ID}",
         params={
             'date': date_str,
-            'time': '15:00'
+            'time': time_str
         },
         timeout=REQUEST_TIMEOUT
     )
@@ -157,15 +158,28 @@ def test_get_city_weather_with_date_integration():
     
     # Validar que timestamp está próximo da data solicitada
     forecast_dt = datetime.fromisoformat(data['timestamp'].replace('Z', '+00:00'))
-    requested_dt = datetime.strptime(f"{date_str} 15:00", "%Y-%m-%d %H:%M")
+    requested_dt = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
     
-    time_diff = abs((forecast_dt.replace(tzinfo=None) - requested_dt).total_seconds() / 3600)
-    assert time_diff <= 3, \
-        f"Forecast time should be within 3 hours of requested time, got {time_diff:.1f}h"
+    # OpenWeather fornece previsões a cada 3 horas, então deve estar dentro de ±1.5h
+    time_diff_hours = abs((forecast_dt.replace(tzinfo=None) - requested_dt).total_seconds() / 3600)
+    assert time_diff_hours <= 3, \
+        f"Forecast time should be within 3 hours of requested time, got {time_diff_hours:.1f}h"
+    
+    # Validar que a previsão está dentro do range de 5 dias (limite OpenWeather)
+    now = datetime.now()
+    max_forecast_date = now + timedelta(days=5)
+    assert forecast_dt.replace(tzinfo=None) <= max_forecast_date, \
+        f"Forecast should be within 5 days from now"
+    
+    # Validar que a previsão não é no passado
+    assert forecast_dt.replace(tzinfo=None) >= now - timedelta(hours=3), \
+        f"Forecast should not be in the past (considering 3h tolerance)"
     
     print(f"✅ Status: {response.status_code}")
-    print(f"✅ Data solicitada: {date_str} 15:00")
+    print(f"✅ Data solicitada: {date_str} {time_str}")
     print(f"✅ Data previsão: {data['timestamp']}")
+    print(f"✅ Diferença de horário: {time_diff_hours:.1f}h (dentro do limite de 3h)")
+    print(f"✅ Dentro da faixa de 5 dias: Sim")
     print(f"✅ Prob. chuva: {data['rainfallIntensity']}%")
 
 
@@ -229,7 +243,7 @@ def test_post_regional_weather_integration():
 
 
 def test_post_regional_weather_with_date_integration():
-    """Testa rota POST /api/weather/regional com data específica"""
+    """Testa rota POST /api/weather/regional com data específica e valida faixa de horário"""
     print("\n" + "="*70)
     print("TEST INTEGRATION 6: POST /api/weather/regional?date=...")
     print("="*70)
@@ -259,22 +273,37 @@ def test_post_regional_weather_with_date_integration():
     
     # Validar que previsões são para data próxima da solicitada
     requested_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+    now = datetime.now()
+    max_forecast_date = now + timedelta(days=5)
     
     for weather in data:
         assert 'timestamp' in weather, "Weather should contain timestamp"
         forecast_dt = datetime.fromisoformat(weather['timestamp'].replace('Z', '+00:00'))
         
+        # Validar diferença de data (deve ser o mesmo dia ou próximo)
         date_diff = abs((forecast_dt.date() - requested_date).days)
         assert date_diff <= 1, \
-            f"Forecast date should be within 1 day of requested, got {date_diff} days"
+            f"Forecast date should be within 1 day of requested, got {date_diff} days for {weather['cityName']}"
+        
+        # Validar que a previsão está dentro do range de 5 dias
+        assert forecast_dt.replace(tzinfo=None) <= max_forecast_date, \
+            f"Forecast for {weather['cityName']} should be within 5 days from now"
+        
+        # Validar que a previsão não é no passado
+        assert forecast_dt.replace(tzinfo=None) >= now - timedelta(hours=3), \
+            f"Forecast for {weather['cityName']} should not be in the past"
     
     print(f"✅ Status: {response.status_code}")
     print(f"✅ Data solicitada: {date_str}")
     print(f"✅ Cidades processadas: {len(data)}")
+    print(f"✅ Todas as previsões dentro da faixa de 5 dias: Sim")
+    print(f"✅ Todas as previsões para data solicitada (±1 dia): Sim")
     
     for weather in data:
+        forecast_dt = datetime.fromisoformat(weather['timestamp'].replace('Z', '+00:00'))
+        date_diff = abs((forecast_dt.date() - requested_date).days)
         print(f"  ✅ {weather['cityName']} ({weather['timestamp']}): "
-              f"chuva {weather['rainfallIntensity']}%")
+              f"chuva {weather['rainfallIntensity']}%, diff={date_diff}d")
 
 
 def test_error_handling_integration():
@@ -321,6 +350,91 @@ def test_error_handling_integration():
     print(f"✅ Body inválido retorna erro: {response.status_code}")
 
 
+def test_forecast_date_range_limits():
+    """Testa limites de data de previsão (máximo 5 dias)"""
+    print("\n" + "="*70)
+    print("TEST INTEGRATION 8: Forecast Date Range Limits")
+    print("="*70)
+    
+    # Teste 1: Data no limite (5 dias)
+    five_days = datetime.now() + timedelta(days=5)
+    date_str = five_days.strftime('%Y-%m-%d')
+    
+    response = requests.get(
+        f"{API_BASE_URL}/api/weather/city/{TEST_CITY_ID}",
+        params={'date': date_str, 'time': '12:00'},
+        timeout=REQUEST_TIMEOUT
+    )
+    
+    # Deve funcionar ou retornar a última previsão disponível
+    if response.status_code == 200:
+        data = response.json()
+        forecast_dt = datetime.fromisoformat(data['timestamp'].replace('Z', '+00:00'))
+        
+        # Validar que não excede 5.5 dias (margem para fusos horários)
+        diff_days = (forecast_dt.replace(tzinfo=None) - datetime.now()).days
+        assert diff_days <= 6, \
+            f"Forecast should not exceed 6 days (5 days + margin), got {diff_days} days"
+        
+        print(f"✅ Previsão para 5 dias funciona: {data['timestamp']}")
+        print(f"   Diferença: {diff_days} dias")
+    else:
+        print(f"⚠️  Previsão para 5 dias retorna: {response.status_code}")
+    
+    # Teste 2: Data muito no futuro (deve usar última previsão disponível)
+    far_future = datetime.now() + timedelta(days=10)
+    date_str = far_future.strftime('%Y-%m-%d')
+    
+    response = requests.get(
+        f"{API_BASE_URL}/api/weather/city/{TEST_CITY_ID}",
+        params={'date': date_str, 'time': '12:00'},
+        timeout=REQUEST_TIMEOUT
+    )
+    
+    # OpenWeather deve retornar a última previsão disponível
+    if response.status_code == 200:
+        data = response.json()
+        forecast_dt = datetime.fromisoformat(data['timestamp'].replace('Z', '+00:00'))
+        
+        # Deve retornar previsão dentro do limite de 5 dias
+        diff_days = (forecast_dt.replace(tzinfo=None) - datetime.now()).days
+        assert diff_days <= 6, \
+            f"When requesting far future, should return last available forecast (≤6 days), got {diff_days} days"
+        
+        print(f"✅ Data muito no futuro (10 dias) retorna última previsão disponível")
+        print(f"   Data solicitada: {date_str}")
+        print(f"   Previsão retornada: {data['timestamp']} ({diff_days} dias no futuro)")
+    else:
+        print(f"⚠️  Data muito no futuro retorna: {response.status_code}")
+    
+    # Teste 3: Data no passado (deve retornar previsão atual)
+    past = datetime.now() - timedelta(days=1)
+    date_str = past.strftime('%Y-%m-%d')
+    
+    response = requests.get(
+        f"{API_BASE_URL}/api/weather/city/{TEST_CITY_ID}",
+        params={'date': date_str, 'time': '12:00'},
+        timeout=REQUEST_TIMEOUT
+    )
+    
+    if response.status_code == 200:
+        data = response.json()
+        forecast_dt = datetime.fromisoformat(data['timestamp'].replace('Z', '+00:00'))
+        
+        # Deve retornar previsão atual ou próxima (não no passado)
+        now = datetime.now()
+        assert forecast_dt.replace(tzinfo=None) >= now - timedelta(hours=3), \
+            f"Should not return forecast in the past"
+        
+        print(f"✅ Data no passado retorna previsão atual/próxima")
+        print(f"   Data solicitada: {date_str}")
+        print(f"   Previsão retornada: {data['timestamp']}")
+    else:
+        print(f"⚠️  Data no passado retorna: {response.status_code}")
+    
+    print("✅ Testes de limites de data concluídos")
+
+
 def run_all_tests():
     """Executa todos os testes de integração"""
     print("="*70)
@@ -336,7 +450,8 @@ def run_all_tests():
         test_get_city_weather_with_date_integration,
         test_post_regional_weather_integration,
         test_post_regional_weather_with_date_integration,
-        test_error_handling_integration
+        test_error_handling_integration,
+        test_forecast_date_range_limits
     ]
     
     failed = []

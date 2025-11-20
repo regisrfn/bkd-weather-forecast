@@ -87,6 +87,9 @@ class OpenWeatherRepository(IWeatherRepository):
         
         Returns:
             Previsão selecionada ou None se não houver
+        
+        Nota: Busca a previsão MAIS PRÓXIMA (antes ou depois) do horário solicitado,
+        considerando que OpenWeather fornece previsões a cada 3 horas.
         """
         if not forecasts:
             return None
@@ -97,20 +100,18 @@ class OpenWeatherRepository(IWeatherRepository):
         
         # Converter target_datetime para UTC se tiver timezone
         if target_datetime.tzinfo is not None:
-            target_datetime = target_datetime.astimezone(ZoneInfo("UTC"))
+            target_datetime_utc = target_datetime.astimezone(ZoneInfo("UTC"))
+        else:
+            # Se não tem timezone, assume UTC
+            target_datetime_utc = target_datetime.replace(tzinfo=ZoneInfo("UTC"))
         
-        # Encontra previsão mais próxima da data alvo
-        closest_forecast = None
-        min_diff = float('inf')
-        
-        for forecast in forecasts:
-            # OpenWeather retorna timestamps em UTC
-            forecast_dt = datetime.fromtimestamp(forecast['dt'], tz=ZoneInfo("UTC"))
-            diff = abs((forecast_dt - target_datetime).total_seconds())
-            
-            if diff < min_diff:
-                min_diff = diff
-                closest_forecast = forecast
+        # Encontra previsão MAIS PRÓXIMA usando min() com key function
+        closest_forecast = min(
+            forecasts,
+            key=lambda f: abs(
+                datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")) - target_datetime_utc
+            ).total_seconds()
+        )
         
         return closest_forecast
 
