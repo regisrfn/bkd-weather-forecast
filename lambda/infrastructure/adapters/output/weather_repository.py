@@ -74,6 +74,9 @@ class OpenWeatherRepository(IWeatherRepository):
         # Gerar alertas de TODAS as previsões futuras (não apenas da selecionada)
         weather_alerts = self._collect_all_alerts(data['list'])
         
+        # Calcular temperaturas mínima e máxima do DIA INTEIRO
+        temp_min_day, temp_max_day = self._get_daily_temp_extremes(data['list'], target_datetime)
+        
         # Converter resposta da API para entidade Weather
         return Weather(
             city_id='',  # Será preenchido pelo use case
@@ -90,7 +93,9 @@ class OpenWeatherRepository(IWeatherRepository):
             visibility=forecast_item.get('visibility', 0),
             clouds=forecast_item.get('clouds', {}).get('all', 0),  # Cobertura de nuvens (0-100%)
             weather_alert=weather_alerts,  # Alertas de todas as previsões
-            weather_code=weather_code
+            weather_code=weather_code,
+            temp_min=temp_min_day,  # Mínima do dia inteiro
+            temp_max=temp_max_day   # Máxima do dia inteiro
         )
     
     def _collect_all_alerts(self, forecasts: List[dict]) -> List:
@@ -128,6 +133,50 @@ class OpenWeatherRepository(IWeatherRepository):
                     seen_codes.add(alert.code)
         
         return all_alerts
+    
+    def _get_daily_temp_extremes(self, forecasts: List[dict], target_datetime: Optional[datetime]) -> tuple[float, float]:
+        """
+        Calcula temperaturas mínima e máxima do DIA INTEIRO da data alvo
+        
+        Args:
+            forecasts: Lista de previsões da API
+            target_datetime: Data/hora alvo (None = hoje)
+        
+        Returns:
+            Tupla (temp_min, temp_max) do dia inteiro
+        """
+        if not forecasts:
+            return (0.0, 0.0)
+        
+        # Determinar data alvo
+        if target_datetime is None:
+            target_date = datetime.now(tz=ZoneInfo("UTC")).date()
+        else:
+            # Converter para UTC se necessário
+            if target_datetime.tzinfo is not None:
+                target_datetime_utc = target_datetime.astimezone(ZoneInfo("UTC"))
+            else:
+                target_datetime_utc = target_datetime.replace(tzinfo=ZoneInfo("UTC"))
+            target_date = target_datetime_utc.date()
+        
+        # Filtrar previsões do mesmo dia
+        day_forecasts = [
+            f for f in forecasts
+            if datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")).date() == target_date
+        ]
+        
+        if not day_forecasts:
+            # Se não há previsões para o dia, retorna da primeira disponível
+            return (forecasts[0]['main']['temp_min'], forecasts[0]['main']['temp_max'])
+        
+        # Extrair todas as temperaturas do dia
+        temps = []
+        for f in day_forecasts:
+            temps.append(f['main']['temp'])
+            temps.append(f['main']['temp_min'])
+            temps.append(f['main']['temp_max'])
+        
+        return (min(temps), max(temps))
     
     def _select_forecast(self, forecasts: List[dict], target_datetime: Optional[datetime]) -> Optional[dict]:
         """

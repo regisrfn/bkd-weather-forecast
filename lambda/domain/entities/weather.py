@@ -61,6 +61,8 @@ class Weather:
     clouds: float = 0.0  # Cobertura de nuvens (0-100%)
     weather_alert: List[WeatherAlert] = field(default_factory=list)  # Lista de alertas estruturados
     weather_code: int = 0  # Código da condição climática da API
+    temp_min: float = 0.0  # Temperatura mínima (°C)
+    temp_max: float = 0.0  # Temperatura máxima (°C)
     
     @property
     def rainfall_intensity(self) -> float:
@@ -239,5 +241,7 @@ class Weather:
             'visibility': round(self.visibility),
             'clouds': round(self.clouds, 1),
             'cloudsDescription': self.clouds_description,
-            'weatherAlert': [alert.to_dict() for alert in self.weather_alert]  # Array de alertas estruturados
+            'weatherAlert': [alert.to_dict() for alert in self.weather_alert],  # Array de alertas estruturados
+            'tempMin': round(self.temp_min, 1),
+            'tempMax': round(self.temp_max, 1)
         }

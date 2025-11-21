@@ -119,9 +119,19 @@ def test_get_city_weather_integration():
     assert data['windSpeed'] >= 0, "Wind speed non-negative"
     assert 0 <= data['rainfallIntensity'] <= 100, "Rain probability 0-100%"
     
+    # Validar temperaturas mínima e máxima do dia
+    assert 'tempMin' in data, "Response should contain tempMin"
+    assert 'tempMax' in data, "Response should contain tempMax"
+    assert isinstance(data['tempMin'], (int, float)), "tempMin should be numeric"
+    assert isinstance(data['tempMax'], (int, float)), "tempMax should be numeric"
+    assert data['tempMin'] <= data['temperature'] <= data['tempMax'], \
+        "Current temp should be between min and max"
+    assert data['tempMin'] <= data['tempMax'], "tempMin should be <= tempMax"
+    
     print(f"✅ Status: {response.status_code}")
     print(f"✅ Cidade: {data['cityName']}")
     print(f"✅ Temperatura: {data['temperature']}°C")
+    print(f"✅ Temp. Mín/Máx: {data['tempMin']}°C / {data['tempMax']}°C")
     print(f"✅ Umidade: {data['humidity']}%")
     print(f"✅ Prob. chuva: {data['rainfallIntensity']}%")
 
