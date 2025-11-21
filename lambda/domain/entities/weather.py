@@ -155,10 +155,10 @@ class Weather:
                     timestamp=alert_time
                 ))
             elif rain_prob >= 70:
-                # Chuva moderada com alta probabilidade
+                # Chuva moderada com alta probabilidade - INFO apenas
                 alerts.append(WeatherAlert(
                     code="RAIN_EXPECTED",
-                    severity=AlertSeverity.WARNING,
+                    severity=AlertSeverity.INFO,
                     description="🌧️ Alta probabilidade de chuva",
                     timestamp=alert_time
                 ))
@@ -177,7 +177,7 @@ class Weather:
         elif rain_prob >= 70 and not any(a.code in ["STORM", "STORM_RAIN", "HEAVY_RAIN", "RAIN_EXPECTED"] for a in alerts):
             alerts.append(WeatherAlert(
                 code="RAIN_EXPECTED",
-                severity=AlertSeverity.WARNING,
+                severity=AlertSeverity.INFO,
                 description="🌧️ Alta probabilidade de chuva",
                 timestamp=alert_time
             ))
@@ -193,7 +193,7 @@ class Weather:
         elif wind_speed >= 30:
             alerts.append(WeatherAlert(
                 code="MODERATE_WIND",
-                severity=AlertSeverity.WARNING,
+                severity=AlertSeverity.INFO,
                 description="💨 Ventos moderados",
                 timestamp=alert_time
             ))
