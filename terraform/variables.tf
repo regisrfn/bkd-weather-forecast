@@ -71,3 +71,9 @@ variable "enable_cors" {
   type        = bool
   default     = true
 }
+
+variable "cache_table_name" {
+  description = "Nome da tabela DynamoDB para cache (opcional, se null cache é desabilitado)"
+  type        = string
+  default     = null
+}

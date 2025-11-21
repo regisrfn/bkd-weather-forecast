@@ -1,7 +1,7 @@
+# Dependências de PRODUÇÃO para Lambda
+# Mantenha mínimo para reduzir tamanho do pacote
+# Para desenvolvimento local, use: requirements-dev.txt
 requests==2.32.5
+boto3==1.35.76
 aws-lambda-powertools==3.23.0
 aws-xray-sdk==2.15.0
-
-# Dependências de teste (apenas para desenvolvimento local)
-pytest==8.3.4
-pytest-cov==6.0.0

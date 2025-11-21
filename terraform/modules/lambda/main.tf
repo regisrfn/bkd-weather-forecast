@@ -30,6 +30,29 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+# Policy inline para DynamoDB (Cache)
+resource "aws_iam_role_policy" "dynamodb_cache_policy" {
+  count = var.cache_table_name != null ? 1 : 0
+  
+  name = "${var.function_name}-dynamodb-cache"
+  role = aws_iam_role.lambda_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:DeleteItem"
+        ]
+        Resource = "arn:aws:dynamodb:${var.aws_region}:*:table/${var.cache_table_name}"
+      }
+    ]
+  })
+}
+
 # Políticas adicionais (opcional)
 resource "aws_iam_role_policy_attachment" "additional_policies" {
   for_each = toset(var.additional_policy_arns)

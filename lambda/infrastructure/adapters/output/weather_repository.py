@@ -1,28 +1,34 @@
 """
 Output Adapter: Implementação do Repositório de Dados Meteorológicos
-Integração com OpenWeatherMap API (Forecast)
+Integração com OpenWeatherMap API (Forecast) com Cache DynamoDB
 """
 import requests
 import os
+import logging
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from typing import Optional, List
 from domain.entities.weather import Weather
 from application.ports.output.weather_repository_port import IWeatherRepository
+from application.ports.output.cache_repository_port import ICacheRepository
+
+logger = logging.getLogger(__name__)
 
 
 class OpenWeatherRepository(IWeatherRepository):
-    """Repositório de dados meteorológicos usando OpenWeatherMap Forecast API"""
+    """Repositório de dados meteorológicos usando OpenWeatherMap Forecast API com Cache"""
     
-    def __init__(self, api_key: Optional[str] = None):
+    def __init__(self, api_key: Optional[str] = None, cache_repository: Optional[ICacheRepository] = None):
         """
         Inicializa o repositório
         
         Args:
             api_key: Chave da API OpenWeatherMap (opcional, usa env se não fornecida)
+            cache_repository: Repositório de cache (opcional)
         """
         self.api_key = api_key or os.environ.get('OPENWEATHER_API_KEY')
         self.base_url = "https://api.openweathermap.org/data/2.5"
+        self.cache = cache_repository
         
         if not self.api_key:
             raise ValueError("OPENWEATHER_API_KEY não configurada")
@@ -30,7 +36,13 @@ class OpenWeatherRepository(IWeatherRepository):
     def get_current_weather(self, latitude: float, longitude: float, city_name: str, 
                            target_datetime: Optional[datetime] = None) -> Weather:
         """
-        Busca dados meteorológicos (previsão) do OpenWeatherMap
+        Busca dados meteorológicos (previsão) do OpenWeather com Cache
+        
+        Estratégia:
+        1. Verifica cache DynamoDB por cityId (se cache habilitado)
+        2. Se MISS, chama API OpenWeather
+        3. Salva resposta completa no cache com TTL de 3 horas
+        4. Processa dados e retorna Weather entity
         
         Args:
             latitude: Latitude da cidade
@@ -44,22 +56,40 @@ class OpenWeatherRepository(IWeatherRepository):
         Raises:
             Exception: Se a chamada à API falhar ou não houver dados para a data solicitada
         """
-        url = f"{self.base_url}/forecast"
+        # Nota: cityId será preenchido pelo use case, mas não temos aqui ainda
+        # Por enquanto, usamos coordenadas como chave de cache
+        cache_key = f"{latitude:.4f}_{longitude:.4f}"
         
-        params = {
-            'lat': latitude,
-            'lon': longitude,
-            'appid': self.api_key,
-            'units': 'metric',
-            'lang': 'pt_br'
-        }
+        # Tentar buscar do cache primeiro
+        data = None
+        if self.cache and self.cache.is_enabled():
+            data = self.cache.get(cache_key)
+            if data:
+                logger.info(f"Cache HIT para coordenadas {cache_key}")
         
-        response = requests.get(url, params=params, timeout=10)
-        response.raise_for_status()
+        # Se não encontrou no cache, chamar API
+        if data is None:
+            logger.info(f"Cache MISS para coordenadas {cache_key}, chamando API")
+            url = f"{self.base_url}/forecast"
+            
+            params = {
+                'lat': latitude,
+                'lon': longitude,
+                'appid': self.api_key,
+                'units': 'metric',
+                'lang': 'pt_br'
+            }
+            
+            response = requests.get(url, params=params, timeout=10)
+            response.raise_for_status()
+            
+            data = response.json()
+            
+            # Salvar no cache (resposta completa)
+            if self.cache and self.cache.is_enabled():
+                self.cache.set(cache_key, data)
         
-        data = response.json()
-        
-        # Selecionar previsão mais próxima da data/hora solicitada
+        # Processar dados (mesmo fluxo anterior)
         forecast_item = self._select_forecast(data['list'], target_datetime)
         
         if not forecast_item:
@@ -219,7 +249,11 @@ class OpenWeatherRepository(IWeatherRepository):
 
 def get_weather_repository(api_key: Optional[str] = None) -> IWeatherRepository:
     """
-    Factory para criar repositório de weather
+    Factory para criar repositório de weather com cache
     Permite facilmente trocar implementação ou adicionar mock
     """
-    return OpenWeatherRepository(api_key)
+    # Importar aqui para evitar circular dependency
+    from infrastructure.adapters.cache.dynamodb_cache_adapter import get_cache_repository
+    
+    cache = get_cache_repository()
+    return OpenWeatherRepository(api_key=api_key, cache_repository=cache)

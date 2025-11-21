@@ -23,6 +23,32 @@ BUILD_DIR="${PROJECT_ROOT}/terraform/build"
 PACKAGE_DIR="${BUILD_DIR}/package"
 
 # ============================================
+# Verificar e ativar ambiente virtual
+# ============================================
+echo -e "\n${YELLOW}🐍 Verificando Ambiente Virtual${NC}"
+echo "================================="
+
+if [ ! -d "${PROJECT_ROOT}/.venv" ]; then
+    echo -e "${RED}❌ Erro: Ambiente virtual .venv não encontrado!${NC}"
+    echo -e "${YELLOW}   Crie com: python3 -m venv .venv${NC}"
+    echo -e "${YELLOW}   Depois: source .venv/bin/activate${NC}"
+    echo -e "${YELLOW}   E: pip install -r lambda/requirements-dev.txt${NC}"
+    exit 1
+fi
+
+source "${PROJECT_ROOT}/.venv/bin/activate"
+
+if [ -z "$VIRTUAL_ENV" ]; then
+    echo -e "${RED}❌ Erro: Falha ao ativar ambiente virtual${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}✓${NC} Ambiente virtual ativo"
+echo -e "   ${BLUE}→ Path: ${VIRTUAL_ENV}${NC}"
+echo -e "   ${BLUE}→ Python: $(python --version)${NC}"
+echo -e "   ${BLUE}→ Pip: $(pip --version | cut -d' ' -f1,2)${NC}"
+
+# ============================================
 # FASE 0: Validações iniciais
 # ============================================
 echo -e "\n${YELLOW}🔍 FASE 0: Validações Iniciais${NC}"
@@ -41,6 +67,11 @@ if [ ! -f "lambda/requirements.txt" ]; then
     exit 1
 fi
 echo -e "${GREEN}✓${NC} requirements.txt encontrado"
+
+# Avisar se requirements-dev.txt existe
+if [ -f "lambda/requirements-dev.txt" ]; then
+    echo -e "${BLUE}ℹ${NC}  requirements-dev.txt disponível para desenvolvimento local"
+fi
 
 # Carregar variáveis de ambiente
 if [ -f ".env" ]; then
@@ -74,10 +105,11 @@ rm -rf "${BUILD_DIR}"
 mkdir -p "${PACKAGE_DIR}"
 echo -e "${GREEN}✓${NC} Diretório limpo"
 
-# 2.2. Instalar dependências
-echo -e "\n${BLUE}📥 Instalando dependências Python...${NC}"
+# 2.2. Instalar dependências (APENAS PRODUÇÃO - sem pytest)
+echo -e "\n${BLUE}📥 Instalando dependências Python (PRODUÇÃO)...${NC}"
+echo -e "   ${BLUE}→${NC} Usando requirements.txt (sem ferramentas de teste)"
 pip install -r "${LAMBDA_DIR}/requirements.txt" -t "${PACKAGE_DIR}" --upgrade --quiet
-echo -e "${GREEN}✓${NC} Dependências instaladas"
+echo -e "${GREEN}✓${NC} Dependências de produção instaladas"
 
 # 2.3. Copiar TODOS os arquivos Python recursivamente
 echo -e "\n${BLUE}📂 Copiando código da aplicação (método recursivo)...${NC}"
@@ -125,22 +157,50 @@ done
 # 2.4. Remover arquivos desnecessários
 echo -e "\n${BLUE}🗑️  Removendo arquivos desnecessários...${NC}"
 
+# Calcular tamanho antes
+BEFORE_SIZE=$(du -sm "${PACKAGE_DIR}" 2>/dev/null | cut -f1 || echo "0")
+
 # Remover __pycache__
 find "${PACKAGE_DIR}" -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+echo -e "   ${GREEN}✓${NC} __pycache__ removidos"
+
 # Remover testes
 rm -rf "${PACKAGE_DIR}/tests" 2>/dev/null || true
 find "${PACKAGE_DIR}" -type f -name "test_*.py" -delete 2>/dev/null || true
+echo -e "   ${GREEN}✓${NC} Arquivos de teste removidos"
+
 # Remover arquivos de cache Python
 find "${PACKAGE_DIR}" -type f -name "*.pyc" -delete 2>/dev/null || true
 find "${PACKAGE_DIR}" -type f -name "*.pyo" -delete 2>/dev/null || true
+echo -e "   ${GREEN}✓${NC} Arquivos .pyc/.pyo removidos"
+
 # Remover dist-info e egg-info
 find "${PACKAGE_DIR}" -type d -name "*.dist-info" -exec rm -rf {} + 2>/dev/null || true
 find "${PACKAGE_DIR}" -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true
-# Remover arquivos do sistema
+echo -e "   ${GREEN}✓${NC} Metadados de pacotes removidos"
+
+# Remover pytest/pytest-cov se foi instalado por engano
+rm -rf "${PACKAGE_DIR}/pytest" "${PACKAGE_DIR}/_pytest" 2>/dev/null || true
+rm -rf "${PACKAGE_DIR}/pytest_cov" "${PACKAGE_DIR}/_pytest_cov" 2>/dev/null || true
+find "${PACKAGE_DIR}" -type d -name "*pytest*" -exec rm -rf {} + 2>/dev/null || true
+echo -e "   ${GREEN}✓${NC} Pytest/pytest-cov removidos (se existirem)"
+
+# Remover arquivos do sistema e documentação
 find "${PACKAGE_DIR}" -type f -name ".DS_Store" -delete 2>/dev/null || true
 find "${PACKAGE_DIR}" -type f -name ".gitignore" -delete 2>/dev/null || true
+find "${PACKAGE_DIR}" -type f -name "*.md" -delete 2>/dev/null || true
+find "${PACKAGE_DIR}" -type f -name "LICENSE*" -delete 2>/dev/null || true
+find "${PACKAGE_DIR}" -type f -name "README*" -delete 2>/dev/null || true
+echo -e "   ${GREEN}✓${NC} Arquivos de sistema/documentação removidos"
 
-echo -e "${GREEN}✓${NC} Limpeza concluída"
+# Calcular economia
+AFTER_SIZE=$(du -sm "${PACKAGE_DIR}" 2>/dev/null | cut -f1 || echo "0")
+SAVED_SIZE=$((BEFORE_SIZE - AFTER_SIZE))
+if [ "$SAVED_SIZE" -gt 0 ]; then
+    echo -e "${GREEN}✓${NC} Limpeza concluída (economizados ~${SAVED_SIZE}MB)"
+else
+    echo -e "${GREEN}✓${NC} Limpeza concluída"
+fi
 
 # 2.5. Criar ZIP
 echo -e "\n${BLUE}📦 Criando arquivo ZIP...${NC}"

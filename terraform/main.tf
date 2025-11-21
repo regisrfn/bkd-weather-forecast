@@ -44,6 +44,10 @@ module "lambda" {
   environment_variables = var.lambda_environment_variables
   log_retention_days   = var.log_retention_days
   
+  # Cache DynamoDB
+  cache_table_name = var.cache_table_name
+  aws_region       = var.aws_region
+  
   tags = local.tags
 }
 

@@ -70,3 +70,15 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "cache_table_name" {
+  description = "Nome da tabela DynamoDB para cache (opcional)"
+  type        = string
+  default     = null
+}
+
+variable "aws_region" {
+  description = "Região AWS para o recurso DynamoDB"
+  type        = string
+  default     = "sa-east-1"
+}

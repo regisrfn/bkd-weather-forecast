@@ -1,0 +1,14 @@
+# Dependências de desenvolvimento/teste local
+# Inclui tudo do requirements.txt + ferramentas de dev
+
+# Dependências de produção
+-r requirements.txt
+
+# Ferramentas de teste
+pytest==8.3.4
+pytest-cov==6.0.0
+
+# Ferramentas opcionais de dev (adicione conforme necessário)
+# black==23.12.1
+# flake8==7.0.0
+# mypy==1.8.0
