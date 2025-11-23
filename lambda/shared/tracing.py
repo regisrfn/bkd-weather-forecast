@@ -50,8 +50,8 @@ def trace_operation(span_name: str, level: str = "INFO"):
     """
     Decorator to trace operation execution with flat span model.
     
-    Adds span_name to logger context for all logs within the decorated function.
-    Measures and logs execution duration.
+    Emits START and END logs for each span with duration measurement.
+    Simple and clear approach without context management complexity.
     
     Args:
         span_name: Name of the span/operation (e.g., "api_get_neighbors", "db_query")
@@ -68,55 +68,76 @@ def trace_operation(span_name: str, level: str = "INFO"):
             # Get or generate trace_id
             trace_id = get_trace_id()
             
-            # Start timing
-            start_time = time.time()
-            
-            # Add span_name to logger context (Powertools)
+            # Get logger
             logger = None
             try:
                 from aws_lambda_powertools import Logger
                 logger = Logger(child=True)
-                logger.append_keys(span_name=span_name)
             except Exception:
-                # Fallback if logger not available
                 pass
             
+            # Emit START log
+            if logger:
+                try:
+                    logger.info(
+                        f"Span started: {span_name}",
+                        extra={
+                            "span_name": span_name,
+                            "trace_id": trace_id,
+                            "span_event": "start"
+                        }
+                    )
+                except Exception:
+                    pass
+            
+            # Start timing
+            start_time = time.time()
+            
             # Execute function
+            error_occurred = False
+            error_message = None
             try:
                 result = func(*args, **kwargs)
-                
-                # Calculate duration
-                duration_ms = (time.time() - start_time) * 1000
-                
-                # Add span metrics to logger context
-                # Use span_duration_ms name for compatibility with ingestor
-                if logger:
-                    try:
-                        logger.append_keys(span_duration_ms=duration_ms)
-                    except Exception:
-                        # Ignore logger errors (e.g., in unit tests without parent logger)
-                        pass
-                
                 return result
                 
             except Exception as e:
-                # Calculate duration even on error
+                error_occurred = True
+                error_message = str(e)
+                raise
+                
+            finally:
+                # Calculate duration
                 duration_ms = (time.time() - start_time) * 1000
                 
+                # Emit END log with duration
                 if logger:
                     try:
-                        logger.append_keys(span_duration_ms=duration_ms)
+                        status = "failed" if error_occurred else "completed"
+                        log_data = {
+                            "span_name": span_name,
+                            "trace_id": trace_id,
+                            "span_event": "end",
+                            "span_duration_ms": duration_ms,
+                            "status": status
+                        }
+                        
+                        if error_occurred and error_message:
+                            log_data["error_message"] = error_message
+                        
+                        logger.info(
+                            f"Span {status}: {span_name} ({duration_ms:.2f}ms)",
+                            extra=log_data
+                        )
                     except Exception:
-                        # Ignore logger errors
                         pass
-                
-                # Re-raise exception preserving stack trace
-                raise
         
         return wrapper
     return decorator
 
 
-# Note: Span metrics (span_name, duration_ms, trace_id) should be added
-# to your application logs using logger.append_keys() or similar.
-# This avoids duplicate logs while preserving observability data.
+# Note: Each span emits two logs:
+# 1. START log: {"span_event": "start", "span_name": "...", "trace_id": "..."}
+# 2. END log: {"span_event": "end", "span_name": "...", "trace_id": "...", "span_duration_ms": 123.45, "status": "completed|failed"}
+#
+# This simple approach avoids context management complexity and provides clear visibility
+# of span lifecycle and performance metrics.

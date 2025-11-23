@@ -116,23 +116,42 @@ def calculate_trace_duration(trace_logs: List[Dict]) -> float:
     return (t2 - t1).total_seconds() * 1000
 
 def calculate_span_stats(traces: Dict[str, List[Dict]]) -> Dict[str, Dict]:
-    """Calcula estatísticas de performance por span usando duration_ms da API."""
+    """
+    Calcula estatísticas de performance por span usando logs de START/END.
+    
+    Cada span agora tem 2 logs:
+    - START: span_event=start
+    - END: span_event=end (com span_duration_ms)
+    """
     span_durations = defaultdict(list)
     span_traces = defaultdict(set)
-    span_count = defaultdict(int)
+    span_executions = defaultdict(int)
     
     for trace_id, trace_logs in traces.items():
-        # Processar cada log e extrair duration_ms
+        # Agrupar logs por span_name para encontrar pares START/END
+        span_logs = defaultdict(list)
+        
         for log in trace_logs:
             span_name = log.get('span_name')
             if span_name:
-                span_traces[span_name].add(trace_id)
-                span_count[span_name] += 1
+                span_logs[span_name].append(log)
+        
+        # Para cada span, extrair duration do log END
+        for span_name, logs in span_logs.items():
+            span_traces[span_name].add(trace_id)
+            
+            # Procurar log END com duration
+            for log in logs:
+                span_event = log.get('span_event')
                 
-                # Usar duration_ms fornecido pela API
-                duration_ms = log.get('duration_ms', 0)
-                if duration_ms and duration_ms > 0:
-                    span_durations[span_name].append(float(duration_ms))
+                # Log END contém a duração
+                if span_event == 'end':
+                    span_executions[span_name] += 1
+                    
+                    # Extrair duration_ms do log END
+                    duration_ms = log.get('duration_ms', 0)
+                    if duration_ms and duration_ms > 0:
+                        span_durations[span_name].append(float(duration_ms))
     
     # Calcular estatísticas
     stats = {}
@@ -140,9 +159,11 @@ def calculate_span_stats(traces: Dict[str, List[Dict]]) -> Dict[str, Dict]:
     
     for span_name in all_spans:
         durations = span_durations.get(span_name, [])
+        executions = span_executions[span_name]
+        
         stats[span_name] = {
-            'count': span_count[span_name],
-            'traces': len(span_traces[span_name]),
+            'count': executions,  # Número de execuções (logs END)
+            'traces': len(span_traces[span_name]),  # Número de traces únicos
             'avg': sum(durations) / len(durations) if durations else 0,
             'min': min(durations) if durations else 0,
             'max': max(durations) if durations else 0,
