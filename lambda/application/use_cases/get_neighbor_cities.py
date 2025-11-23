@@ -8,6 +8,7 @@ from application.ports.input.get_neighbor_cities_port import IGetNeighborCitiesU
 from application.ports.output.city_repository_port import ICityRepository
 from shared.utils.haversine import calculate_distance
 from config import MIN_RADIUS, MAX_RADIUS, DEFAULT_RADIUS
+from shared.tracing import trace_operation
 
 
 class GetNeighborCitiesUseCase(IGetNeighborCitiesUseCase):
@@ -16,6 +17,7 @@ class GetNeighborCitiesUseCase(IGetNeighborCitiesUseCase):
     def __init__(self, city_repository: ICityRepository):
         self.city_repository = city_repository
     
+    @trace_operation("use_case_get_neighbors")
     def execute(self, center_city_id: str, radius: float = DEFAULT_RADIUS) -> dict:
         """
         Executa o caso de uso

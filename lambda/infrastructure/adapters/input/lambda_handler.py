@@ -5,10 +5,13 @@ Presentation Layer: gerencia requisições HTTP e delega para use cases
 import json
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from aws_lambda_powertools import Logger, Tracer
+from aws_lambda_powertools import Logger
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, CORSConfig
 from aws_lambda_powertools.logging import correlation_paths
 from aws_lambda_powertools.utilities.typing import LambdaContext
+
+# Observability
+from shared.tracing import trace_operation, set_trace_id
 
 # Application Layer - Use Cases
 from application.use_cases.get_neighbor_cities import GetNeighborCitiesUseCase
@@ -23,7 +26,6 @@ from config import DEFAULT_RADIUS
 
 # Configurar Powertools
 logger = Logger()
-tracer = Tracer()
 
 app = APIGatewayRestResolver(cors=CORSConfig(allow_origin="*"))
 
@@ -38,7 +40,7 @@ get_regional_weather_use_case = GetRegionalWeatherUseCase(city_repository, weath
 
 
 @app.get("/api/cities/neighbors/<city_id>")
-@tracer.capture_method
+@trace_operation("api_get_neighbors")
 def get_neighbors_route(city_id: str):
     """
     GET /api/cities/neighbors/{cityId}?radius=50
@@ -78,7 +80,7 @@ def get_neighbors_route(city_id: str):
 
 
 @app.get("/api/weather/city/<city_id>")
-@tracer.capture_method
+@trace_operation("api_get_city_weather")
 def get_city_weather_route(city_id: str):
     """
     GET /api/weather/city/{cityId}?date=2025-11-20&time=15:00
@@ -159,7 +161,7 @@ def get_city_weather_route(city_id: str):
 
 
 @app.post("/api/weather/regional")
-@tracer.capture_method
+@trace_operation("api_post_regional_weather")
 def post_regional_weather_route():
     """
     POST /api/weather/regional?date=2025-11-20&time=15:00
@@ -243,7 +245,6 @@ def post_regional_weather_route():
 
 
 @logger.inject_lambda_context(correlation_id_path=correlation_paths.API_GATEWAY_REST)
-@tracer.capture_lambda_handler
 def lambda_handler(event, context: LambdaContext):
     """
     Função Lambda principal
@@ -254,7 +255,7 @@ def lambda_handler(event, context: LambdaContext):
     - Serialização JSON
     - Error handling
     - Logging estruturado
-    - Tracing com X-Ray (em produção)
+    - Correlation ID para tracing
     
     Rotas disponíveis:
     - GET  /api/cities/neighbors/{cityId}?radius=50
