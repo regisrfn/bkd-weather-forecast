@@ -83,38 +83,48 @@ class GetRegionalWeatherUseCase:
 
 ## Gerando Relatório de Análise
 
-### 1. Coletar Logs da API de Observabilidade
+### Modo Automático (Recomendado)
+
+O script busca automaticamente os logs dos **últimos 15 minutos**:
 
 ```bash
-# Definir janela de tempo
+# Buscar logs e gerar relatório
+python3 scripts/analyze_traces.py
+
+# Ou explicitamente usando API
+python3 scripts/analyze_traces.py --api
+```
+
+**Saída:**
+- Relatório: `trace_analysis_YYYYMMDD_HHMMSS.md`
+- Logs são buscados automaticamente da API
+- Não é necessário baixar manualmente
+
+**Configuração:**
+Para alterar a janela de tempo, edite o script:
+```python
+# scripts/analyze_traces.py
+TIME_WINDOW_MINUTES = 15  # Altere para 5, 30, 60, etc.
+```
+
+### Modo Manual (Arquivo)
+
+Use arquivo JSON pré-baixado:
+
+```bash
+# 1. Baixar logs manualmente
 NOW=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
 START=$(date -u -d '1 hour ago' +'%Y-%m-%dT%H:%M:%SZ')
 
-# Baixar logs
 curl -s "https://szcszohdub.execute-api.sa-east-1.amazonaws.com/dev/logs/query?service_name=api-lambda-weather-forecast&start_time=$START&end_time=$NOW&limit=1000" \
-  | jq '.' > observability_logs.json
+  | jq '.' > logs.json
+
+# 2. Processar arquivo
+python3 scripts/analyze_traces.py logs.json
 ```
 
-### 2. Executar Script de Análise
-
-```bash
-# Atualizar o caminho do arquivo no script
-sed -i "s|/tmp/observability_logs_new.json|$(pwd)/observability_logs.json|" scripts/analyze_traces.py
-sed -i "s|/tmp/trace_analysis_new.md|$(pwd)/trace_analysis.md|" scripts/analyze_traces.py
-
-# Executar análise
-python3 scripts/analyze_traces.py
-```
-
-### 3. Visualizar Relatório
-
-```bash
-# Ver relatório no terminal
-cat trace_analysis.md
-
-# Ou abrir no VS Code
-code trace_analysis.md
-```
+**Saída:**
+- Relatório: `logs_analysis.md` (mesmo nome do arquivo JSON)
 
 ## Estrutura do Relatório
 

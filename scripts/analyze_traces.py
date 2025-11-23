@@ -5,9 +5,64 @@ Gera relatório markdown organizado por @trace_operation.
 """
 
 import json
-from datetime import datetime
+import subprocess
+from datetime import datetime, timedelta, timezone
 from collections import defaultdict
 from typing import Dict, List, Any
+
+# Configurações
+OBSERVABILITY_API_URL = "https://szcszohdub.execute-api.sa-east-1.amazonaws.com/dev"
+SERVICE_NAME = "api-lambda-weather-forecast"
+TIME_WINDOW_MINUTES = 15  # Buscar logs dos últimos N minutos
+
+def fetch_logs_from_api(minutes: int = TIME_WINDOW_MINUTES) -> List[Dict[str, Any]]:
+    """Busca logs da API de observabilidade."""
+    print(f"🔄 Buscando logs dos últimos {minutes} minutos...")
+    
+    # Calcular janela de tempo
+    now = datetime.now(timezone.utc)
+    start = now - timedelta(minutes=minutes)
+    
+    start_time = start.strftime('%Y-%m-%dT%H:%M:%SZ')
+    end_time = now.strftime('%Y-%m-%dT%H:%M:%SZ')
+    
+    # Construir URL
+    url = f"{OBSERVABILITY_API_URL}/logs/query"
+    url += f"?service_name={SERVICE_NAME}"
+    url += f"&start_time={start_time}"
+    url += f"&end_time={end_time}"
+    url += "&limit=1000"
+    
+    print(f"   Período: {start_time} → {end_time}")
+    
+    # Fazer requisição usando curl
+    try:
+        result = subprocess.run(
+            ['curl', '-s', url],
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+        
+        if result.returncode != 0:
+            print(f"❌ Erro ao buscar logs: {result.stderr}")
+            return []
+        
+        data = json.loads(result.stdout)
+        logs = data.get('logs', [])
+        
+        print(f"✅ {len(logs)} logs recuperados")
+        return logs
+        
+    except subprocess.TimeoutExpired:
+        print("❌ Timeout ao buscar logs")
+        return []
+    except json.JSONDecodeError as e:
+        print(f"❌ Erro ao decodificar resposta JSON: {e}")
+        return []
+    except Exception as e:
+        print(f"❌ Erro inesperado: {e}")
+        return []
 
 def load_logs(filepath: str) -> List[Dict[str, Any]]:
     """Carrega logs do arquivo JSON."""
@@ -212,11 +267,30 @@ def generate_markdown(logs: List[Dict], traces: Dict, spans: Dict, span_stats: D
 
 def main():
     """Função principal."""
-    input_file = '/tmp/observability_logs_new.json'
-    output_file = '/tmp/trace_analysis_new.md'
+    import sys
     
-    print("🔄 Carregando logs...")
-    all_logs = load_logs(input_file)
+    # Verificar se deve usar arquivo ou buscar da API
+    use_api = '--api' in sys.argv or '-a' in sys.argv
+    
+    if use_api or len(sys.argv) == 1:
+        # Buscar logs da API (comportamento padrão)
+        all_logs = fetch_logs_from_api()
+        
+        if not all_logs:
+            print("⚠️  Nenhum log encontrado. Tente aumentar a janela de tempo.")
+            print(f"   Configuração atual: TIME_WINDOW_MINUTES = {TIME_WINDOW_MINUTES}")
+            print("   Para usar arquivo: python3 analyze_traces.py <arquivo.json>")
+            return
+            
+        output_file = f'trace_analysis_{datetime.now().strftime("%Y%m%d_%H%M%S")}.md'
+        
+    else:
+        # Usar arquivo fornecido
+        input_file = sys.argv[1]
+        output_file = input_file.replace('.json', '_analysis.md')
+        
+        print(f"🔄 Carregando logs de {input_file}...")
+        all_logs = load_logs(input_file)
     
     print("🔍 Filtrando logs de aplicação...")
     app_logs = filter_app_logs(all_logs)

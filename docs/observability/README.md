@@ -27,23 +27,29 @@ Relatório real com análise de traces coletados:
 
 ## 🚀 Quick Start
 
-### 1. Coletar Logs
+### Modo Automático (Padrão)
 ```bash
+# Busca logs dos últimos 15 minutos e gera relatório
+python3 scripts/analyze_traces.py
+
+# Visualizar relatório gerado
+cat trace_analysis_*.md
+```
+
+### Modo Manual (Arquivo)
+```bash
+# 1. Coletar Logs
 NOW=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
 START=$(date -u -d '1 hour ago' +'%Y-%m-%dT%H:%M:%SZ')
 
 curl -s "https://szcszohdub.execute-api.sa-east-1.amazonaws.com/dev/logs/query?service_name=api-lambda-weather-forecast&start_time=$START&end_time=$NOW&limit=1000" \
-  | jq '.' > observability_logs.json
-```
+  | jq '.' > logs.json
 
-### 2. Gerar Relatório
-```bash
-python3 scripts/analyze_traces.py
-```
+# 2. Gerar Relatório
+python3 scripts/analyze_traces.py logs.json
 
-### 3. Visualizar
-```bash
-cat trace_analysis.md
+# 3. Visualizar
+cat logs_analysis.md
 ```
 
 ## 🎯 Spans Disponíveis
