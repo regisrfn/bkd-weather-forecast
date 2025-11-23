@@ -50,8 +50,7 @@ def trace_operation(span_name: str, level: str = "INFO"):
     """
     Decorator to trace operation execution with flat span model.
     
-    Logs operation completion with duration in JSON format.
-    Compatible with any logging system (CloudWatch, stdout, etc).
+    Adds span_name to logger context for all logs within the decorated function.
     
     Args:
         span_name: Name of the span/operation (e.g., "api_get_neighbors", "db_query")
@@ -68,24 +67,23 @@ def trace_operation(span_name: str, level: str = "INFO"):
             # Get or generate trace_id
             trace_id = get_trace_id()
             
-            # Record start time
-            start_time = time.time()
+            # Add span_name to logger context (Powertools)
+            try:
+                from aws_lambda_powertools import Logger
+                logger = Logger(child=True)
+                logger.append_keys(span_name=span_name)
+            except Exception:
+                # Fallback if logger not available
+                pass
             
             # Execute function
             try:
                 result = func(*args, **kwargs)
-                status = "success"
-                error_type = None
+                return result
                 
             except Exception as e:
-                status = "error"
-                error_type = type(e).__name__
-                
-                # Re-raise exception (span metrics captured without logging)
+                # Re-raise exception preserving stack trace
                 raise
-            
-            # Span completed successfully (metrics captured without logging)
-            return result
         
         return wrapper
     return decorator

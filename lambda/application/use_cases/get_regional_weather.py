@@ -8,6 +8,7 @@ from domain.entities.weather import Weather
 from application.ports.input.get_regional_weather_port import IGetRegionalWeatherUseCase
 from application.ports.output.city_repository_port import ICityRepository
 from application.ports.output.weather_repository_port import IWeatherRepository
+from shared.tracing import trace_operation
 
 
 class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
@@ -21,6 +22,7 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
         self.city_repository = city_repository
         self.weather_repository = weather_repository
     
+    @trace_operation("use_case_get_regional_weather")
     def execute(self, city_ids: List[str], target_datetime: Optional[datetime] = None) -> List[Weather]:
         """
         Executa o caso de uso
