@@ -51,6 +51,7 @@ def trace_operation(span_name: str, level: str = "INFO"):
     Decorator to trace operation execution with flat span model.
     
     Adds span_name to logger context for all logs within the decorated function.
+    Measures and logs execution duration.
     
     Args:
         span_name: Name of the span/operation (e.g., "api_get_neighbors", "db_query")
@@ -67,7 +68,11 @@ def trace_operation(span_name: str, level: str = "INFO"):
             # Get or generate trace_id
             trace_id = get_trace_id()
             
+            # Start timing
+            start_time = time.time()
+            
             # Add span_name to logger context (Powertools)
+            logger = None
             try:
                 from aws_lambda_powertools import Logger
                 logger = Logger(child=True)
@@ -79,9 +84,32 @@ def trace_operation(span_name: str, level: str = "INFO"):
             # Execute function
             try:
                 result = func(*args, **kwargs)
+                
+                # Calculate duration
+                duration_ms = (time.time() - start_time) * 1000
+                
+                # Add span metrics to logger context
+                # Use span_duration_ms name for compatibility with ingestor
+                if logger:
+                    try:
+                        logger.append_keys(span_duration_ms=duration_ms)
+                    except Exception:
+                        # Ignore logger errors (e.g., in unit tests without parent logger)
+                        pass
+                
                 return result
                 
             except Exception as e:
+                # Calculate duration even on error
+                duration_ms = (time.time() - start_time) * 1000
+                
+                if logger:
+                    try:
+                        logger.append_keys(span_duration_ms=duration_ms)
+                    except Exception:
+                        # Ignore logger errors
+                        pass
+                
                 # Re-raise exception preserving stack trace
                 raise
         

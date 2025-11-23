@@ -116,44 +116,38 @@ def calculate_trace_duration(trace_logs: List[Dict]) -> float:
     return (t2 - t1).total_seconds() * 1000
 
 def calculate_span_stats(traces: Dict[str, List[Dict]]) -> Dict[str, Dict]:
-    """Calcula estatísticas de performance por span."""
+    """Calcula estatísticas de performance por span usando duration_ms da API."""
     span_durations = defaultdict(list)
     span_traces = defaultdict(set)
+    span_count = defaultdict(int)
     
     for trace_id, trace_logs in traces.items():
-        # Agrupar logs do trace por span_name
-        span_groups = defaultdict(list)
+        # Processar cada log e extrair duration_ms
         for log in trace_logs:
             span_name = log.get('span_name')
             if span_name:
-                span_groups[span_name].append(log)
                 span_traces[span_name].add(trace_id)
-        
-        # Calcular duração de cada span no trace
-        for span_name, span_logs_in_trace in span_groups.items():
-            if len(span_logs_in_trace) >= 2:
-                first_log = min(span_logs_in_trace, key=lambda x: x['timestamp'])
-                last_log = max(span_logs_in_trace, key=lambda x: x['timestamp'])
+                span_count[span_name] += 1
                 
-                t1 = datetime.fromisoformat(first_log['timestamp'].replace('Z', '+00:00'))
-                t2 = datetime.fromisoformat(last_log['timestamp'].replace('Z', '+00:00'))
-                
-                duration_ms = (t2 - t1).total_seconds() * 1000
-                span_durations[span_name].append(duration_ms)
+                # Usar duration_ms fornecido pela API
+                duration_ms = log.get('duration_ms', 0)
+                if duration_ms and duration_ms > 0:
+                    span_durations[span_name].append(float(duration_ms))
     
     # Calcular estatísticas
     stats = {}
-    for span_name in span_durations:
-        durations = span_durations[span_name]
-        if durations:
-            stats[span_name] = {
-                'count': len(durations),
-                'traces': len(span_traces[span_name]),
-                'avg': sum(durations) / len(durations),
-                'min': min(durations),
-                'max': max(durations),
-                'total': sum(durations)
-            }
+    all_spans = set(span_traces.keys())
+    
+    for span_name in all_spans:
+        durations = span_durations.get(span_name, [])
+        stats[span_name] = {
+            'count': span_count[span_name],
+            'traces': len(span_traces[span_name]),
+            'avg': sum(durations) / len(durations) if durations else 0,
+            'min': min(durations) if durations else 0,
+            'max': max(durations) if durations else 0,
+            'total': sum(durations) if durations else 0
+        }
     
     return stats
 
@@ -258,8 +252,11 @@ def generate_markdown(logs: List[Dict], traces: Dict, spans: Dict, span_stats: D
             span = log.get('span_name', 'N/A')
             msg = log.get('message', '')
             level = log.get('level', 'INFO')
+            duration = log.get('duration_ms', 0)
             
-            md.append(f"{i}. [{timestamp.strftime('%H:%M:%S.%f')[:-3]}] **[{span}]** {level}: {msg}")
+            # Adicionar duração se disponível
+            duration_str = f" ({duration:.2f}ms)" if duration > 0 else ""
+            md.append(f"{i}. [{timestamp.strftime('%H:%M:%S.%f')[:-3]}] **[{span}]** {level}: {msg}{duration_str}")
         
         md.append("")
     
