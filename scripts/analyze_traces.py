@@ -11,7 +11,7 @@ from collections import defaultdict
 from typing import Dict, List, Any
 
 # Configurações
-OBSERVABILITY_API_URL = "https://szcszohdub.execute-api.sa-east-1.amazonaws.com/dev"
+OBSERVABILITY_API_URL = "https://4w4dmecaff.execute-api.sa-east-1.amazonaws.com/dev"
 SERVICE_NAME = "api-lambda-weather-forecast"
 TIME_WINDOW_MINUTES = 15  # Buscar logs dos últimos N minutos
 
