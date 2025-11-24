@@ -26,7 +26,7 @@ except ImportError:
 # Configurações
 OBSERVABILITY_API_URL = "https://4w4dmecaff.execute-api.sa-east-1.amazonaws.com/dev"
 SERVICE_NAME = "api-lambda-weather-forecast"
-TIME_WINDOW_MINUTES = 15  # Buscar logs dos últimos N minutos
+TIME_WINDOW_MINUTES = 120  # Buscar logs dos últimos N minutos
 
 def fetch_logs_from_api(minutes: int = TIME_WINDOW_MINUTES) -> List[Dict[str, Any]]:
     """Busca logs da API de observabilidade."""
