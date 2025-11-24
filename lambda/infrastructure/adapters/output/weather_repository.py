@@ -93,7 +93,7 @@ class OpenWeatherRepository(IWeatherRepository):
         forecast_item = self._select_forecast(data['list'], target_datetime)
         
         if not forecast_item:
-            raise ValueError("Nenhuma previsão disponível para a data/hora solicitada")
+            raise ValueError("Nenhuma previsão futura disponível para a data/hora solicitada")
         
         # Extrair dados da previsão selecionada
         weather_code = forecast_item['weather'][0]['id']
@@ -102,7 +102,7 @@ class OpenWeatherRepository(IWeatherRepository):
         forecast_time = datetime.fromtimestamp(forecast_item['dt'], tz=ZoneInfo("UTC"))
         
         # Gerar alertas de TODAS as previsões futuras (não apenas da selecionada)
-        weather_alerts = self._collect_all_alerts(data['list'])
+        weather_alerts = self._collect_all_alerts(data['list'], target_datetime)
         
         # Calcular temperaturas mínima e máxima do DIA INTEIRO
         temp_min_day, temp_max_day = self._get_daily_temp_extremes(data['list'], target_datetime)
@@ -128,13 +128,15 @@ class OpenWeatherRepository(IWeatherRepository):
             temp_max=temp_max_day   # Máxima do dia inteiro
         )
     
-    def _collect_all_alerts(self, forecasts: List[dict]) -> List:
+    def _collect_all_alerts(self, forecasts: List[dict], target_datetime: Optional[datetime] = None) -> List:
         """
         Coleta alertas de TODAS as previsões futuras
+        Filtra previsões passadas antes de gerar alertas (relativo ao target_datetime)
         Útil para mostrar alertas importantes dos próximos dias
         
         Args:
             forecasts: Lista completa de previsões da API
+            target_datetime: Data/hora de referência para filtro (None = agora UTC)
         
         Returns:
             Lista consolidada de alertas únicos (sem duplicatas por code)
@@ -142,7 +144,21 @@ class OpenWeatherRepository(IWeatherRepository):
         all_alerts = []
         seen_codes = set()
         
-        for forecast_item in forecasts:
+        # Determinar data/hora de referência para filtro
+        if target_datetime is None:
+            reference_datetime = datetime.now(tz=ZoneInfo("UTC"))
+        elif target_datetime.tzinfo is not None:
+            reference_datetime = target_datetime.astimezone(ZoneInfo("UTC"))
+        else:
+            reference_datetime = target_datetime.replace(tzinfo=ZoneInfo("UTC"))
+        
+        # Filtrar apenas previsões futuras relativas ao target_datetime
+        future_forecasts = [
+            f for f in forecasts
+            if datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")) >= reference_datetime
+        ]
+        
+        for forecast_item in future_forecasts:
             weather_code = forecast_item['weather'][0]['id']
             rain_prob = forecast_item.get('pop', 0) * 100
             wind_speed = forecast_item['wind']['speed'] * 3.6
@@ -189,10 +205,19 @@ class OpenWeatherRepository(IWeatherRepository):
                 target_datetime_utc = target_datetime.replace(tzinfo=ZoneInfo("UTC"))
             target_date = target_datetime_utc.date()
         
-        # Filtrar previsões do mesmo dia
+        # Determinar data/hora de referência para filtro
+        if target_datetime is None:
+            reference_datetime = datetime.now(tz=ZoneInfo("UTC"))
+        elif target_datetime.tzinfo is not None:
+            reference_datetime = target_datetime.astimezone(ZoneInfo("UTC"))
+        else:
+            reference_datetime = target_datetime.replace(tzinfo=ZoneInfo("UTC"))
+        
+        # Filtrar previsões futuras do mesmo dia (relativo ao target_datetime)
         day_forecasts = [
             f for f in forecasts
             if datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")).date() == target_date
+            and datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")) >= reference_datetime
         ]
         
         if not day_forecasts:
@@ -211,36 +236,44 @@ class OpenWeatherRepository(IWeatherRepository):
     def _select_forecast(self, forecasts: List[dict], target_datetime: Optional[datetime]) -> Optional[dict]:
         """
         Seleciona a previsão mais próxima da data/hora solicitada
+        Filtra previsões passadas para retornar apenas previsões futuras
         
         Args:
             forecasts: Lista de previsões da API
-            target_datetime: Data/hora alvo (None = primeira disponível)
+            target_datetime: Data/hora alvo (None = agora UTC)
         
         Returns:
-            Previsão selecionada ou None se não houver
+            Previsão selecionada ou None se não houver previsões futuras
         
-        Nota: Busca a previsão MAIS PRÓXIMA (antes ou depois) do horário solicitado,
-        considerando que OpenWeather fornece previsões a cada 3 horas.
+        Nota: Busca a previsão MAIS PRÓXIMA do horário solicitado,
+        considerando apenas previsões com timestamp >= target_datetime.
         """
         if not forecasts:
             return None
         
-        # Se não há data alvo, retorna a primeira previsão
+        # Determinar data/hora de referência para filtro
         if target_datetime is None:
-            return forecasts[0]
-        
-        # Converter target_datetime para UTC se tiver timezone
-        if target_datetime.tzinfo is not None:
-            target_datetime_utc = target_datetime.astimezone(ZoneInfo("UTC"))
+            reference_datetime = datetime.now(tz=ZoneInfo("UTC"))
+        elif target_datetime.tzinfo is not None:
+            reference_datetime = target_datetime.astimezone(ZoneInfo("UTC"))
         else:
-            # Se não tem timezone, assume UTC
-            target_datetime_utc = target_datetime.replace(tzinfo=ZoneInfo("UTC"))
+            reference_datetime = target_datetime.replace(tzinfo=ZoneInfo("UTC"))
+        
+        # Filtrar apenas previsões futuras (>= reference_datetime)
+        future_forecasts = [
+            f for f in forecasts
+            if datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")) >= reference_datetime
+        ]
+        
+        # Se não há previsões futuras, retornar None
+        if not future_forecasts:
+            return None
         
         # Encontra previsão MAIS PRÓXIMA usando min() com key function
         closest_forecast = min(
-            forecasts,
+            future_forecasts,
             key=lambda f: abs(
-                datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")) - target_datetime_utc
+                datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")) - reference_datetime
             ).total_seconds()
         )
         

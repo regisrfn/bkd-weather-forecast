@@ -63,7 +63,7 @@ class OpenWeatherRepository(IWeatherRepository):
         forecast_item = self._select_forecast(data['list'], target_datetime)
         
         if not forecast_item:
-            raise ValueError("Nenhuma previsão disponível para a data/hora solicitada")
+            raise ValueError("Nenhuma previsão futura disponível para a data/hora solicitada")
         
         # Extrair descrição do clima (já vem em português com lang=pt_br)
         weather_description = forecast_item.get('weather', [{}])[0].get('description', 'Sem informação')
@@ -110,36 +110,44 @@ class OpenWeatherRepository(IWeatherRepository):
     def _select_forecast(self, forecasts: List[dict], target_datetime: Optional[datetime]) -> Optional[dict]:
         """
         Seleciona a previsão mais próxima da data/hora solicitada
+        Filtra previsões passadas para retornar apenas previsões futuras
         
         Args:
             forecasts: Lista de previsões da API
-            target_datetime: Data/hora alvo (None = primeira disponível)
+            target_datetime: Data/hora alvo (None = agora UTC)
         
         Returns:
-            Previsão selecionada ou None se não houver
+            Previsão selecionada ou None se não houver previsões futuras
         
-        Nota: Busca a previsão MAIS PRÓXIMA (antes ou depois) do horário solicitado,
-        considerando que OpenWeather fornece previsões a cada 3 horas.
+        Nota: Busca a previsão MAIS PRÓXIMA do horário solicitado,
+        considerando apenas previsões com timestamp >= target_datetime.
         """
         if not forecasts:
             return None
         
-        # Se não há data alvo, retorna a primeira previsão
+        # Determinar data/hora de referência para filtro
         if target_datetime is None:
-            return forecasts[0]
-        
-        # Converter target_datetime para UTC se tiver timezone
-        if target_datetime.tzinfo is not None:
-            target_datetime_utc = target_datetime.astimezone(ZoneInfo("UTC"))
+            reference_datetime = datetime.now(tz=ZoneInfo("UTC"))
+        elif target_datetime.tzinfo is not None:
+            reference_datetime = target_datetime.astimezone(ZoneInfo("UTC"))
         else:
-            # Se não tem timezone, assume UTC
-            target_datetime_utc = target_datetime.replace(tzinfo=ZoneInfo("UTC"))
+            reference_datetime = target_datetime.replace(tzinfo=ZoneInfo("UTC"))
+        
+        # Filtrar apenas previsões futuras (>= reference_datetime)
+        future_forecasts = [
+            f for f in forecasts
+            if datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")) >= reference_datetime
+        ]
+        
+        # Se não há previsões futuras, retornar None
+        if not future_forecasts:
+            return None
         
         # Encontra previsão MAIS PRÓXIMA usando min() com key function
         closest_forecast = min(
-            forecasts,
+            future_forecasts,
             key=lambda f: abs(
-                datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")) - target_datetime_utc
+                datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")) - reference_datetime
             ).total_seconds()
         )
         
