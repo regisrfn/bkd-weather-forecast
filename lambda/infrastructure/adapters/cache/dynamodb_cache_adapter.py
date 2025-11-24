@@ -1,6 +1,7 @@
 """
 Output Adapter: Implementação do Cache Repository usando DynamoDB
 Armazena respostas completas da API OpenWeather com TTL de 3 horas
+Otimizado com serialização JSON nativa (sem TypeSerializer)
 """
 import os
 import json
@@ -12,7 +13,6 @@ from decimal import Decimal
 import boto3
 from botocore.config import Config
 from botocore.exceptions import ClientError, BotoCoreError
-from boto3.dynamodb.types import TypeDeserializer, TypeSerializer
 from ddtrace import tracer
 
 from application.ports.output.cache_repository_port import ICacheRepository
@@ -20,15 +20,27 @@ from application.ports.output.cache_repository_port import ICacheRepository
 
 logger = logging.getLogger(__name__)
 
-# Instâncias globais para (de)serialização nativa DynamoDB
-serializer = TypeSerializer()
-deserializer = TypeDeserializer()
+
+class DecimalEncoder(json.JSONEncoder):
+    """Encoder JSON customizado para converter Decimal em float"""
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            return float(obj)
+        return super(DecimalEncoder, self).default(obj)
+
+
+class DecimalEncoder(json.JSONEncoder):
+    """Encoder JSON customizado para converter Decimal em float"""
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            return float(obj)
+        return super(DecimalEncoder, self).default(obj)
 
 
 def python_to_dynamodb(obj):
     """
     Converte tipos Python para DynamoDB-safe (floats -> Decimal)
-    Mais rápido que conversão recursiva manual pois só converte floats
+    Usado apenas para garantir compatibilidade com DynamoDB
     """
     if isinstance(obj, float):
         return Decimal(str(obj))
@@ -36,20 +48,6 @@ def python_to_dynamodb(obj):
         return {k: python_to_dynamodb(v) for k, v in obj.items()}
     elif isinstance(obj, list):
         return [python_to_dynamodb(item) for item in obj]
-    return obj
-
-
-def dynamodb_to_python(obj):
-    """
-    Converte Decimal de DynamoDB para float Python
-    Mais rápido que deserialização manual item por item
-    """
-    if isinstance(obj, Decimal):
-        return float(obj)
-    elif isinstance(obj, dict):
-        return {k: dynamodb_to_python(v) for k, v in obj.items()}
-    elif isinstance(obj, list):
-        return [dynamodb_to_python(item) for item in obj]
     return obj
 
 
@@ -98,11 +96,11 @@ class DynamoDBCacheAdapter(ICacheRepository):
         
         if self.enabled:
             try:
-                # Config com connection pooling para reduzir latência
+                # Config com connection pooling otimizado (150 conexões, timeouts 1s)
                 config = Config(
-                    max_pool_connections=50,
-                    connect_timeout=2,
-                    read_timeout=2
+                    max_pool_connections=500,
+                    connect_timeout=1,
+                    read_timeout=1
                 )
                 self.dynamodb_client = boto3.client(
                     'dynamodb',
@@ -142,19 +140,21 @@ class DynamoDBCacheAdapter(ICacheRepository):
                 logger.debug(f"Cache MISS: cidade {city_id}")
                 return None
             
-            # Deserializar item usando TypeDeserializer
-            item = {k: deserializer.deserialize(v) for k, v in response['Item'].items()}
+            # Deserializar usando JSON nativo (mais rápido que TypeDeserializer)
+            item = response['Item']
             
-            # Verificar se TTL ainda é válido (DynamoDB pode demorar para excluir)
-            ttl = item.get('ttl')
+            # Verificar TTL (DynamoDB pode demorar para excluir itens expirados)
+            ttl = int(item['ttl']['N']) if 'ttl' in item else None
             if ttl and ttl < int(datetime.now(timezone.utc).timestamp()):
                 logger.debug(f"Cache EXPIRED: cidade {city_id}")
                 return None
             
             logger.info(f"Cache HIT: cidade {city_id}")
-            # Converter Decimals para float antes de retornar
-            data = item.get('data')
-            return dynamodb_to_python(data) if data else None
+            # Parse JSON string diretamente (bem mais rápido)
+            data_json = item.get('data', {}).get('S')
+            if data_json:
+                return json.loads(data_json)
+            return None
             
         except ClientError as e:
             logger.error(f"Erro DynamoDB ao buscar cache: {e.response['Error']['Code']} - {e}")
@@ -186,13 +186,13 @@ class DynamoDBCacheAdapter(ICacheRepository):
             now = datetime.now(timezone.utc)
             ttl_timestamp = int(now.timestamp()) + ttl_seconds
             
-            # Converter floats para Decimal antes de serializar (DynamoDB não aceita float)
-            data_safe = python_to_dynamodb(data)
+            # Serializar data como JSON string (muito mais rápido que TypeSerializer)
+            data_json = json.dumps(data, cls=DecimalEncoder, separators=(',', ':'))
             
-            # Serializar usando TypeSerializer
+            # Item com serialização JSON nativa
             item = {
                 'cityId': {'S': city_id},
-                'data': serializer.serialize(data_safe),
+                'data': {'S': data_json},
                 'ttl': {'N': str(ttl_timestamp)},
                 'createdAt': {'S': now.isoformat()}
             }

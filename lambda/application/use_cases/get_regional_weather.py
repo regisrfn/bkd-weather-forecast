@@ -63,7 +63,7 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
                 return None
         
         # Executar requisições em paralelo (máximo 10 threads simultâneas)
-        with ThreadPoolExecutor(max_workers=10) as executor:
+        with ThreadPoolExecutor(max_workers=100) as executor:
             # Submeter todas as tarefas
             future_to_city = {executor.submit(fetch_city_weather, city_id): city_id 
                              for city_id in city_ids}
