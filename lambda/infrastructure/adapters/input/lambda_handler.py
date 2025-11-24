@@ -7,11 +7,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, CORSConfig
-from aws_lambda_powertools.logging import correlation_paths
 from aws_lambda_powertools.utilities.typing import LambdaContext
-
-# Observability
-from shared.tracing import trace_operation, set_trace_id, get_trace_id
 
 # Application Layer - Use Cases
 from application.use_cases.get_neighbor_cities import GetNeighborCitiesUseCase
@@ -40,7 +36,6 @@ get_regional_weather_use_case = GetRegionalWeatherUseCase(city_repository, weath
 
 
 @app.get("/api/cities/neighbors/<city_id>")
-@trace_operation("api_get_neighbors")
 def get_neighbors_route(city_id: str):
     """
     GET /api/cities/neighbors/{cityId}?radius=50
@@ -80,7 +75,6 @@ def get_neighbors_route(city_id: str):
 
 
 @app.get("/api/weather/city/<city_id>")
-@trace_operation("api_get_city_weather")
 def get_city_weather_route(city_id: str):
     """
     GET /api/weather/city/{cityId}?date=2025-11-20&time=15:00
@@ -161,7 +155,6 @@ def get_city_weather_route(city_id: str):
 
 
 @app.post("/api/weather/regional")
-@trace_operation("api_post_regional_weather")
 def post_regional_weather_route():
     """
     POST /api/weather/regional?date=2025-11-20&time=15:00
@@ -244,7 +237,7 @@ def post_regional_weather_route():
         }
 
 
-@logger.inject_lambda_context(correlation_id_path=correlation_paths.API_GATEWAY_REST)
+@logger.inject_lambda_context()
 def lambda_handler(event, context: LambdaContext):
     """
     Função Lambda principal
@@ -255,7 +248,11 @@ def lambda_handler(event, context: LambdaContext):
     - Serialização JSON
     - Error handling
     - Logging estruturado
-    - Correlation ID para tracing
+    
+    Datadog APM gerencia:
+    - Distributed tracing
+    - Performance monitoring
+    - Custom metrics
     
     Rotas disponíveis:
     - GET  /api/cities/neighbors/{cityId}?radius=50
@@ -267,18 +264,6 @@ def lambda_handler(event, context: LambdaContext):
     - time: HH:MM (ex: 15:00)
     - Se omitidos, retorna próxima previsão disponível
     """
-    # Sincronizar trace_id com correlation_id do Powertools
-    # O Powertools já extrai correlation_id do API Gateway request_id
-    try:
-        correlation_id = logger.get_correlation_id()
-        if correlation_id:
-            set_trace_id(correlation_id)
-            logger.append_keys(trace_id=correlation_id)
-    except Exception:
-        # Se não houver correlation_id, gerar novo trace_id
-        trace_id = get_trace_id()
-        logger.append_keys(trace_id=trace_id)
-    
     response = app.resolve(event, context)
     
     # Adicionar headers CORS manualmente

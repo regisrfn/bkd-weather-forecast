@@ -5,6 +5,7 @@ Usa o municipalities_db.json como fonte de dados
 import json
 from pathlib import Path
 from typing import Dict, List, Optional
+from ddtrace import tracer
 from domain.entities.city import City
 from application.ports.output.city_repository_port import ICityRepository
 
@@ -73,6 +74,7 @@ class MunicipalitiesRepository(ICityRepository):
             longitude=data.get('longitude')
         )
     
+    @tracer.wrap(service="weather-forecast", resource="repository.get_city_by_id")
     def get_by_id(self, city_id: str) -> Optional[City]:
         """Busca município por ID (O(1))"""
         data = self._index_by_id.get(city_id)
@@ -103,6 +105,7 @@ class MunicipalitiesRepository(ICityRepository):
         """Retorna todos os municípios"""
         return [self._dict_to_entity(data) for data in self._data]
     
+    @tracer.wrap(service="weather-forecast", resource="repository.get_with_coordinates")
     def get_with_coordinates(self) -> List[City]:
         """Retorna apenas municípios com coordenadas"""
         return [

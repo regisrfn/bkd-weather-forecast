@@ -8,6 +8,9 @@
 pytest==8.3.4
 pytest-cov==6.0.0
 
+# Datadog para desenvolvimento local
+ddtrace==4.0.0
+
 # Ferramentas de análise e visualização
 matplotlib==3.9.2
 numpy==2.1.3

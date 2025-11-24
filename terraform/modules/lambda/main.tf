@@ -53,6 +53,25 @@ resource "aws_iam_role_policy" "dynamodb_cache_policy" {
   })
 }
 
+# Policy inline para Secrets Manager (Datadog API Key)
+resource "aws_iam_role_policy" "secrets_manager_policy" {
+  name = "${var.function_name}-secrets-manager"
+  role = aws_iam_role.lambda_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ]
+        Resource = var.datadog_api_key_secret_arn
+      }
+    ]
+  })
+}
+
 # Políticas adicionais (opcional)
 resource "aws_iam_role_policy_attachment" "additional_policies" {
   for_each = toset(var.additional_policy_arns)
@@ -80,9 +99,31 @@ resource "aws_lambda_function" "main" {
   timeout         = var.timeout
   memory_size     = var.memory_size
   description     = var.description
+  
+  # Datadog Lambda Layers (Python + Extension)
+  layers = [
+    var.datadog_layer_arn,
+    var.datadog_extension_layer_arn
+  ]
 
   environment {
-    variables = var.environment_variables
+    variables = merge(
+      var.environment_variables,
+      {
+        # Datadog Configuration
+        DD_API_KEY_SECRET_ARN = var.datadog_api_key_secret_arn
+        DD_SITE               = var.datadog_site
+        DD_SERVICE            = "weather-forecast"
+        DD_ENV                = var.datadog_env
+        DD_VERSION            = var.datadog_version
+        DD_TRACE_ENABLED      = "true"
+        DD_LOGS_INJECTION     = "true"
+        DD_LAMBDA_HANDLER     = "infrastructure.adapters.input.lambda_handler.lambda_handler"
+        DD_SERVICE_MAPPING    = "dynamodb:weather-cache"
+        DD_FLUSH_TO_LOG       = "false"
+        DD_SERVERLESS_LOGS_ENABLED = "true"
+      }
+    )
   }
 
   dynamic "vpc_config" {

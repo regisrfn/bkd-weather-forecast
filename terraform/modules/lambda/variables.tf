@@ -82,3 +82,35 @@ variable "aws_region" {
   type        = string
   default     = "sa-east-1"
 }
+
+# Datadog Configuration
+variable "datadog_api_key_secret_arn" {
+  description = "ARN do secret no Secrets Manager contendo a API key do Datadog"
+  type        = string
+}
+
+variable "datadog_layer_arn" {
+  description = "ARN do Lambda Layer do Datadog"
+  type        = string
+}
+
+variable "datadog_extension_layer_arn" {
+  description = "ARN do Datadog Lambda Extension Layer"
+  type        = string
+}
+
+variable "datadog_site" {
+  description = "Site do Datadog"
+  type        = string
+  default     = "datadoghq.com"
+}
+
+variable "datadog_env" {
+  description = "Environment tag para Datadog"
+  type        = string
+}
+
+variable "datadog_version" {
+  description = "Version tag para Datadog"
+  type        = string
+}

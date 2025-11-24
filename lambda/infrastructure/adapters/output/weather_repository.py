@@ -8,6 +8,7 @@ import logging
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from typing import Optional, List
+from ddtrace import tracer
 from domain.entities.weather import Weather
 from application.ports.output.weather_repository_port import IWeatherRepository
 from application.ports.output.cache_repository_port import ICacheRepository
@@ -33,6 +34,7 @@ class OpenWeatherRepository(IWeatherRepository):
         if not self.api_key:
             raise ValueError("OPENWEATHER_API_KEY não configurada")
     
+    @tracer.wrap(service="weather-forecast", resource="repository.get_current_weather")
     def get_current_weather(self, latitude: float, longitude: float, city_name: str, 
                            target_datetime: Optional[datetime] = None) -> Weather:
         """

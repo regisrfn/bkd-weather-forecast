@@ -9,14 +9,9 @@ from datetime import datetime, timezone
 from typing import Optional, Dict, Any
 from functools import lru_cache
 from decimal import Decimal
-
-try:
-    import boto3
-    from botocore.exceptions import ClientError, BotoCoreError
-    BOTO3_AVAILABLE = True
-except ImportError:
-    BOTO3_AVAILABLE = False
-    logging.warning("boto3 não disponível - cache DynamoDB desabilitado")
+import boto3
+from botocore.exceptions import ClientError, BotoCoreError
+from ddtrace import tracer
 
 from application.ports.output.cache_repository_port import ICacheRepository
 
@@ -95,7 +90,7 @@ class DynamoDBCacheAdapter(ICacheRepository):
         self.dynamodb = None
         self.table = None
         
-        if self.enabled and BOTO3_AVAILABLE:
+        if self.enabled:
             try:
                 self.dynamodb = boto3.resource('dynamodb', region_name=self.region_name)
                 self.table = self.dynamodb.Table(self.table_name)
@@ -103,14 +98,12 @@ class DynamoDBCacheAdapter(ICacheRepository):
             except Exception as e:
                 logger.error(f"Erro ao inicializar DynamoDB: {e}")
                 self.enabled = False
-        elif self.enabled and not BOTO3_AVAILABLE:
-            logger.warning("Cache habilitado mas boto3 não disponível")
-            self.enabled = False
     
     def is_enabled(self) -> bool:
         """Verifica se cache está habilitado e operacional"""
         return self.enabled and self.table is not None
     
+    @tracer.wrap(service="weather-forecast", resource="cache.get")
     def get(self, city_id: str) -> Optional[Dict[str, Any]]:
         """
         Busca dados do cache
@@ -151,6 +144,7 @@ class DynamoDBCacheAdapter(ICacheRepository):
             logger.error(f"Erro inesperado ao buscar cache: {e}")
             return None
     
+    @tracer.wrap(service="weather-forecast", resource="cache.set")
     def set(self, city_id: str, data: Dict[str, Any], ttl_seconds: int = None) -> bool:
         """
         Armazena dados no cache

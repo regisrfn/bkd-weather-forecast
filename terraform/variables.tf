@@ -60,12 +60,6 @@ variable "enable_api_gateway_logs" {
   default     = true
 }
 
-variable "enable_xray_tracing" {
-  description = "Habilitar AWS X-Ray tracing no API Gateway"
-  type        = bool
-  default     = false
-}
-
 variable "enable_cors" {
   description = "Habilitar CORS no API Gateway"
   type        = bool
@@ -76,4 +70,38 @@ variable "cache_table_name" {
   description = "Nome da tabela DynamoDB para cache (opcional, se null cache é desabilitado)"
   type        = string
   default     = null
+}
+
+# Datadog Configuration
+variable "datadog_api_key_secret_arn" {
+  description = "ARN do secret no Secrets Manager contendo a API key do Datadog"
+  type        = string
+}
+
+variable "datadog_layer_arn" {
+  description = "ARN do Lambda Layer do Datadog para Python 3.13"
+  type        = string
+}
+
+variable "datadog_extension_layer_arn" {
+  description = "ARN do Datadog Lambda Extension Layer"
+  type        = string
+}
+
+variable "datadog_site" {
+  description = "Site do Datadog (datadoghq.com, datadoghq.eu, etc)"
+  type        = string
+  default     = "datadoghq.com"
+}
+
+variable "datadog_env" {
+  description = "Environment tag para Datadog (dev, staging, production)"
+  type        = string
+  default     = "production"
+}
+
+variable "datadog_version" {
+  description = "Version tag para Datadog"
+  type        = string
+  default     = "1.0.0"
 }

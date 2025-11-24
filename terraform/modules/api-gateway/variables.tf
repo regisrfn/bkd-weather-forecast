@@ -38,13 +38,7 @@ variable "authorizer_id" {
 }
 
 variable "enable_access_logs" {
-  description = "Habilitar logs de acesso no CloudWatch"
-  type        = bool
-  default     = true
-}
-
-variable "enable_xray_tracing" {
-  description = "Habilitar AWS X-Ray tracing"
+  description = "Habilitar logs de acesso do API Gateway no CloudWatch"
   type        = bool
   default     = false
 }
