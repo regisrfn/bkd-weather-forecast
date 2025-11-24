@@ -23,6 +23,9 @@ from typing import Optional, Callable, Any
 # Thread-safe trace_id storage
 _trace_id_var: ContextVar[Optional[str]] = ContextVar('trace_id', default=None)
 
+# Thread-safe span stack for nested spans
+_span_stack_var: ContextVar[list] = ContextVar('span_stack', default=None)
+
 
 def get_trace_id() -> str:
     """Get current trace_id or generate new one."""
@@ -77,7 +80,13 @@ def trace_operation(span_name: str, level: str = "INFO"):
             except Exception:
                 pass
             
-            # Save previous span_name if exists (for nested decorators)
+            # Get or initialize span stack
+            span_stack = _span_stack_var.get()
+            if span_stack is None:
+                span_stack = []
+                _span_stack_var.set(span_stack)
+            
+            # Save current span_name to stack (for nested decorators)
             previous_span_name = None
             if logger:
                 try:
@@ -85,6 +94,9 @@ def trace_operation(span_name: str, level: str = "INFO"):
                     previous_span_name = current_keys.get('span_name')
                 except Exception:
                     pass
+            
+            # Push current span to stack
+            span_stack.append(span_name)
             
             # Add span context to all subsequent logs
             if logger:
@@ -125,6 +137,13 @@ def trace_operation(span_name: str, level: str = "INFO"):
                 # Calculate duration
                 duration_ms = (time.time() - start_time) * 1000
                 
+                # Add duration to logger context for application logs
+                if logger:
+                    try:
+                        logger.append_keys(span_duration_ms=duration_ms)
+                    except Exception:
+                        pass
+                
                 # Emit END marker log (will be filtered by ingestor, not saved to DynamoDB)
                 if logger:
                     try:
@@ -147,12 +166,22 @@ def trace_operation(span_name: str, level: str = "INFO"):
                     except Exception:
                         pass
                 
-                # Clean up span context
+                # Pop current span from stack
+                span_stack = _span_stack_var.get()
+                if span_stack and span_stack[-1] == span_name:
+                    span_stack.pop()
+                
+                # Clean up span context and restore parent span_name
                 if logger:
                     try:
-                        logger.remove_keys(['span_name'])
-                        # Restore previous span_name if it existed
-                        if previous_span_name:
+                        logger.remove_keys(['span_name', 'span_duration_ms'])
+                        
+                        # Restore parent span_name from stack if exists
+                        if span_stack:
+                            parent_span_name = span_stack[-1]
+                            logger.append_keys(span_name=parent_span_name)
+                        elif previous_span_name:
+                            # Fallback: restore from saved previous_span_name
                             logger.append_keys(span_name=previous_span_name)
                     except Exception:
                         pass

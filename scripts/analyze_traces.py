@@ -119,8 +119,8 @@ def calculate_span_stats(traces: Dict[str, List[Dict]]) -> Dict[str, Dict]:
     """
     Calcula estatísticas de performance por span.
     
-    Prioriza logs START/END ([SPAN_END]) com span_duration_ms quando disponíveis.
-    Fallback: calcula duração usando diferença de timestamps.
+    Prioriza span_duration_ms dos logs de aplicação (adicionado pelo decorator).
+    Fallback: calcula duração usando diferença de timestamps entre primeiro e último log.
     """
     span_durations = defaultdict(list)
     span_traces = defaultdict(set)
@@ -140,38 +140,44 @@ def calculate_span_stats(traces: Dict[str, List[Dict]]) -> Dict[str, Dict]:
             span_traces[span_name].add(trace_id)
             span_executions[span_name] += 1
             
-            # Método 1 (preferido): Procurar log [SPAN_END] com span_duration_ms
+            # Método 1 (preferido): Procurar span_duration_ms no metadata dos logs
             duration_ms = None
             for log in logs:
-                message = log.get('message', '')
                 metadata = log.get('metadata', {})
                 
-                # Verificar se é log de fim de span com duração
-                if '[SPAN_END]' in message or metadata.get('span_event') == 'end':
-                    # Tentar extrair duração do metadata primeiro
-                    if 'span_duration_ms' in metadata:
-                        duration_ms = float(metadata['span_duration_ms'])
-                        break
-                    # Fallback: extrair da mensagem
-                    elif 'duration_ms' in log:
-                        duration_ms = float(log['duration_ms'])
-                        break
+                # Verificar se o log tem span_duration_ms
+                if 'span_duration_ms' in metadata:
+                    duration_ms = float(metadata['span_duration_ms'])
+                    break
+                
+                # Fallback: verificar campo direto no log
+                if 'span_duration_ms' in log:
+                    duration_ms = float(log['span_duration_ms'])
+                    break
             
             # Método 2 (fallback): Calcular duração por diferença de timestamps
-            if duration_ms is None and len(logs) >= 2:
+            # Usar primeiro e último log com este span_name
+            if duration_ms is None and len(logs) >= 1:
                 timestamps = []
                 for log in logs:
                     ts_str = log.get('timestamp', '')
                     if ts_str:
-                        ts = datetime.fromisoformat(ts_str.replace('Z', '+00:00'))
-                        timestamps.append(ts)
+                        try:
+                            ts = datetime.fromisoformat(ts_str.replace('Z', '+00:00'))
+                            timestamps.append(ts)
+                        except Exception:
+                            pass
                 
                 if len(timestamps) >= 2:
+                    # Calcular duração entre primeiro e último log
                     min_ts = min(timestamps)
                     max_ts = max(timestamps)
                     duration_ms = (max_ts - min_ts).total_seconds() * 1000
+                elif len(timestamps) == 1:
+                    # Apenas 1 log - assumir duração mínima
+                    duration_ms = 0.0
             
-            # Se apenas 1 log ou não conseguiu calcular, duração = 0
+            # Se não conseguiu calcular, duração = 0
             if duration_ms is None:
                 duration_ms = 0.0
             
