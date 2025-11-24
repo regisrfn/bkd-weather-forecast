@@ -17,7 +17,7 @@ class GetNeighborCitiesUseCase(IGetNeighborCitiesUseCase):
     def __init__(self, city_repository: ICityRepository):
         self.city_repository = city_repository
     
-    @tracer.wrap(service="weather-forecast", resource="use_case.get_neighbor_cities")
+    @tracer.wrap(resource="use_case.get_neighbor_cities")
     def execute(self, center_city_id: str, radius: float = DEFAULT_RADIUS) -> dict:
         """
         Executa o caso de uso

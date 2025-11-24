@@ -22,8 +22,8 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
         self.city_repository = city_repository
         self.weather_repository = weather_repository
     
-    @tracer.wrap(service="weather-forecast", resource="use_case.get_regional_weather")
-    def execute(self, city_ids: List[str], target_datetime: Optional[datetime] = None) -> List[Weather]:
+    @tracer.wrap(resource="use_case.get_regional_weather")
+    def execute(self, cities: list, target_datetime: Optional[datetime] = None) -> list:
         """
         Executa o caso de uso
         

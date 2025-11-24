@@ -103,7 +103,7 @@ class DynamoDBCacheAdapter(ICacheRepository):
         """Verifica se cache está habilitado e operacional"""
         return self.enabled and self.table is not None
     
-    @tracer.wrap(service="weather-forecast", resource="cache.get")
+    @tracer.wrap(resource="cache.get")
     def get(self, city_id: str) -> Optional[Dict[str, Any]]:
         """
         Busca dados do cache
@@ -144,7 +144,7 @@ class DynamoDBCacheAdapter(ICacheRepository):
             logger.error(f"Erro inesperado ao buscar cache: {e}")
             return None
     
-    @tracer.wrap(service="weather-forecast", resource="cache.set")
+    @tracer.wrap(resource="cache.set")
     def set(self, city_id: str, data: Dict[str, Any], ttl_seconds: int = None) -> bool:
         """
         Armazena dados no cache

@@ -34,7 +34,7 @@ class OpenWeatherRepository(IWeatherRepository):
         if not self.api_key:
             raise ValueError("OPENWEATHER_API_KEY não configurada")
     
-    @tracer.wrap(service="weather-forecast", resource="repository.get_current_weather")
+    @tracer.wrap(resource="repository.get_current_weather")
     def get_current_weather(self, latitude: float, longitude: float, city_name: str, 
                            target_datetime: Optional[datetime] = None) -> Weather:
         """

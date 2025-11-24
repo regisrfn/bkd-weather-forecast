@@ -74,7 +74,7 @@ class MunicipalitiesRepository(ICityRepository):
             longitude=data.get('longitude')
         )
     
-    @tracer.wrap(service="weather-forecast", resource="repository.get_city_by_id")
+    @tracer.wrap(resource="repository.get_city_by_id")
     def get_by_id(self, city_id: str) -> Optional[City]:
         """Busca município por ID (O(1))"""
         data = self._index_by_id.get(city_id)
@@ -105,7 +105,7 @@ class MunicipalitiesRepository(ICityRepository):
         """Retorna todos os municípios"""
         return [self._dict_to_entity(data) for data in self._data]
     
-    @tracer.wrap(service="weather-forecast", resource="repository.get_with_coordinates")
+    @tracer.wrap(resource="repository.get_with_coordinates")
     def get_with_coordinates(self) -> List[City]:
         """Retorna apenas municípios com coordenadas"""
         return [
