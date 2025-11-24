@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../lambda'))
 import pytest
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
-from infrastructure.repositories.weather_repository import OpenWeatherRepository
+from infrastructure.adapters.output.weather_repository import OpenWeatherRepository
 
 
 def test_select_forecast_filters_past_forecasts():
