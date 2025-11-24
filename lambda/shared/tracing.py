@@ -15,13 +15,10 @@ Usage:
     set_trace_id(trace_id)     # Set trace_id in new context
 """
 
-import json
-import time
 import uuid
 from contextvars import ContextVar
 from functools import wraps
 from typing import Optional, Callable, Any
-from datetime import datetime
 
 # Thread-safe trace_id storage
 _trace_id_var: ContextVar[Optional[str]] = ContextVar('trace_id', default=None)
@@ -50,8 +47,8 @@ def trace_operation(span_name: str, level: str = "INFO"):
     """
     Decorator to trace operation execution with flat span model.
     
-    Emits START and END logs for each span with duration measurement.
-    Simple and clear approach without context management complexity.
+    Emits START/END marker logs for span boundaries (not persisted to DynamoDB).
+    Adds span_name and trace_id context to all application logs within the span.
     
     Args:
         span_name: Name of the span/operation (e.g., "api_get_neighbors", "db_query")
@@ -60,38 +57,57 @@ def trace_operation(span_name: str, level: str = "INFO"):
     Example:
         @trace_operation("calculate_distance")
         def calculate_distance(lat1, lon1, lat2, lon2):
+            logger.info("Calculating distance")  # Will have span_name in context
             return math.sqrt((lat2-lat1)**2 + (lon2-lon1)**2)
     """
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         def wrapper(*args, **kwargs) -> Any:
+            import time
+            from datetime import datetime
+            
             # Get or generate trace_id
             trace_id = get_trace_id()
             
-            # Get logger
+            # Get global logger instance
             logger = None
             try:
                 from aws_lambda_powertools import Logger
-                logger = Logger(child=True)
+                logger = Logger()
             except Exception:
                 pass
             
-            # Emit START log
+            # Save previous span_name if exists (for nested decorators)
+            previous_span_name = None
+            if logger:
+                try:
+                    current_keys = getattr(logger, '_keys', {})
+                    previous_span_name = current_keys.get('span_name')
+                except Exception:
+                    pass
+            
+            # Add span context to all subsequent logs
+            if logger:
+                try:
+                    logger.append_keys(span_name=span_name, trace_id=trace_id)
+                except Exception:
+                    pass
+            
+            # Emit START marker log (will be filtered by ingestor, not saved to DynamoDB)
+            start_time = time.time()
             if logger:
                 try:
                     logger.info(
-                        f"Span started: {span_name}",
+                        f"[SPAN_START] {span_name}",
                         extra={
+                            "span_marker": True,
+                            "span_event": "start",
                             "span_name": span_name,
-                            "trace_id": trace_id,
-                            "span_event": "start"
+                            "trace_id": trace_id
                         }
                     )
                 except Exception:
                     pass
-            
-            # Start timing
-            start_time = time.time()
             
             # Execute function
             error_occurred = False
@@ -109,25 +125,35 @@ def trace_operation(span_name: str, level: str = "INFO"):
                 # Calculate duration
                 duration_ms = (time.time() - start_time) * 1000
                 
-                # Emit END log with duration
+                # Emit END marker log (will be filtered by ingestor, not saved to DynamoDB)
                 if logger:
                     try:
                         status = "failed" if error_occurred else "completed"
-                        log_data = {
+                        extra_data = {
+                            "span_marker": True,
+                            "span_event": "end",
                             "span_name": span_name,
                             "trace_id": trace_id,
-                            "span_event": "end",
                             "span_duration_ms": duration_ms,
                             "status": status
                         }
-                        
                         if error_occurred and error_message:
-                            log_data["error_message"] = error_message
+                            extra_data["error_message"] = error_message
                         
                         logger.info(
-                            f"Span {status}: {span_name} ({duration_ms:.2f}ms)",
-                            extra=log_data
+                            f"[SPAN_END] {span_name} ({duration_ms:.2f}ms) [{status}]",
+                            extra=extra_data
                         )
+                    except Exception:
+                        pass
+                
+                # Clean up span context
+                if logger:
+                    try:
+                        logger.remove_keys(['span_name'])
+                        # Restore previous span_name if it existed
+                        if previous_span_name:
+                            logger.append_keys(span_name=previous_span_name)
                     except Exception:
                         pass
         
@@ -135,9 +161,7 @@ def trace_operation(span_name: str, level: str = "INFO"):
     return decorator
 
 
-# Note: Each span emits two logs:
-# 1. START log: {"span_event": "start", "span_name": "...", "trace_id": "..."}
-# 2. END log: {"span_event": "end", "span_name": "...", "trace_id": "...", "span_duration_ms": 123.45, "status": "completed|failed"}
-#
-# This simple approach avoids context management complexity and provides clear visibility
-# of span lifecycle and performance metrics.
+# Note: Span marker logs ([SPAN_START] and [SPAN_END]) are emitted to CloudWatch
+# for debugging and duration calculation, but are filtered by the ingestor and
+# NOT saved to DynamoDB (identified by span_marker=True in extra metadata).
+# This provides accurate span timing without polluting the persisted log data.

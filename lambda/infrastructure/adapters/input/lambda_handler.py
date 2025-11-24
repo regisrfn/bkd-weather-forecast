@@ -11,7 +11,7 @@ from aws_lambda_powertools.logging import correlation_paths
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
 # Observability
-from shared.tracing import trace_operation, set_trace_id
+from shared.tracing import trace_operation, set_trace_id, get_trace_id
 
 # Application Layer - Use Cases
 from application.use_cases.get_neighbor_cities import GetNeighborCitiesUseCase
@@ -267,6 +267,18 @@ def lambda_handler(event, context: LambdaContext):
     - time: HH:MM (ex: 15:00)
     - Se omitidos, retorna próxima previsão disponível
     """
+    # Sincronizar trace_id com correlation_id do Powertools
+    # O Powertools já extrai correlation_id do API Gateway request_id
+    try:
+        correlation_id = logger.get_correlation_id()
+        if correlation_id:
+            set_trace_id(correlation_id)
+            logger.append_keys(trace_id=correlation_id)
+    except Exception:
+        # Se não houver correlation_id, gerar novo trace_id
+        trace_id = get_trace_id()
+        logger.append_keys(trace_id=trace_id)
+    
     response = app.resolve(event, context)
     
     # Adicionar headers CORS manualmente
