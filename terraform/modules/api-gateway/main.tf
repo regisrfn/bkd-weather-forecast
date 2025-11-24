@@ -42,7 +42,309 @@ resource "aws_api_gateway_rest_api" "main" {
   tags = var.tags
 }
 
-# Recurso proxy para capturar todas as rotas
+# ============================================================================
+# RECURSOS E ROTAS ESPECÍFICAS
+# ============================================================================
+
+# /api
+resource "aws_api_gateway_resource" "api" {
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  parent_id   = aws_api_gateway_rest_api.main.root_resource_id
+  path_part   = "api"
+}
+
+# /api/health
+resource "aws_api_gateway_resource" "health" {
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  parent_id   = aws_api_gateway_resource.api.id
+  path_part   = "health"
+}
+
+# /api/weather
+resource "aws_api_gateway_resource" "weather" {
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  parent_id   = aws_api_gateway_resource.api.id
+  path_part   = "weather"
+}
+
+# /api/weather/city
+resource "aws_api_gateway_resource" "weather_city" {
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  parent_id   = aws_api_gateway_resource.weather.id
+  path_part   = "city"
+}
+
+# /api/weather/city/{cityId}
+resource "aws_api_gateway_resource" "weather_city_id" {
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  parent_id   = aws_api_gateway_resource.weather_city.id
+  path_part   = "{cityId}"
+}
+
+# /api/weather/regional
+resource "aws_api_gateway_resource" "weather_regional" {
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  parent_id   = aws_api_gateway_resource.weather.id
+  path_part   = "regional"
+}
+
+# /api/cities
+resource "aws_api_gateway_resource" "cities" {
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  parent_id   = aws_api_gateway_resource.api.id
+  path_part   = "cities"
+}
+
+# /api/cities/neighbors
+resource "aws_api_gateway_resource" "cities_neighbors" {
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  parent_id   = aws_api_gateway_resource.cities.id
+  path_part   = "neighbors"
+}
+
+# /api/cities/neighbors/{cityId}
+resource "aws_api_gateway_resource" "cities_neighbors_id" {
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  parent_id   = aws_api_gateway_resource.cities_neighbors.id
+  path_part   = "{cityId}"
+}
+
+# ============================================================================
+# MÉTODOS E INTEGRAÇÕES
+# ============================================================================
+
+# GET /api/health
+resource "aws_api_gateway_method" "health_get" {
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  resource_id   = aws_api_gateway_resource.health.id
+  http_method   = "GET"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "health_get" {
+  rest_api_id             = aws_api_gateway_rest_api.main.id
+  resource_id             = aws_api_gateway_resource.health.id
+  http_method             = aws_api_gateway_method.health_get.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = var.lambda_invoke_arn
+}
+
+# GET /api/weather/city/{cityId}
+resource "aws_api_gateway_method" "weather_city_get" {
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  resource_id   = aws_api_gateway_resource.weather_city_id.id
+  http_method   = "GET"
+  authorization = "NONE"
+  
+  request_parameters = {
+    "method.request.path.cityId" = true
+  }
+}
+
+resource "aws_api_gateway_integration" "weather_city_get" {
+  rest_api_id             = aws_api_gateway_rest_api.main.id
+  resource_id             = aws_api_gateway_resource.weather_city_id.id
+  http_method             = aws_api_gateway_method.weather_city_get.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = var.lambda_invoke_arn
+}
+
+# POST /api/weather/regional
+resource "aws_api_gateway_method" "weather_regional_post" {
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  resource_id   = aws_api_gateway_resource.weather_regional.id
+  http_method   = "POST"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "weather_regional_post" {
+  rest_api_id             = aws_api_gateway_rest_api.main.id
+  resource_id             = aws_api_gateway_resource.weather_regional.id
+  http_method             = aws_api_gateway_method.weather_regional_post.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = var.lambda_invoke_arn
+}
+
+# GET /api/cities/neighbors/{cityId}
+resource "aws_api_gateway_method" "cities_neighbors_get" {
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  resource_id   = aws_api_gateway_resource.cities_neighbors_id.id
+  http_method   = "GET"
+  authorization = "NONE"
+  
+  request_parameters = {
+    "method.request.path.cityId" = true
+  }
+}
+
+resource "aws_api_gateway_integration" "cities_neighbors_get" {
+  rest_api_id             = aws_api_gateway_rest_api.main.id
+  resource_id             = aws_api_gateway_resource.cities_neighbors_id.id
+  http_method             = aws_api_gateway_method.cities_neighbors_get.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = var.lambda_invoke_arn
+}
+
+# ============================================================================
+# CORS PARA ROTAS ESPECÍFICAS
+# ============================================================================
+
+# OPTIONS /api/weather/city/{cityId}
+resource "aws_api_gateway_method" "weather_city_options" {
+  count         = var.enable_cors ? 1 : 0
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  resource_id   = aws_api_gateway_resource.weather_city_id.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "weather_city_options" {
+  count       = var.enable_cors ? 1 : 0
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.weather_city_id.id
+  http_method = aws_api_gateway_method.weather_city_options[0].http_method
+  type        = "MOCK"
+
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+resource "aws_api_gateway_method_response" "weather_city_options" {
+  count       = var.enable_cors ? 1 : 0
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.weather_city_id.id
+  http_method = aws_api_gateway_method.weather_city_options[0].http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
+  }
+}
+
+resource "aws_api_gateway_integration_response" "weather_city_options" {
+  count       = var.enable_cors ? 1 : 0
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.weather_city_id.id
+  http_method = aws_api_gateway_method.weather_city_options[0].http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+  }
+}
+
+# OPTIONS /api/weather/regional
+resource "aws_api_gateway_method" "weather_regional_options" {
+  count         = var.enable_cors ? 1 : 0
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  resource_id   = aws_api_gateway_resource.weather_regional.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "weather_regional_options" {
+  count       = var.enable_cors ? 1 : 0
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.weather_regional.id
+  http_method = aws_api_gateway_method.weather_regional_options[0].http_method
+  type        = "MOCK"
+
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+resource "aws_api_gateway_method_response" "weather_regional_options" {
+  count       = var.enable_cors ? 1 : 0
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.weather_regional.id
+  http_method = aws_api_gateway_method.weather_regional_options[0].http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
+  }
+}
+
+resource "aws_api_gateway_integration_response" "weather_regional_options" {
+  count       = var.enable_cors ? 1 : 0
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.weather_regional.id
+  http_method = aws_api_gateway_method.weather_regional_options[0].http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+    "method.response.header.Access-Control-Allow-Methods" = "'POST,OPTIONS'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+  }
+}
+
+# OPTIONS /api/cities/neighbors/{cityId}
+resource "aws_api_gateway_method" "cities_neighbors_options" {
+  count         = var.enable_cors ? 1 : 0
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  resource_id   = aws_api_gateway_resource.cities_neighbors_id.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "cities_neighbors_options" {
+  count       = var.enable_cors ? 1 : 0
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.cities_neighbors_id.id
+  http_method = aws_api_gateway_method.cities_neighbors_options[0].http_method
+  type        = "MOCK"
+
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+resource "aws_api_gateway_method_response" "cities_neighbors_options" {
+  count       = var.enable_cors ? 1 : 0
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.cities_neighbors_id.id
+  http_method = aws_api_gateway_method.cities_neighbors_options[0].http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
+  }
+}
+
+resource "aws_api_gateway_integration_response" "cities_neighbors_options" {
+  count       = var.enable_cors ? 1 : 0
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.cities_neighbors_id.id
+  http_method = aws_api_gateway_method.cities_neighbors_options[0].http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+  }
+}
+
+# ============================================================================
+# RECURSO PROXY (FALLBACK PARA ROTAS NÃO MAPEADAS)
+# ============================================================================
+
+# Recurso proxy para capturar rotas não mapeadas (fallback)
 resource "aws_api_gateway_resource" "proxy" {
   rest_api_id = aws_api_gateway_rest_api.main.id
   parent_id   = aws_api_gateway_rest_api.main.root_resource_id
@@ -92,6 +394,12 @@ resource "aws_api_gateway_deployment" "main" {
   rest_api_id = aws_api_gateway_rest_api.main.id
 
   depends_on = [
+    # Rotas específicas
+    aws_api_gateway_integration.health_get,
+    aws_api_gateway_integration.weather_city_get,
+    aws_api_gateway_integration.weather_regional_post,
+    aws_api_gateway_integration.cities_neighbors_get,
+    # Proxy fallback
     aws_api_gateway_integration.lambda_proxy,
     aws_api_gateway_integration.lambda_root
   ]
@@ -102,6 +410,20 @@ resource "aws_api_gateway_deployment" "main" {
 
   triggers = {
     redeployment = sha1(jsonencode([
+      # Rotas específicas
+      aws_api_gateway_resource.health.id,
+      aws_api_gateway_method.health_get.id,
+      aws_api_gateway_integration.health_get.id,
+      aws_api_gateway_resource.weather_city_id.id,
+      aws_api_gateway_method.weather_city_get.id,
+      aws_api_gateway_integration.weather_city_get.id,
+      aws_api_gateway_resource.weather_regional.id,
+      aws_api_gateway_method.weather_regional_post.id,
+      aws_api_gateway_integration.weather_regional_post.id,
+      aws_api_gateway_resource.cities_neighbors_id.id,
+      aws_api_gateway_method.cities_neighbors_get.id,
+      aws_api_gateway_integration.cities_neighbors_get.id,
+      # Proxy fallback
       aws_api_gateway_resource.proxy.id,
       aws_api_gateway_method.proxy.id,
       aws_api_gateway_integration.lambda_proxy.id,
@@ -157,59 +479,4 @@ resource "aws_lambda_permission" "api_gateway" {
   function_name = var.lambda_function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.main.execution_arn}/*/*"
-}
-
-# CORS configuration (opcional)
-resource "aws_api_gateway_method" "options" {
-  count         = var.enable_cors ? 1 : 0
-  rest_api_id   = aws_api_gateway_rest_api.main.id
-  resource_id   = aws_api_gateway_resource.proxy.id
-  http_method   = "OPTIONS"
-  authorization = "NONE"
-}
-
-resource "aws_api_gateway_integration" "options" {
-  count       = var.enable_cors ? 1 : 0
-  rest_api_id = aws_api_gateway_rest_api.main.id
-  resource_id = aws_api_gateway_resource.proxy.id
-  http_method = aws_api_gateway_method.options[0].http_method
-  type        = "MOCK"
-
-  request_templates = {
-    "application/json" = "{\"statusCode\": 200}"
-  }
-}
-
-resource "aws_api_gateway_method_response" "options" {
-  count       = var.enable_cors ? 1 : 0
-  rest_api_id = aws_api_gateway_rest_api.main.id
-  resource_id = aws_api_gateway_resource.proxy.id
-  http_method = aws_api_gateway_method.options[0].http_method
-  status_code = "200"
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-    "method.response.header.Access-Control-Allow-Origin"  = true
-  }
-
-  response_models = {
-    "application/json" = "Empty"
-  }
-}
-
-resource "aws_api_gateway_integration_response" "options" {
-  count       = var.enable_cors ? 1 : 0
-  rest_api_id = aws_api_gateway_rest_api.main.id
-  resource_id = aws_api_gateway_resource.proxy.id
-  http_method = aws_api_gateway_method.options[0].http_method
-  status_code = aws_api_gateway_method_response.options[0].status_code
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,OPTIONS'"
-    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-  }
-
-  depends_on = [aws_api_gateway_integration.options]
 }
