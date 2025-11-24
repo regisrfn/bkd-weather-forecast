@@ -170,7 +170,9 @@ def post_regional_weather_route():
     
     # Extrair cityIds do body
     body = app.current_event.json_body
+    logger.info(f"Body recebido: {body}")
     city_ids = body.get('cityIds', [])
+    logger.info(f"city_ids extraído: {city_ids}")
     
     if not city_ids or not isinstance(city_ids, list):
         return {
@@ -216,6 +218,7 @@ def post_regional_weather_route():
             }
     
     try:
+        logger.info(f"Antes de executar use case, city_ids={city_ids}, target_datetime={target_datetime}")
         # Executar use case
         weather_list = get_regional_weather_use_case.execute(city_ids, target_datetime)
         
