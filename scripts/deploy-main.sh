@@ -223,8 +223,6 @@ REQUIRED_FILES=(
     "application/use_cases/get_city_weather.py"
     "application/use_cases/get_neighbor_cities.py"
     "application/use_cases/get_regional_weather.py"
-    "infrastructure/repositories/municipalities_repository.py"
-    "infrastructure/repositories/weather_repository.py"
     "shared/utils/haversine.py"
     "data/municipalities_db.json"
 )
