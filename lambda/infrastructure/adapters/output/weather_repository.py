@@ -35,7 +35,7 @@ class OpenWeatherRepository(IWeatherRepository):
             raise ValueError("OPENWEATHER_API_KEY não configurada")
     
     @tracer.wrap(resource="repository.get_current_weather")
-    def get_current_weather(self, latitude: float, longitude: float, city_name: str, 
+    def get_current_weather(self, city_id: str, latitude: float, longitude: float, city_name: str, 
                            target_datetime: Optional[datetime] = None) -> Weather:
         """
         Busca dados meteorológicos (previsão) do OpenWeather com Cache
@@ -47,6 +47,7 @@ class OpenWeatherRepository(IWeatherRepository):
         4. Processa dados e retorna Weather entity
         
         Args:
+            city_id: ID da cidade (usado como chave de cache)
             latitude: Latitude da cidade
             longitude: Longitude da cidade
             city_name: Nome da cidade
@@ -58,20 +59,19 @@ class OpenWeatherRepository(IWeatherRepository):
         Raises:
             Exception: Se a chamada à API falhar ou não houver dados para a data solicitada
         """
-        # Nota: cityId será preenchido pelo use case, mas não temos aqui ainda
-        # Por enquanto, usamos coordenadas como chave de cache
-        cache_key = f"{latitude:.4f}_{longitude:.4f}"
+        # Usar city_id como chave de cache (alinhado com partition key do DynamoDB)
+        cache_key = city_id
         
         # Tentar buscar do cache primeiro
         data = None
         if self.cache and self.cache.is_enabled():
             data = self.cache.get(cache_key)
             if data:
-                logger.info(f"Cache HIT para coordenadas {cache_key}")
+                logger.info(f"Cache HIT para cidade {cache_key}")
         
         # Se não encontrou no cache, chamar API
         if data is None:
-            logger.info(f"Cache MISS para coordenadas {cache_key}, chamando API")
+            logger.info(f"Cache MISS para cidade {cache_key}, chamando API")
             url = f"{self.base_url}/forecast"
             
             params = {

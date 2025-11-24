@@ -12,12 +12,13 @@ class IWeatherRepository(ABC):
     """Interface para repositório de dados meteorológicos"""
     
     @abstractmethod
-    def get_current_weather(self, latitude: float, longitude: float, city_name: str,
+    def get_current_weather(self, city_id: str, latitude: float, longitude: float, city_name: str,
                            target_datetime: Optional[datetime] = None) -> Weather:
         """
         Busca dados meteorológicos (previsão) para uma localização
         
         Args:
+            city_id: ID da cidade (usado para cache)
             latitude: Latitude da cidade
             longitude: Longitude da cidade
             city_name: Nome da cidade (para identificação)

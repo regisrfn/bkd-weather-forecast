@@ -10,7 +10,9 @@ from typing import Optional, Dict, Any
 from functools import lru_cache
 from decimal import Decimal
 import boto3
+from botocore.config import Config
 from botocore.exceptions import ClientError, BotoCoreError
+from boto3.dynamodb.types import TypeDeserializer, TypeSerializer
 from ddtrace import tracer
 
 from application.ports.output.cache_repository_port import ICacheRepository
@@ -18,31 +20,36 @@ from application.ports.output.cache_repository_port import ICacheRepository
 
 logger = logging.getLogger(__name__)
 
+# Instâncias globais para (de)serialização nativa DynamoDB
+serializer = TypeSerializer()
+deserializer = TypeDeserializer()
 
-def convert_floats_to_decimal(obj):
+
+def python_to_dynamodb(obj):
     """
-    Converte recursivamente floats para Decimal para DynamoDB
-    DynamoDB não aceita float, apenas Decimal
+    Converte tipos Python para DynamoDB-safe (floats -> Decimal)
+    Mais rápido que conversão recursiva manual pois só converte floats
     """
     if isinstance(obj, float):
         return Decimal(str(obj))
     elif isinstance(obj, dict):
-        return {k: convert_floats_to_decimal(v) for k, v in obj.items()}
+        return {k: python_to_dynamodb(v) for k, v in obj.items()}
     elif isinstance(obj, list):
-        return [convert_floats_to_decimal(item) for item in obj]
+        return [python_to_dynamodb(item) for item in obj]
     return obj
 
 
-def convert_decimal_to_float(obj):
+def dynamodb_to_python(obj):
     """
-    Converte recursivamente Decimal para float ao ler do DynamoDB
+    Converte Decimal de DynamoDB para float Python
+    Mais rápido que deserialização manual item por item
     """
     if isinstance(obj, Decimal):
         return float(obj)
     elif isinstance(obj, dict):
-        return {k: convert_decimal_to_float(v) for k, v in obj.items()}
+        return {k: dynamodb_to_python(v) for k, v in obj.items()}
     elif isinstance(obj, list):
-        return [convert_decimal_to_float(item) for item in obj]
+        return [dynamodb_to_python(item) for item in obj]
     return obj
 
 
@@ -86,22 +93,30 @@ class DynamoDBCacheAdapter(ICacheRepository):
         else:
             self.enabled = enabled
         
-        # Inicializar cliente DynamoDB
-        self.dynamodb = None
-        self.table = None
+        # Inicializar cliente DynamoDB com connection pooling otimizado
+        self.dynamodb_client = None
         
         if self.enabled:
             try:
-                self.dynamodb = boto3.resource('dynamodb', region_name=self.region_name)
-                self.table = self.dynamodb.Table(self.table_name)
-                logger.info(f"Cache DynamoDB inicializado: {self.table_name}")
+                # Config com connection pooling para reduzir latência
+                config = Config(
+                    max_pool_connections=50,
+                    connect_timeout=2,
+                    read_timeout=2
+                )
+                self.dynamodb_client = boto3.client(
+                    'dynamodb',
+                    region_name=self.region_name,
+                    config=config
+                )
+                logger.info(f"Cache DynamoDB inicializado (client): {self.table_name}")
             except Exception as e:
                 logger.error(f"Erro ao inicializar DynamoDB: {e}")
                 self.enabled = False
     
     def is_enabled(self) -> bool:
         """Verifica se cache está habilitado e operacional"""
-        return self.enabled and self.table is not None
+        return self.enabled and self.dynamodb_client is not None
     
     @tracer.wrap(resource="cache.get")
     def get(self, city_id: str) -> Optional[Dict[str, Any]]:
@@ -118,13 +133,17 @@ class DynamoDBCacheAdapter(ICacheRepository):
             return None
         
         try:
-            response = self.table.get_item(Key={'cityId': city_id})
+            response = self.dynamodb_client.get_item(
+                TableName=self.table_name,
+                Key={'cityId': {'S': city_id}}
+            )
             
             if 'Item' not in response:
                 logger.debug(f"Cache MISS: cidade {city_id}")
                 return None
             
-            item = response['Item']
+            # Deserializar item usando TypeDeserializer
+            item = {k: deserializer.deserialize(v) for k, v in response['Item'].items()}
             
             # Verificar se TTL ainda é válido (DynamoDB pode demorar para excluir)
             ttl = item.get('ttl')
@@ -133,9 +152,9 @@ class DynamoDBCacheAdapter(ICacheRepository):
                 return None
             
             logger.info(f"Cache HIT: cidade {city_id}")
-            # Converter Decimal de volta para float
+            # Converter Decimals para float antes de retornar
             data = item.get('data')
-            return convert_decimal_to_float(data) if data else None
+            return dynamodb_to_python(data) if data else None
             
         except ClientError as e:
             logger.error(f"Erro DynamoDB ao buscar cache: {e.response['Error']['Code']} - {e}")
@@ -167,17 +186,21 @@ class DynamoDBCacheAdapter(ICacheRepository):
             now = datetime.now(timezone.utc)
             ttl_timestamp = int(now.timestamp()) + ttl_seconds
             
-            # Converter floats para Decimal antes de salvar no DynamoDB
-            data_decimal = convert_floats_to_decimal(data)
+            # Converter floats para Decimal antes de serializar (DynamoDB não aceita float)
+            data_safe = python_to_dynamodb(data)
             
+            # Serializar usando TypeSerializer
             item = {
-                'cityId': city_id,
-                'data': data_decimal,
-                'ttl': ttl_timestamp,
-                'createdAt': now.isoformat()
+                'cityId': {'S': city_id},
+                'data': serializer.serialize(data_safe),
+                'ttl': {'N': str(ttl_timestamp)},
+                'createdAt': {'S': now.isoformat()}
             }
             
-            self.table.put_item(Item=item)
+            self.dynamodb_client.put_item(
+                TableName=self.table_name,
+                Item=item
+            )
             logger.info(f"Cache SET: cidade {city_id}, TTL {ttl_seconds}s")
             return True
             
@@ -202,7 +225,10 @@ class DynamoDBCacheAdapter(ICacheRepository):
             return False
         
         try:
-            self.table.delete_item(Key={'cityId': city_id})
+            self.dynamodb_client.delete_item(
+                TableName=self.table_name,
+                Key={'cityId': {'S': city_id}}
+            )
             logger.info(f"Cache DELETE: cidade {city_id}")
             return True
             

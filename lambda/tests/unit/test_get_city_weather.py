@@ -41,7 +41,7 @@ class MockCityRepository:
 class MockWeatherRepository:
     """Mock do repositório de clima"""
     
-    def get_current_weather(self, latitude, longitude, city_name, target_datetime=None):
+    def get_current_weather(self, city_id, latitude, longitude, city_name, target_datetime=None):
         return Weather(
             city_id="",
             city_name=city_name,

@@ -46,8 +46,9 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
                 if not city or not city.has_coordinates():
                     return None
                 
-                # Buscar dados climáticos
+                # Buscar dados climáticos (passar city_id para cache)
                 weather = self.weather_repository.get_current_weather(
+                    city.id,
                     city.latitude,
                     city.longitude,
                     city.name,

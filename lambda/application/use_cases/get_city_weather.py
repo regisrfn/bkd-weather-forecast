@@ -45,8 +45,9 @@ class GetCityWeatherUseCase(IGetCityWeatherUseCase):
         if not city.has_coordinates():
             raise ValueError(f'Cidade {city_id} não possui coordenadas')
         
-        # Buscar dados climáticos
+        # Buscar dados climáticos (passar city_id para cache)
         weather = self.weather_repository.get_current_weather(
+            city.id,
             city.latitude,
             city.longitude,
             city.name,
