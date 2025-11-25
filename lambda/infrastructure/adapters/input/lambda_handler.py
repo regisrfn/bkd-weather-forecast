@@ -218,7 +218,6 @@ def post_regional_weather_route():
             }
     
     try:
-        logger.info(f"Antes de executar use case, city_ids={city_ids}, target_datetime={target_datetime}")
         # Executar use case
         weather_list = get_regional_weather_use_case.execute(city_ids, target_datetime)
         
