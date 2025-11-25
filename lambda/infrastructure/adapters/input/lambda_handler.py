@@ -3,6 +3,7 @@ Input Adapter: Lambda Handler HTTP (100% ASYNC)
 Presentation Layer: gerencia requisições HTTP e delega para use cases
 """
 import json
+import asyncio
 from datetime import datetime
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, CORSConfig, Response
@@ -36,6 +37,10 @@ logger = Logger()
 
 app = APIGatewayRestResolver(cors=CORSConfig(allow_origin="*"))
 
+# =============================
+# Global Event Loop (persistente entre invocações Lambda)
+# =============================
+_global_event_loop = None
 
 # =============================
 # Exception Handlers (AWS Powertools style)
@@ -146,10 +151,8 @@ def get_neighbors_route(city_id: str):
     
     Returns center city and neighbor cities within radius
     
-    Note: AWS Powertools doesn't support async def routes, so we use asyncio.run()
+    Note: Uses persistent event loop for true client reuse
     """
-    import asyncio
-    
     logger.info("Get neighbors", city_id=city_id)
     
     # Validate city ID
@@ -175,8 +178,8 @@ def get_neighbors_route(city_id: str):
         
         return result
     
-    # Run async code
-    result = asyncio.run(execute_async())
+    # Run async code with persistent loop
+    result = run_async(execute_async())
     
     # Convert to API format
     response = {
@@ -205,10 +208,8 @@ def get_city_weather_route(city_id: str):
     - date: Date in format YYYY-MM-DD (ex: 2025-11-20)
     - time: Time in format HH:MM (ex: 15:00)
     
-    Note: AWS Powertools doesn't support async def routes, so we use asyncio.run()
+    Note: Uses persistent event loop for true client reuse
     """
-    import asyncio
-    
     logger.info("Get city weather", city_id=city_id)
     
     # Validate city ID
@@ -240,8 +241,8 @@ def get_city_weather_route(city_id: str):
             # Cleanup: close session if in a closed loop context
             pass  # Session will be recreated if needed in next invocation
     
-    # Run async code
-    weather = asyncio.run(execute_async())
+    # Run async code with persistent loop
+    weather = run_async(execute_async())
     
     # Convert to API format
     response = weather.to_api_response()
@@ -270,10 +271,8 @@ def post_regional_weather_route():
     - date: Date in format YYYY-MM-DD (ex: 2025-11-20)
     - time: Time in format HH:MM (ex: 15:00)
     
-    Note: AWS Powertools doesn't support async def routes, so we use asyncio.run()
+    Note: Uses persistent event loop for true client reuse
     """
-    import asyncio
-    
     request_start = datetime.now()
     
     logger.info("POST regional weather - ASYNC")
@@ -314,8 +313,8 @@ def post_regional_weather_route():
         
         return weather_list
     
-    # Run async code
-    weather_list = asyncio.run(execute_async())
+    # Run async code with persistent loop
+    weather_list = run_async(execute_async())
     
     # Convert to API format
     response = [weather.to_api_response() for weather in weather_list]
@@ -421,3 +420,40 @@ def lambda_handler(event, context: LambdaContext):
             })
         }
 
+
+def get_or_create_event_loop():
+    """
+    Retorna event loop global persistente
+    
+    Benefícios:
+    - Reutiliza event loop entre invocações Lambda (warm starts)
+    - Clientes aioboto3/aiohttp permanecem válidos
+    - TRUE REUSE: Mesmos clientes em múltiplas invocações
+    """
+    global _global_event_loop
+    
+    # Se loop existe e não está fechado, reutilizar
+    if _global_event_loop is not None and not _global_event_loop.is_closed():
+        logger.debug("♻️  Reusing existing event loop")
+        return _global_event_loop
+    
+    # Criar novo loop se necessário
+    logger.info("🔨 Creating new event loop")
+    _global_event_loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(_global_event_loop)
+    
+    return _global_event_loop
+
+
+def run_async(coro):
+    """
+    Executa coroutine no event loop global (NÃO fecha o loop)
+    
+    Args:
+        coro: Coroutine a ser executada
+    
+    Returns:
+        Resultado da coroutine
+    """
+    loop = get_or_create_event_loop()
+    return loop.run_until_complete(coro)

@@ -7,10 +7,9 @@ import json
 from datetime import datetime, timezone
 from typing import Optional, Dict, Any
 from decimal import Decimal
-import aioboto3
-from botocore.config import Config
 from ddtrace import tracer
 from aws_lambda_powertools import Logger
+from infrastructure.adapters.cache.dynamodb_client_manager import get_dynamodb_client_manager
 
 logger = Logger(child=True)
 
@@ -60,20 +59,12 @@ class AsyncDynamoDBCache:
         else:
             self.enabled = enabled
         
-        # aioboto3 Session (thread-safe, reutilizável)
-        self.session = aioboto3.Session()
-        
-        # Client reuse with event loop detection
-        self._client = None
-        self._client_loop = None
-        
-        # Config otimizado para client pooling
-        self.boto_config = Config(
+        # Usar gerenciador centralizado de cliente DynamoDB
+        self.client_manager = get_dynamodb_client_manager(
             region_name=self.region_name,
-            max_pool_connections=100,  # Pool grande para async
-            connect_timeout=3,         # 3s (aiohttp timeout + margem)
-            read_timeout=3,            # 3s para operações DynamoDB
-            retries={'max_attempts': 2, 'mode': 'adaptive'}
+            max_pool_connections=100,
+            connect_timeout=3,
+            read_timeout=3
         )
         
         if self.enabled:
@@ -92,61 +83,17 @@ class AsyncDynamoDBCache:
     
     async def _get_client(self):
         """
-        Obtém ou cria cliente DynamoDB - SMART REUSE with loop detection
+        Obtém cliente DynamoDB do gerenciador centralizado
         
-        Persiste cliente entre invocações Lambda (warm start) mas
-        detecta mudanças de event loop do asyncio.run() e recria quando necessário.
+        O gerenciador cuida de:
+        - Reutilizar cliente entre invocações (warm starts)
+        - Detectar mudanças de event loop
+        - Recriar cliente quando necessário
         
         Returns:
-            DynamoDB client async context manager
+            Cliente DynamoDB async
         """
-        import asyncio
-        
-        recreate_client = False
-        
-        # Check if client needs recreation
-        if self._client is None:
-            recreate_client = True
-        else:
-            # Check if event loop changed (asyncio.run creates new loop per invocation)
-            try:
-                current_loop = asyncio.get_running_loop()
-                if self._client_loop is None or self._client_loop != id(current_loop):
-                    recreate_client = True
-                    logger.info(
-                        "Event loop changed - recreating DynamoDB client",
-                        old_loop=self._client_loop,
-                        new_loop=id(current_loop)
-                    )
-            except RuntimeError:
-                recreate_client = True
-        
-        if recreate_client:
-            # Close old client if exists
-            if self._client is not None:
-                try:
-                    await self._client.__aexit__(None, None, None)
-                except:
-                    pass
-            
-            # Create new client for current event loop
-            current_loop = asyncio.get_running_loop()
-            context_manager = self.session.client(
-                'dynamodb',
-                region_name=self.region_name,
-                config=self.boto_config
-            )
-            # Enter context manager and get actual client
-            self._client = await context_manager.__aenter__()
-            self._client_loop = id(current_loop)
-            
-            logger.info(
-                "DynamoDB client created",
-                loop_id=self._client_loop,
-                table=self.table_name
-            )
-        
-        return self._client
+        return await self.client_manager.get_client()
     
     @tracer.wrap(resource="async_cache.get")
     async def get(self, city_id: str) -> Optional[Dict[str, Any]]:
@@ -483,17 +430,12 @@ class AsyncDynamoDBCache:
             return {}
     
     async def cleanup(self) -> None:
-        """Clean up resources - close DynamoDB client"""
-        if self._client is not None:
-            try:
-                # Client was obtained from __aenter__, need to close it properly
-                await self._client.close()
-                logger.info("DynamoDB client closed")
-            except Exception as e:
-                logger.warning(f"Error closing client: {e}")
-            finally:
-                self._client = None
-                self._client_loop = None
+        """
+        Cleanup - delega para o gerenciador de cliente
+        Opcional: pode ser chamado ao final de cada invocação Lambda
+        """
+        await self.client_manager.cleanup()
+        logger.info("AsyncDynamoDBCache cleanup completed")
 
 
 # Factory singleton
