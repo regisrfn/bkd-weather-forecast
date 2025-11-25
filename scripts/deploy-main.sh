@@ -220,9 +220,11 @@ REQUIRED_FILES=(
     "config.py"
     "domain/entities/city.py"
     "domain/entities/weather.py"
-    "application/use_cases/get_city_weather.py"
-    "application/use_cases/get_neighbor_cities.py"
+    "application/use_cases/async_get_city_weather.py"
+    "application/use_cases/async_get_neighbor_cities.py"
     "application/use_cases/get_regional_weather.py"
+    "infrastructure/adapters/output/async_weather_repository.py"
+    "infrastructure/adapters/cache/async_dynamodb_cache.py"
     "shared/utils/haversine.py"
     "data/municipalities_db.json"
 )

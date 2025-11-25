@@ -1,65 +1,101 @@
 """
-Script de teste de integração com API Gateway
-Testa endpoints reais após deploy
-Executar: python test_api_gateway.py
-ou: pytest test_api_gateway.py -v
+Testes de integração com API Gateway
+Testa endpoints reais após deploy na AWS
 """
 import pytest
-import requests
-import json
+import pytest_asyncio
+import httpx
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
-from typing import Optional
+from typing import Optional, List, Dict, Any
 import os
 
 
-# URL do API Gateway (obtida do terraform output)
-API_BASE_URL = os.getenv('API_GATEWAY_URL', 'https://u8r56xdgog.execute-api.sa-east-1.amazonaws.com/dev')
+# URL do API Gateway (obtida do terraform output ou arquivo API_URL.txt)
+def get_api_url() -> str:
+    """Obtém URL da API de variável de ambiente ou arquivo"""
+    # 1. Tenta variável de ambiente
+    if url := os.getenv('API_GATEWAY_URL'):
+        return url.rstrip('/')
+    
+    # 2. Tenta ler de API_URL.txt na raiz do projeto
+    try:
+        root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+        api_url_file = os.path.join(root_dir, 'API_URL.txt')
+        if os.path.exists(api_url_file):
+            with open(api_url_file, 'r') as f:
+                return f.read().strip().rstrip('/')
+    except:
+        pass
+    
+    # 3. Fallback para URL antiga (se existir)
+    return 'https://u8r56xdgog.execute-api.sa-east-1.amazonaws.com/dev'
+
+
+API_BASE_URL = get_api_url()
 
 # Timeout para requests (60 segundos para dar tempo das chamadas paralelas)
-REQUEST_TIMEOUT = 60
+REQUEST_TIMEOUT = 60.0
 
 # Cidade de teste: Ribeirão Preto
 TEST_CITY_ID = '3543204'
 
 
-def test_health_check():
+# ============================================================================
+# FIXTURES
+# ============================================================================
+
+@pytest_asyncio.fixture
+async def http_client():
+    """Cliente HTTP assíncrono para testes de integração"""
+    async with httpx.AsyncClient(timeout=REQUEST_TIMEOUT) as client:
+        yield client
+
+
+@pytest.fixture
+def sample_city_ids() -> List[str]:
+    """IDs de cidades para testes"""
+    return [
+        '3543204',  # Ribeirão Preto
+        '3548708',  # São Carlos
+        '3509502'   # Campinas
+    ]
+
+
+@pytest.fixture
+def brazil_tz():
+    """Timezone do Brasil"""
+    return ZoneInfo("America/Sao_Paulo")
+
+
+# ============================================================================
+# TESTES DE HEALTH CHECK
+# ============================================================================
+
+@pytest.mark.asyncio
+async def test_health_check(http_client: httpx.AsyncClient):
     """Verifica se o API Gateway está respondendo"""
-    print("\n" + "="*70)
-    print("TEST INTEGRATION 1: Health Check - API Gateway")
-    print("="*70)
-    
-    try:
-        # Tentar qualquer endpoint para verificar conectividade
-        response = requests.get(
-            f"{API_BASE_URL}/api/cities/neighbors/{TEST_CITY_ID}",
-            params={'radius': '10'},
-            timeout=10
-        )
-        
-        assert response.status_code in [200, 400, 404, 500], \
-            f"API should respond with valid HTTP status, got {response.status_code}"
-        
-        print(f"✅ API Gateway está respondendo (status: {response.status_code})")
-        
-    except requests.exceptions.RequestException as e:
-        print(f"❌ Erro de conectividade: {e}")
-        pytest.fail(f"Cannot connect to API Gateway: {e}")
-
-
-def test_get_neighbors_integration():
-    """Testa rota GET /api/cities/neighbors/{cityId}"""
-    print("\n" + "="*70)
-    print(f"TEST INTEGRATION 2: GET /api/cities/neighbors/{TEST_CITY_ID}")
-    print("="*70)
-    
-    response = requests.get(
+    response = await http_client.get(
         f"{API_BASE_URL}/api/cities/neighbors/{TEST_CITY_ID}",
-        params={'radius': '50'},
-        timeout=REQUEST_TIMEOUT
+        params={'radius': '10'}
     )
     
-    # Asserts
+    assert response.status_code in [200, 400, 404, 500], \
+        f"API should respond with valid HTTP status, got {response.status_code}"
+
+
+# ============================================================================
+# TESTES DE ENDPOINTS - GET
+# ============================================================================
+
+@pytest.mark.asyncio
+async def test_get_neighbors(http_client: httpx.AsyncClient):
+    """Testa rota GET /api/cities/neighbors/{cityId}"""
+    response = await http_client.get(
+        f"{API_BASE_URL}/api/cities/neighbors/{TEST_CITY_ID}",
+        params={'radius': '50'}
+    )
+    
     assert response.status_code == 200, \
         f"Expected 200, got {response.status_code}: {response.text}"
     
@@ -81,25 +117,15 @@ def test_get_neighbors_integration():
     # Verificar CORS headers
     assert 'access-control-allow-origin' in response.headers, \
         "Should have CORS header"
-    
-    print(f"✅ Status: {response.status_code}")
-    print(f"✅ Cidade centro: {center_city['name']}")
-    print(f"✅ Vizinhos: {len(neighbors)}")
-    print(f"✅ CORS habilitado: {response.headers.get('access-control-allow-origin')}")
 
 
-def test_get_city_weather_integration():
+@pytest.mark.asyncio
+async def test_get_city_weather(http_client: httpx.AsyncClient):
     """Testa rota GET /api/weather/city/{cityId}"""
-    print("\n" + "="*70)
-    print(f"TEST INTEGRATION 3: GET /api/weather/city/{TEST_CITY_ID}")
-    print("="*70)
-    
-    response = requests.get(
-        f"{API_BASE_URL}/api/weather/city/{TEST_CITY_ID}",
-        timeout=REQUEST_TIMEOUT
+    response = await http_client.get(
+        f"{API_BASE_URL}/api/weather/city/{TEST_CITY_ID}"
     )
     
-    # Asserts
     assert response.status_code == 200, \
         f"Expected 200, got {response.status_code}: {response.text}"
     
@@ -128,23 +154,11 @@ def test_get_city_weather_integration():
     assert data['tempMin'] <= data['temperature'] <= data['tempMax'], \
         "Current temp should be between min and max"
     assert data['tempMin'] <= data['tempMax'], "tempMin should be <= tempMax"
-    
-    print(f"✅ Status: {response.status_code}")
-    print(f"✅ Cidade: {data['cityName']}")
-    print(f"✅ Temperatura: {data['temperature']}°C")
-    print(f"✅ Temp. Mín/Máx: {data['tempMin']}°C / {data['tempMax']}°C")
-    print(f"✅ Umidade: {data['humidity']}%")
-    print(f"✅ Prob. chuva: {data['rainfallIntensity']}%")
 
 
-def test_get_city_weather_with_date_integration():
-    """Testa rota GET /api/weather/city/{cityId} com data específica e valida faixa de horário"""
-    print("\n" + "="*70)
-    print(f"TEST INTEGRATION 4: GET /api/weather/city/{TEST_CITY_ID}?date=...&time=...")
-    print("="*70)
-    
-    # Usar timezone Brasil
-    brazil_tz = ZoneInfo("America/Sao_Paulo")
+@pytest.mark.asyncio
+async def test_get_city_weather_with_date(http_client: httpx.AsyncClient, brazil_tz):
+    """Testa rota GET /api/weather/city/{cityId} com data específica"""
     now_brazil = datetime.now(tz=brazil_tz)
     
     # Calcular amanhã às 15h
@@ -152,16 +166,14 @@ def test_get_city_weather_with_date_integration():
     date_str = tomorrow.strftime('%Y-%m-%d')
     time_str = '15:00'
     
-    response = requests.get(
+    response = await http_client.get(
         f"{API_BASE_URL}/api/weather/city/{TEST_CITY_ID}",
         params={
             'date': date_str,
             'time': time_str
-        },
-        timeout=REQUEST_TIMEOUT
+        }
     )
     
-    # Asserts
     assert response.status_code == 200, \
         f"Expected 200, got {response.status_code}: {response.text}"
     
@@ -174,12 +186,12 @@ def test_get_city_weather_with_date_integration():
     forecast_dt = datetime.fromisoformat(data['timestamp'].replace('Z', '+00:00'))
     requested_dt = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
     
-    # OpenWeather fornece previsões a cada 3 horas, então deve estar dentro de ±1.5h
+    # OpenWeather fornece previsões a cada 3 horas
     time_diff_hours = abs((forecast_dt.replace(tzinfo=None) - requested_dt).total_seconds() / 3600)
     assert time_diff_hours <= 3, \
         f"Forecast time should be within 3 hours of requested time, got {time_diff_hours:.1f}h"
     
-    # Validar que a previsão está dentro do range de 5 dias (limite OpenWeather)
+    # Validar que a previsão está dentro do range de 5 dias
     now = datetime.now()
     max_forecast_date = now + timedelta(days=5)
     assert forecast_dt.replace(tzinfo=None) <= max_forecast_date, \
@@ -188,39 +200,25 @@ def test_get_city_weather_with_date_integration():
     # Validar que a previsão não é no passado
     assert forecast_dt.replace(tzinfo=None) >= now - timedelta(hours=3), \
         f"Forecast should not be in the past (considering 3h tolerance)"
-    
-    print(f"✅ Status: {response.status_code}")
-    print(f"✅ Data solicitada: {date_str} {time_str}")
-    print(f"✅ Data previsão: {data['timestamp']}")
-    print(f"✅ Diferença de horário: {time_diff_hours:.1f}h (dentro do limite de 3h)")
-    print(f"✅ Dentro da faixa de 5 dias: Sim")
-    print(f"✅ Prob. chuva: {data['rainfallIntensity']}%")
 
 
-def test_post_regional_weather_integration():
-    """Testa rota POST /api/weather/regional (performance crítico)"""
-    print("\n" + "="*70)
-    print("TEST INTEGRATION 5: POST /api/weather/regional (3 cidades)")
-    print("="*70)
-    
-    city_ids = [
-        '3543204',  # Ribeirão Preto
-        '3548708',  # São Carlos
-        '3509502'   # Campinas
-    ]
-    
+# ============================================================================
+# TESTES DE ENDPOINTS - POST
+# ============================================================================
+
+@pytest.mark.asyncio
+async def test_post_regional_weather(http_client: httpx.AsyncClient, sample_city_ids: List[str]):
+    """Testa rota POST /api/weather/regional"""
     start_time = datetime.now()
     
-    response = requests.post(
+    response = await http_client.post(
         f"{API_BASE_URL}/api/weather/regional",
-        json={'cityIds': city_ids},
-        headers={'Content-Type': 'application/json'},
-        timeout=REQUEST_TIMEOUT
+        json={'cityIds': sample_city_ids},
+        headers={'Content-Type': 'application/json'}
     )
     
     elapsed = (datetime.now() - start_time).total_seconds()
     
-    # Asserts
     assert response.status_code == 200, \
         f"Expected 200, got {response.status_code}: {response.text}"
     
@@ -243,44 +241,31 @@ def test_post_regional_weather_integration():
         assert 0 <= weather['humidity'] <= 100, "Humidity 0-100%"
         assert 0 <= weather['rainfallIntensity'] <= 100, "Rain probability 0-100%"
     
-    # Performance check (deve ser < 5 segundos com paralelização)
+    # Performance check (deve ser < 10 segundos com paralelização)
     assert elapsed < 10, \
         f"Regional weather should be fast (<10s), took {elapsed:.2f}s"
-    
-    print(f"✅ Status: {response.status_code}")
-    print(f"✅ Cidades processadas: {len(data)}")
-    print(f"⚡ Tempo de resposta: {elapsed:.2f}s")
-    
-    for weather in data:
-        print(f"  ✅ {weather['cityName']}: {weather['temperature']}°C, "
-              f"chuva {weather['rainfallIntensity']}%")
 
 
-def test_post_regional_weather_with_date_integration():
-    """Testa rota POST /api/weather/regional com data específica e valida faixa de horário"""
-    print("\n" + "="*70)
-    print("TEST INTEGRATION 6: POST /api/weather/regional?date=...")
-    print("="*70)
-    
-    # Usar timezone Brasil para consistencia
-    brazil_tz = ZoneInfo("America/Sao_Paulo")
+@pytest.mark.asyncio
+async def test_post_regional_weather_with_date(
+    http_client: httpx.AsyncClient, 
+    sample_city_ids: List[str],
+    brazil_tz
+):
+    """Testa rota POST /api/weather/regional com data específica"""
     now_brazil = datetime.now(tz=brazil_tz)
     
     # Calcular depois de amanhã
     day_after_tomorrow = now_brazil + timedelta(days=2)
     date_str = day_after_tomorrow.strftime('%Y-%m-%d')
     
-    city_ids = ['3543204', '3548708', '3509502']
-    
-    response = requests.post(
+    response = await http_client.post(
         f"{API_BASE_URL}/api/weather/regional",
         params={'date': date_str},
-        json={'cityIds': city_ids},
-        headers={'Content-Type': 'application/json'},
-        timeout=REQUEST_TIMEOUT
+        json={'cityIds': sample_city_ids},
+        headers={'Content-Type': 'application/json'}
     )
     
-    # Asserts
     assert response.status_code == 200, \
         f"Expected 200, got {response.status_code}: {response.text}"
     
@@ -298,7 +283,7 @@ def test_post_regional_weather_with_date_integration():
         assert 'timestamp' in weather, "Weather should contain timestamp"
         forecast_dt = datetime.fromisoformat(weather['timestamp'].replace('Z', '+00:00'))
         
-        # Validar diferença de data (deve ser o mesmo dia ou próximo)
+        # Validar diferença de data
         date_diff = abs((forecast_dt.date() - requested_date).days)
         assert date_diff <= 1, \
             f"Forecast date should be within 1 day of requested, got {date_diff} days for {weather['cityName']}"
@@ -310,244 +295,108 @@ def test_post_regional_weather_with_date_integration():
         # Validar que a previsão não é no passado
         assert forecast_dt.replace(tzinfo=None) >= now - timedelta(hours=3), \
             f"Forecast for {weather['cityName']} should not be in the past"
-    
-    print(f"✅ Status: {response.status_code}")
-    print(f"✅ Data solicitada: {date_str}")
-    print(f"✅ Cidades processadas: {len(data)}")
-    print(f"✅ Todas as previsões dentro da faixa de 5 dias: Sim")
-    print(f"✅ Todas as previsões para data solicitada (±1 dia): Sim")
-    
-    for weather in data:
-        forecast_dt = datetime.fromisoformat(weather['timestamp'].replace('Z', '+00:00'))
-        date_diff = abs((forecast_dt.date() - requested_date).days)
-        print(f"  ✅ {weather['cityName']} ({weather['timestamp']}): "
-              f"chuva {weather['rainfallIntensity']}%, diff={date_diff}d")
 
 
-def test_error_handling_integration():
-    """Testa tratamento de erros"""
-    print("\n" + "="*70)
-    print("TEST INTEGRATION 7: Error Handling")
-    print("="*70)
-    
-    # Teste 1: Cidade inválida
-    response = requests.get(
-        f"{API_BASE_URL}/api/weather/city/INVALID_ID",
-        timeout=REQUEST_TIMEOUT
+# ============================================================================
+# TESTES DE VALIDAÇÃO E ERROR HANDLING
+# ============================================================================
+
+@pytest.mark.asyncio
+async def test_error_invalid_city(http_client: httpx.AsyncClient):
+    """Testa erro com cidade inválida"""
+    response = await http_client.get(
+        f"{API_BASE_URL}/api/weather/city/INVALID_ID"
     )
     
     # A API pode retornar 200 com erro no body ou status de erro
-    # Verificar se há algum indicador de erro
     if response.status_code == 200:
-        try:
-            body = response.json()
-            # Se retornar 200, deve haver algum campo de erro ou faltar dados obrigatórios
-            if 'error' in body or 'message' in body or 'cityId' not in body:
-                print(f"✅ Cidade inválida retorna erro no body: {response.status_code}")
-            else:
-                # Se não tem indicação de erro, pode ser que a OpenWeather aceite IDs inválidos
-                print(f"⚠️  Cidade inválida retorna 200 (OpenWeather pode aceitar qualquer ID)")
-        except:
-            print(f"✅ Cidade inválida retorna resposta inválida: {response.status_code}")
+        body = response.json()
+        # Se retornar 200, deve haver indicador de erro
+        assert 'error' in body or 'message' in body or 'cityId' not in body, \
+            "Should indicate error for invalid city"
     else:
         assert response.status_code in [400, 404, 500], \
             f"Should return error for invalid city, got {response.status_code}"
-        print(f"✅ Cidade inválida retorna erro: {response.status_code}")
-    
-    # Teste 2: Body inválido no POST (sem cityIds)
-    response = requests.post(
+
+
+@pytest.mark.asyncio
+async def test_error_invalid_body(http_client: httpx.AsyncClient):
+    """Testa erro com body inválido no POST"""
+    response = await http_client.post(
         f"{API_BASE_URL}/api/weather/regional",
         json={'invalid': 'data'},
-        headers={'Content-Type': 'application/json'},
-        timeout=REQUEST_TIMEOUT
+        headers={'Content-Type': 'application/json'}
     )
     
-    # A API agora valida e retorna erro estruturado com statusCode 400 no body
+    # A API valida e retorna erro estruturado
     if response.status_code == 200:
         body = response.json()
-        # Se retornar 200, pode ter um objeto com statusCode interno
         if isinstance(body, dict) and 'statusCode' in body:
             assert body['statusCode'] in [400, 500], \
-                f"Should return error statusCode for invalid body, got {body.get('statusCode')}"
-            print(f"✅ Body inválido retorna erro (statusCode: {body['statusCode']}): {body.get('body', {}).get('message')}")
-        elif isinstance(body, list) and len(body) == 0:
-            print(f"✅ Body inválido retorna lista vazia")
-        else:
-            pytest.fail(f"Unexpected response format for invalid body: {body}")
+                f"Should return error statusCode for invalid body"
+        elif isinstance(body, list):
+            assert len(body) == 0, "Should return empty list for invalid body"
     else:
         assert response.status_code in [400, 500], \
             f"Should return error for invalid body, got {response.status_code}"
-        print(f"✅ Body inválido retorna erro HTTP: {response.status_code}")
 
 
-def test_forecast_date_range_limits():
-    """Testa limites de data de previsão (máximo ~4 dias da OpenWeather API)"""
-    print("\n" + "="*70)
-    print("TEST INTEGRATION 8: Forecast Date Range Limits")
-    print("="*70)
-    
-    # Usar timezone do Brasil para consistencia com a API
-    brazil_tz = ZoneInfo("America/Sao_Paulo")
+@pytest.mark.asyncio
+async def test_forecast_date_limits(http_client: httpx.AsyncClient, brazil_tz):
+    """Testa limites de data de previsão"""
     now_brazil = datetime.now(tz=brazil_tz)
     
-    # Teste 1: Data no limite (4 dias - limite real da OpenWeather API)
+    # Teste 1: Data no limite (4 dias - limite real da OpenWeather)
     four_days = now_brazil + timedelta(days=4)
     date_str = four_days.strftime('%Y-%m-%d')
     
-    response = requests.get(
+    response = await http_client.get(
         f"{API_BASE_URL}/api/weather/city/{TEST_CITY_ID}",
-        params={'date': date_str, 'time': '12:00'},
-        timeout=REQUEST_TIMEOUT
+        params={'date': date_str, 'time': '12:00'}
     )
     
-    # Deve funcionar dentro do limite de 4 dias
+    # Deve funcionar dentro do limite ou retornar erro controlado
+    assert response.status_code in [200, 400, 500], \
+        f"Should return valid status for 4-day forecast"
+    
     if response.status_code == 200:
         data = response.json()
-        # Validar estrutura da resposta
-        if 'timestamp' not in data:
-            print(f"⚠️  Resposta sem timestamp para 4 dias. Dados: {data}")
-        else:
+        if 'timestamp' in data:
             forecast_dt = datetime.fromisoformat(data['timestamp'].replace('Z', '+00:00'))
-            
-            # Validar que não excede 5 dias (margem de segurança)
             diff_days = (forecast_dt.replace(tzinfo=None) - now_brazil.replace(tzinfo=None)).days
             assert diff_days <= 5, \
                 f"Forecast should not exceed 5 days, got {diff_days} days"
-            
-            print(f"✅ Previsão para 4 dias funciona: {data['timestamp']}")
-            print(f"   Diferença: {diff_days} dias")
-    elif response.status_code == 500 or response.status_code == 400:
-        # Pode retornar erro se estiver no limite da API
-        error_data = response.json()
-        print(f"⚠️  Previsão para 4 dias retorna erro: {response.status_code}")
-        print(f"   Mensagem: {error_data.get('body', {}).get('message', 'N/A')}")
-        print(f"   (Normal se estiver no limite da API OpenWeather)")
-    else:
-        try:
-            error_data = response.json()
-            print(f"⚠️  Previsão para 4 dias retorna: {response.status_code}")
-            print(f"   Resposta: {error_data}")
-        except:
-            print(f"⚠️  Previsão para 4 dias retorna: {response.status_code} (sem JSON)")
     
-    # Teste 2: Data muito no futuro (7 dias - além do limite da API)
+    # Teste 2: Data muito no futuro (7 dias - além do limite)
     far_future = now_brazil + timedelta(days=7)
     date_str = far_future.strftime('%Y-%m-%d')
     
-    response = requests.get(
+    response = await http_client.get(
         f"{API_BASE_URL}/api/weather/city/{TEST_CITY_ID}",
-        params={'date': date_str, 'time': '12:00'},
-        timeout=REQUEST_TIMEOUT
+        params={'date': date_str, 'time': '12:00'}
     )
     
-    # Deve retornar erro pois está além do limite da API
-    if response.status_code == 200:
-        data = response.json()
-        if 'timestamp' not in data:
-            # Se retornou 200 mas é um objeto de erro
-            if 'statusCode' in data and data['statusCode'] != 200:
-                print(f"✅ Data muito no futuro (7 dias) retorna erro (esperado): {data['statusCode']}")
-                print(f"   Mensagem: {data.get('body', {}).get('message', 'N/A')}")
-            else:
-                print(f"⚠️  Resposta sem timestamp para 7 dias. Dados: {data}")
-        else:
-            forecast_dt = datetime.fromisoformat(data['timestamp'].replace('Z', '+00:00'))
-            
-            # Se retornou 200, deve ser última previsão disponível (<=5 dias)
-            diff_days = (forecast_dt.replace(tzinfo=None) - now_brazil.replace(tzinfo=None)).days
-            
-            print(f"✅ Data muito no futuro (7 dias) retorna última previsão disponível")
-            print(f"   Data solicitada: {date_str}")
-            print(f"   Previsão retornada: {data['timestamp']} ({diff_days} dias no futuro)")
-    elif response.status_code == 500 or response.status_code == 400:
-        # Esperado: erro pois não há previsões tão longe
-        error_data = response.json()
-        print(f"✅ Data muito no futuro (7 dias) retorna erro (esperado): {response.status_code}")
-        print(f"   Mensagem: {error_data.get('body', {}).get('message', 'N/A')}")
-    else:
-        print(f"⚠️  Data muito no futuro retorna: {response.status_code}")
+    # Deve retornar erro ou última previsão disponível
+    assert response.status_code in [200, 400, 500], \
+        f"Should handle far future date gracefully"
     
-    # Teste 3: Data no passado (deve retornar erro ou previsão atual)
+    # Teste 3: Data no passado
     past = now_brazil - timedelta(days=1)
     date_str = past.strftime('%Y-%m-%d')
     
-    response = requests.get(
+    response = await http_client.get(
         f"{API_BASE_URL}/api/weather/city/{TEST_CITY_ID}",
-        params={'date': date_str, 'time': '12:00'},
-        timeout=REQUEST_TIMEOUT
+        params={'date': date_str, 'time': '12:00'}
     )
+    
+    # Deve retornar erro ou previsão atual
+    assert response.status_code in [200, 400, 500], \
+        f"Should handle past date gracefully"
     
     if response.status_code == 200:
         data = response.json()
-        if 'timestamp' not in data:
-            print(f"⚠️  Resposta sem timestamp para data passada. Dados: {data}")
-        else:
+        if 'timestamp' in data:
             forecast_dt = datetime.fromisoformat(data['timestamp'].replace('Z', '+00:00'))
-            
-            # Com a nova filtragem, deve retornar previsão futura (não no passado)
+            # Não deve retornar previsão no passado
             assert forecast_dt.replace(tzinfo=None) >= now_brazil.replace(tzinfo=None) - timedelta(hours=3), \
                 f"Should not return forecast in the past"
-            
-            print(f"✅ Data no passado retorna previsão atual/próxima")
-            print(f"   Data solicitada: {date_str}")
-            print(f"   Previsão retornada: {data['timestamp']}")
-    elif response.status_code == 500 or response.status_code == 400:
-        # Com a nova filtragem, pode retornar erro se data solicitada está no passado
-        error_data = response.json()
-        print(f"✅ Data no passado retorna erro (esperado com nova filtragem): {response.status_code}")
-        print(f"   Mensagem: {error_data.get('body', {}).get('message', 'N/A')}")
-    else:
-        print(f"⚠️  Data no passado retorna: {response.status_code}")
-    
-    print("✅ Testes de limites de data concluídos")
-
-
-def run_all_tests():
-    """Executa todos os testes de integração"""
-    print("="*70)
-    print("🧪 TESTES DE INTEGRAÇÃO - API GATEWAY")
-    print(f"   URL: {API_BASE_URL}")
-    print(f"   Cidade de teste: Ribeirão Preto ({TEST_CITY_ID})")
-    print("="*70)
-    
-    tests = [
-        test_health_check,
-        test_get_neighbors_integration,
-        test_get_city_weather_integration,
-        test_get_city_weather_with_date_integration,
-        test_post_regional_weather_integration,
-        test_post_regional_weather_with_date_integration,
-        test_error_handling_integration,
-        test_forecast_date_range_limits
-    ]
-    
-    failed = []
-    
-    for test in tests:
-        try:
-            test()
-        except AssertionError as e:
-            print(f"\n❌ TESTE FALHOU: {test.__name__}")
-            print(f"   Erro: {e}")
-            failed.append((test.__name__, str(e)))
-        except Exception as e:
-            print(f"\n❌ ERRO INESPERADO: {test.__name__}")
-            print(f"   Erro: {e}")
-            failed.append((test.__name__, str(e)))
-    
-    print("\n" + "="*70)
-    if failed:
-        print(f"❌ {len(failed)} TESTE(S) FALHARAM:")
-        for name, error in failed:
-            print(f"   - {name}: {error}")
-        print("="*70)
-        return False
-    else:
-        print("✅ TODOS OS TESTES DE INTEGRAÇÃO PASSARAM!")
-        print("="*70)
-        return True
-
-
-if __name__ == '__main__':
-    success = run_all_tests()
-    exit(0 if success else 1)

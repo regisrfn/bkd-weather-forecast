@@ -1,10 +1,11 @@
-"""Application Use Cases"""
-from .get_neighbor_cities import GetNeighborCitiesUseCase
-from .get_city_weather import GetCityWeatherUseCase
-from .get_regional_weather import GetRegionalWeatherUseCase
+"""Application Use Cases - 100% ASYNC"""
+from .async_get_neighbor_cities import AsyncGetNeighborCitiesUseCase
+from .async_get_city_weather import AsyncGetCityWeatherUseCase
+from .get_regional_weather import AsyncGetRegionalWeatherUseCase
 
 __all__ = [
-    'GetNeighborCitiesUseCase',
-    'GetCityWeatherUseCase',
-    'GetRegionalWeatherUseCase'
+    'AsyncGetNeighborCitiesUseCase',
+    'AsyncGetCityWeatherUseCase',
+    'AsyncGetRegionalWeatherUseCase'
 ]
+
