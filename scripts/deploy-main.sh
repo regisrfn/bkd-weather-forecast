@@ -81,16 +81,27 @@ if [ -f ".env" ]; then
 fi
 
 # ============================================
-# FASE 1: Testes Unitários (Pré-Build)
+# FASE 1: Testes Pré-Build (Unit + Lambda Integration)
 # ============================================
-echo -e "\n${YELLOW}🧪 FASE 1: Testes Unitários (Pré-Build)${NC}"
+echo -e "\n${YELLOW}🧪 FASE 1: Testes Pré-Build${NC}"
 echo "========================================"
 
+# Testes unitários
+echo -e "${BLUE}→ Executando testes unitários...${NC}"
 if bash scripts/run_tests.sh unit; then
-    echo -e "${GREEN}✅ Todos os testes unitários passaram!${NC}"
+    echo -e "${GREEN}✅ Testes unitários passaram!${NC}"
 else
     echo -e "${RED}❌ Testes unitários falharam! Deploy cancelado.${NC}"
     exit 1
+fi
+
+# Testes de integração Lambda (identificam problemas async/event loop)
+echo -e "\n${BLUE}→ Executando testes de integração Lambda...${NC}"
+if bash scripts/run_tests.sh lambda; then
+    echo -e "${GREEN}✅ Testes de integração Lambda passaram!${NC}"
+else
+    echo -e "${YELLOW}⚠️  Testes de integração Lambda falharam!${NC}"
+    echo -e "${YELLOW}   Continuando deploy mas verifique os logs...${NC}"
 fi
 
 # ============================================

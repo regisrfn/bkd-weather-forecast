@@ -29,13 +29,18 @@ echo ""
 
 if [ "$1" == "unit" ]; then
     python -m pytest lambda/tests/unit/ -v
+elif [ "$1" == "lambda" ]; then
+    python -m pytest lambda/tests/integration/test_lambda_integration.py -v
 elif [ "$1" == "integration" ]; then
     python -m pytest lambda/tests/integration/ -v
 elif [ "$1" == "all" ]; then
     echo "=== TESTES UNITÁRIOS ==="
     python -m pytest lambda/tests/unit/ -v
     echo ""
-    echo "=== TESTES DE INTEGRAÇÃO ==="
+    echo "=== TESTES DE INTEGRAÇÃO LAMBDA ==="
+    python -m pytest lambda/tests/integration/test_lambda_integration.py -v
+    echo ""
+    echo "=== TESTES DE INTEGRAÇÃO API ==="
     python -m pytest lambda/tests/integration/ -v
 else
     # Se nenhum argumento, executar todos
