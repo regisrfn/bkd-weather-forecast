@@ -22,7 +22,7 @@ DEFAULT_RADIUS = 50
 CACHE_TTL = 300  # Legacy - não usado
 CACHE_TTL_SECONDS = int(os.environ.get('CACHE_TTL_SECONDS', '10800'))  # 3 horas
 CACHE_ENABLED = os.environ.get('CACHE_ENABLED', 'true').lower() in ('true', '1', 'yes')
-CACHE_TABLE_NAME = os.environ.get('CACHE_TABLE_NAME', 'weather-forecast-cache')
+CACHE_TABLE_NAME = os.environ.get('CACHE_TABLE_NAME', 'weather-forecast-cache-prod')
 
 # AWS
 AWS_REGION = os.environ.get('AWS_REGION', 'sa-east-1')

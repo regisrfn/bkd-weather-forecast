@@ -63,12 +63,17 @@ class AsyncDynamoDBCache:
         # aioboto3 Session (thread-safe, reutilizável)
         self.session = aioboto3.Session()
         
-        # Config otimizado para baixa latência
+        # Client reuse with event loop detection
+        self._client = None
+        self._client_loop = None
+        
+        # Config otimizado para client pooling
         self.boto_config = Config(
+            region_name=self.region_name,
             max_pool_connections=100,  # Pool grande para async
-            connect_timeout=1,
-            read_timeout=1,
-            retries={'max_attempts': 1, 'mode': 'standard'}
+            connect_timeout=3,         # 3s (aiohttp timeout + margem)
+            read_timeout=3,            # 3s para operações DynamoDB
+            retries={'max_attempts': 2, 'mode': 'adaptive'}
         )
         
         if self.enabled:
@@ -84,6 +89,64 @@ class AsyncDynamoDBCache:
     def is_enabled(self) -> bool:
         """Verifica se cache está habilitado"""
         return self.enabled
+    
+    async def _get_client(self):
+        """
+        Obtém ou cria cliente DynamoDB - SMART REUSE with loop detection
+        
+        Persiste cliente entre invocações Lambda (warm start) mas
+        detecta mudanças de event loop do asyncio.run() e recria quando necessário.
+        
+        Returns:
+            DynamoDB client async context manager
+        """
+        import asyncio
+        
+        recreate_client = False
+        
+        # Check if client needs recreation
+        if self._client is None:
+            recreate_client = True
+        else:
+            # Check if event loop changed (asyncio.run creates new loop per invocation)
+            try:
+                current_loop = asyncio.get_running_loop()
+                if self._client_loop is None or self._client_loop != id(current_loop):
+                    recreate_client = True
+                    logger.info(
+                        "Event loop changed - recreating DynamoDB client",
+                        old_loop=self._client_loop,
+                        new_loop=id(current_loop)
+                    )
+            except RuntimeError:
+                recreate_client = True
+        
+        if recreate_client:
+            # Close old client if exists
+            if self._client is not None:
+                try:
+                    await self._client.__aexit__(None, None, None)
+                except:
+                    pass
+            
+            # Create new client for current event loop
+            current_loop = asyncio.get_running_loop()
+            context_manager = self.session.client(
+                'dynamodb',
+                region_name=self.region_name,
+                config=self.boto_config
+            )
+            # Enter context manager and get actual client
+            self._client = await context_manager.__aenter__()
+            self._client_loop = id(current_loop)
+            
+            logger.info(
+                "DynamoDB client created",
+                loop_id=self._client_loop,
+                table=self.table_name
+            )
+        
+        return self._client
     
     @tracer.wrap(resource="async_cache.get")
     async def get(self, city_id: str) -> Optional[Dict[str, Any]]:
@@ -103,57 +166,53 @@ class AsyncDynamoDBCache:
         start_time = datetime.now()
         
         try:
-            async with self.session.client(
-                'dynamodb',
-                region_name=self.region_name,
-                config=self.boto_config
-            ) as client:
-                response = await client.get_item(
-                    TableName=self.table_name,
-                    Key={'cityId': {'S': city_id}},
-                    ConsistentRead=False  # Eventual consistency (2x mais rápido)
-                )
-                
-                # Cache MISS
-                if 'Item' not in response:
-                    elapsed_ms = (datetime.now() - start_time).total_seconds() * 1000
-                    logger.debug(
-                        "Cache MISS",
-                        city_id=city_id,
-                        latency_ms=f"{elapsed_ms:.1f}"
-                    )
-                    return None
-                
-                item = response['Item']
-                
-                # Verificar TTL
-                ttl = int(item['ttl']['N']) if 'ttl' in item else None
-                if ttl and ttl < int(datetime.now(timezone.utc).timestamp()):
-                    elapsed_ms = (datetime.now() - start_time).total_seconds() * 1000
-                    logger.debug(
-                        "Cache EXPIRED",
-                        city_id=city_id,
-                        latency_ms=f"{elapsed_ms:.1f}"
-                    )
-                    return None
-                
-                # Parse JSON data
-                data_json = item.get('data', {}).get('S')
-                if not data_json:
-                    logger.warning("Cache HIT but no data", city_id=city_id)
-                    return None
-                
-                data = json.loads(data_json)
+            client = await self._get_client()
+            response = await client.get_item(
+                TableName=self.table_name,
+                Key={'cityId': {'S': city_id}},
+                ConsistentRead=False  # Eventual consistency (2x mais rápido)
+            )
+            
+            # Cache MISS
+            if 'Item' not in response:
                 elapsed_ms = (datetime.now() - start_time).total_seconds() * 1000
-                
-                logger.info(
-                    "Cache HIT",
+                logger.debug(
+                    "Cache MISS",
                     city_id=city_id,
-                    latency_ms=f"{elapsed_ms:.1f}",
-                    size_bytes=len(data_json)
+                    latency_ms=f"{elapsed_ms:.1f}"
                 )
-                
-                return data
+                return None
+            
+            item = response['Item']
+            
+            # Verificar TTL
+            ttl = int(item['ttl']['N']) if 'ttl' in item else None
+            if ttl and ttl < int(datetime.now(timezone.utc).timestamp()):
+                elapsed_ms = (datetime.now() - start_time).total_seconds() * 1000
+                logger.debug(
+                    "Cache EXPIRED",
+                    city_id=city_id,
+                    latency_ms=f"{elapsed_ms:.1f}"
+                )
+                return None
+            
+            # Parse JSON data
+            data_json = item.get('data', {}).get('S')
+            if not data_json:
+                logger.warning("Cache HIT but no data", city_id=city_id)
+                return None
+            
+            data = json.loads(data_json)
+            elapsed_ms = (datetime.now() - start_time).total_seconds() * 1000
+            
+            logger.info(
+                "Cache HIT",
+                city_id=city_id,
+                latency_ms=f"{elapsed_ms:.1f}",
+                size_bytes=len(data_json)
+            )
+            
+            return data
         
         except Exception as e:
             elapsed_ms = (datetime.now() - start_time).total_seconds() * 1000
@@ -207,15 +266,11 @@ class AsyncDynamoDBCache:
                 'createdAt': {'S': now.isoformat()}
             }
             
-            async with self.session.client(
-                'dynamodb',
-                region_name=self.region_name,
-                config=self.boto_config
-            ) as client:
-                await client.put_item(
-                    TableName=self.table_name,
-                    Item=item
-                )
+            client = await self._get_client()
+            await client.put_item(
+                TableName=self.table_name,
+                Item=item
+            )
             
             elapsed_ms = (datetime.now() - start_time).total_seconds() * 1000
             
@@ -245,15 +300,11 @@ class AsyncDynamoDBCache:
             return False
         
         try:
-            async with self.session.client(
-                'dynamodb',
-                region_name=self.region_name,
-                config=self.boto_config
-            ) as client:
-                await client.delete_item(
-                    TableName=self.table_name,
-                    Key={'cityId': {'S': city_id}}
-                )
+            client = await self._get_client()
+            await client.delete_item(
+                TableName=self.table_name,
+                Key={'cityId': {'S': city_id}}
+            )
             
             logger.info("Cache DELETE", city_id=city_id)
             return True
@@ -287,19 +338,15 @@ class AsyncDynamoDBCache:
                 
                 keys = [{'cityId': {'S': city_id}} for city_id in batch]
                 
-                async with self.session.client(
-                    'dynamodb',
-                    region_name=self.region_name,
-                    config=self.boto_config
-                ) as client:
-                    response = await client.batch_get_item(
-                        RequestItems={
-                            self.table_name: {
-                                'Keys': keys,
-                                'ConsistentRead': False
-                            }
+                client = await self._get_client()
+                response = await client.batch_get_item(
+                    RequestItems={
+                        self.table_name: {
+                            'Keys': keys,
+                            'ConsistentRead': False
                         }
-                    )
+                    }
+                )
                 
                 # Processar resultados
                 items = response.get('Responses', {}).get(self.table_name, [])
@@ -338,6 +385,19 @@ class AsyncDynamoDBCache:
                 latency_ms=f"{elapsed_ms:.1f}"
             )
             return {}
+    
+    async def cleanup(self) -> None:
+        """Clean up resources - close DynamoDB client"""
+        if self._client is not None:
+            try:
+                # Client was obtained from __aenter__, need to close it properly
+                await self._client.close()
+                logger.info("DynamoDB client closed")
+            except Exception as e:
+                logger.warning(f"Error closing client: {e}")
+            finally:
+                self._client = None
+                self._client_loop = None
 
 
 # Factory singleton
