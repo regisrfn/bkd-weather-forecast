@@ -274,7 +274,8 @@ def lambda_handler(event, context: LambdaContext):
         response['headers'] = {}
     
     response['headers']['Access-Control-Allow-Origin'] = '*'
-    response['headers']['Access-Control-Allow-Headers'] = 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'
+    response['headers']['Access-Control-Allow-Headers'] = 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Requested-With'
     response['headers']['Access-Control-Allow-Methods'] = 'GET,POST,OPTIONS'
+    response['headers']['Access-Control-Max-Age'] = '86400'
     
     return response

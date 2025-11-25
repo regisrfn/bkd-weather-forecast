@@ -193,6 +193,59 @@ resource "aws_api_gateway_integration" "cities_neighbors_get" {
 # CORS PARA ROTAS ESPECÍFICAS
 # ============================================================================
 
+# OPTIONS /api/health
+resource "aws_api_gateway_method" "health_options" {
+  count         = var.enable_cors ? 1 : 0
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  resource_id   = aws_api_gateway_resource.health.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "health_options" {
+  count       = var.enable_cors ? 1 : 0
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.health.id
+  http_method = aws_api_gateway_method.health_options[0].http_method
+  type        = "MOCK"
+
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+resource "aws_api_gateway_method_response" "health_options" {
+  count       = var.enable_cors ? 1 : 0
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.health.id
+  http_method = aws_api_gateway_method.health_options[0].http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Max-Age"       = true
+  }
+}
+
+resource "aws_api_gateway_integration_response" "health_options" {
+  count       = var.enable_cors ? 1 : 0
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.health.id
+  http_method = aws_api_gateway_method.health_options[0].http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Requested-With'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Max-Age"       = "'86400'"
+  }
+
+  depends_on = [aws_api_gateway_method_response.health_options]
+}
+
 # OPTIONS /api/weather/city/{cityId}
 resource "aws_api_gateway_method" "weather_city_options" {
   count         = var.enable_cors ? 1 : 0
@@ -225,6 +278,7 @@ resource "aws_api_gateway_method_response" "weather_city_options" {
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
     "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Max-Age"       = true
   }
 }
 
@@ -236,10 +290,13 @@ resource "aws_api_gateway_integration_response" "weather_city_options" {
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Requested-With'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Max-Age"       = "'86400'"
   }
+
+  depends_on = [aws_api_gateway_method_response.weather_city_options]
 }
 
 # OPTIONS /api/weather/regional
@@ -274,6 +331,7 @@ resource "aws_api_gateway_method_response" "weather_regional_options" {
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
     "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Max-Age"       = true
   }
 }
 
@@ -285,10 +343,13 @@ resource "aws_api_gateway_integration_response" "weather_regional_options" {
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Requested-With'"
     "method.response.header.Access-Control-Allow-Methods" = "'POST,OPTIONS'"
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Max-Age"       = "'86400'"
   }
+
+  depends_on = [aws_api_gateway_method_response.weather_regional_options]
 }
 
 # OPTIONS /api/cities/neighbors/{cityId}
@@ -323,6 +384,7 @@ resource "aws_api_gateway_method_response" "cities_neighbors_options" {
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
     "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Max-Age"       = true
   }
 }
 
@@ -334,10 +396,13 @@ resource "aws_api_gateway_integration_response" "cities_neighbors_options" {
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Requested-With'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Max-Age"       = "'86400'"
   }
+
+  depends_on = [aws_api_gateway_method_response.cities_neighbors_options]
 }
 
 # ============================================================================
@@ -399,6 +464,11 @@ resource "aws_api_gateway_deployment" "main" {
     aws_api_gateway_integration.weather_city_get,
     aws_api_gateway_integration.weather_regional_post,
     aws_api_gateway_integration.cities_neighbors_get,
+    # CORS integrations
+    aws_api_gateway_integration_response.health_options,
+    aws_api_gateway_integration_response.weather_city_options,
+    aws_api_gateway_integration_response.weather_regional_options,
+    aws_api_gateway_integration_response.cities_neighbors_options,
     # Proxy fallback
     aws_api_gateway_integration.lambda_proxy,
     aws_api_gateway_integration.lambda_root
@@ -429,6 +499,8 @@ resource "aws_api_gateway_deployment" "main" {
       aws_api_gateway_integration.lambda_proxy.id,
       aws_api_gateway_method.proxy_root.id,
       aws_api_gateway_integration.lambda_root.id,
+      # CORS configuration hash
+      var.enable_cors,
     ]))
   }
 }
