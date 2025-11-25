@@ -294,6 +294,102 @@ class AsyncDynamoDBCache:
             )
             return False
     
+    async def batch_set(
+        self,
+        items: Dict[str, Dict[str, Any]],
+        ttl_seconds: Optional[int] = None
+    ) -> Dict[str, bool]:
+        """
+        Armazena múltiplos itens no cache usando BatchWriteItem
+        
+        Args:
+            items: Dict com {city_id: data}
+            ttl_seconds: TTL customizado (usa default se None)
+        
+        Returns:
+            Dict com {city_id: success}
+        """
+        if not self.is_enabled() or not items:
+            return {city_id: False for city_id in items.keys()}
+        
+        if ttl_seconds is None:
+            ttl_seconds = self.default_ttl
+        
+        start_time = datetime.now()
+        results = {}
+        
+        try:
+            now = datetime.now(timezone.utc)
+            ttl_timestamp = int(now.timestamp()) + ttl_seconds
+            
+            # DynamoDB BatchWriteItem aceita até 25 itens por request
+            batch_size = 25
+            city_ids = list(items.keys())
+            
+            for i in range(0, len(city_ids), batch_size):
+                batch_city_ids = city_ids[i:i + batch_size]
+                
+                # Preparar requests
+                write_requests = []
+                for city_id in batch_city_ids:
+                    data = items[city_id]
+                    data_json = json.dumps(data, cls=DecimalEncoder, separators=(',', ':'))
+                    
+                    write_requests.append({
+                        'PutRequest': {
+                            'Item': {
+                                'cityId': {'S': city_id},
+                                'data': {'S': data_json},
+                                'ttl': {'N': str(ttl_timestamp)},
+                                'createdAt': {'S': now.isoformat()}
+                            }
+                        }
+                    })
+                
+                # Executar batch write
+                client = await self._get_client()
+                response = await client.batch_write_item(
+                    RequestItems={
+                        self.table_name: write_requests
+                    }
+                )
+                
+                # Verificar itens não processados
+                unprocessed = response.get('UnprocessedItems', {})
+                unprocessed_keys = []
+                if self.table_name in unprocessed:
+                    unprocessed_keys = [
+                        req['PutRequest']['Item']['cityId']['S']
+                        for req in unprocessed[self.table_name]
+                    ]
+                
+                # Marcar resultados
+                for city_id in batch_city_ids:
+                    results[city_id] = city_id not in unprocessed_keys
+            
+            elapsed_ms = (datetime.now() - start_time).total_seconds() * 1000
+            success_count = sum(1 for v in results.values() if v)
+            
+            logger.info(
+                "Batch SET",
+                requested=len(items),
+                saved=success_count,
+                failed=len(items) - success_count,
+                latency_ms=f"{elapsed_ms:.1f}"
+            )
+            
+            return results
+        
+        except Exception as e:
+            elapsed_ms = (datetime.now() - start_time).total_seconds() * 1000
+            logger.error(
+                "Batch SET error",
+                requested=len(items),
+                error=str(e)[:200],
+                latency_ms=f"{elapsed_ms:.1f}"
+            )
+            return {city_id: False for city_id in items.keys()}
+    
     async def delete(self, city_id: str) -> bool:
         """Remove entrada do cache"""
         if not self.is_enabled():
@@ -310,7 +406,7 @@ class AsyncDynamoDBCache:
             return True
         
         except Exception as e:
-            logger.error("Cache DELETE error", city_id=city_id, error=str(e))
+            logger.error("Cache DELETE error", city_id=city_id, error=str(e)[:100])
             return False
     
     async def batch_get(self, city_ids: list[str]) -> Dict[str, Dict[str, Any]]:

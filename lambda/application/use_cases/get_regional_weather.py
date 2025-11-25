@@ -167,7 +167,7 @@ class AsyncGetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
             List of Weather entities
         """
         
-        async def fetch_city_weather(city_id: str, index: int) -> Optional[Weather]:
+        async def fetch_city_weather(city_id: str, index: int):
             """
             Fetch weather data for ONE city asynchronously from API
             
@@ -176,7 +176,7 @@ class AsyncGetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
                 index: Index in list (for logs)
             
             Returns:
-                Weather entity or None if error
+                Tuple (Weather, cache_key, raw_data) or None if error
             """
             city_start = datetime.now()
             
@@ -198,13 +198,12 @@ class AsyncGetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
                 
                 # Get weather data (ASYNC - no GIL)
                 # skip_cache_check=True porque já fizemos batch lookup antes
-                weather = await self.weather_repository.get_current_weather(
+                weather, cache_key, raw_data = await self.weather_repository.get_current_weather_with_cache_data(
                     city.id,
                     city.latitude,
                     city.longitude,
                     city.name,
-                    target_datetime,
-                    skip_cache_check=True  # Já sabemos que é MISS do batch
+                    target_datetime
                 )
                 
                 weather.city_id = city.id
@@ -219,7 +218,7 @@ class AsyncGetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
                     latency_ms=f"{city_elapsed:.1f}"
                 )
                 
-                return weather
+                return (weather, cache_key, raw_data)
             
             except Exception as e:
                 city_elapsed = (datetime.now() - city_start).total_seconds() * 1000
@@ -251,19 +250,34 @@ class AsyncGetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
         
         results = await asyncio.gather(*tasks, return_exceptions=True)
         
-        # Filter only successful results (Weather entities)
+        # Filter valid results and prepare cache data
         weather_data = []
+        cache_items = []
         exceptions_count = 0
         
         for result in results:
-            if isinstance(result, Weather):
-                weather_data.append(result)
+            if isinstance(result, tuple) and len(result) == 3:
+                weather_obj, cache_key, raw_data = result
+                weather_data.append(weather_obj)
+                if cache_key and raw_data:
+                    cache_items.append((cache_key, raw_data))
             elif isinstance(result, Exception):
                 exceptions_count += 1
                 logger.debug("Exception caught", error=str(result))
         
         if exceptions_count > 0:
             logger.warning("Exceptions caught during gather", count=exceptions_count)
+        
+        logger.info(
+            "API fetch completed",
+            requested=len(city_ids),
+            success=len(weather_data),
+            failed=len(city_ids) - len(weather_data)
+        )
+        
+        # 💾 Batch save to cache
+        if cache_items:
+            await self.weather_repository.batch_save_weather_to_cache(cache_items)
         
         return weather_data
     
