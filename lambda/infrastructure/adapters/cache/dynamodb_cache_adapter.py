@@ -96,11 +96,15 @@ class DynamoDBCacheAdapter(ICacheRepository):
         
         if self.enabled:
             try:
-                # Config com connection pooling otimizado (150 conexões, timeouts 1s)
+                # Config com connection pooling otimizado e timeouts adequados
                 config = Config(
                     max_pool_connections=500,
-                    connect_timeout=1,
-                    read_timeout=1
+                    connect_timeout=2,      # 2s para estabelecer conexão
+                    read_timeout=3,         # 3s para leitura (DynamoDB p99 < 1s)
+                    retries={
+                        'max_attempts': 2,  # Apenas 1 retry
+                        'mode': 'adaptive'  # Adapta baseado em throttling
+                    }
                 )
                 self.dynamodb_client = boto3.client(
                     'dynamodb',
@@ -133,7 +137,8 @@ class DynamoDBCacheAdapter(ICacheRepository):
         try:
             response = self.dynamodb_client.get_item(
                 TableName=self.table_name,
-                Key={'cityId': {'S': city_id}}
+                Key={'cityId': {'S': city_id}},
+                ConsistentRead=True  # Leitura fortemente consistente (mais rápida e confiável)
             )
             
             if 'Item' not in response:
