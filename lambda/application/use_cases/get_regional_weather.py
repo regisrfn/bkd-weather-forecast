@@ -90,6 +90,11 @@ class AsyncGetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
         """
         Fetch weather data for all cities in parallel
         
+        Strategy:
+        1. Batch cache lookup (1 DynamoDB call for all cities) - FAST ⚡
+        2. For cache MISSes: parallel API calls with semaphore
+        3. Batch cache write for API results
+        
         Args:
             city_ids: City IDs
             target_datetime: Target datetime
@@ -98,9 +103,73 @@ class AsyncGetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
             List of Weather entities (only successful)
         """
         
+        # 🎯 STEP 1: Batch cache lookup (1 call, ~50ms for 100 cities)
+        batch_start = datetime.now()
+        cache_results = await self.weather_repository.batch_get_weather_from_cache(city_ids)
+        batch_elapsed = (datetime.now() - batch_start).total_seconds() * 1000
+        
+        logger.info(
+            "Batch cache completed",
+            hits=len(cache_results),
+            misses=len(city_ids) - len(cache_results),
+            latency_ms=f"{batch_elapsed:.1f}"
+        )
+        
+        # 🚀 STEP 2: Process cache HITs and identify MISSes
+        weather_data = []
+        cache_miss_ids = []
+        
+        # Check which cities had cache HITs and collect MISSes
+        for city_id in city_ids:
+            if city_id in cache_results:
+                # Cache HIT - parse data
+                try:
+                    city = self.city_repository.get_by_id(city_id)
+                    if city and city.has_coordinates():
+                        cached_data = cache_results[city_id]
+                        weather = self._parse_cached_weather(
+                            cached_data,
+                            city,
+                            target_datetime
+                        )
+                        if weather:
+                            weather_data.append(weather)
+                    else:
+                        cache_miss_ids.append(city_id)  # No coordinates, fetch from API
+                except Exception as e:
+                    logger.error(f"Error parsing cached data for {city_id}: {e}")
+                    cache_miss_ids.append(city_id)  # Error, try API
+            else:
+                # Cache MISS
+                cache_miss_ids.append(city_id)
+        
+        # 📡 STEP 3: Fetch cache MISSes from API in parallel
+        if cache_miss_ids:
+            logger.info(f"Fetching {len(cache_miss_ids)} cache MISSes from API")
+            miss_results = await self._fetch_cities_from_api(cache_miss_ids, target_datetime)
+            weather_data.extend(miss_results)
+        
+        return weather_data
+    
+    async def _fetch_cities_from_api(
+        self,
+        city_ids: list,
+        target_datetime: Optional[datetime] = None
+    ) -> list:
+        """
+        Fetch weather data from API for cache MISSes
+        
+        Args:
+            city_ids: City IDs to fetch from API
+            target_datetime: Target datetime
+        
+        Returns:
+            List of Weather entities
+        """
+        
         async def fetch_city_weather(city_id: str, index: int) -> Optional[Weather]:
             """
-            Fetch weather data for ONE city asynchronously
+            Fetch weather data for ONE city asynchronously from API
             
             Args:
                 city_id: City ID
@@ -128,12 +197,14 @@ class AsyncGetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
                     return None
                 
                 # Get weather data (ASYNC - no GIL)
+                # skip_cache_check=True porque já fizemos batch lookup antes
                 weather = await self.weather_repository.get_current_weather(
                     city.id,
                     city.latitude,
                     city.longitude,
                     city.name,
-                    target_datetime
+                    target_datetime,
+                    skip_cache_check=True  # Já sabemos que é MISS do batch
                 )
                 
                 weather.city_id = city.id
@@ -195,4 +266,79 @@ class AsyncGetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
             logger.warning("Exceptions caught during gather", count=exceptions_count)
         
         return weather_data
+    
+    def _parse_cached_weather(
+        self,
+        cached_data: dict,
+        city,
+        target_datetime: Optional[datetime] = None
+    ) -> Optional[Weather]:
+        """
+        Parse cached weather data into Weather entity
+        
+        Args:
+            cached_data: Raw data from cache (OpenWeather API format)
+            city: City entity
+            target_datetime: Target datetime for forecast selection
+        
+        Returns:
+            Weather entity or None if error
+        """
+        try:
+            from zoneinfo import ZoneInfo
+            
+            # Select appropriate forecast
+            forecast_item = self.weather_repository._select_forecast(
+                cached_data.get('list', []),
+                target_datetime
+            )
+            
+            if not forecast_item:
+                return None
+            
+            # Extract weather data
+            weather_code = forecast_item['weather'][0]['id']
+            rain_prob = forecast_item.get('pop', 0) * 100
+            wind_speed = forecast_item['wind']['speed'] * 3.6
+            forecast_time = datetime.fromtimestamp(forecast_item['dt'], tz=ZoneInfo("UTC"))
+            
+            # Collect alerts
+            weather_alerts = self.weather_repository._collect_all_alerts(
+                cached_data.get('list', []),
+                target_datetime
+            )
+            
+            # Get daily temp extremes
+            temp_min_day, temp_max_day = self.weather_repository._get_daily_temp_extremes(
+                cached_data.get('list', []),
+                target_datetime
+            )
+            
+            # Create Weather entity
+            weather = Weather(
+                city_id=city.id,
+                city_name=city.name,
+                timestamp=forecast_time,
+                temperature=forecast_item['main']['temp'],
+                humidity=forecast_item['main']['humidity'],
+                wind_speed=wind_speed,
+                rain_probability=rain_prob,
+                rain_1h=forecast_item.get('rain', {}).get('3h', 0) / 3,
+                description=forecast_item['weather'][0].get('description', ''),
+                feels_like=forecast_item['main'].get('feels_like', 0),
+                pressure=forecast_item['main'].get('pressure', 0),
+                visibility=forecast_item.get('visibility', 0),
+                clouds=forecast_item.get('clouds', {}).get('all', 0),
+                weather_alert=weather_alerts,
+                weather_code=weather_code,
+                temp_min=temp_min_day,
+                temp_max=temp_max_day
+            )
+            
+            return weather
+        
+        except Exception as e:
+            logger.error(f"Error parsing cached weather: {e}")
+            return None
+
 

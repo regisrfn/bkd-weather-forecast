@@ -45,7 +45,8 @@ resource "aws_iam_role_policy" "dynamodb_cache_policy" {
         Action = [
           "dynamodb:GetItem",
           "dynamodb:PutItem",
-          "dynamodb:DeleteItem"
+          "dynamodb:DeleteItem",
+          "dynamodb:BatchGetItem"
         ]
         Resource = "arn:aws:dynamodb:${var.aws_region}:*:table/${var.cache_table_name}"
       }
