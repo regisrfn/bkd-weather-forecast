@@ -535,6 +535,31 @@ resource "aws_api_gateway_stage" "main" {
   depends_on = [aws_api_gateway_account.main]
 }
 
+# Gateway Responses para incluir CORS em respostas 4XX/5XX (timeouts/erros)
+resource "aws_api_gateway_gateway_response" "default_4xx" {
+  count        = var.enable_cors ? 1 : 0
+  rest_api_id  = aws_api_gateway_rest_api.main.id
+  response_type = "DEFAULT_4XX"
+
+  response_parameters = {
+    "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
+    "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Requested-With'"
+    "gatewayresponse.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'"
+  }
+}
+
+resource "aws_api_gateway_gateway_response" "default_5xx" {
+  count        = var.enable_cors ? 1 : 0
+  rest_api_id  = aws_api_gateway_rest_api.main.id
+  response_type = "DEFAULT_5XX"
+
+  response_parameters = {
+    "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
+    "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Requested-With'"
+    "gatewayresponse.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'"
+  }
+}
+
 # CloudWatch Log Group para API Gateway (opcional)
 resource "aws_cloudwatch_log_group" "api_gateway" {
   count             = var.enable_access_logs ? 1 : 0
