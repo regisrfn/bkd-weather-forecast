@@ -10,7 +10,6 @@ from datetime import datetime, timezone
 from typing import Optional, Dict, Any
 from functools import lru_cache
 from decimal import Decimal
-from threading import RLock
 import boto3
 from botocore.config import Config
 from botocore.exceptions import ClientError, BotoCoreError
@@ -20,6 +19,14 @@ from application.ports.output.cache_repository_port import ICacheRepository
 
 
 logger = logging.getLogger(__name__)
+
+
+class DecimalEncoder(json.JSONEncoder):
+    """Encoder JSON customizado para converter Decimal em float"""
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            return float(obj)
+        return super(DecimalEncoder, self).default(obj)
 
 
 class DecimalEncoder(json.JSONEncoder):
@@ -76,8 +83,6 @@ class DynamoDBCacheAdapter(ICacheRepository):
         self.table_name = table_name or os.environ.get('CACHE_TABLE_NAME', 'weather-forecast-cache')
         self.default_ttl = ttl_seconds
         self.region_name = region_name or os.environ.get('AWS_REGION', 'sa-east-1')
-        self._memory_cache: Dict[str, tuple[Any, int]] = {}
-        self._cache_lock = RLock()
         
         # Verificar se cache está habilitado
         if enabled is None:
@@ -129,24 +134,11 @@ class DynamoDBCacheAdapter(ICacheRepository):
         if not self.is_enabled():
             return None
         
-        now_ts = int(datetime.now(timezone.utc).timestamp())
-
-        # Hot cache em memória para evitar round-trips ao Dynamo em warm starts
-        with self._cache_lock:
-            cached_entry = self._memory_cache.get(city_id)
-            if cached_entry:
-                cached_data, cached_ttl = cached_entry
-                if cached_ttl > now_ts:
-                    logger.debug(f"Cache HIT (memory): cidade {city_id}")
-                    return cached_data
-                # Expirou: remover para não acumular
-                self._memory_cache.pop(city_id, None)
-        
         try:
             response = self.dynamodb_client.get_item(
                 TableName=self.table_name,
                 Key={'cityId': {'S': city_id}},
-                ConsistentRead=False  # Leitura eventual é suficiente e mais barata/rápida
+                ConsistentRead=True  # Leitura fortemente consistente (mais rápida e confiável)
             )
             
             if 'Item' not in response:
@@ -158,7 +150,7 @@ class DynamoDBCacheAdapter(ICacheRepository):
             
             # Verificar TTL (DynamoDB pode demorar para excluir itens expirados)
             ttl = int(item['ttl']['N']) if 'ttl' in item else None
-            if ttl and ttl < now_ts:
+            if ttl and ttl < int(datetime.now(timezone.utc).timestamp()):
                 logger.debug(f"Cache EXPIRED: cidade {city_id}")
                 return None
             
@@ -166,13 +158,7 @@ class DynamoDBCacheAdapter(ICacheRepository):
             # Parse JSON string diretamente (bem mais rápido)
             data_json = item.get('data', {}).get('S')
             if data_json:
-                cached_data = json.loads(data_json)
-                with self._cache_lock:
-                    self._memory_cache[city_id] = (
-                        cached_data,
-                        ttl or now_ts + self.default_ttl
-                    )
-                return cached_data
+                return json.loads(data_json)
             return None
             
         except ClientError as e:
@@ -221,9 +207,6 @@ class DynamoDBCacheAdapter(ICacheRepository):
                 Item=item
             )
             logger.info(f"Cache SET: cidade {city_id}, TTL {ttl_seconds}s")
-            # Atualiza hot cache para evitar round-trip nas próximas invocações do mesmo container
-            with self._cache_lock:
-                self._memory_cache[city_id] = (data, ttl_timestamp)
             return True
             
         except ClientError as e:
@@ -247,9 +230,6 @@ class DynamoDBCacheAdapter(ICacheRepository):
             return False
         
         try:
-            with self._cache_lock:
-                self._memory_cache.pop(city_id, None)
-            
             self.dynamodb_client.delete_item(
                 TableName=self.table_name,
                 Key={'cityId': {'S': city_id}}
