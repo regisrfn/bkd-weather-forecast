@@ -12,7 +12,7 @@ from aws_lambda_powertools import Logger
 from domain.entities.weather import Weather
 from application.ports.output.weather_repository_port import IWeatherRepository
 from infrastructure.adapters.cache.async_dynamodb_cache import AsyncDynamoDBCache, get_async_cache
-from shared.config.aiohttp_session_manager import get_aiohttp_session_manager
+from infrastructure.adapters.config.aiohttp_session_manager import get_aiohttp_session_manager
 
 logger = Logger(child=True)
 
@@ -100,25 +100,15 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
             ValueError: Se não houver previsões futuras
             aiohttp.ClientError: Se API falhar
         """
-        start_time = datetime.now()
         cache_key = city_id
         
         # 🔍 Tentar cache primeiro (async, sem GIL) - apenas se não pulou
         data = None
         if not skip_cache_check and self.cache and self.cache.is_enabled():
             data = await self.cache.get(cache_key)
-            
-            if data:
-                elapsed_ms = (datetime.now() - start_time).total_seconds() * 1000
-                logger.info(
-                    f"✅ Cache HIT | City: {city_name} ({city_id}) | "
-                    f"Latency: {elapsed_ms:.1f}ms"
-                )
         
         # 📡 Cache MISS: chamar API (async HTTP, sem GIL)
         if data is None:
-            api_start = datetime.now()
-            
             url = f"{self.base_url}/forecast"
             params = {
                 'lat': latitude,
@@ -133,14 +123,6 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
             async with session.get(url, params=params) as response:
                 response.raise_for_status()
                 data = await response.json()
-            
-            api_elapsed = (datetime.now() - api_start).total_seconds() * 1000
-            
-            logger.info(
-                f"📡 API CALL | City: {city_name} ({city_id}) | "
-                f"Latency: {api_elapsed:.1f}ms | "
-                f"Forecasts: {len(data.get('list', []))}"
-            )
             
             # 💾 Salvar no cache (async, sem GIL)
             # Quando skip_cache_check=True, caller fará batch save
@@ -171,12 +153,9 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
         Returns:
             Tuple (Weather entity, cache_key, raw_data)
         """
-        start_time = datetime.now()
         cache_key = city_id
         
         # 📡 Chamar API (sem cache, será feito batch save depois)
-        api_start = datetime.now()
-        
         url = f"{self.base_url}/forecast"
         params = {
             'lat': latitude,
@@ -191,13 +170,6 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
         async with session.get(url, params=params) as response:
             response.raise_for_status()
             data = await response.json()
-        
-        api_elapsed = (datetime.now() - api_start).total_seconds() * 1000
-        
-        logger.debug(
-            f"📡 API CALL (batch save) | City: {city_name} ({city_id}) | "
-            f"Latency: {api_elapsed:.1f}ms"
-        )
         
         # 🔄 Processar dados
         weather = self._process_weather_data(data, city_name, target_datetime)
@@ -444,8 +416,6 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
         if not self.cache or not self.cache.is_enabled():
             return {key: False for key, _ in weather_data_list}
         
-        start_time = datetime.now()
-        
         try:
             # Preparar items para batch
             items = {cache_key: data for cache_key, data in weather_data_list}
@@ -453,27 +423,13 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
             # Executar batch set
             results = await self.cache.batch_set(items)
             
-            elapsed_ms = (datetime.now() - start_time).total_seconds() * 1000
-            success_count = sum(1 for v in results.values() if v)
-            
-            logger.info(
-                "🎯 Batch cache save | Items: {} | Saved: {} | Failed: {} | Latency: {:.1f}ms".format(
-                    len(items),
-                    success_count,
-                    len(items) - success_count,
-                    elapsed_ms
-                )
-            )
-            
             return results
         
         except Exception as e:
-            elapsed_ms = (datetime.now() - start_time).total_seconds() * 1000
             logger.error(
                 "Batch cache save ERROR",
                 items_count=len(weather_data_list),
-                error=str(e)[:200],
-                latency_ms=f"{elapsed_ms:.1f}"
+                error=str(e)[:200]
             )
             return {key: False for key, _ in weather_data_list}
     
@@ -495,21 +451,8 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
         if not self.cache or not self.cache.is_enabled():
             return {}
         
-        start_time = datetime.now()
-        
         # Usar batch_get do cache (1 única chamada ao DynamoDB)
         results = await self.cache.batch_get(city_ids)
-        
-        elapsed_ms = (datetime.now() - start_time).total_seconds() * 1000
-        hit_count = len(results)
-        miss_count = len(city_ids) - hit_count
-        hit_rate = (hit_count / len(city_ids) * 100) if city_ids else 0
-        
-        logger.info(
-            f"🎯 Batch cache lookup | Cities: {len(city_ids)} | "
-            f"Hits: {hit_count} | Misses: {miss_count} | "
-            f"Hit rate: {hit_rate:.1f}% | Latency: {elapsed_ms:.1f}ms"
-        )
         
         return results
 

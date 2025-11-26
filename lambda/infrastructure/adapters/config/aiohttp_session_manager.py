@@ -60,13 +60,6 @@ class AiohttpSessionManager:
         # Session state
         self._session: Optional[aiohttp.ClientSession] = None
         self._session_loop_id: Optional[int] = None
-        
-        logger.info(
-            "AiohttpSessionManager initialized",
-            total_timeout=total_timeout,
-            limit=limit,
-            limit_per_host=limit_per_host
-        )
     
     @classmethod
     def get_instance(
@@ -101,7 +94,6 @@ class AiohttpSessionManager:
                 limit_per_host=limit_per_host,
                 ttl_dns_cache=ttl_dns_cache
             )
-            logger.info("AiohttpSessionManager singleton created")
         
         return cls._instance
     
@@ -128,30 +120,14 @@ class AiohttpSessionManager:
         if (self._session is not None and 
             not self._session.closed and 
             self._session_loop_id == current_loop_id):
-            logger.info(
-                "♻️  REUSING existing aiohttp session",
-                loop_id=current_loop_id,
-                reused=True
-            )
             return self._session
         
         # Loop mudou, sessão fechada, ou não existe - precisa recriar
         if self._session is not None and not self._session.closed:
-            logger.info(
-                "Event loop changed - recreating session",
-                old_loop_id=self._session_loop_id,
-                new_loop_id=current_loop_id
-            )
             await self._close_session()
         
         # Criar nova sessão para o event loop atual
         try:
-            logger.info(
-                "🔨 Creating NEW aiohttp session",
-                loop_id=current_loop_id,
-                limit=self.limit,
-                reused=False
-            )
             
             # Timeout configuration
             timeout = aiohttp.ClientTimeout(
@@ -172,13 +148,6 @@ class AiohttpSessionManager:
                 connector=connector
             )
             self._session_loop_id = current_loop_id
-            
-            logger.info(
-                "✅ Aiohttp session CREATED and CACHED for reuse",
-                loop_id=current_loop_id,
-                limit=self.limit,
-                limit_per_host=self.limit_per_host
-            )
         
         except Exception as e:
             logger.error(
@@ -232,7 +201,6 @@ class AiohttpSessionManager:
             # Não podemos fazer cleanup assíncrono aqui
             # Cleanup deve ser feito antes de reset
             cls._instance = None
-            logger.info("AiohttpSessionManager instance reset")
 
 
 # Factory function para facilitar uso

@@ -9,7 +9,7 @@ from typing import Optional, Dict, Any
 from decimal import Decimal
 from ddtrace import tracer
 from aws_lambda_powertools import Logger
-from shared.config.dynamodb_client_manager import get_dynamodb_client_manager
+from infrastructure.adapters.config.dynamodb_client_manager import get_dynamodb_client_manager
 
 logger = Logger(child=True)
 
@@ -66,16 +66,6 @@ class AsyncDynamoDBCache:
             connect_timeout=3,
             read_timeout=3
         )
-        
-        if self.enabled:
-            logger.info(
-                "AsyncDynamoDBCache initialized",
-                table_name=self.table_name,
-                region=self.region_name,
-                ttl_seconds=ttl_seconds
-            )
-        else:
-            logger.warning("AsyncDynamoDBCache DISABLED")
     
     def is_enabled(self) -> bool:
         """Verifica se cache está habilitado"""
@@ -110,8 +100,6 @@ class AsyncDynamoDBCache:
         if not self.is_enabled():
             return None
         
-        start_time = datetime.now()
-        
         try:
             client = await self._get_client()
             response = await client.get_item(
@@ -122,12 +110,6 @@ class AsyncDynamoDBCache:
             
             # Cache MISS
             if 'Item' not in response:
-                elapsed_ms = (datetime.now() - start_time).total_seconds() * 1000
-                logger.debug(
-                    "Cache MISS",
-                    city_id=city_id,
-                    latency_ms=f"{elapsed_ms:.1f}"
-                )
                 return None
             
             item = response['Item']
@@ -135,39 +117,22 @@ class AsyncDynamoDBCache:
             # Verificar TTL
             ttl = int(item['ttl']['N']) if 'ttl' in item else None
             if ttl and ttl < int(datetime.now(timezone.utc).timestamp()):
-                elapsed_ms = (datetime.now() - start_time).total_seconds() * 1000
-                logger.debug(
-                    "Cache EXPIRED",
-                    city_id=city_id,
-                    latency_ms=f"{elapsed_ms:.1f}"
-                )
                 return None
             
             # Parse JSON data
             data_json = item.get('data', {}).get('S')
             if not data_json:
-                logger.warning("Cache HIT but no data", city_id=city_id)
                 return None
             
             data = json.loads(data_json)
-            elapsed_ms = (datetime.now() - start_time).total_seconds() * 1000
-            
-            logger.info(
-                "Cache HIT",
-                city_id=city_id,
-                latency_ms=f"{elapsed_ms:.1f}",
-                size_bytes=len(data_json)
-            )
             
             return data
         
         except Exception as e:
-            elapsed_ms = (datetime.now() - start_time).total_seconds() * 1000
             logger.error(
                 "Cache GET error",
                 city_id=city_id,
-                error=str(e)[:100],
-                latency_ms=f"{elapsed_ms:.1f}"
+                error=str(e)[:100]
             )
             return None
     
@@ -195,15 +160,12 @@ class AsyncDynamoDBCache:
         if ttl_seconds is None:
             ttl_seconds = self.default_ttl
         
-        start_time = datetime.now()
-        
         try:
             now = datetime.now(timezone.utc)
             ttl_timestamp = int(now.timestamp()) + ttl_seconds
             
             # Serializar como JSON compacto
             data_json = json.dumps(data, cls=DecimalEncoder, separators=(',', ':'))
-            data_size = len(data_json)
             
             # Item DynamoDB
             item = {
@@ -219,25 +181,13 @@ class AsyncDynamoDBCache:
                 Item=item
             )
             
-            elapsed_ms = (datetime.now() - start_time).total_seconds() * 1000
-            
-            logger.info(
-                "Cache SET",
-                city_id=city_id,
-                size_bytes=data_size,
-                ttl_seconds=ttl_seconds,
-                latency_ms=f"{elapsed_ms:.1f}"
-            )
-            
             return True
         
         except Exception as e:
-            elapsed_ms = (datetime.now() - start_time).total_seconds() * 1000
             logger.error(
                 "Cache SET error",
                 city_id=city_id,
-                error=str(e)[:100],
-                latency_ms=f"{elapsed_ms:.1f}"
+                error=str(e)[:100]
             )
             return False
     
@@ -262,7 +212,6 @@ class AsyncDynamoDBCache:
         if ttl_seconds is None:
             ttl_seconds = self.default_ttl
         
-        start_time = datetime.now()
         results = {}
         
         try:
@@ -314,26 +263,13 @@ class AsyncDynamoDBCache:
                 for city_id in batch_city_ids:
                     results[city_id] = city_id not in unprocessed_keys
             
-            elapsed_ms = (datetime.now() - start_time).total_seconds() * 1000
-            success_count = sum(1 for v in results.values() if v)
-            
-            logger.info(
-                "Batch SET",
-                requested=len(items),
-                saved=success_count,
-                failed=len(items) - success_count,
-                latency_ms=f"{elapsed_ms:.1f}"
-            )
-            
             return results
         
         except Exception as e:
-            elapsed_ms = (datetime.now() - start_time).total_seconds() * 1000
             logger.error(
                 "Batch SET error",
                 requested=len(items),
-                error=str(e)[:200],
-                latency_ms=f"{elapsed_ms:.1f}"
+                error=str(e)[:200]
             )
             return {city_id: False for city_id in items.keys()}
     
@@ -349,7 +285,6 @@ class AsyncDynamoDBCache:
                 Key={'cityId': {'S': city_id}}
             )
             
-            logger.info("Cache DELETE", city_id=city_id)
             return True
         
         except Exception as e:
@@ -369,7 +304,6 @@ class AsyncDynamoDBCache:
         if not self.is_enabled() or not city_ids:
             return {}
         
-        start_time = datetime.now()
         results = {}
         
         try:
@@ -407,25 +341,12 @@ class AsyncDynamoDBCache:
                     if data_json:
                         results[city_id] = json.loads(data_json)
             
-            elapsed_ms = (datetime.now() - start_time).total_seconds() * 1000
-            hit_rate = (len(results) / len(city_ids)) * 100 if city_ids else 0
-            
-            logger.info(
-                "Batch GET",
-                requested=len(city_ids),
-                found=len(results),
-                hit_rate_pct=f"{hit_rate:.1f}",
-                latency_ms=f"{elapsed_ms:.1f}"
-            )
-            
             return results
         
         except Exception as e:
-            elapsed_ms = (datetime.now() - start_time).total_seconds() * 1000
             logger.error(
                 "Batch GET error",
-                error=str(e),
-                latency_ms=f"{elapsed_ms:.1f}"
+                error=str(e)
             )
             return {}
     
@@ -435,7 +356,6 @@ class AsyncDynamoDBCache:
         Opcional: pode ser chamado ao final de cada invocação Lambda
         """
         await self.client_manager.cleanup()
-        logger.info("AsyncDynamoDBCache cleanup completed")
 
 
 # Factory singleton

@@ -65,12 +65,6 @@ class DynamoDBClientManager:
         self._client = None
         self._client_loop_id = None
         self._client_context_manager = None
-        
-        logger.info(
-            "DynamoDBClientManager initialized",
-            region=self.region_name,
-            max_pool_connections=max_pool_connections
-        )
     
     @classmethod
     def get_instance(
@@ -99,7 +93,6 @@ class DynamoDBClientManager:
                 connect_timeout=connect_timeout,
                 read_timeout=read_timeout
             )
-            logger.info("DynamoDBClientManager singleton created")
         
         return cls._instance
     
@@ -124,31 +117,14 @@ class DynamoDBClientManager:
         
         # Se cliente existe E está no mesmo event loop, REUTILIZAR
         if self._client is not None and self._client_loop_id == current_loop_id:
-            logger.info(
-                "♻️  REUSING existing DynamoDB client",
-                loop_id=current_loop_id,
-                reused=True
-            )
             return self._client
         
         # Loop mudou ou cliente não existe - precisa recriar
         if self._client is not None:
-            logger.info(
-                "Event loop changed - recreating client",
-                old_loop_id=self._client_loop_id,
-                new_loop_id=current_loop_id
-            )
             await self._close_client()
         
         # Criar novo cliente para o event loop atual
         try:
-            logger.info(
-                "🔨 Creating NEW DynamoDB client",
-                loop_id=current_loop_id,
-                region=self.region_name,
-                reused=False
-            )
-            
             self._client_context_manager = self.session.client(
                 'dynamodb',
                 region_name=self.region_name,
@@ -158,12 +134,6 @@ class DynamoDBClientManager:
             # Enter context manager
             self._client = await self._client_context_manager.__aenter__()
             self._client_loop_id = current_loop_id
-            
-            logger.info(
-                "✅ DynamoDB client CREATED and CACHED for reuse",
-                loop_id=current_loop_id,
-                region=self.region_name
-            )
         
         except Exception as e:
             logger.error(
@@ -186,18 +156,9 @@ class DynamoDBClientManager:
                 # Exit context manager properly
                 if self._client_context_manager is not None:
                     await self._client_context_manager.__aexit__(None, None, None)
-                
-                logger.info(
-                    "DynamoDB client closed",
-                    loop_id=self._client_loop_id
-                )
             
-            except Exception as e:
-                logger.warning(
-                    "Error closing DynamoDB client",
-                    error=str(e),
-                    loop_id=self._client_loop_id
-                )
+            except Exception:
+                pass
             
             finally:
                 self._client = None
@@ -210,7 +171,6 @@ class DynamoDBClientManager:
         Deve ser chamado ao final de cada invocação Lambda (opcional)
         """
         await self._close_client()
-        logger.info("DynamoDBClientManager cleanup completed")
     
     @classmethod
     def reset_instance(cls) -> None:
@@ -221,7 +181,6 @@ class DynamoDBClientManager:
             # Não podemos fazer cleanup assíncrono aqui
             # Cleanup deve ser feito antes de reset
             cls._instance = None
-            logger.info("DynamoDBClientManager instance reset")
 
 
 # Factory function para facilitar uso

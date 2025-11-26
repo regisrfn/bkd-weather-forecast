@@ -67,12 +67,4 @@ class AsyncGetCityWeatherUseCase(IGetCityWeatherUseCase):
             target_datetime
         )
         
-        logger.info(
-            "Weather data retrieved",
-            city_id=city_id,
-            city_name=city.name,
-            temperature=weather.temperature,
-            rain_probability=weather.rain_probability
-        )
-        
         return weather

@@ -81,14 +81,6 @@ class AsyncGetNeighborCitiesUseCase(IGetNeighborCitiesUseCase):
         # Sort by distance
         neighbors.sort(key=lambda n: n.distance)
         
-        logger.info(
-            "Neighbors found",
-            center_city_id=center_city_id,
-            center_city_name=center_city.name,
-            radius_km=radius,
-            neighbors_count=len(neighbors)
-        )
-        
         return {
             'centerCity': center_city,
             'neighbors': neighbors

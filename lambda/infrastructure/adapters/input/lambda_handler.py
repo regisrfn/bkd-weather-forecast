@@ -6,7 +6,7 @@ import json
 import asyncio
 from datetime import datetime
 from aws_lambda_powertools import Logger
-from aws_lambda_powertools.event_handler import APIGatewayRestResolver, CORSConfig, Response
+from aws_lambda_powertools.event_handler import APIGatewayRestResolver, CORSConfig
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
 # Application Layer - Use Cases (ASYNC)
@@ -24,6 +24,7 @@ from domain.exceptions import (
 )
 
 # Infrastructure Layer - Adapters
+from infrastructure.adapters.input.exception_handler_service import ExceptionHandlerService
 from infrastructure.adapters.output.municipalities_repository import get_repository
 from infrastructure.adapters.output.async_weather_repository import get_async_weather_repository
 
@@ -43,100 +44,17 @@ app = APIGatewayRestResolver(cors=CORSConfig(allow_origin="*"))
 _global_event_loop = None
 
 # =============================
-# Exception Handlers (AWS Powertools style)
+# Exception Handlers (Delegados para ExceptionHandlerService)
 # =============================
 
-@app.exception_handler(CityNotFoundException)
-def handle_city_not_found(ex: CityNotFoundException):
-    """Handle 404 - City not found"""
-    logger.warning("City not found", error=str(ex), details=ex.details)
-    return Response(
-        status_code=404,
-        content_type="application/json",
-        body=json.dumps({
-            "type": "CityNotFoundException",
-            "error": "City not found",
-            "message": str(ex),
-            "details": ex.details
-        })
-    )
+exception_service = ExceptionHandlerService()
 
-
-@app.exception_handler(CoordinatesNotFoundException)
-def handle_coordinates_not_found(ex: CoordinatesNotFoundException):
-    """Handle 404 - Coordinates not found"""
-    logger.warning("Coordinates not found", error=str(ex), details=ex.details)
-    return Response(
-        status_code=404,
-        content_type="application/json",
-        body=json.dumps({
-            "type": "CoordinatesNotFoundException",
-            "error": "Coordinates not found",
-            "message": str(ex),
-            "details": ex.details
-        })
-    )
-
-
-@app.exception_handler(InvalidRadiusException)
-def handle_invalid_radius(ex: InvalidRadiusException):
-    """Handle 400 - Invalid radius"""
-    logger.warning("Invalid radius", error=str(ex), details=ex.details)
-    return Response(
-        status_code=400,
-        content_type="application/json",
-        body=json.dumps({
-            "type": "InvalidRadiusException",
-            "error": "Invalid radius",
-            "message": str(ex),
-            "details": ex.details
-        })
-    )
-
-
-@app.exception_handler(InvalidDateTimeException)
-def handle_invalid_datetime(ex: InvalidDateTimeException):
-    """Handle 400 - Invalid datetime format"""
-    logger.warning("Invalid datetime", error=str(ex), details=ex.details)
-    return Response(
-        status_code=400,
-        content_type="application/json",
-        body=json.dumps({
-            "type": "InvalidDateTimeException",
-            "error": "Invalid datetime",
-            "message": str(ex),
-            "details": ex.details
-        })
-    )
-
-
-@app.exception_handler(WeatherDataNotFoundException)
-def handle_weather_data_not_found(ex: WeatherDataNotFoundException):
-    """Handle 404 - Weather data not available"""
-    logger.warning("Weather data not found", error=str(ex), details=ex.details)
-    return Response(
-        status_code=404,
-        content_type="application/json",
-        body=json.dumps({
-            "error": "Weather data not found",
-            "message": str(ex),
-            "details": ex.details
-        })
-    )
-
-
-@app.exception_handler(Exception)
-def handle_unexpected_error(ex: Exception):
-    """Handle 500 - Unexpected errors"""
-    logger.error("Unexpected error", error=str(ex), exc_info=True)
-    return Response(
-        status_code=500,
-        content_type="application/json",
-        body=json.dumps({
-            "error": "Internal server error",
-            "message": "An unexpected error occurred"
-        })
-    )
+app.exception_handler(CityNotFoundException)(exception_service.handle_city_not_found)
+app.exception_handler(CoordinatesNotFoundException)(exception_service.handle_coordinates_not_found)
+app.exception_handler(InvalidRadiusException)(exception_service.handle_invalid_radius)
+app.exception_handler(InvalidDateTimeException)(exception_service.handle_invalid_datetime)
+app.exception_handler(WeatherDataNotFoundException)(exception_service.handle_weather_data_not_found)
+app.exception_handler(Exception)(exception_service.handle_unexpected_error)
 
 
 
@@ -153,8 +71,6 @@ def get_neighbors_route(city_id: str):
     
     Note: Uses persistent event loop for true client reuse
     """
-    logger.info("Get neighbors", city_id=city_id)
-    
     # Validate city ID
     CityIdValidator.validate(city_id)
     
@@ -187,13 +103,6 @@ def get_neighbors_route(city_id: str):
         'neighbors': [n.to_api_response() for n in result['neighbors']]
     }
     
-    logger.info(
-        "Neighbors found",
-        city_id=city_id,
-        city_name=result['centerCity'].name,
-        neighbors_count=len(response['neighbors'])
-    )
-    
     return response
 
 
@@ -210,8 +119,6 @@ def get_city_weather_route(city_id: str):
     
     Note: Uses persistent event loop for true client reuse
     """
-    logger.info("Get city weather", city_id=city_id)
-    
     # Validate city ID
     CityIdValidator.validate(city_id)
     
@@ -228,32 +135,20 @@ def get_city_weather_route(city_id: str):
     
     # Execute async use case
     async def execute_async():
-        try:
-            # Execute use case (ASYNC)
-            use_case = AsyncGetCityWeatherUseCase(city_repository, weather_repository)
-            weather = await use_case.execute(city_id, target_datetime)
-            
-            # Update city_id in Weather entity
-            weather.city_id = city_id
-            
-            return weather
-        finally:
-            # Cleanup: close session if in a closed loop context
-            pass  # Session will be recreated if needed in next invocation
+        # Execute use case (ASYNC)
+        use_case = AsyncGetCityWeatherUseCase(city_repository, weather_repository)
+        weather = await use_case.execute(city_id, target_datetime)
+        
+        # Update city_id in Weather entity
+        weather.city_id = city_id
+        
+        return weather
     
     # Run async code with persistent loop
     weather = run_async(execute_async())
     
     # Convert to API format
     response = weather.to_api_response()
-    
-    logger.info(
-        "Weather data retrieved",
-        city_id=city_id,
-        city_name=weather.city_name,
-        temperature=weather.temperature,
-        rain_probability=weather.rain_probability
-    )
     
     return response
 
@@ -273,15 +168,9 @@ def post_regional_weather_route():
     
     Note: Uses persistent event loop for true client reuse
     """
-    request_start = datetime.now()
-    
-    logger.info("POST regional weather - ASYNC")
-    
     # Extract cityIds from body
     body = app.current_event.json_body
     city_ids = body.get('cityIds', [])
-    
-    logger.info("Regional request", city_count=len(city_ids))
     
     # Validate cityIds format
     if not isinstance(city_ids, list):
@@ -318,17 +207,6 @@ def post_regional_weather_route():
     
     # Convert to API format
     response = [weather.to_api_response() for weather in weather_list]
-    
-    request_elapsed = (datetime.now() - request_start).total_seconds() * 1000
-    success_rate = (len(response) / len(city_ids)) * 100 if city_ids else 0
-    
-    logger.info(
-        "Regional ASYNC completed",
-        success_count=len(response),
-        total_count=len(city_ids),
-        success_rate=f"{success_rate:.1f}%",
-        latency_ms=f"{request_elapsed:.1f}"
-    )
     
     return response
 
@@ -368,57 +246,29 @@ def lambda_handler(event, context: LambdaContext):
     - time: HH:MM (ex: 15:00)
     - If omitted, returns next available forecast
     """
-    handler_start = datetime.now()
-    
     logger.info(
         "Lambda invoked",
         path=event.get('path', 'N/A'),
         method=event.get('httpMethod', 'N/A')
     )
     
-    try:
-        response = app.resolve(event, context)
-        
-        # Add CORS headers manually
-        if 'headers' not in response:
-            response['headers'] = {}
-        
-        response['headers']['Access-Control-Allow-Origin'] = '*'
-        response['headers']['Access-Control-Allow-Headers'] = 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Requested-With'
-        response['headers']['Access-Control-Allow-Methods'] = 'GET,POST,OPTIONS'
-        response['headers']['Access-Control-Max-Age'] = '86400'
-        
-        handler_elapsed = (datetime.now() - handler_start).total_seconds() * 1000
-        
-        logger.info(
-            "Lambda completed",
-            status_code=response.get('statusCode', 'N/A'),
-            latency_ms=f"{handler_elapsed:.1f}"
-        )
-        
-        return response
+    response = app.resolve(event, context)
     
-    except Exception as e:
-        handler_elapsed = (datetime.now() - handler_start).total_seconds() * 1000
-        
-        logger.error(
-            "Lambda error",
-            error=str(e),
-            latency_ms=f"{handler_elapsed:.1f}",
-            exc_info=True
-        )
-        
-        return {
-            'statusCode': 500,
-            'headers': {
-                'Access-Control-Allow-Origin': '*',
-                'Content-Type': 'application/json'
-            },
-            'body': json.dumps({
-                'error': 'Internal Server Error',
-                'message': 'Unexpected error in Lambda handler'
-            })
-        }
+    # Add CORS headers manually
+    if 'headers' not in response:
+        response['headers'] = {}
+    
+    response['headers']['Access-Control-Allow-Origin'] = '*'
+    response['headers']['Access-Control-Allow-Headers'] = 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Requested-With'
+    response['headers']['Access-Control-Allow-Methods'] = 'GET,POST,OPTIONS'
+    response['headers']['Access-Control-Max-Age'] = '86400'
+    
+    logger.info(
+        "Lambda completed",
+        status_code=response.get('statusCode', 'N/A')
+    )
+    
+    return response
 
 
 def get_or_create_event_loop():
@@ -434,11 +284,9 @@ def get_or_create_event_loop():
     
     # Se loop existe e não está fechado, reutilizar
     if _global_event_loop is not None and not _global_event_loop.is_closed():
-        logger.debug("♻️  Reusing existing event loop")
         return _global_event_loop
     
     # Criar novo loop se necessário
-    logger.info("🔨 Creating new event loop")
     _global_event_loop = asyncio.new_event_loop()
     asyncio.set_event_loop(_global_event_loop)
     
