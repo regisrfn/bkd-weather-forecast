@@ -388,7 +388,16 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
         ]
         
         if not future_forecasts:
-            return None
+            # Se não há previsões futuras, retornar a última disponível (dia 5)
+            last_forecast = forecasts[-1]
+            last_forecast_dt = datetime.fromtimestamp(last_forecast['dt'], tz=ZoneInfo("UTC"))
+            logger.info(
+                "Retornando última previsão disponível",
+                last_forecast_dt=last_forecast_dt.isoformat(),
+                requested_dt=reference_datetime.isoformat(),
+                reason="Requested date beyond forecast limit (5 days)"
+            )
+            return last_forecast
         
         # Previsão MAIS PRÓXIMA
         closest_forecast = min(
