@@ -9,7 +9,7 @@ from typing import Optional, Dict, Any
 from decimal import Decimal
 from ddtrace import tracer
 from aws_lambda_powertools import Logger
-from infrastructure.adapters.cache.dynamodb_client_manager import get_dynamodb_client_manager
+from shared.config.dynamodb_client_manager import get_dynamodb_client_manager
 
 logger = Logger(child=True)
 
