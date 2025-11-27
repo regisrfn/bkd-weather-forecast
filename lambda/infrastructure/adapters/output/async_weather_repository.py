@@ -391,8 +391,14 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
                 
                 # Detectar variações significativas (>8°C)
                 if abs(variation) >= 8:
-                    # Usar primeiro timestamp do day1 (dia inicial da variação)
-                    alert_time = daily_temps[day1]['first_timestamp'].astimezone(brasil_tz)
+                    # Usar primeiro timestamp do day1 convertido para Brasil
+                    # Garantir que o timestamp esteja no dia correto mesmo após conversão de timezone
+                    alert_time_utc = daily_temps[day1]['first_timestamp']
+                    alert_time = alert_time_utc.astimezone(brasil_tz)
+                    
+                    # Se após conversão o dia mudou, ajustar para meia-noite do day1
+                    if alert_time.date() != day1:
+                        alert_time = datetime.combine(day1, datetime.min.time()).replace(tzinfo=brasil_tz)
                     
                     if variation < 0:
                         # Queda de temperatura - manter apenas a maior queda
