@@ -12,9 +12,9 @@ from enum import Enum
 RAIN_PROBABILITY_THRESHOLD = 80  # Mínimo de 80% para gerar alertas de chuva
 
 # Threshold de referência para intensidade de chuva (métrica composta)
-# Define que 10mm/h com 100% de probabilidade = 100 pontos de intensidade
-# Baseado na classificação WMO: 10mm/h = início de chuva moderada
-RAIN_INTENSITY_REFERENCE = 10.0  # mm/h
+# Define que 30mm/h com 100% de probabilidade = 100 pontos de intensidade
+# Threshold maior permite melhor distribuição visual de chuvas fortes
+RAIN_INTENSITY_REFERENCE = 30.0  # mm/h
 
 
 class AlertSeverity(Enum):
@@ -67,6 +67,7 @@ class Weather:
     wind_speed: float  # km/h
     rain_probability: float = 0.0  # Probabilidade de chuva (0-100%)
     rain_1h: float = 0.0  # mm na última hora (opcional, para dados históricos)
+    rain_accumulated_day: float = 0.0  # Acumulado de chuva esperado no dia (mm)
     description: str = ""  # Descrição do clima (ex: "céu limpo", "nublado")
     feels_like: float = 0.0  # Sensação térmica (°C)
     pressure: float = 0.0  # Pressão atmosférica (hPa)
@@ -84,13 +85,13 @@ class Weather:
         
         Combina volume de precipitação (mm/h) e probabilidade (%) em uma métrica única:
         - 0 pontos: Sem chuva ou volume insignificante
-        - 100 pontos: Chuva moderada garantida (10mm/h a 100% probabilidade)
+        - 100 pontos: Chuva forte garantida (30mm/h a 100% probabilidade)
         - Escala proporcional: volume × probabilidade / threshold
         
         Resolve o problema de "100% probabilidade mas 0mm" retornando 0 pontos,
         pois intensidade real = volume × probabilidade.
         
-        Baseado na classificação WMO onde 10mm/h = início de chuva moderada.
+        Threshold: 30mm/h permite melhor distribuição visual de chuvas fortes.
         """
         if self.rain_1h == 0:
             return 0.0
@@ -352,7 +353,9 @@ class Weather:
             'cityName': self.city_name,
             'timestamp': timestamp_brasil.isoformat(),  # Agora em horário Brasil
             'rainfallIntensity': round(self.rainfall_intensity, 1),
+            'rainfallProbability': round(self.rain_probability, 1),
             'rainVolumeHour': round(self.rain_1h, 1),
+            'dailyRainAccumulation': round(self.rain_accumulated_day, 1),
             'temperature': round(self.temperature, 1),
             'humidity': round(self.humidity, 1),
             'windSpeed': round(self.wind_speed, 1),

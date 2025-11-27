@@ -215,10 +215,14 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
         # 🌡️ Calcular temperaturas min/max do dia inteiro
         temp_min_day, temp_max_day = self._get_daily_temp_extremes(data['list'], target_datetime)
         
+        # 🌧️ Calcular acumulado de chuva esperado no dia
+        daily_rain_accumulation = self._calculate_daily_rain_accumulation(data['list'], target_datetime)
+        
         logger.debug(
             f"✅ Weather processed | City: {city_name} | "
             f"Temp: {forecast_item['main']['temp']:.1f}°C | "
             f"Rain: {rain_prob:.0f}% | "
+            f"Daily Rain: {daily_rain_accumulation:.1f}mm | "
             f"Alerts: {len(weather_alerts)}"
         )
         
@@ -232,6 +236,7 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
             wind_speed=wind_speed,
             rain_probability=rain_prob,
             rain_1h=forecast_item.get('rain', {}).get('3h', 0) / 3,
+            rain_accumulated_day=daily_rain_accumulation,
             description=forecast_item['weather'][0].get('description', ''),
             feels_like=forecast_item['main'].get('feels_like', 0),
             pressure=forecast_item['main'].get('pressure', 0),
@@ -567,6 +572,50 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
             temps.append(f['main']['temp_max'])
         
         return (min(temps), max(temps))
+    
+    def _calculate_daily_rain_accumulation(
+        self,
+        forecasts: List[dict],
+        target_datetime: Optional[datetime]
+    ) -> float:
+        """
+        Calcula acumulado total de chuva esperado no dia do target_datetime
+        
+        Args:
+            forecasts: Lista de previsões da API
+            target_datetime: Data/hora de referência (None = hoje UTC)
+        
+        Returns:
+            Total de chuva acumulada esperada no dia (mm)
+        """
+        if not forecasts:
+            return 0.0
+        
+        # Data/hora de referência
+        if target_datetime is None:
+            reference_datetime = datetime.now(tz=ZoneInfo("UTC"))
+        elif target_datetime.tzinfo is not None:
+            reference_datetime = target_datetime.astimezone(ZoneInfo("UTC"))
+        else:
+            reference_datetime = target_datetime.replace(tzinfo=ZoneInfo("UTC"))
+        
+        # Filtrar previsões do mesmo dia
+        target_date = reference_datetime.date()
+        day_forecasts = [
+            f for f in forecasts
+            if datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")).date() == target_date
+        ]
+        
+        if not day_forecasts:
+            return 0.0
+        
+        # Somar todos os valores de rain.3h do dia
+        total_rain = 0.0
+        for forecast in day_forecasts:
+            rain_3h = forecast.get('rain', {}).get('3h', 0)
+            total_rain += rain_3h
+        
+        return total_rain
     
     def _select_forecast(
         self,
