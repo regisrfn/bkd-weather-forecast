@@ -28,6 +28,8 @@ bash scripts/deploy-main.sh
 
 ## 📡 API Endpoints
 
+**Documentação completa:** [API Routes](docs/api/ROUTES.md) | [Alertas Meteorológicos](docs/api/WEATHER_ALERTS.md)
+
 ### 1. GET `/api/cities/neighbors/{cityId}?radius=50`
 Busca cidades vizinhas dentro de um raio (1-500km).
 
@@ -77,13 +79,41 @@ curl "https://api.example.com/api/weather/city/3543204?date=2025-11-26&time=15:0
 {
   "cityId": "3543204",
   "cityName": "Ribeirão do Sul",
-  "timestamp": "2025-11-26T15:00:00",
+  "timestamp": "2025-11-26T15:00:00-03:00",
   "temperature": 28.3,
   "humidity": 65.0,
   "windSpeed": 12.5,
-  "rainfallIntensity": 35.5
+  "rainfallIntensity": 35.5,
+  "weatherAlert": [
+    {
+      "code": "MODERATE_RAIN",
+      "severity": "warning",
+      "description": "🌧️ Chuva moderada",
+      "timestamp": "2025-11-26T18:00:00-03:00",
+      "details": {
+        "rain_mm_h": 15.5
+      }
+    }
+  ],
+  "tempMin": 18.5,
+  "tempMax": 32.1
 }
 ```
+
+**Alertas Meteorológicos:**
+
+A API inclui alertas climáticos estruturados baseados nas previsões dos próximos 5 dias:
+
+| Categoria | Códigos | Exemplos |
+|-----------|---------|----------|
+| 🌧️ **Precipitação** | `DRIZZLE`, `LIGHT_RAIN`, `MODERATE_RAIN`, `HEAVY_RAIN` | Baseados em mm/h |
+| ⛈️ **Tempestade** | `STORM`, `STORM_RAIN` | Raios e chuva intensa |
+| 💨 **Vento** | `MODERATE_WIND`, `STRONG_WIND` | 30+ km/h e 50+ km/h |
+| 🌡️ **Temperatura** | `COLD`, `VERY_COLD`, `TEMP_DROP`, `TEMP_RISE` | Frio e variações |
+| ❄️ **Neve** | `SNOW` | Raro no Brasil |
+
+Ver [documentação completa de alertas](docs/api/ROUTES.md#alertas-meteorológicos) para todos os códigos, limiares e exemplos.
+
 </details>
 
 ### 3. POST `/api/weather/regional`

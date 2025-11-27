@@ -276,6 +276,237 @@ Accept: application/json
 | `windSpeed` | float | Velocidade do vento | km/h |
 | `rainfallIntensity` | float | Probabilidade de chuva | % (0-100) |
 | `weatherDescription` | string | Descrição do clima | - |
+| `weatherAlert` | array | Lista de alertas climáticos | - |
+| `feelsLike` | float | Sensação térmica | °C |
+| `pressure` | float | Pressão atmosférica | hPa |
+| `visibility` | float | Visibilidade | metros |
+| `clouds` | float | Cobertura de nuvens | % (0-100) |
+| `cloudsDescription` | string | Descrição da cobertura de nuvens | - |
+| `tempMin` | float | Temperatura mínima do dia | °C |
+| `tempMax` | float | Temperatura máxima do dia | °C |
+
+**Exemplo de resposta completa com alertas:**
+
+```json
+{
+  "cityId": "3543204",
+  "cityName": "Ribeirão do Sul",
+  "timestamp": "2025-11-27T15:00:00-03:00",
+  "temperature": 28.3,
+  "humidity": 65.0,
+  "windSpeed": 12.5,
+  "rainfallIntensity": 35.5,
+  "description": "céu limpo",
+  "feelsLike": 29.0,
+  "pressure": 1013.0,
+  "visibility": 10000,
+  "clouds": 2.0,
+  "cloudsDescription": "Céu limpo",
+  "weatherAlert": [
+    {
+      "code": "MODERATE_RAIN",
+      "severity": "warning",
+      "description": "🌧️ Chuva moderada",
+      "timestamp": "2025-11-27T18:00:00-03:00",
+      "details": {
+        "rain_mm_h": 15.5
+      }
+    },
+    {
+      "code": "STRONG_WIND",
+      "severity": "alert",
+      "description": "💨 ALERTA: Ventos fortes",
+      "timestamp": "2025-11-27T21:00:00-03:00",
+      "details": {
+        "wind_speed_kmh": 65.0
+      }
+    }
+  ],
+  "tempMin": 18.5,
+  "tempMax": 32.1
+}
+```
+
+### Alertas Meteorológicos
+
+A API retorna alertas climáticos estruturados no campo `weatherAlert` baseados nas previsões dos próximos 5 dias.
+
+#### Estrutura de um Alerta
+
+```json
+{
+  "code": "MODERATE_RAIN",
+  "severity": "warning",
+  "description": "🌧️ Chuva moderada",
+  "timestamp": "2025-11-27T18:00:00-03:00",
+  "details": {
+    "rain_mm_h": 15.5,
+    "probability_percent": 85.0
+  }
+}
+```
+
+**Campos:**
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `code` | string | Código único do alerta (ver tabela abaixo) |
+| `severity` | string | Nível de severidade: `info`, `warning`, `alert`, `danger` |
+| `description` | string | Descrição em português com emoji |
+| `timestamp` | string | Data/hora quando o alerta se aplica (ISO 8601) |
+| `details` | object | Informações adicionais (opcional) |
+
+#### Níveis de Severidade
+
+| Severidade | Cor Sugerida | Uso |
+|------------|--------------|-----|
+| `info` | 🔵 Azul | Informativo, sem necessidade de ação |
+| `warning` | 🟡 Amarelo | Atenção, preparação recomendada |
+| `alert` | 🟠 Laranja | Alerta, ação necessária |
+| `danger` | 🔴 Vermelho | Perigo, ação imediata necessária |
+
+#### Códigos de Alerta Disponíveis
+
+##### 🌧️ Alertas de Precipitação (baseados em volume mm/h)
+
+| Código | Severidade | Descrição | Limiar | Details |
+|--------|-----------|-----------|---------|---------|
+| `DRIZZLE` | info | 🌦️ Garoa | < 2.5 mm/h | `rain_mm_h` |
+| `LIGHT_RAIN` | info | 🌧️ Chuva fraca | 2.5-10 mm/h | `rain_mm_h` |
+| `MODERATE_RAIN` | warning | 🌧️ Chuva moderada | 10-50 mm/h | `rain_mm_h` |
+| `HEAVY_RAIN` | alert | ⚠️ ALERTA: Chuva forte | > 50 mm/h | `rain_mm_h` |
+| `RAIN_EXPECTED` | info | 🌧️ Alta probabilidade de chuva | Probabilidade ≥ 70% | `probability_percent` |
+
+##### ⛈️ Alertas de Tempestade
+
+| Código | Severidade | Descrição | Condição | Details |
+|--------|-----------|-----------|----------|---------|
+| `STORM` | danger | ⚠️ ALERTA: Tempestade com raios | Códigos 200-212, 221 | `weather_code`, `rain_mm_h` |
+| `STORM_RAIN` | alert | ⚠️ Tempestade com chuva | Outros códigos 2xx | `weather_code`, `rain_mm_h` |
+
+##### 💨 Alertas de Vento
+
+| Código | Severidade | Descrição | Limiar | Details |
+|--------|-----------|-----------|---------|---------|
+| `MODERATE_WIND` | info | 💨 Ventos moderados | 30-49 km/h | `wind_speed_kmh` |
+| `STRONG_WIND` | alert | 💨 ALERTA: Ventos fortes | ≥ 50 km/h | `wind_speed_kmh` |
+
+##### 🌡️ Alertas de Temperatura
+
+| Código | Severidade | Descrição | Limiar | Details |
+|--------|-----------|-----------|---------|---------|
+| `COLD` | alert | 🧊 Frio | < 12°C | `temperature_c` |
+| `VERY_COLD` | danger | 🥶 ALERTA: Frio intenso | < 8°C | `temperature_c` |
+| `TEMP_DROP` | warning | 🌡️ Queda de temperatura | Variação > 8°C entre dias | `day_1_date`, `day_1_max_c`, `day_2_date`, `day_2_max_c`, `variation_c` |
+| `TEMP_RISE` | info | 🌡️ Aumento de temperatura | Variação > 8°C entre dias | `day_1_date`, `day_1_max_c`, `day_2_date`, `day_2_max_c`, `variation_c` |
+
+##### ❄️ Outros Alertas
+
+| Código | Severidade | Descrição | Condição | Details |
+|--------|-----------|-----------|----------|---------|
+| `SNOW` | info | ❄️ Neve (raro no Brasil) | Códigos 600-699 | `weather_code`, `temperature_c` |
+
+#### Exemplos de Details por Tipo de Alerta
+
+**Precipitação:**
+```json
+{
+  "details": {
+    "rain_mm_h": 15.5
+  }
+}
+```
+
+**Vento:**
+```json
+{
+  "details": {
+    "wind_speed_kmh": 65.0
+  }
+}
+```
+
+**Temperatura:**
+```json
+{
+  "details": {
+    "temperature_c": 10.5
+  }
+}
+```
+
+**Variação de temperatura:**
+```json
+{
+  "details": {
+    "day_1_date": "2025-11-27",
+    "day_1_max_c": 28.0,
+    "day_2_date": "2025-11-28",
+    "day_2_max_c": 18.0,
+    "variation_c": -10.0
+  }
+}
+```
+
+**Tempestade:**
+```json
+{
+  "details": {
+    "weather_code": 210,
+    "rain_mm_h": 20.0
+  }
+}
+```
+
+**Probabilidade de chuva:**
+```json
+{
+  "details": {
+    "probability_percent": 85.0
+  }
+}
+```
+
+#### Características dos Alertas
+
+- **Deduplição**: Cada código de alerta aparece apenas uma vez na lista
+- **Múltiplos alertas**: Uma previsão pode ter vários alertas simultâneos (ex: tempestade + vento forte + frio)
+- **Campo opcional**: O campo `details` é opcional e pode não estar presente em alguns alertas
+- **Horário Brasil**: Todos os `timestamp` dos alertas estão em horário de Brasília (America/Sao_Paulo)
+- **Próximos 5 dias**: Alertas são coletados de todas as previsões futuras (até 5 dias)
+- **Limiares brasileiros**: Alertas de frio consideram o contexto climático brasileiro
+
+#### Uso Recomendado no Frontend
+
+```javascript
+// Exemplo de processamento de alertas
+weather.weatherAlert.forEach(alert => {
+  // Filtrar por severidade
+  if (alert.severity === 'danger' || alert.severity === 'alert') {
+    showNotification(alert.description);
+  }
+  
+  // Exibir detalhes se disponíveis
+  if (alert.details) {
+    if (alert.details.rain_mm_h) {
+      console.log(`Precipitação: ${alert.details.rain_mm_h} mm/h`);
+    }
+    if (alert.details.wind_speed_kmh) {
+      console.log(`Vento: ${alert.details.wind_speed_kmh} km/h`);
+    }
+  }
+});
+
+// Agrupar por severidade
+const criticalAlerts = weather.weatherAlert.filter(a => 
+  a.severity === 'danger' || a.severity === 'alert'
+);
+
+// Verificar se há alerta específico
+const hasColdAlert = weather.weatherAlert.some(a => 
+  a.code === 'COLD' || a.code === 'VERY_COLD'
+);
+```
 
 **Error (404 Not Found):**
 
