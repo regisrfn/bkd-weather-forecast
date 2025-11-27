@@ -359,7 +359,8 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
                 daily_temps[date_key] = {
                     'temps': [],
                     'max': float('-inf'),
-                    'min': float('inf')
+                    'min': float('inf'),
+                    'first_timestamp': forecast_dt  # Guardar primeiro timestamp do dia
                 }
             
             temp = forecast['main']['temp']
@@ -390,7 +391,8 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
                 
                 # Detectar variações significativas (>8°C)
                 if abs(variation) >= 8:
-                    alert_time = datetime.combine(day2, datetime.min.time()).replace(tzinfo=ZoneInfo("UTC")).astimezone(brasil_tz)
+                    # Usar primeiro timestamp do day1 (dia inicial da variação)
+                    alert_time = daily_temps[day1]['first_timestamp'].astimezone(brasil_tz)
                     
                     if variation < 0:
                         # Queda de temperatura - manter apenas a maior queda
