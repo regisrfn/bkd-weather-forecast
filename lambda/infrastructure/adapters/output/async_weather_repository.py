@@ -407,7 +407,7 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
                                 'variation': variation,
                                 'alert': WeatherAlert(
                                     code="TEMP_DROP",
-                                    severity=AlertSeverity.WARNING,
+                                    severity=AlertSeverity.INFO,
                                     description=f"🌡️ Queda de temperatura ({abs(variation):.0f}°C em {days_between} {'dia' if days_between == 1 else 'dias'})",
                                     timestamp=alert_time,
                                     details={
@@ -427,7 +427,7 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
                                 'variation': variation,
                                 'alert': WeatherAlert(
                                     code="TEMP_RISE",
-                                    severity=AlertSeverity.INFO,
+                                    severity=AlertSeverity.WARNING,
                                     description=f"🌡️ Aumento de temperatura (+{variation:.0f}°C em {days_between} {'dia' if days_between == 1 else 'dias'})",
                                     timestamp=alert_time,
                                     details={
