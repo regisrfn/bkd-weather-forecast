@@ -288,6 +288,9 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
             # Extrair temperatura
             temperature = forecast_item['main']['temp']
             
+            # Extrair visibilidade
+            visibility = forecast_item.get('visibility', 10000)
+            
             # Gerar alertas
             alerts = Weather.get_weather_alert(
                 weather_code=weather_code,
@@ -295,7 +298,8 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
                 wind_speed=wind_speed,
                 forecast_time=forecast_time,
                 rain_1h=rain_1h,
-                temperature=temperature
+                temperature=temperature,
+                visibility=visibility
             )
             
             # Adicionar apenas alertas novos (por code)
@@ -303,6 +307,14 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
                 if alert.code not in seen_codes:
                     all_alerts.append(alert)
                     seen_codes.add(alert.code)
+        
+        # Adicionar rain_ends_at aos alertas de chuva
+        rain_alert_codes = {"DRIZZLE", "LIGHT_RAIN", "MODERATE_RAIN", "HEAVY_RAIN", "STORM", "STORM_RAIN"}
+        for alert in all_alerts:
+            if alert.code in rain_alert_codes and alert.details:
+                rain_end_time = self._find_rain_end_time(future_forecasts, alert.timestamp)
+                if rain_end_time:
+                    alert.details["rain_ends_at"] = rain_end_time.isoformat()
         
         # Adicionar alertas de variação de temperatura entre dias
         temp_trend_alerts = self._analyze_temperature_trend(future_forecasts, reference_datetime)
@@ -428,6 +440,69 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
             alerts.append(max_rise['alert'])
         
         return alerts
+    
+    def _find_rain_end_time(
+        self,
+        forecasts: List[dict],
+        alert_timestamp: datetime
+    ) -> Optional[datetime]:
+        """
+        Encontra quando a chuva deve parar
+        
+        Percorre previsões futuras até encontrar a primeira sem indicação de chuva.
+        Retorna o FIM do último intervalo com chuva (timestamp + 3h).
+        
+        Args:
+            forecasts: Lista de previsões futuras
+            alert_timestamp: Timestamp do alerta de chuva (UTC)
+        
+        Returns:
+            Timestamp do fim da chuva em horário de Brasília (ou None se chuva contínua)
+        """
+        from datetime import timedelta
+        brasil_tz = ZoneInfo("America/Sao_Paulo")
+        
+        # Garantir que alert_timestamp está em UTC
+        if alert_timestamp.tzinfo is None:
+            alert_timestamp = alert_timestamp.replace(tzinfo=ZoneInfo("UTC"))
+        elif alert_timestamp.tzinfo != ZoneInfo("UTC"):
+            alert_timestamp = alert_timestamp.astimezone(ZoneInfo("UTC"))
+        
+        # Filtrar previsões >= timestamp do alerta
+        future = [
+            f for f in forecasts 
+            if datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")) >= alert_timestamp
+        ]
+        
+        last_rain_time = None
+        
+        for forecast in future:
+            rain_volume = forecast.get('rain', {}).get('3h', 0)
+            weather_code = forecast['weather'][0]['id']
+            rain_prob = forecast.get('pop', 0) * 100
+            
+            # Aplica threshold de 80% para volume, tempestades sempre alertam
+            has_rain = (
+                200 <= weather_code < 300 or  # Tempestade - sempre considera
+                (rain_volume > 0 and rain_prob >= 80) or  # Volume com alta probabilidade
+                (500 <= weather_code < 600 and rain_prob >= 80)  # Chuva por código com alta probabilidade
+            )
+            
+            if has_rain:
+                # Atualizar último horário com chuva
+                last_rain_time = datetime.fromtimestamp(
+                    forecast['dt'], 
+                    tz=ZoneInfo("UTC")
+                ).astimezone(brasil_tz)
+            else:
+                # Primeira previsão sem chuva = fim
+                break
+        
+        # Adicionar 3 horas ao último timestamp com chuva (fim do intervalo)
+        if last_rain_time:
+            last_rain_time = last_rain_time + timedelta(hours=3)
+        
+        return last_rain_time
     
     def _get_daily_temp_extremes(
         self,

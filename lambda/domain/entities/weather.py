@@ -8,6 +8,10 @@ from typing import Optional, List
 from enum import Enum
 
 
+# Threshold de probabilidade para alertas de precipitação
+RAIN_PROBABILITY_THRESHOLD = 80  # Mínimo de 80% para gerar alertas de chuva
+
+
 class AlertSeverity(Enum):
     """Níveis de severidade de alertas climáticos"""
     INFO = "info"  # Informativo
@@ -98,7 +102,7 @@ class Weather:
     @staticmethod
     def get_weather_alert(weather_code: int, rain_prob: float, wind_speed: float, 
                          forecast_time: datetime, rain_1h: float = 0.0, 
-                         temperature: float = 0.0) -> List[WeatherAlert]:
+                         temperature: float = 0.0, visibility: float = 10000) -> List[WeatherAlert]:
         """
         Identifica alertas climáticos baseado no código da condição e outros parâmetros
         
@@ -120,6 +124,7 @@ class Weather:
             forecast_time: Data/hora da previsão
             rain_1h: Volume de precipitação em mm/h (opcional)
             temperature: Temperatura em °C (opcional)
+            visibility: Visibilidade em metros (opcional, padrão 10000m)
         
         Returns:
             Lista de alertas estruturados (array vazio se não houver alertas).
@@ -135,14 +140,15 @@ class Weather:
             alert_time = forecast_time.replace(tzinfo=ZoneInfo("UTC")).astimezone(brasil_tz)
         
         # Alertas de PRECIPITAÇÃO baseados em volume (mm/h)
-        if rain_1h > 0:
+        # Requer probabilidade >= 80% para reduzir falsos positivos
+        if rain_1h > 0 and rain_prob >= RAIN_PROBABILITY_THRESHOLD:
             if rain_1h >= 50:
                 alerts.append(WeatherAlert(
                     code="HEAVY_RAIN",
                     severity=AlertSeverity.ALERT,
                     description="⚠️ ALERTA: Chuva forte",
                     timestamp=alert_time,
-                    details={"rain_mm_h": round(rain_1h, 1)}
+                    details={"rain_mm_h": round(rain_1h, 1), "probability_percent": round(rain_prob, 1)}
                 ))
             elif rain_1h >= 10:
                 alerts.append(WeatherAlert(
@@ -150,7 +156,7 @@ class Weather:
                     severity=AlertSeverity.WARNING,
                     description="🌧️ Chuva moderada",
                     timestamp=alert_time,
-                    details={"rain_mm_h": round(rain_1h, 1)}
+                    details={"rain_mm_h": round(rain_1h, 1), "probability_percent": round(rain_prob, 1)}
                 ))
             elif rain_1h >= 2.5:
                 alerts.append(WeatherAlert(
@@ -158,7 +164,7 @@ class Weather:
                     severity=AlertSeverity.INFO,
                     description="🌧️ Chuva fraca",
                     timestamp=alert_time,
-                    details={"rain_mm_h": round(rain_1h, 1)}
+                    details={"rain_mm_h": round(rain_1h, 1), "probability_percent": round(rain_prob, 1)}
                 ))
             elif rain_1h > 0:
                 alerts.append(WeatherAlert(
@@ -166,13 +172,13 @@ class Weather:
                     severity=AlertSeverity.INFO,
                     description="🌦️ Garoa",
                     timestamp=alert_time,
-                    details={"rain_mm_h": round(rain_1h, 1)}
+                    details={"rain_mm_h": round(rain_1h, 1), "probability_percent": round(rain_prob, 1)}
                 ))
         
         # Alertas por código climático - TEMPESTADES
         if 200 <= weather_code < 300:
             if weather_code in [200, 201, 202, 210, 211, 212, 221]:
-                alert_details = {"weather_code": weather_code}
+                alert_details = {"weather_code": weather_code, "probability_percent": round(rain_prob, 1)}
                 if rain_1h > 0:
                     alert_details["rain_mm_h"] = round(rain_1h, 1)
                 alerts.append(WeatherAlert(
@@ -183,7 +189,7 @@ class Weather:
                     details=alert_details
                 ))
             else:
-                alert_details = {"weather_code": weather_code}
+                alert_details = {"weather_code": weather_code, "probability_percent": round(rain_prob, 1)}
                 if rain_1h > 0:
                     alert_details["rain_mm_h"] = round(rain_1h, 1)
                 alerts.append(WeatherAlert(
@@ -203,9 +209,9 @@ class Weather:
                     severity=AlertSeverity.ALERT,
                     description="⚠️ ALERTA: Chuva forte prevista",
                     timestamp=alert_time,
-                    details={"weather_code": weather_code}
+                    details={"weather_code": weather_code, "probability_percent": round(rain_prob, 1)}
                 ))
-            elif rain_prob >= 70:
+            elif rain_prob >= RAIN_PROBABILITY_THRESHOLD:
                 # Chuva moderada com alta probabilidade - INFO apenas
                 alerts.append(WeatherAlert(
                     code="RAIN_EXPECTED",
@@ -227,7 +233,7 @@ class Weather:
         
         # Alerta de chuva pela PROBABILIDADE apenas (se não houver outros alertas de chuva)
         # Consolida em um único alerta de chuva
-        elif rain_prob >= 70 and not any(a.code in ["STORM", "STORM_RAIN", "HEAVY_RAIN", "MODERATE_RAIN", "LIGHT_RAIN", "DRIZZLE", "RAIN_EXPECTED"] for a in alerts):
+        elif rain_prob >= RAIN_PROBABILITY_THRESHOLD and not any(a.code in ["STORM", "STORM_RAIN", "HEAVY_RAIN", "MODERATE_RAIN", "LIGHT_RAIN", "DRIZZLE", "RAIN_EXPECTED"] for a in alerts):
             alerts.append(WeatherAlert(
                 code="RAIN_EXPECTED",
                 severity=AlertSeverity.INFO,
@@ -272,6 +278,24 @@ class Weather:
                     timestamp=alert_time,
                     details={"temperature_c": round(temperature, 1)}
                 ))
+        
+        # Alertas de VISIBILIDADE
+        if visibility < 1000:  # Menos de 1km
+            alerts.append(WeatherAlert(
+                code="LOW_VISIBILITY",
+                severity=AlertSeverity.ALERT,
+                description="🌫️ ALERTA: Visibilidade reduzida",
+                timestamp=alert_time,
+                details={"visibility_m": int(visibility)}
+            ))
+        elif visibility < 3000:  # Menos de 3km
+            alerts.append(WeatherAlert(
+                code="LOW_VISIBILITY",
+                severity=AlertSeverity.WARNING,
+                description="🌫️ Visibilidade reduzida",
+                timestamp=alert_time,
+                details={"visibility_m": int(visibility)}
+            ))
         
         # Deduplica alertas: mantém apenas um alerta por code
         # Prioriza pelo timestamp mais próximo (menor timestamp = mais urgente)

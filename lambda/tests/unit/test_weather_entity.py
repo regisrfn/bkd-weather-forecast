@@ -258,7 +258,7 @@ def test_weather_alert_drizzle():
     forecast_time = datetime(2025, 11, 21, 15, 0)
     alerts = Weather.get_weather_alert(
         weather_code=800,  # Céu limpo
-        rain_prob=50,
+        rain_prob=85,  # Probabilidade alta
         wind_speed=15,
         forecast_time=forecast_time,
         rain_1h=1.5,  # Garoa
@@ -278,7 +278,7 @@ def test_weather_alert_light_rain():
     forecast_time = datetime(2025, 11, 21, 15, 0)
     alerts = Weather.get_weather_alert(
         weather_code=800,
-        rain_prob=60,
+        rain_prob=82,  # Probabilidade alta
         wind_speed=15,
         forecast_time=forecast_time,
         rain_1h=5.0,  # Chuva fraca
@@ -296,7 +296,7 @@ def test_weather_alert_moderate_rain():
     forecast_time = datetime(2025, 11, 21, 15, 0)
     alerts = Weather.get_weather_alert(
         weather_code=800,
-        rain_prob=70,
+        rain_prob=90,  # Probabilidade alta
         wind_speed=20,
         forecast_time=forecast_time,
         rain_1h=15.0,  # Chuva moderada
@@ -434,6 +434,53 @@ def test_temperature_rise_with_days_between():
     assert "3 dias" in alert.description
     assert alert.details["days_between"] == 3
     assert alert.details["variation_c"] == 10.0
+
+
+def test_low_visibility_alert():
+    """Testa alerta LOW_VISIBILITY com visibilidade < 1km"""
+    alerts = Weather.get_weather_alert(
+        weather_code=800,
+        rain_prob=0,
+        wind_speed=10,
+        forecast_time=datetime(2025, 11, 27, 12, 0),
+        visibility=500  # 500 metros
+    )
+    
+    assert len(alerts) == 1
+    assert alerts[0].code == "LOW_VISIBILITY"
+    assert alerts[0].severity == AlertSeverity.ALERT
+    assert "Visibilidade reduzida" in alerts[0].description
+    assert alerts[0].details["visibility_m"] == 500
+
+
+def test_low_visibility_warning():
+    """Testa alerta LOW_VISIBILITY warning com visibilidade < 3km"""
+    alerts = Weather.get_weather_alert(
+        weather_code=800,
+        rain_prob=0,
+        wind_speed=10,
+        forecast_time=datetime(2025, 11, 27, 12, 0),
+        visibility=2000  # 2km
+    )
+    
+    assert len(alerts) == 1
+    assert alerts[0].code == "LOW_VISIBILITY"
+    assert alerts[0].severity == AlertSeverity.WARNING
+    assert "Visibilidade reduzida" in alerts[0].description
+    assert alerts[0].details["visibility_m"] == 2000
+
+
+def test_no_low_visibility_alert():
+    """Testa que não gera alerta com boa visibilidade"""
+    alerts = Weather.get_weather_alert(
+        weather_code=800,
+        rain_prob=0,
+        wind_speed=10,
+        forecast_time=datetime(2025, 11, 27, 12, 0),
+        visibility=10000  # 10km - boa visibilidade
+    )
+    
+    assert len(alerts) == 0
 
 
 if __name__ == '__main__':

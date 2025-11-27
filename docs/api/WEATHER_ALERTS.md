@@ -23,10 +23,16 @@ A API de previsão do tempo inclui um sistema avançado de alertas meteorológic
   "timestamp": "2025-11-27T18:00:00-03:00",
   "details": {
     "rain_mm_h": 15.5,
-    "probability_percent": 85.0
+    "probability_percent": 85.0,
+    "rain_ends_at": "2025-11-27T21:00:00-03:00"
   }
 }
 ```
+
+**Observação sobre `rain_ends_at`:**
+- Representa o **fim do último intervalo de 3h com chuva**
+- Exemplo: se tem chuva às 18h, o intervalo é 18h-21h, então `rain_ends_at` será 21h
+- Se a chuva continuar além de 5 dias, o campo não é incluído
 
 ### Campos
 
@@ -37,6 +43,21 @@ A API de previsão do tempo inclui um sistema avançado de alertas meteorológic
 | `description` | string | Descrição em português com emoji para melhor UX |
 | `timestamp` | string | Data/hora quando o alerta se aplica (ISO 8601) |
 | `details` | object | Informações adicionais opcionais com valores numéricos |
+
+## 📌 Importante: Threshold de Probabilidade
+
+**Todos os alertas baseados em volume de chuva requerem probabilidade >= 80%** para serem gerados. Isso inclui:
+- DRIZZLE (Garoa)
+- LIGHT_RAIN (Chuva fraca)
+- MODERATE_RAIN (Chuva moderada)
+- HEAVY_RAIN (Chuva forte por volume)
+- RAIN_EXPECTED (Alta probabilidade de chuva)
+
+**Exceções que SEMPRE geram alerta (independente da probabilidade):**
+- STORM / STORM_RAIN - Tempestades (códigos 2xx)
+- HEAVY_RAIN por código (códigos 502-504)
+
+Este threshold reduz falsos positivos enquanto mantém alertas críticos de tempestades.
 
 ## Níveis de Severidade
 
@@ -56,7 +77,7 @@ A API de previsão do tempo inclui um sistema avançado de alertas meteorológic
 - **Severidade**: `info`
 - **Descrição**: 🌦️ Garoa
 - **Limiar**: < 2.5 mm/h
-- **Details**: `{ "rain_mm_h": 1.5 }`
+- **Details**: `{ "rain_mm_h": 1.5, "probability_percent": 75.0, "rain_ends_at": "2025-11-27T18:00:00-03:00" }`
 - **Uso**: Informar sobre chuva muito leve que não interfere em atividades
 
 #### LIGHT_RAIN
@@ -64,7 +85,7 @@ A API de previsão do tempo inclui um sistema avançado de alertas meteorológic
 - **Severidade**: `info`
 - **Descrição**: 🌧️ Chuva fraca
 - **Limiar**: 2.5-10 mm/h
-- **Details**: `{ "rain_mm_h": 5.0 }`
+- **Details**: `{ "rain_mm_h": 5.0, "probability_percent": 80.0, "rain_ends_at": "2025-11-27T19:00:00-03:00" }`
 - **Uso**: Chuva leve, guarda-chuva recomendado
 
 #### MODERATE_RAIN
@@ -72,7 +93,7 @@ A API de previsão do tempo inclui um sistema avançado de alertas meteorológic
 - **Severidade**: `warning`
 - **Descrição**: 🌧️ Chuva moderada
 - **Limiar**: 10-50 mm/h
-- **Details**: `{ "rain_mm_h": 15.0 }`
+- **Details**: `{ "rain_mm_h": 15.0, "probability_percent": 85.0, "rain_ends_at": "2025-11-27T21:00:00-03:00" }`
 - **Uso**: Chuva considerável, evitar atividades externas
 
 #### HEAVY_RAIN
@@ -80,7 +101,7 @@ A API de previsão do tempo inclui um sistema avançado de alertas meteorológic
 - **Severidade**: `alert`
 - **Descrição**: ⚠️ ALERTA: Chuva forte
 - **Limiar**: > 50 mm/h
-- **Details**: `{ "rain_mm_h": 65.0 }`
+- **Details**: `{ "rain_mm_h": 65.0, "probability_percent": 90.0, "rain_ends_at": "2025-11-28T02:00:00-03:00" }`
 - **Uso**: Chuva intensa, risco de alagamentos
 
 #### RAIN_EXPECTED
@@ -98,7 +119,7 @@ A API de previsão do tempo inclui um sistema avançado de alertas meteorológic
 - **Severidade**: `danger`
 - **Descrição**: ⚠️ ALERTA: Tempestade com raios
 - **Condição**: Códigos OpenWeather 200, 201, 202, 210, 211, 212, 221
-- **Details**: `{ "weather_code": 210, "rain_mm_h": 20.0 }`
+- **Details**: `{ "weather_code": 210, "rain_mm_h": 20.0, "probability_percent": 95.0, "rain_ends_at": "2025-11-28T00:00:00-03:00" }`
 - **Uso**: Perigo de raios, buscar abrigo imediatamente
 
 #### STORM_RAIN
@@ -106,7 +127,7 @@ A API de previsão do tempo inclui um sistema avançado de alertas meteorológic
 - **Severidade**: `alert`
 - **Descrição**: ⚠️ Tempestade com chuva
 - **Condição**: Outros códigos 2xx
-- **Details**: `{ "weather_code": 231, "rain_mm_h": 15.0 }`
+- **Details**: `{ "weather_code": 231, "rain_mm_h": 15.0, "probability_percent": 85.0, "rain_ends_at": "2025-11-27T23:00:00-03:00" }`
 - **Uso**: Tempestade menos intensa, mas ainda requer cuidado
 
 ### 💨 Vento
@@ -191,6 +212,16 @@ A API de previsão do tempo inclui um sistema avançado de alertas meteorológic
 - **Details**: `{ "weather_code": 600, "temperature_c": 0.5 }`
 - **Uso**: Evento raro, principalmente em regiões serranas do Sul
 
+### 🌫️ Visibilidade
+
+#### LOW_VISIBILITY
+- **Código**: `LOW_VISIBILITY`
+- **Severidade**: `alert` (< 1km) ou `warning` (< 3km)
+- **Descrição**: 🌫️ ALERTA: Visibilidade reduzida
+- **Limiar**: < 3000 metros
+- **Details**: `{ "visibility_m": 500 }`
+- **Uso**: Neblina, névoa ou fumaça reduzindo visibilidade. Importante para segurança no trânsito
+
 ## Exemplos de Resposta da API
 
 ### Exemplo 1: Chuva Moderada + Vento Forte
@@ -207,7 +238,9 @@ A API de previsão do tempo inclui um sistema avançado de alertas meteorológic
       "description": "🌧️ Chuva moderada",
       "timestamp": "2025-11-27T15:00:00-03:00",
       "details": {
-        "rain_mm_h": 18.5
+        "rain_mm_h": 18.5,
+        "probability_percent": 85.0,
+        "rain_ends_at": "2025-11-27T21:00:00-03:00"
       }
     },
     {
@@ -237,7 +270,9 @@ A API de previsão do tempo inclui um sistema avançado de alertas meteorológic
       "description": "⚠️ ALERTA: Chuva forte",
       "timestamp": "2025-11-27T20:00:00-03:00",
       "details": {
-        "rain_mm_h": 60.0
+        "rain_mm_h": 60.0,
+        "probability_percent": 90.0,
+        "rain_ends_at": "2025-11-28T02:00:00-03:00"
       }
     },
     {
@@ -247,7 +282,9 @@ A API de previsão do tempo inclui um sistema avançado de alertas meteorológic
       "timestamp": "2025-11-27T21:00:00-03:00",
       "details": {
         "weather_code": 210,
-        "rain_mm_h": 65.0
+        "rain_mm_h": 65.0,
+        "probability_percent": 95.0,
+        "rain_ends_at": "2025-11-28T00:00:00-03:00"
       }
     },
     {
@@ -352,6 +389,16 @@ function formatAlertDetails(alert) {
   
   if (details.rain_mm_h) {
     extraInfo.push(`${details.rain_mm_h} mm/h`);
+  }
+  if (details.probability_percent) {
+    extraInfo.push(`${details.probability_percent}% chance`);
+  }
+  if (details.rain_ends_at) {
+    const endTime = new Date(details.rain_ends_at);
+    extraInfo.push(`até ${endTime.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'})}`);
+  }
+  if (details.visibility_m) {
+    extraInfo.push(`visibilidade ${details.visibility_m}m`);
   }
   if (details.wind_speed_kmh) {
     extraInfo.push(`${details.wind_speed_kmh} km/h`);
