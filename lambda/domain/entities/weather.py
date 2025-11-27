@@ -32,15 +32,19 @@ class WeatherAlert:
     severity: AlertSeverity  # Nível de severidade
     description: str  # Descrição em português
     timestamp: datetime  # Data/hora do alerta (quando se aplica)
+    details: Optional[dict] = None  # Detalhes adicionais opcionais (ex: velocidade vento, mm chuva)
     
     def to_dict(self) -> dict:
         """Converte para dicionário para resposta da API"""
-        return {
+        result = {
             'code': self.code,
             'severity': self.severity.value,
             'description': self.description,
             'timestamp': self.timestamp.isoformat()
         }
+        if self.details is not None:
+            result['details'] = self.details
+        return result
 
 
 @dataclass
@@ -93,7 +97,8 @@ class Weather:
     
     @staticmethod
     def get_weather_alert(weather_code: int, rain_prob: float, wind_speed: float, 
-                         forecast_time: datetime) -> List[WeatherAlert]:
+                         forecast_time: datetime, rain_1h: float = 0.0, 
+                         temperature: float = 0.0) -> List[WeatherAlert]:
         """
         Identifica alertas climáticos baseado no código da condição e outros parâmetros
         
@@ -113,6 +118,8 @@ class Weather:
             rain_prob: Probabilidade de chuva (0-100%)
             wind_speed: Velocidade do vento (km/h)
             forecast_time: Data/hora da previsão
+            rain_1h: Volume de precipitação em mm/h (opcional)
+            temperature: Temperatura em °C (opcional)
         
         Returns:
             Lista de alertas estruturados (array vazio se não houver alertas).
@@ -127,32 +134,76 @@ class Weather:
         else:
             alert_time = forecast_time.replace(tzinfo=ZoneInfo("UTC")).astimezone(brasil_tz)
         
-        # Alertas por código climático - TEMPESTADES
-        if 200 <= weather_code < 300:
-            if weather_code in [200, 201, 202, 210, 211, 212, 221]:
-                alerts.append(WeatherAlert(
-                    code="STORM",
-                    severity=AlertSeverity.DANGER,
-                    description="⚠️ ALERTA: Tempestade com raios",
-                    timestamp=alert_time
-                ))
-            else:
-                alerts.append(WeatherAlert(
-                    code="STORM_RAIN",
-                    severity=AlertSeverity.ALERT,
-                    description="⚠️ Tempestade com chuva",
-                    timestamp=alert_time
-                ))
-        
-        # CHUVAS
-        elif 500 <= weather_code < 600:
-            if weather_code in [502, 503, 504, 522, 531]:
-                # Chuva forte
+        # Alertas de PRECIPITAÇÃO baseados em volume (mm/h)
+        if rain_1h > 0:
+            if rain_1h >= 50:
                 alerts.append(WeatherAlert(
                     code="HEAVY_RAIN",
                     severity=AlertSeverity.ALERT,
                     description="⚠️ ALERTA: Chuva forte",
-                    timestamp=alert_time
+                    timestamp=alert_time,
+                    details={"rain_mm_h": round(rain_1h, 1)}
+                ))
+            elif rain_1h >= 10:
+                alerts.append(WeatherAlert(
+                    code="MODERATE_RAIN",
+                    severity=AlertSeverity.WARNING,
+                    description="🌧️ Chuva moderada",
+                    timestamp=alert_time,
+                    details={"rain_mm_h": round(rain_1h, 1)}
+                ))
+            elif rain_1h >= 2.5:
+                alerts.append(WeatherAlert(
+                    code="LIGHT_RAIN",
+                    severity=AlertSeverity.INFO,
+                    description="🌧️ Chuva fraca",
+                    timestamp=alert_time,
+                    details={"rain_mm_h": round(rain_1h, 1)}
+                ))
+            elif rain_1h > 0:
+                alerts.append(WeatherAlert(
+                    code="DRIZZLE",
+                    severity=AlertSeverity.INFO,
+                    description="🌦️ Garoa",
+                    timestamp=alert_time,
+                    details={"rain_mm_h": round(rain_1h, 1)}
+                ))
+        
+        # Alertas por código climático - TEMPESTADES
+        if 200 <= weather_code < 300:
+            if weather_code in [200, 201, 202, 210, 211, 212, 221]:
+                alert_details = {"weather_code": weather_code}
+                if rain_1h > 0:
+                    alert_details["rain_mm_h"] = round(rain_1h, 1)
+                alerts.append(WeatherAlert(
+                    code="STORM",
+                    severity=AlertSeverity.DANGER,
+                    description="⚠️ ALERTA: Tempestade com raios",
+                    timestamp=alert_time,
+                    details=alert_details
+                ))
+            else:
+                alert_details = {"weather_code": weather_code}
+                if rain_1h > 0:
+                    alert_details["rain_mm_h"] = round(rain_1h, 1)
+                alerts.append(WeatherAlert(
+                    code="STORM_RAIN",
+                    severity=AlertSeverity.ALERT,
+                    description="⚠️ Tempestade com chuva",
+                    timestamp=alert_time,
+                    details=alert_details
+                ))
+        
+        # CHUVAS - alertas por código apenas se não houver volume medido
+        elif 500 <= weather_code < 600 and rain_1h == 0:
+            if weather_code in [502, 503, 504, 522, 531]:
+                # Chuva forte prevista por código
+                alerts.append(WeatherAlert(
+                    code="HEAVY_RAIN",
+                    severity=AlertSeverity.ALERT,
+                    description="⚠️ ALERTA: Chuva forte prevista",
+                    timestamp=alert_time,
+                    details={"weather_code": weather_code}
                 ))
             elif rain_prob >= 70:
                 # Chuva moderada com alta probabilidade - INFO apenas
@@ -160,7 +211,8 @@ class Weather:
                     code="RAIN_EXPECTED",
                     severity=AlertSeverity.INFO,
                     description="🌧️ Alta probabilidade de chuva",
-                    timestamp=alert_time
+                    timestamp=alert_time,
+                    details={"probability_percent": round(rain_prob, 1)}
                 ))
         
         # NEVE
@@ -169,17 +221,19 @@ class Weather:
                 code="SNOW",
                 severity=AlertSeverity.INFO,
                 description="❄️ Neve (raro no Brasil)",
-                timestamp=alert_time
+                timestamp=alert_time,
+                details={"weather_code": weather_code, "temperature_c": round(temperature, 1)}
             ))
         
         # Alerta de chuva pela PROBABILIDADE apenas (se não houver outros alertas de chuva)
         # Consolida em um único alerta de chuva
-        elif rain_prob >= 70 and not any(a.code in ["STORM", "STORM_RAIN", "HEAVY_RAIN", "RAIN_EXPECTED"] for a in alerts):
+        elif rain_prob >= 70 and not any(a.code in ["STORM", "STORM_RAIN", "HEAVY_RAIN", "MODERATE_RAIN", "LIGHT_RAIN", "DRIZZLE", "RAIN_EXPECTED"] for a in alerts):
             alerts.append(WeatherAlert(
                 code="RAIN_EXPECTED",
                 severity=AlertSeverity.INFO,
                 description="🌧️ Alta probabilidade de chuva",
-                timestamp=alert_time
+                timestamp=alert_time,
+                details={"probability_percent": round(rain_prob, 1)}
             ))
         
         # Alertas de VENTO FORTE
@@ -188,15 +242,36 @@ class Weather:
                 code="STRONG_WIND",
                 severity=AlertSeverity.ALERT,
                 description="💨 ALERTA: Ventos fortes",
-                timestamp=alert_time
+                timestamp=alert_time,
+                details={"wind_speed_kmh": round(wind_speed, 1)}
             ))
         elif wind_speed >= 30:
             alerts.append(WeatherAlert(
                 code="MODERATE_WIND",
                 severity=AlertSeverity.INFO,
                 description="💨 Ventos moderados",
-                timestamp=alert_time
+                timestamp=alert_time,
+                details={"wind_speed_kmh": round(wind_speed, 1)}
             ))
+        
+        # Alertas de TEMPERATURA (frio considerando contexto brasileiro)
+        if temperature > 0:  # Apenas se temperatura foi fornecida
+            if temperature < 8:
+                alerts.append(WeatherAlert(
+                    code="VERY_COLD",
+                    severity=AlertSeverity.DANGER,
+                    description="🥶 ALERTA: Frio intenso",
+                    timestamp=alert_time,
+                    details={"temperature_c": round(temperature, 1)}
+                ))
+            elif temperature < 12:
+                alerts.append(WeatherAlert(
+                    code="COLD",
+                    severity=AlertSeverity.ALERT,
+                    description="🧊 Frio",
+                    timestamp=alert_time,
+                    details={"temperature_c": round(temperature, 1)}
+                ))
         
         # Deduplica alertas: mantém apenas um alerta por code
         # Prioriza pelo timestamp mais próximo (menor timestamp = mais urgente)

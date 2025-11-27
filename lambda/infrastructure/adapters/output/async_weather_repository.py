@@ -282,12 +282,20 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
             wind_speed = forecast_item['wind']['speed'] * 3.6
             forecast_time = datetime.fromtimestamp(forecast_item['dt'], tz=ZoneInfo("UTC"))
             
+            # Extrair volume de precipitação (mm/h)
+            rain_1h = forecast_item.get('rain', {}).get('3h', 0) / 3 if forecast_item.get('rain') else 0
+            
+            # Extrair temperatura
+            temperature = forecast_item['main']['temp']
+            
             # Gerar alertas
             alerts = Weather.get_weather_alert(
                 weather_code=weather_code,
                 rain_prob=rain_prob,
                 wind_speed=wind_speed,
-                forecast_time=forecast_time
+                forecast_time=forecast_time,
+                rain_1h=rain_1h,
+                temperature=temperature
             )
             
             # Adicionar apenas alertas novos (por code)
@@ -296,7 +304,130 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
                     all_alerts.append(alert)
                     seen_codes.add(alert.code)
         
+        # Adicionar alertas de variação de temperatura entre dias
+        temp_trend_alerts = self._analyze_temperature_trend(future_forecasts, reference_datetime)
+        for alert in temp_trend_alerts:
+            if alert.code not in seen_codes:
+                all_alerts.append(alert)
+                seen_codes.add(alert.code)
+        
         return all_alerts
+    
+    def _analyze_temperature_trend(
+        self,
+        forecasts: List[dict],
+        reference_datetime: datetime
+    ) -> List:
+        """
+        Analisa tendência de temperatura entre todos os pares de dias
+        Detecta variações significativas (>8°C) entre máximas/mínimas de dias
+        
+        Args:
+            forecasts: Lista de previsões futuras
+            reference_datetime: Data/hora de referência (UTC)
+        
+        Returns:
+            Lista de alertas de variação de temperatura (TEMP_DROP, TEMP_RISE)
+        """
+        from domain.entities.weather import WeatherAlert, AlertSeverity
+        
+        if not forecasts:
+            return []
+        
+        alerts = []
+        brasil_tz = ZoneInfo("America/Sao_Paulo")
+        
+        # Agrupar previsões por dia
+        daily_temps = {}
+        for forecast in forecasts:
+            forecast_dt = datetime.fromtimestamp(forecast['dt'], tz=ZoneInfo("UTC"))
+            date_key = forecast_dt.date()
+            
+            if date_key not in daily_temps:
+                daily_temps[date_key] = {
+                    'temps': [],
+                    'max': float('-inf'),
+                    'min': float('inf')
+                }
+            
+            temp = forecast['main']['temp']
+            temp_max = forecast['main']['temp_max']
+            temp_min = forecast['main']['temp_min']
+            
+            daily_temps[date_key]['temps'].extend([temp, temp_max, temp_min])
+            daily_temps[date_key]['max'] = max(daily_temps[date_key]['max'], temp, temp_max, temp_min)
+            daily_temps[date_key]['min'] = min(daily_temps[date_key]['min'], temp, temp_max, temp_min)
+        
+        # Analisar variações entre TODOS os pares de dias (não apenas consecutivos)
+        sorted_dates = sorted(daily_temps.keys())
+        
+        # Rastrear maior queda e maior aumento para evitar alertas duplicados
+        max_drop = None
+        max_rise = None
+        
+        for i in range(len(sorted_dates)):
+            for j in range(i + 1, len(sorted_dates)):
+                day1 = sorted_dates[i]
+                day2 = sorted_dates[j]
+                
+                temp1_max = daily_temps[day1]['max']
+                temp2_max = daily_temps[day2]['max']
+                
+                variation = temp2_max - temp1_max
+                days_between = (day2 - day1).days
+                
+                # Detectar variações significativas (>8°C)
+                if abs(variation) >= 8:
+                    alert_time = datetime.combine(day2, datetime.min.time()).replace(tzinfo=ZoneInfo("UTC")).astimezone(brasil_tz)
+                    
+                    if variation < 0:
+                        # Queda de temperatura - manter apenas a maior queda
+                        if max_drop is None or abs(variation) > abs(max_drop['variation']):
+                            max_drop = {
+                                'variation': variation,
+                                'alert': WeatherAlert(
+                                    code="TEMP_DROP",
+                                    severity=AlertSeverity.WARNING,
+                                    description=f"🌡️ Queda de temperatura ({abs(variation):.0f}°C em {days_between} {'dia' if days_between == 1 else 'dias'})",
+                                    timestamp=alert_time,
+                                    details={
+                                        "day_1_date": day1.isoformat(),
+                                        "day_1_max_c": round(temp1_max, 1),
+                                        "day_2_date": day2.isoformat(),
+                                        "day_2_max_c": round(temp2_max, 1),
+                                        "variation_c": round(variation, 1),
+                                        "days_between": days_between
+                                    }
+                                )
+                            }
+                    else:
+                        # Aumento de temperatura - manter apenas o maior aumento
+                        if max_rise is None or variation > max_rise['variation']:
+                            max_rise = {
+                                'variation': variation,
+                                'alert': WeatherAlert(
+                                    code="TEMP_RISE",
+                                    severity=AlertSeverity.INFO,
+                                    description=f"🌡️ Aumento de temperatura (+{variation:.0f}°C em {days_between} {'dia' if days_between == 1 else 'dias'})",
+                                    timestamp=alert_time,
+                                    details={
+                                        "day_1_date": day1.isoformat(),
+                                        "day_1_max_c": round(temp1_max, 1),
+                                        "day_2_date": day2.isoformat(),
+                                        "day_2_max_c": round(temp2_max, 1),
+                                        "variation_c": round(variation, 1),
+                                        "days_between": days_between
+                                    }
+                                )
+                            }
+        
+        # Adicionar apenas os alertas de maior variação
+        if max_drop:
+            alerts.append(max_drop['alert'])
+        if max_rise:
+            alerts.append(max_rise['alert'])
+        
+        return alerts
     
     def _get_daily_temp_extremes(
         self,
