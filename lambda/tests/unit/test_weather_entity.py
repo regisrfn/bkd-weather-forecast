@@ -71,6 +71,7 @@ def test_weather_to_api_response():
     assert api_response['humidity'] == 65
     assert api_response['windSpeed'] == 15.2
     assert api_response['rainfallIntensity'] == 45.0
+    assert api_response['rainVolumeHour'] == 2.5
     assert api_response['description'] == "céu limpo"
     assert api_response['feelsLike'] == 29.0
     assert api_response['pressure'] == 1013.0

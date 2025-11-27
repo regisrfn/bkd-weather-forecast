@@ -331,6 +331,7 @@ class Weather:
             'cityName': self.city_name,
             'timestamp': timestamp_brasil.isoformat(),  # Agora em horário Brasil
             'rainfallIntensity': round(self.rainfall_intensity, 1),
+            'rainVolumeHour': round(self.rain_1h, 1),
             'temperature': round(self.temperature, 1),
             'humidity': round(self.humidity, 1),
             'windSpeed': round(self.wind_speed, 1),
