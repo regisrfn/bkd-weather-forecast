@@ -275,6 +275,7 @@ Accept: application/json
 | `humidity` | float | Umidade relativa | % (0-100) |
 | `windSpeed` | float | Velocidade do vento | km/h |
 | `rainfallIntensity` | float | Probabilidade de chuva | % (0-100) |
+| `rainVolumeHour` | float | Volume de chuva | mm/h |
 | `weatherDescription` | string | Descrição do clima | - |
 | `weatherAlert` | array | Lista de alertas climáticos | - |
 | `feelsLike` | float | Sensação térmica | °C |
