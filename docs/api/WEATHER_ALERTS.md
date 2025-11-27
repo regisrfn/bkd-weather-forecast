@@ -59,6 +59,45 @@ A API de previsão do tempo inclui um sistema avançado de alertas meteorológic
 
 Este threshold reduz falsos positivos enquanto mantém alertas críticos de tempestades.
 
+## 📊 Métrica de Intensidade de Chuva (rainfallIntensity)
+
+**Nova implementação**: `rainfallIntensity` agora é uma **métrica composta** que combina volume de precipitação (mm/h) e probabilidade (%).
+
+### Fórmula
+
+```
+rainfallIntensity = min(100, (rain_1h × rain_probability / 100) / 10.0 × 100)
+```
+
+Onde:
+- `rain_1h`: Volume de precipitação em mm/h (da OpenWeatherMap API)
+- `rain_probability`: Probabilidade de precipitação de 0-100% (campo `pop` da API)
+- `10.0`: Threshold de referência (10mm/h = início de chuva moderada segundo WMO)
+
+### Escala de Valores
+
+| Intensidade | Significado | Exemplo |
+|-------------|-------------|----------|
+| 0 | Sem chuva | 0mm × 100% = 0 pontos |
+| 1-25 | Chuva leve | 2mm × 50% = 10 pontos, garoa com média probabilidade |
+| 26-50 | Chuva moderada | 5mm × 80% = 40 pontos, chuva fraca provável |
+| 51-75 | Chuva forte | 8mm × 90% = 72 pontos, chuva considerável |
+| 76-100 | Chuva intensa | 10mm × 100% = 100 pontos, chuva moderada garantida |
+
+### Vantagens da Métrica Composta
+
+✅ **Resolve "100% probabilidade mas 0mm"**: Retorna 0 pontos quando não há volume real  
+✅ **Representa intensidade real**: Combina chance + quantidade de chuva  
+✅ **Baseada em padrões WMO**: 10mm/h como referência de chuva moderada  
+✅ **Escala intuitiva**: 0-100 mantém compatibilidade com UI existente  
+✅ **Cap em 100**: Chuvas extremas não quebram interface
+
+### Comparação com Campos Separados
+
+- **`rainfallIntensity`**: Métrica composta (volume × probabilidade) - **usar para visualização**
+- **`rainVolumeHour`**: Volume puro em mm/h - usar para alertas técnicos
+- **`rain_probability`**: Probabilidade pura 0-100% - disponível internamente
+
 ## Níveis de Severidade
 
 | Severidade | Cor Sugerida | Uso | Ação Recomendada |

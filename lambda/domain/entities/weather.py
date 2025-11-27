@@ -11,6 +11,11 @@ from enum import Enum
 # Threshold de probabilidade para alertas de precipitação
 RAIN_PROBABILITY_THRESHOLD = 80  # Mínimo de 80% para gerar alertas de chuva
 
+# Threshold de referência para intensidade de chuva (métrica composta)
+# Define que 10mm/h com 100% de probabilidade = 100 pontos de intensidade
+# Baseado na classificação WMO: 10mm/h = início de chuva moderada
+RAIN_INTENSITY_REFERENCE = 10.0  # mm/h
+
 
 class AlertSeverity(Enum):
     """Níveis de severidade de alertas climáticos"""
@@ -75,10 +80,26 @@ class Weather:
     @property
     def rainfall_intensity(self) -> float:
         """
-        Retorna probabilidade de chuva (0-100%)
-        Agora baseado no campo 'pop' (Probability of Precipitation) da API
+        Retorna intensidade de chuva composta (0-100)
+        
+        Combina volume de precipitação (mm/h) e probabilidade (%) em uma métrica única:
+        - 0 pontos: Sem chuva ou volume insignificante
+        - 100 pontos: Chuva moderada garantida (10mm/h a 100% probabilidade)
+        - Escala proporcional: volume × probabilidade / threshold
+        
+        Resolve o problema de "100% probabilidade mas 0mm" retornando 0 pontos,
+        pois intensidade real = volume × probabilidade.
+        
+        Baseado na classificação WMO onde 10mm/h = início de chuva moderada.
         """
-        return self.rain_probability
+        if self.rain_1h == 0:
+            return 0.0
+        
+        # Calcula intensidade composta: volume × probabilidade normalizado
+        composite_intensity = (self.rain_1h * self.rain_probability / 100.0) / RAIN_INTENSITY_REFERENCE * 100.0
+        
+        # Limita em 100 para manter compatibilidade com frontend
+        return min(100.0, composite_intensity)
     
     @property
     def clouds_description(self) -> str:

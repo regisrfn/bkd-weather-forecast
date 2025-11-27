@@ -70,7 +70,8 @@ def test_weather_to_api_response():
     assert api_response['temperature'] == 28.5
     assert api_response['humidity'] == 65
     assert api_response['windSpeed'] == 15.2
-    assert api_response['rainfallIntensity'] == 45.0
+    # rainfallIntensity agora é métrica composta: (2.5mm/h * 45%) / 10 * 100 = 11.25
+    assert api_response['rainfallIntensity'] == 11.2  # Arredondado
     assert api_response['rainVolumeHour'] == 2.5
     assert api_response['description'] == "céu limpo"
     assert api_response['feelsLike'] == 29.0
@@ -482,6 +483,88 @@ def test_no_low_visibility_alert():
     )
     
     assert len(alerts) == 0
+
+
+def test_rainfall_intensity_composite_metric():
+    """Testa cálculo de intensidade composta de chuva"""
+    
+    # Caso 1: 0mm com 100% probabilidade = 0 pontos (resolve problema original)
+    weather1 = Weather(
+        city_id="3543204",
+        city_name="Test",
+        timestamp=datetime(2025, 11, 27, 12, 0),
+        temperature=25.0,
+        humidity=80,
+        wind_speed=10,
+        rain_probability=100.0,
+        rain_1h=0.0
+    )
+    assert weather1.rainfall_intensity == 0.0
+    
+    # Caso 2: 10mm/h com 100% probabilidade = 100 pontos (referência)
+    weather2 = Weather(
+        city_id="3543204",
+        city_name="Test",
+        timestamp=datetime(2025, 11, 27, 12, 0),
+        temperature=22.0,
+        humidity=85,
+        wind_speed=15,
+        rain_probability=100.0,
+        rain_1h=10.0
+    )
+    assert weather2.rainfall_intensity == 100.0
+    
+    # Caso 3: 5mm/h com 50% probabilidade = 25 pontos
+    weather3 = Weather(
+        city_id="3543204",
+        city_name="Test",
+        timestamp=datetime(2025, 11, 27, 12, 0),
+        temperature=20.0,
+        humidity=75,
+        wind_speed=12,
+        rain_probability=50.0,
+        rain_1h=5.0
+    )
+    assert weather3.rainfall_intensity == 25.0
+    
+    # Caso 4: 5mm/h com 80% probabilidade = 40 pontos
+    weather4 = Weather(
+        city_id="3543204",
+        city_name="Test",
+        timestamp=datetime(2025, 11, 27, 12, 0),
+        temperature=19.0,
+        humidity=82,
+        wind_speed=18,
+        rain_probability=80.0,
+        rain_1h=5.0
+    )
+    assert weather4.rainfall_intensity == 40.0
+    
+    # Caso 5: 20mm/h com 80% probabilidade = 160 -> cap em 100 pontos
+    weather5 = Weather(
+        city_id="3543204",
+        city_name="Test",
+        timestamp=datetime(2025, 11, 27, 12, 0),
+        temperature=18.0,
+        humidity=90,
+        wind_speed=25,
+        rain_probability=80.0,
+        rain_1h=20.0
+    )
+    assert weather5.rainfall_intensity == 100.0  # Capped
+    
+    # Caso 6: 2mm/h com 100% probabilidade = 20 pontos (garoa certa)
+    weather6 = Weather(
+        city_id="3543204",
+        city_name="Test",
+        timestamp=datetime(2025, 11, 27, 12, 0),
+        temperature=21.0,
+        humidity=78,
+        wind_speed=8,
+        rain_probability=100.0,
+        rain_1h=2.0
+    )
+    assert weather6.rainfall_intensity == 20.0
 
 
 if __name__ == '__main__':
