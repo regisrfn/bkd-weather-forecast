@@ -115,7 +115,7 @@ resource "aws_lambda_function" "main" {
         # Datadog Configuration
         DD_API_KEY_SECRET_ARN = var.datadog_api_key_secret_arn
         DD_SITE               = var.datadog_site
-        DD_SERVICE            = "weather-forecast"
+        DD_SERVICE            = var.function_name
         DD_ENV                = var.datadog_env
         DD_VERSION            = var.datadog_version
         DD_TRACE_ENABLED      = "true"
