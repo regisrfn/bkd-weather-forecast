@@ -113,14 +113,18 @@ class WeatherDataProcessor:
         target_datetime: Optional[datetime]
     ) -> Tuple[float, float]:
         """
-        Calculate min/max temperatures for the entire target day
+        Calculate min/max temperatures for the ENTIRE target day
+        
+        Important: Returns min/max for the whole day, regardless of query time.
+        Example: If querying at 18:00, still includes forecasts from 00:00-18:00
+        to get accurate daily extremes.
         
         Args:
             forecasts: List of forecasts
             target_datetime: Target date (None = today)
         
         Returns:
-            Tuple (temp_min, temp_max)
+            Tuple (temp_min, temp_max) for the entire day
         """
         if not forecasts:
             return (0.0, 0.0)
@@ -129,11 +133,11 @@ class WeatherDataProcessor:
         reference_datetime = DateFilterHelper.get_reference_datetime(target_datetime, "UTC")
         target_date = reference_datetime.date()
         
-        # Filter forecasts for target day (future only)
+        # Filter forecasts for target day (ALL forecasts for the day, not just future)
+        # This ensures we get the true daily min/max regardless of query time
         day_forecasts = [
             f for f in forecasts
             if datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")).date() == target_date
-            and datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")) >= reference_datetime
         ]
         
         if not day_forecasts:

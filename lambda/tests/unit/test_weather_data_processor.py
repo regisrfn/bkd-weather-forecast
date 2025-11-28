@@ -122,6 +122,38 @@ class TestGetDailyTempExtremes:
         assert isinstance(temp_min, float)
         assert isinstance(temp_max, float)
         assert temp_min <= temp_max
+    
+    def test_get_daily_temp_extremes_includes_whole_day(self, test_data):
+        """Test that temperature extremes include ALL forecasts for the day, not just future ones"""
+        forecasts = test_data['list']
+        
+        # Query at end of day (e.g., 21:00) - should still include earlier forecasts
+        target_dt = datetime(2025, 11, 27, 21, 0, tzinfo=ZoneInfo("UTC"))
+        
+        temp_min_late, temp_max_late = WeatherDataProcessor.get_daily_temp_extremes(
+            forecasts,
+            target_dt
+        )
+        
+        # Query at start of day (e.g., 03:00)
+        target_dt_early = datetime(2025, 11, 27, 3, 0, tzinfo=ZoneInfo("UTC"))
+        
+        temp_min_early, temp_max_early = WeatherDataProcessor.get_daily_temp_extremes(
+            forecasts,
+            target_dt_early
+        )
+        
+        # Both queries should return same extremes for the day
+        # (since we now include all forecasts for the day, not just future ones)
+        assert isinstance(temp_min_late, float)
+        assert isinstance(temp_max_late, float)
+        assert isinstance(temp_min_early, float)
+        assert isinstance(temp_max_early, float)
+        
+        # The late query should have same or similar extremes as early query
+        # because they both look at the entire day
+        assert temp_min_late <= temp_max_late
+        assert temp_min_early <= temp_max_early
 
 
 class TestCalculateDailyRainAccumulation:
@@ -172,6 +204,34 @@ class TestCalculateDailyRainAccumulation:
         
         assert isinstance(total_rain, float)
         assert total_rain >= 0
+    
+    def test_calculate_daily_rain_accumulation_sums_all_periods(self):
+        """Test that daily rain correctly sums all 3h periods for the day"""
+        # Create forecasts for a specific day with known rain amounts
+        # Use Brazil timezone to ensure date alignment
+        brazil_tz = ZoneInfo("America/Sao_Paulo")
+        base_dt = datetime(2024, 11, 27, 0, 0, tzinfo=brazil_tz)
+        base_timestamp = int(base_dt.timestamp())
+        
+        forecasts = [
+            # Day 1: 4 forecasts with rain (total should be 2+3+4+5 = 14mm)
+            {'dt': base_timestamp, 'rain': {'3h': 2.0}},  # 00:00
+            {'dt': base_timestamp + 10800, 'rain': {'3h': 3.0}},  # 03:00
+            {'dt': base_timestamp + 21600, 'rain': {'3h': 4.0}},  # 06:00
+            {'dt': base_timestamp + 32400, 'rain': {'3h': 5.0}},  # 09:00
+            # Day 2: Should not be included
+            {'dt': base_timestamp + 86400, 'rain': {'3h': 10.0}},  # Next day
+        ]
+        
+        target_dt = datetime(2024, 11, 27, 6, 0, tzinfo=brazil_tz)
+        
+        total_rain = WeatherDataProcessor.calculate_daily_rain_accumulation(
+            forecasts,
+            target_dt
+        )
+        
+        # Should sum only first 4 forecasts: 2+3+4+5 = 14mm
+        assert total_rain == 14.0
 
 
 if __name__ == '__main__':

@@ -100,9 +100,14 @@ class DateFilterHelper:
         Select the forecast closest to the target datetime
         Returns last available forecast if target is beyond forecast range
         
+        Behavior:
+        - If target_datetime is None (current time): Only future forecasts
+        - If target_datetime is specified: Find closest forecast (can be slightly past)
+          Example: Query 18:01 returns 18:00 forecast if available
+        
         Args:
             forecasts: List of forecast dictionaries
-            target_datetime: Target datetime (None = now)
+            target_datetime: Target datetime (None = now, future only)
         
         Returns:
             Selected forecast or None if list is empty
@@ -112,28 +117,49 @@ class DateFilterHelper:
         
         reference_datetime = DateFilterHelper.get_reference_datetime(target_datetime, "UTC")
         
-        # Filter future forecasts
-        future_forecasts = DateFilterHelper.filter_future_forecasts(forecasts, reference_datetime)
-        
-        if not future_forecasts:
-            # No future forecasts - return last available (day 5)
-            last_forecast = forecasts[-1]
-            last_forecast_dt = datetime.fromtimestamp(last_forecast['dt'], tz=ZoneInfo("UTC"))
-            logger.info(
-                "Returning last available forecast",
-                last_forecast_dt=last_forecast_dt.isoformat(),
-                requested_dt=reference_datetime.isoformat(),
-                reason="Requested date beyond forecast limit (5 days)"
+        # If no specific target was provided (using current time), only consider future
+        if target_datetime is None:
+            future_forecasts = DateFilterHelper.filter_future_forecasts(forecasts, reference_datetime)
+            
+            if not future_forecasts:
+                # No future forecasts - return last available (day 5)
+                last_forecast = forecasts[-1]
+                last_forecast_dt = datetime.fromtimestamp(last_forecast['dt'], tz=ZoneInfo("UTC"))
+                logger.info(
+                    "Returning last available forecast",
+                    last_forecast_dt=last_forecast_dt.isoformat(),
+                    requested_dt=reference_datetime.isoformat(),
+                    reason="Requested date beyond forecast limit (5 days)"
+                )
+                return last_forecast
+            
+            # Find closest future forecast
+            closest_forecast = min(
+                future_forecasts,
+                key=lambda f: abs(
+                    datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")) - reference_datetime
+                ).total_seconds()
             )
-            return last_forecast
-        
-        # Find closest forecast
-        closest_forecast = min(
-            future_forecasts,
-            key=lambda f: abs(
-                datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")) - reference_datetime
-            ).total_seconds()
-        )
+        else:
+            # Specific target provided - find closest forecast (can be past)
+            # This allows queries like 18:01 to match 18:00 forecast
+            closest_forecast = min(
+                forecasts,
+                key=lambda f: abs(
+                    datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")) - reference_datetime
+                ).total_seconds()
+            )
+            
+            # Log if we selected a past forecast
+            forecast_dt = datetime.fromtimestamp(closest_forecast['dt'], tz=ZoneInfo("UTC"))
+            if forecast_dt < reference_datetime:
+                time_diff = (reference_datetime - forecast_dt).total_seconds() / 60
+                logger.info(
+                    f"Selected past forecast (closest match)",
+                    forecast_dt=forecast_dt.isoformat(),
+                    requested_dt=reference_datetime.isoformat(),
+                    time_diff_minutes=round(time_diff, 1)
+                )
         
         return closest_forecast
     

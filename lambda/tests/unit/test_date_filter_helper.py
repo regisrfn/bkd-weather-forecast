@@ -167,6 +167,33 @@ class TestSelectClosestForecast:
         result = DateFilterHelper.select_closest_forecast([], None)
         
         assert result is None
+    
+    def test_select_closest_forecast_past_match_with_target(self, sample_forecasts):
+        """Test that specific target can match past forecast (e.g., 18:01 → 18:00)"""
+        # Query at 18:01, should return 18:00 forecast
+        target = datetime.fromtimestamp(1764244860, tz=ZoneInfo("UTC"))  # 18:01
+        
+        result = DateFilterHelper.select_closest_forecast(sample_forecasts, target)
+        
+        # Should return 18:00 forecast (closest match)
+        assert result['dt'] == 1764244800  # 18:00
+        assert result['main']['temp'] == 25
+    
+    def test_select_closest_forecast_no_target_only_future(self, sample_forecasts):
+        """Test that None target only considers future forecasts"""
+        # Create forecasts where some are in the past
+        now = datetime.now(tz=ZoneInfo("UTC"))
+        past_forecasts = [
+            {'dt': int(now.timestamp()) - 3600, 'main': {'temp': 20}},  # 1h ago
+            {'dt': int(now.timestamp()) + 3600, 'main': {'temp': 25}},  # 1h future
+            {'dt': int(now.timestamp()) + 7200, 'main': {'temp': 22}},  # 2h future
+        ]
+        
+        result = DateFilterHelper.select_closest_forecast(past_forecasts, None)
+        
+        # Should only consider future forecasts
+        result_dt = datetime.fromtimestamp(result['dt'], tz=ZoneInfo("UTC"))
+        assert result_dt >= now
 
 
 class TestGroupForecastsByDay:
