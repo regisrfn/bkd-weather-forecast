@@ -64,11 +64,14 @@ class AsyncGetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
         # Execute async with asyncio.gather
         weather_data = await self._fetch_all_cities(city_ids, target_datetime)
         
+        # Calculate success rate (handle empty list)
+        taxa_sucesso = f"{(len(weather_data)/len(city_ids)*100):.1f}%" if len(city_ids) > 0 else "N/A"
+        
         logger.info(
             "Previsão do tempo regional concluída com sucesso",
             cidades_processadas=len(weather_data),
             cidades_solicitadas=len(city_ids),
-            taxa_sucesso=f"{(len(weather_data)/len(city_ids)*100):.1f}%"
+            taxa_sucesso=taxa_sucesso
         )
         
         return weather_data

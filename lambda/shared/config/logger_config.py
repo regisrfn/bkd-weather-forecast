@@ -18,7 +18,7 @@ def get_logger(service_name: str = None, child: bool = False) -> Logger:
         Logger configurado
     """
     if service_name is None:
-        service_name = os.environ.get('DD_SERVICE', 'weather-forecast')
+        service_name = os.environ.get('DD_SERVICE', 'api-lambda-weather-forecast')
     
     if child:
         return Logger(service=service_name, child=True)
