@@ -583,7 +583,7 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
         
         Args:
             forecasts: Lista de previsões da API
-            target_datetime: Data/hora de referência (None = hoje UTC)
+            target_datetime: Data/hora de referência (None = hoje América/Sao_Paulo)
         
         Returns:
             Total de chuva acumulada esperada no dia (mm)
@@ -591,22 +591,36 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
         if not forecasts:
             return 0.0
         
-        # Data/hora de referência
+        # Data/hora de referência (manter no timezone Brasil para comparação de data)
         if target_datetime is None:
-            reference_datetime = datetime.now(tz=ZoneInfo("UTC"))
+            # Se None, usar agora em horário Brasil
+            reference_datetime = datetime.now(tz=ZoneInfo("America/Sao_Paulo"))
         elif target_datetime.tzinfo is not None:
-            reference_datetime = target_datetime.astimezone(ZoneInfo("UTC"))
+            # Converter para horário Brasil
+            reference_datetime = target_datetime.astimezone(ZoneInfo("America/Sao_Paulo"))
         else:
-            reference_datetime = target_datetime.replace(tzinfo=ZoneInfo("UTC"))
+            # Assumir que é horário Brasil
+            reference_datetime = target_datetime.replace(tzinfo=ZoneInfo("America/Sao_Paulo"))
         
-        # Filtrar previsões do mesmo dia
+        # Extrair a DATA no timezone Brasil (não UTC!)
         target_date = reference_datetime.date()
-        day_forecasts = [
-            f for f in forecasts
-            if datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")).date() == target_date
-        ]
+        
+        # Filtrar previsões do mesmo DIA no timezone Brasil
+        day_forecasts = []
+        for f in forecasts:
+            forecast_dt_utc = datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC"))
+            forecast_dt_br = forecast_dt_utc.astimezone(ZoneInfo("America/Sao_Paulo"))
+            if forecast_dt_br.date() == target_date:
+                day_forecasts.append(f)
+        
+        logger.info(
+            f"🌧️ Daily rain calculation | Target date: {target_date} | "
+            f"Total forecasts: {len(forecasts)} | "
+            f"Day forecasts: {len(day_forecasts)}"
+        )
         
         if not day_forecasts:
+            logger.info("No forecasts for target date")
             return 0.0
         
         # Somar todos os valores de rain.3h do dia
@@ -614,7 +628,15 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
         for forecast in day_forecasts:
             rain_3h = forecast.get('rain', {}).get('3h', 0)
             total_rain += rain_3h
+            if rain_3h > 0:
+                forecast_dt = datetime.fromtimestamp(forecast['dt'], tz=ZoneInfo("UTC"))
+                logger.info(
+                    f"   ➕ Rain forecast | Time: {forecast_dt} | "
+                    f"Rain 3h: {rain_3h:.2f}mm | "
+                    f"Running total: {total_rain:.2f}mm"
+                )
         
+        logger.info(f"✅ Daily rain total: {total_rain:.2f}mm")
         return total_rain
     
     def _select_forecast(

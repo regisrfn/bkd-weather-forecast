@@ -85,10 +85,17 @@ class TestParseCachedWeather:
         """Test successful parsing of cached weather data"""
         city = City(id='3550308', name='São Paulo', state='SP', region='Sudeste', latitude=-23.5505, longitude=-46.6333)
         
-        # Mock _select_forecast to return first item
-        use_case.weather_repository._select_forecast = Mock(return_value=sample_cached_data['list'][0])
-        use_case.weather_repository._collect_all_alerts = Mock(return_value=[])
-        use_case.weather_repository._get_daily_temp_extremes = Mock(return_value=(20.0, 30.0))
+        # Mock _process_weather_data to return a Weather object
+        expected_weather = Weather(
+            city_id='',
+            city_name='São Paulo',
+            timestamp=datetime.now(),
+            temperature=25.0,
+            humidity=65,
+            wind_speed=10.0,
+            rain_probability=50.0
+        )
+        use_case.weather_repository._process_weather_data = Mock(return_value=expected_weather)
         
         result = use_case._parse_cached_weather(sample_cached_data, city, None)
         
@@ -103,8 +110,8 @@ class TestParseCachedWeather:
         """Test parsing when no forecast is selected"""
         city = City(id='3550308', name='São Paulo', state='SP', region='Sudeste', latitude=-23.5505, longitude=-46.6333)
         
-        # Mock _select_forecast to return None
-        use_case.weather_repository._select_forecast = Mock(return_value=None)
+        # Mock _process_weather_data to raise an exception (simulating no forecast)
+        use_case.weather_repository._process_weather_data = Mock(side_effect=Exception("No forecast available"))
         
         result = use_case._parse_cached_weather(sample_cached_data, city, None)
         
@@ -115,9 +122,20 @@ class TestParseCachedWeather:
         city = City(id='3550308', name='São Paulo', state='SP', region='Sudeste', latitude=-23.5505, longitude=-46.6333)
         target_dt = datetime(2025, 12, 1, 12, 0, tzinfo=ZoneInfo("America/Sao_Paulo"))
         
-        use_case.weather_repository._select_forecast = Mock(return_value=sample_cached_data['list'][0])
-        use_case.weather_repository._collect_all_alerts = Mock(return_value=['RAIN'])
-        use_case.weather_repository._get_daily_temp_extremes = Mock(return_value=(18.0, 28.0))
+        # Mock _process_weather_data to return Weather with alerts
+        expected_weather = Weather(
+            city_id='',
+            city_name='São Paulo',
+            timestamp=target_dt,
+            temperature=25.0,
+            humidity=65,
+            wind_speed=10.0,
+            rain_probability=80.0,
+            weather_alert=['RAIN'],
+            temp_min=18.0,
+            temp_max=28.0
+        )
+        use_case.weather_repository._process_weather_data = Mock(return_value=expected_weather)
         
         result = use_case._parse_cached_weather(sample_cached_data, city, target_dt)
         
@@ -245,10 +263,26 @@ class TestFetchAllCities:
         }
         use_case.weather_repository.batch_get_weather_from_cache = AsyncMock(return_value=cache_results)
         
-        # Mock _select_forecast and related methods
-        use_case.weather_repository._select_forecast = Mock(return_value=sample_cached_data['list'][0])
-        use_case.weather_repository._collect_all_alerts = Mock(return_value=[])
-        use_case.weather_repository._get_daily_temp_extremes = Mock(return_value=(20.0, 30.0))
+        # Mock _process_weather_data to return Weather objects
+        weather1 = Weather(
+            city_id='',
+            city_name='São Paulo',
+            timestamp=datetime.now(ZoneInfo("UTC")),
+            temperature=25.0,
+            humidity=65,
+            wind_speed=10.0,
+            rain_probability=50.0
+        )
+        weather2 = Weather(
+            city_id='',
+            city_name='Rio de Janeiro',
+            timestamp=datetime.now(ZoneInfo("UTC")),
+            temperature=28.0,
+            humidity=70,
+            wind_speed=8.0,
+            rain_probability=15.0
+        )
+        use_case.weather_repository._process_weather_data = Mock(side_effect=[weather1, weather2])
         
         result = await use_case._fetch_all_cities(city_ids, None)
         
@@ -265,10 +299,17 @@ class TestFetchAllCities:
         cache_results = {'3550308': sample_cached_data}
         use_case.weather_repository.batch_get_weather_from_cache = AsyncMock(return_value=cache_results)
         
-        # Mock cache hit parsing
-        use_case.weather_repository._select_forecast = Mock(return_value=sample_cached_data['list'][0])
-        use_case.weather_repository._collect_all_alerts = Mock(return_value=[])
-        use_case.weather_repository._get_daily_temp_extremes = Mock(return_value=(20.0, 30.0))
+        # Mock _process_weather_data for cache hit
+        weather1 = Weather(
+            city_id='',
+            city_name='São Paulo',
+            timestamp=datetime.now(ZoneInfo("UTC")),
+            temperature=25.0,
+            humidity=65,
+            wind_speed=10.0,
+            rain_probability=50.0
+        )
+        use_case.weather_repository._process_weather_data = Mock(return_value=weather1)
         
         # Mock API fetch for cache miss
         weather2 = Weather(

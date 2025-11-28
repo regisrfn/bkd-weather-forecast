@@ -230,6 +230,8 @@ class AsyncGetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
         """
         Parse cached weather data into Weather entity
         
+        Delegates to repository's _process_weather_data to avoid code duplication.
+        
         Args:
             cached_data: Raw data from cache (OpenWeather API format)
             city: City entity
@@ -238,56 +240,20 @@ class AsyncGetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
         Returns:
             Weather entity or None if error
         """
-        from zoneinfo import ZoneInfo
-        
-        # Select appropriate forecast
-        forecast_item = self.weather_repository._select_forecast(
-            cached_data.get('list', []),
-            target_datetime
-        )
-        
-        if not forecast_item:
+        try:
+            # Reuse repository's processing logic (DRY principle)
+            weather = self.weather_repository._process_weather_data(
+                cached_data,
+                city.name,
+                target_datetime
+            )
+            weather.city_id = city.id
+            return weather
+        except Exception as e:
+            logger.warning(
+                f"Failed to parse cached weather for city {city.id}",
+                error=str(e)
+            )
             return None
-        
-        # Extract weather data
-        weather_code = forecast_item['weather'][0]['id']
-        rain_prob = forecast_item.get('pop', 0) * 100
-        wind_speed = forecast_item['wind']['speed'] * 3.6
-        forecast_time = datetime.fromtimestamp(forecast_item['dt'], tz=ZoneInfo("UTC"))
-        
-        # Collect alerts
-        weather_alerts = self.weather_repository._collect_all_alerts(
-            cached_data.get('list', []),
-            target_datetime
-        )
-        
-        # Get daily temp extremes
-        temp_min_day, temp_max_day = self.weather_repository._get_daily_temp_extremes(
-            cached_data.get('list', []),
-            target_datetime
-        )
-        
-        # Create Weather entity
-        weather = Weather(
-            city_id=city.id,
-            city_name=city.name,
-            timestamp=forecast_time,
-            temperature=forecast_item['main']['temp'],
-            humidity=forecast_item['main']['humidity'],
-            wind_speed=wind_speed,
-            rain_probability=rain_prob,
-            rain_1h=forecast_item.get('rain', {}).get('3h', 0) / 3,
-            description=forecast_item['weather'][0].get('description', ''),
-            feels_like=forecast_item['main'].get('feels_like', 0),
-            pressure=forecast_item['main'].get('pressure', 0),
-            visibility=forecast_item.get('visibility', 0),
-            clouds=forecast_item.get('clouds', {}).get('all', 0),
-            weather_alert=weather_alerts,
-            weather_code=weather_code,
-            temp_min=temp_min_day,
-            temp_max=temp_max_day
-        )
-        
-        return weather
 
 
