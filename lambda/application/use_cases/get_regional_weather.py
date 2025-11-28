@@ -13,6 +13,7 @@ from domain.exceptions import CityNotFoundException, CoordinatesNotFoundExceptio
 from application.ports.input.get_regional_weather_port import IGetRegionalWeatherUseCase
 from application.ports.output.city_repository_port import ICityRepository
 from infrastructure.adapters.output.async_weather_repository import AsyncOpenWeatherRepository
+from infrastructure.adapters.helpers.weather_data_processor import WeatherDataProcessor
 
 logger = Logger(child=True)
 
@@ -230,7 +231,7 @@ class AsyncGetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
         """
         Parse cached weather data into Weather entity
         
-        Delegates to repository's _process_weather_data to avoid code duplication.
+        Delegates to WeatherDataProcessor to avoid code duplication.
         
         Args:
             cached_data: Raw data from cache (OpenWeather API format)
@@ -241,8 +242,8 @@ class AsyncGetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
             Weather entity or None if error
         """
         try:
-            # Reuse repository's processing logic (DRY principle)
-            weather = self.weather_repository._process_weather_data(
+            # Reuse processor's logic (DRY principle)
+            weather = WeatherDataProcessor.process_weather_data(
                 cached_data,
                 city.name,
                 target_datetime
