@@ -605,24 +605,12 @@ def test_no_rain_expected_when_volume_alert_exists():
 
 def test_rain_expected_fallback():
     """
-    Testa que RAIN_EXPECTED é gerado como fallback quando:
-    - Alta probabilidade (>= 80%) MAS sem volume E sem código de chuva forte
+    Testa que RAIN_EXPECTED é gerado quando há código de chuva leve
+    com alta probabilidade mas sem volume medido
     """
     forecast_time = datetime(2025, 11, 21, 15, 0)
     
-    # Caso 1: Alta probabilidade sem volume nem código de chuva = RAIN_EXPECTED
-    alerts = Weather.get_weather_alert(
-        weather_code=800,  # Céu limpo
-        rain_prob=85,
-        wind_speed=15,
-        forecast_time=forecast_time,
-        rain_1h=0.0,  # SEM volume
-        temperature=20.0
-    )
-    alert_codes = [a.code for a in alerts]
-    assert "RAIN_EXPECTED" in alert_codes, "RAIN_EXPECTED deve ser fallback para probabilidade alta sem volume"
-    
-    # Caso 2: Código de chuva leve + probabilidade alta sem volume = RAIN_EXPECTED
+    # Caso: Código de chuva leve + probabilidade alta sem volume = RAIN_EXPECTED
     alerts = Weather.get_weather_alert(
         weather_code=500,  # Chuva leve
         rain_prob=85,
@@ -634,6 +622,26 @@ def test_rain_expected_fallback():
     alert_codes = [a.code for a in alerts]
     assert "RAIN_EXPECTED" in alert_codes
     assert alerts[0].details.get("weather_code") == 500, "Deve incluir weather_code nos detalhes"
+
+
+def test_no_rain_expected_without_rain_code():
+    """
+    Testa que RAIN_EXPECTED NÃO é gerado quando não há código de chuva,
+    mesmo com alta probabilidade (seria contraditório: 80% de 0mm)
+    """
+    forecast_time = datetime(2025, 11, 21, 15, 0)
+    
+    # Alta probabilidade sem volume e sem código de chuva = SEM alerta
+    alerts = Weather.get_weather_alert(
+        weather_code=800,  # Céu limpo
+        rain_prob=85,
+        wind_speed=15,
+        forecast_time=forecast_time,
+        rain_1h=0.0,  # SEM volume
+        temperature=20.0
+    )
+    alert_codes = [a.code for a in alerts]
+    assert "RAIN_EXPECTED" not in alert_codes, "Não deve gerar RAIN_EXPECTED sem código de chuva"
 
 
 def test_no_rain_expected_when_storm():

@@ -254,21 +254,6 @@ class Weather:
                 details={"weather_code": weather_code, "temperature_c": round(temperature, 1)}
             ))
         
-        # Fallback: RAIN_EXPECTED para alta probabilidade SEM volume E SEM código de chuva
-        # Captura casos onde API indica alta probabilidade mas não retorna código nem volume
-        # Evita redundância: só gera se NÃO houver alertas de precipitação
-        elif rain_prob >= RAIN_PROBABILITY_THRESHOLD and not any(
-            a.code in ["STORM", "STORM_RAIN", "HEAVY_RAIN", "MODERATE_RAIN", "LIGHT_RAIN", "DRIZZLE", "RAIN_EXPECTED"]
-            for a in alerts
-        ):
-            alerts.append(WeatherAlert(
-                code="RAIN_EXPECTED",
-                severity=AlertSeverity.INFO,
-                description="🌧️ Alta probabilidade de chuva",
-                timestamp=alert_time,
-                details={"probability_percent": round(rain_prob, 1)}
-            ))
-        
         # Alertas de VENTO FORTE
         if wind_speed >= 50:
             alerts.append(WeatherAlert(
