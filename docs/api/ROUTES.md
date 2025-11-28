@@ -274,8 +274,10 @@ Accept: application/json
 | `temperature` | float | Temperatura | °C |
 | `humidity` | float | Umidade relativa | % (0-100) |
 | `windSpeed` | float | Velocidade do vento | km/h |
-| `rainfallIntensity` | float | Intensidade de chuva composta (volume × probabilidade) | 0-100 (100 = 10mm/h a 100% prob) |
+| `rainfallIntensity` | float | Intensidade de chuva composta (volume × probabilidade) | 0-100 (100 = 30mm/h a 100% prob) |
+| `rainfallProbability` | float | Probabilidade de chuva | % (0-100) |
 | `rainVolumeHour` | float | Volume de chuva | mm/h |
+| `dailyRainAccumulation` | float | Acumulado de chuva esperado no dia | mm |
 | `weatherDescription` | string | Descrição do clima | - |
 | `weatherAlert` | array | Lista de alertas climáticos | - |
 | `feelsLike` | float | Sensação térmica | °C |
