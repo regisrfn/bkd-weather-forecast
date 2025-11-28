@@ -79,7 +79,7 @@ class Weather:
     temp_max: float = 0.0  # Temperatura máxima (°C)
     
     @property
-    def rainfall_intensity(self) -> float:
+    def rainfall_intensity(self) -> int:
         """
         Retorna intensidade de chuva composta (0-100)
         
@@ -94,13 +94,13 @@ class Weather:
         Threshold: 30mm/h permite melhor distribuição visual de chuvas fortes.
         """
         if self.rain_1h == 0:
-            return 0.0
+            return 0
         
         # Calcula intensidade composta: volume × probabilidade normalizado
         composite_intensity = (self.rain_1h * self.rain_probability / 100.0) / RAIN_INTENSITY_REFERENCE * 100.0
         
-        # Limita em 100 para manter compatibilidade com frontend
-        return min(100.0, composite_intensity)
+        # Limita em 100 e arredonda para inteiro
+        return round(min(100.0, composite_intensity))
     
     @property
     def clouds_description(self) -> str:
@@ -342,7 +342,7 @@ class Weather:
             'cityId': self.city_id,
             'cityName': self.city_name,
             'timestamp': timestamp_brasil.isoformat(),  # Agora em horário Brasil
-            'rainfallIntensity': round(self.rainfall_intensity, 1),
+            'rainfallIntensity': self.rainfall_intensity,
             'rainfallProbability': round(self.rain_probability, 1),
             'rainVolumeHour': round(self.rain_1h, 1),
             'dailyRainAccumulation': round(self.rain_accumulated_day, 1),

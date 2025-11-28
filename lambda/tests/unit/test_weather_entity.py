@@ -71,7 +71,7 @@ def test_weather_to_api_response():
     assert api_response['humidity'] == 65
     assert api_response['windSpeed'] == 15.2
     # rainfallIntensity agora usa threshold 30.0: (2.5mm/h * 45%) / 30 * 100 = 3.75
-    assert api_response['rainfallIntensity'] == 3.8  # Arredondado
+    assert api_response['rainfallIntensity'] == 4  # Arredondado para inteiro
     assert api_response['rainfallProbability'] == 45.0
     assert api_response['rainVolumeHour'] == 2.5
     assert api_response['dailyRainAccumulation'] == 0.0  # Não configurado no teste
@@ -501,7 +501,7 @@ def test_rainfall_intensity_composite_metric():
         rain_probability=100.0,
         rain_1h=0.0
     )
-    assert weather1.rainfall_intensity == 0.0
+    assert weather1.rainfall_intensity == 0
     
     # Caso 2: 30mm/h com 100% probabilidade = 100 pontos (referência)
     weather2 = Weather(
@@ -514,7 +514,7 @@ def test_rainfall_intensity_composite_metric():
         rain_probability=100.0,
         rain_1h=30.0
     )
-    assert weather2.rainfall_intensity == 100.0
+    assert weather2.rainfall_intensity == 100
     
     # Caso 3: 15mm/h com 50% probabilidade = 25 pontos
     weather3 = Weather(
@@ -527,7 +527,7 @@ def test_rainfall_intensity_composite_metric():
         rain_probability=50.0,
         rain_1h=15.0
     )
-    assert weather3.rainfall_intensity == 25.0
+    assert weather3.rainfall_intensity == 25
     
     # Caso 4: 10mm/h com 60% probabilidade = 20 pontos
     weather4 = Weather(
@@ -540,7 +540,7 @@ def test_rainfall_intensity_composite_metric():
         rain_probability=60.0,
         rain_1h=10.0
     )
-    assert weather4.rainfall_intensity == 20.0
+    assert weather4.rainfall_intensity == 20
     
     # Caso 5: 50mm/h com 80% probabilidade = 133.3 -> cap em 100 pontos
     weather5 = Weather(
@@ -553,7 +553,7 @@ def test_rainfall_intensity_composite_metric():
         rain_probability=80.0,
         rain_1h=50.0
     )
-    assert weather5.rainfall_intensity == 100.0  # Capped
+    assert weather5.rainfall_intensity == 100  # Capped
     
     # Caso 6: 3mm/h com 100% probabilidade = 10 pontos (garoa certa)
     weather6 = Weather(
@@ -566,7 +566,7 @@ def test_rainfall_intensity_composite_metric():
         rain_probability=100.0,
         rain_1h=3.0
     )
-    assert weather6.rainfall_intensity == 10.0
+    assert weather6.rainfall_intensity == 10
 
 
 def test_no_rain_expected_when_volume_alert_exists():
