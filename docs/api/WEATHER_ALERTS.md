@@ -47,15 +47,19 @@ A API de previsão do tempo inclui um sistema avançado de alertas meteorológic
 ## 📌 Importante: Threshold de Probabilidade
 
 **Todos os alertas baseados em volume de chuva requerem probabilidade >= 80%** para serem gerados. Isso inclui:
-- DRIZZLE (Garoa)
-- LIGHT_RAIN (Chuva fraca)
-- MODERATE_RAIN (Chuva moderada)
-- HEAVY_RAIN (Chuva forte por volume)
-- RAIN_EXPECTED (Alta probabilidade de chuva)
+- DRIZZLE (Garoa) - requer volume > 0 E probabilidade >= 80%
+- LIGHT_RAIN (Chuva fraca) - requer volume >= 2.5 mm/h E probabilidade >= 80%
+- MODERATE_RAIN (Chuva moderada) - requer volume >= 10 mm/h E probabilidade >= 80%
+- HEAVY_RAIN (Chuva forte por volume) - requer volume >= 50 mm/h E probabilidade >= 80%
+
+**RAIN_EXPECTED é um alerta fallback:**
+- Gerado quando probabilidade >= 80% MAS sem volume medido ou código de chuva forte
+- Também pode ser gerado para códigos de chuva leve (500-501, 520-521, etc) com probabilidade >= 80%
+- NÃO é gerado se já houver alertas de volume ou tempestade (evita redundância)
 
 **Exceções que SEMPRE geram alerta (independente da probabilidade):**
 - STORM / STORM_RAIN - Tempestades (códigos 2xx)
-- HEAVY_RAIN por código (códigos 502-504)
+- HEAVY_RAIN por código (códigos 502, 503, 504, 522, 531)
 
 Este threshold reduz falsos positivos enquanto mantém alertas críticos de tempestades.
 
@@ -148,9 +152,10 @@ Onde:
 - **Código**: `RAIN_EXPECTED`
 - **Severidade**: `info`
 - **Descrição**: 🌧️ Alta probabilidade de chuva
-- **Limiar**: Probabilidade ≥ 70% (sem volume medido)
-- **Details**: `{ "probability_percent": 85.0 }`
-- **Uso**: Avisar usuário para levar guarda-chuva
+- **Limiar**: Probabilidade ≥ 80% (sem volume medido E sem código de chuva forte)
+- **Details**: `{ "probability_percent": 85.0 }` ou `{ "weather_code": 500, "probability_percent": 85.0 }`
+- **Uso**: Fallback para indicar alta probabilidade quando API não retorna volume. Avisar usuário para levar guarda-chuva
+- **Nota**: Gerado apenas quando NÃO há alertas baseados em volume (DRIZZLE, LIGHT_RAIN, etc) ou tempestade
 
 ### ⛈️ Tempestade
 
