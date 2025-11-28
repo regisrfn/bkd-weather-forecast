@@ -233,15 +233,6 @@ class Weather:
                     timestamp=alert_time,
                     details={"weather_code": weather_code, "probability_percent": round(rain_prob, 1)}
                 ))
-            elif rain_prob >= RAIN_PROBABILITY_THRESHOLD:
-                # Chuva moderada com alta probabilidade - INFO apenas
-                alerts.append(WeatherAlert(
-                    code="RAIN_EXPECTED",
-                    severity=AlertSeverity.INFO,
-                    description="🌧️ Alta probabilidade de chuva",
-                    timestamp=alert_time,
-                    details={"probability_percent": round(rain_prob, 1)}
-                ))
         
         # NEVE
         elif 600 <= weather_code < 700:
@@ -253,15 +244,16 @@ class Weather:
                 details={"weather_code": weather_code, "temperature_c": round(temperature, 1)}
             ))
         
-        # Alerta de chuva pela PROBABILIDADE apenas (se não houver outros alertas de chuva)
-        # Consolida em um único alerta de chuva
-        elif rain_prob >= RAIN_PROBABILITY_THRESHOLD and not any(a.code in ["STORM", "STORM_RAIN", "HEAVY_RAIN", "MODERATE_RAIN", "LIGHT_RAIN", "DRIZZLE", "RAIN_EXPECTED"] for a in alerts):
+        # Alerta RAIN_EXPECTED: alta probabilidade E volume mínimo esperado
+        # Requer: probabilidade >= 80% E volume > 0 (mas não coberto por outros alertas)
+        # Evita alertas para "80% de chance de 0mm" que não fazem sentido
+        elif rain_prob >= RAIN_PROBABILITY_THRESHOLD and rain_1h > 0 and not any(a.code in ["STORM", "STORM_RAIN", "HEAVY_RAIN", "MODERATE_RAIN", "LIGHT_RAIN", "DRIZZLE"] for a in alerts):
             alerts.append(WeatherAlert(
                 code="RAIN_EXPECTED",
                 severity=AlertSeverity.INFO,
                 description="🌧️ Alta probabilidade de chuva",
                 timestamp=alert_time,
-                details={"probability_percent": round(rain_prob, 1)}
+                details={"probability_percent": round(rain_prob, 1), "rain_mm_h": round(rain_1h, 1)}
             ))
         
         # Alertas de VENTO FORTE
