@@ -250,7 +250,7 @@ def lambda_handler(event, context: LambdaContext):
         "Requisição Lambda recebida",
         rota=event.get('path', 'N/A'),
         metodo=event.get('httpMethod', 'N/A'),
-        request_id=context.request_id if context else 'N/A'
+        request_id=getattr(context, 'aws_request_id', 'N/A')
     )
     
     response = app.resolve(event, context)
