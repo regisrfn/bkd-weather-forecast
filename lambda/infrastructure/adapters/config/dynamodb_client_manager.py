@@ -6,9 +6,6 @@ import asyncio
 from typing import Optional
 import aioboto3
 from botocore.config import Config
-from aws_lambda_powertools import Logger
-
-logger = Logger(child=True)
 
 
 class DynamoDBClientManager:
@@ -112,8 +109,7 @@ class DynamoDBClientManager:
             current_loop = asyncio.get_running_loop()
             current_loop_id = id(current_loop)
         except RuntimeError:
-            logger.error("No running event loop found")
-            raise
+            raise RuntimeError("No running event loop found")
         
         # Se cliente existe E está no mesmo event loop, REUTILIZAR
         if self._client is not None and self._client_loop_id == current_loop_id:
@@ -136,14 +132,10 @@ class DynamoDBClientManager:
             self._client_loop_id = current_loop_id
         
         except Exception as e:
-            logger.error(
-                "Failed to create DynamoDB client",
-                error=str(e)
-            )
             self._client = None
             self._client_loop_id = None
             self._client_context_manager = None
-            raise
+            raise RuntimeError(f"Failed to create DynamoDB client: {str(e)}") from e
         
         return self._client
     

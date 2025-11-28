@@ -5,7 +5,6 @@ Async Use Case: Get Neighbor Cities
 import asyncio
 from typing import List
 from ddtrace import tracer
-from aws_lambda_powertools import Logger
 
 from domain.entities.city import City, NeighborCity
 from domain.exceptions import CityNotFoundException, CoordinatesNotFoundException, InvalidRadiusException
@@ -13,8 +12,9 @@ from application.ports.input.get_neighbor_cities_port import IGetNeighborCitiesU
 from application.ports.output.city_repository_port import ICityRepository
 from shared.utils.haversine import calculate_distance
 from shared.utils.validators import RadiusValidator
+from shared.config.logger_config import get_logger
 
-logger = Logger(child=True)
+logger = get_logger(child=True)
 
 
 class AsyncGetNeighborCitiesUseCase(IGetNeighborCitiesUseCase):

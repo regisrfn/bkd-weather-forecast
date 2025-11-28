@@ -5,9 +5,6 @@ Reutiliza sessão entre invocações Lambda (warm starts)
 import asyncio
 from typing import Optional
 import aiohttp
-from aws_lambda_powertools import Logger
-
-logger = Logger(child=True)
 
 
 class AiohttpSessionManager:
@@ -113,8 +110,7 @@ class AiohttpSessionManager:
             current_loop = asyncio.get_running_loop()
             current_loop_id = id(current_loop)
         except RuntimeError:
-            logger.error("No running event loop found")
-            raise
+            raise RuntimeError("No running event loop found")
         
         # Se sessão existe, não está fechada E está no mesmo event loop, REUTILIZAR
         if (self._session is not None and 
@@ -128,7 +124,6 @@ class AiohttpSessionManager:
         
         # Criar nova sessão para o event loop atual
         try:
-            
             # Timeout configuration
             timeout = aiohttp.ClientTimeout(
                 total=self.total_timeout,
@@ -150,13 +145,9 @@ class AiohttpSessionManager:
             self._session_loop_id = current_loop_id
         
         except Exception as e:
-            logger.error(
-                "Failed to create aiohttp session",
-                error=str(e)
-            )
             self._session = None
             self._session_loop_id = None
-            raise
+            raise RuntimeError(f"Failed to create aiohttp session: {str(e)}") from e
         
         return self._session
     
@@ -167,19 +158,8 @@ class AiohttpSessionManager:
         if self._session is not None and not self._session.closed:
             try:
                 await self._session.close()
-                
-                logger.info(
-                    "Aiohttp session closed",
-                    loop_id=self._session_loop_id
-                )
-            
-            except Exception as e:
-                logger.warning(
-                    "Error closing aiohttp session",
-                    error=str(e),
-                    loop_id=self._session_loop_id
-                )
-            
+            except Exception:
+                pass
             finally:
                 self._session = None
                 self._session_loop_id = None
@@ -190,7 +170,6 @@ class AiohttpSessionManager:
         Deve ser chamado ao final de cada invocação Lambda (opcional)
         """
         await self._close_session()
-        logger.info("AiohttpSessionManager cleanup completed")
     
     @classmethod
     def reset_instance(cls) -> None:

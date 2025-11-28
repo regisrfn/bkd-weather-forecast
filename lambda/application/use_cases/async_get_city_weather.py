@@ -5,15 +5,15 @@ Async Use Case: Get City Weather
 from typing import Optional
 from datetime import datetime
 from ddtrace import tracer
-from aws_lambda_powertools import Logger
 
 from domain.entities.weather import Weather
 from domain.exceptions import CityNotFoundException, CoordinatesNotFoundException
 from application.ports.input.get_city_weather_port import IGetCityWeatherUseCase
 from application.ports.output.city_repository_port import ICityRepository
 from infrastructure.adapters.output.async_weather_repository import AsyncOpenWeatherRepository
+from shared.config.logger_config import get_logger
 
-logger = Logger(child=True)
+logger = get_logger(child=True)
 
 
 class AsyncGetCityWeatherUseCase(IGetCityWeatherUseCase):

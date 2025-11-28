@@ -8,10 +8,7 @@ from datetime import datetime, timezone
 from typing import Optional, Dict, Any
 from decimal import Decimal
 from ddtrace import tracer
-from aws_lambda_powertools import Logger
 from infrastructure.adapters.config.dynamodb_client_manager import get_dynamodb_client_manager
-
-logger = Logger(child=True)
 
 
 class DecimalEncoder(json.JSONEncoder):
@@ -128,12 +125,8 @@ class AsyncDynamoDBCache:
             
             return data
         
-        except Exception as e:
-            logger.error(
-                "Cache GET error",
-                city_id=city_id,
-                error=str(e)[:100]
-            )
+        except Exception:
+            # Silently fail cache get
             return None
     
     @tracer.wrap(resource="async_cache.set")
@@ -183,12 +176,8 @@ class AsyncDynamoDBCache:
             
             return True
         
-        except Exception as e:
-            logger.error(
-                "Cache SET error",
-                city_id=city_id,
-                error=str(e)[:100]
-            )
+        except Exception:
+            # Silently fail cache set
             return False
     
     async def batch_set(
@@ -265,12 +254,8 @@ class AsyncDynamoDBCache:
             
             return results
         
-        except Exception as e:
-            logger.error(
-                "Batch SET error",
-                requested=len(items),
-                error=str(e)[:200]
-            )
+        except Exception:
+            # Silently fail batch set
             return {city_id: False for city_id in items.keys()}
     
     async def delete(self, city_id: str) -> bool:
@@ -287,8 +272,8 @@ class AsyncDynamoDBCache:
             
             return True
         
-        except Exception as e:
-            logger.error("Cache DELETE error", city_id=city_id, error=str(e)[:100])
+        except Exception:
+            # Silently fail cache delete
             return False
     
     async def batch_get(self, city_ids: list[str]) -> Dict[str, Dict[str, Any]]:
@@ -343,11 +328,8 @@ class AsyncDynamoDBCache:
             
             return results
         
-        except Exception as e:
-            logger.error(
-                "Batch GET error",
-                error=str(e)
-            )
+        except Exception:
+            # Silently fail batch get
             return {}
     
     async def cleanup(self) -> None:

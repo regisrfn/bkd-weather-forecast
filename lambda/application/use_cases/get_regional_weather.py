@@ -6,7 +6,6 @@ import asyncio
 from typing import Optional
 from datetime import datetime
 from ddtrace import tracer
-from aws_lambda_powertools import Logger
 
 from domain.entities.weather import Weather
 from domain.exceptions import CityNotFoundException, CoordinatesNotFoundException
@@ -14,8 +13,9 @@ from application.ports.input.get_regional_weather_port import IGetRegionalWeathe
 from application.ports.output.city_repository_port import ICityRepository
 from infrastructure.adapters.output.async_weather_repository import AsyncOpenWeatherRepository
 from infrastructure.adapters.helpers.weather_data_processor import WeatherDataProcessor
+from shared.config.logger_config import get_logger
 
-logger = Logger(child=True)
+logger = get_logger(child=True)
 
 
 class AsyncGetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
@@ -56,17 +56,19 @@ class AsyncGetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
             List[Weather]: Weather data for all cities (only successful ones)
         """
         logger.info(
-            "Regional weather request",
-            city_count=len(city_ids)
+            "Iniciando busca de previsão do tempo regional",
+            total_cidades=len(city_ids),
+            data_alvo=target_datetime.isoformat() if target_datetime else "próxima disponível"
         )
         
         # Execute async with asyncio.gather
         weather_data = await self._fetch_all_cities(city_ids, target_datetime)
         
         logger.info(
-            "Regional weather completed",
-            success_count=len(weather_data),
-            requested_count=len(city_ids)
+            "Previsão do tempo regional concluída com sucesso",
+            cidades_processadas=len(weather_data),
+            cidades_solicitadas=len(city_ids),
+            taxa_sucesso=f"{(len(weather_data)/len(city_ids)*100):.1f}%"
         )
         
         return weather_data
@@ -95,10 +97,14 @@ class AsyncGetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
         # 🎯 STEP 1: Batch cache lookup (1 call, ~50ms for 100 cities)
         cache_results = await self.weather_repository.batch_get_weather_from_cache(city_ids)
         
+        cache_hits = len(cache_results)
+        cache_misses = len(city_ids) - cache_hits
+        
         logger.info(
-            "Cache lookup completed",
-            hits=len(cache_results),
-            misses=len(city_ids) - len(cache_results)
+            "Cache consultado para previsões do tempo",
+            cache_hits=cache_hits,
+            cache_misses=cache_misses,
+            taxa_cache=f"{(cache_hits/len(city_ids)*100):.1f}%" if len(city_ids) > 0 else "0%"
         )
         
         # 🚀 STEP 2: Process cache HITs and identify MISSes
@@ -202,6 +208,7 @@ class AsyncGetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
         # Filter valid results and prepare cache data
         weather_data = []
         cache_items = []
+        errors = 0
         
         for result in results:
             if isinstance(result, tuple) and len(result) == 3:
@@ -209,11 +216,14 @@ class AsyncGetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
                 weather_data.append(weather_obj)
                 if cache_key and raw_data:
                     cache_items.append((cache_key, raw_data))
+            elif isinstance(result, Exception):
+                errors += 1
         
         logger.info(
-            "API fetch completed",
-            success=len(weather_data),
-            requested=len(city_ids)
+            "Dados de API coletados para cidades sem cache",
+            sucessos=len(weather_data),
+            falhas=errors,
+            total_solicitado=len(city_ids)
         )
         
         # 💾 Batch save to cache
@@ -252,7 +262,9 @@ class AsyncGetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
             return weather
         except Exception as e:
             logger.warning(
-                f"Failed to parse cached weather for city {city.id}",
+                f"Falha ao processar dados de previsão em cache",
+                city_id=city.id,
+                city_name=city.name,
                 error=str(e)
             )
             return None

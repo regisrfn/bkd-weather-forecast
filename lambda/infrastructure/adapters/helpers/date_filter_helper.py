@@ -5,9 +5,6 @@ Eliminates code duplication in weather repository
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from typing import Optional, List
-from aws_lambda_powertools import Logger
-
-logger = Logger(child=True)
 
 
 class DateFilterHelper:
@@ -123,15 +120,7 @@ class DateFilterHelper:
             
             if not future_forecasts:
                 # No future forecasts - return last available (day 5)
-                last_forecast = forecasts[-1]
-                last_forecast_dt = datetime.fromtimestamp(last_forecast['dt'], tz=ZoneInfo("UTC"))
-                logger.info(
-                    "Returning last available forecast",
-                    last_forecast_dt=last_forecast_dt.isoformat(),
-                    requested_dt=reference_datetime.isoformat(),
-                    reason="Requested date beyond forecast limit (5 days)"
-                )
-                return last_forecast
+                return forecasts[-1]
             
             # Find closest future forecast
             closest_forecast = min(
@@ -149,17 +138,6 @@ class DateFilterHelper:
                     datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")) - reference_datetime
                 ).total_seconds()
             )
-            
-            # Log if we selected a past forecast
-            forecast_dt = datetime.fromtimestamp(closest_forecast['dt'], tz=ZoneInfo("UTC"))
-            if forecast_dt < reference_datetime:
-                time_diff = (reference_datetime - forecast_dt).total_seconds() / 60
-                logger.info(
-                    f"Selected past forecast (closest match)",
-                    forecast_dt=forecast_dt.isoformat(),
-                    requested_dt=reference_datetime.isoformat(),
-                    time_diff_minutes=round(time_diff, 1)
-                )
         
         return closest_forecast
     

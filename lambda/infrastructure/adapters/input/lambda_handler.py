@@ -5,7 +5,6 @@ Presentation Layer: gerencia requisições HTTP e delega para use cases
 import json
 import asyncio
 from datetime import datetime
-from aws_lambda_powertools import Logger
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, CORSConfig
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
@@ -32,9 +31,10 @@ from infrastructure.adapters.output.async_weather_repository import get_async_we
 from shared.config.settings import DEFAULT_RADIUS
 from shared.utils.datetime_parser import DateTimeParser
 from shared.utils.validators import RadiusValidator, CityIdValidator
+from shared.config.logger_config import get_logger
 
-# Configurar Powertools
-logger = Logger()
+# Configurar Logger com service name do DD_SERVICE
+logger = get_logger()
 
 app = APIGatewayRestResolver(cors=CORSConfig(allow_origin="*"))
 
@@ -247,9 +247,10 @@ def lambda_handler(event, context: LambdaContext):
     - If omitted, returns next available forecast
     """
     logger.info(
-        "Lambda invoked",
-        path=event.get('path', 'N/A'),
-        method=event.get('httpMethod', 'N/A')
+        "Requisição Lambda recebida",
+        rota=event.get('path', 'N/A'),
+        metodo=event.get('httpMethod', 'N/A'),
+        request_id=context.request_id if context else 'N/A'
     )
     
     response = app.resolve(event, context)
@@ -263,9 +264,11 @@ def lambda_handler(event, context: LambdaContext):
     response['headers']['Access-Control-Allow-Methods'] = 'GET,POST,OPTIONS'
     response['headers']['Access-Control-Max-Age'] = '86400'
     
+    status_code = response.get('statusCode', 'N/A')
     logger.info(
-        "Lambda completed",
-        status_code=response.get('statusCode', 'N/A')
+        "Requisição Lambda concluída",
+        status_code=status_code,
+        sucesso=status_code == 200
     )
     
     return response

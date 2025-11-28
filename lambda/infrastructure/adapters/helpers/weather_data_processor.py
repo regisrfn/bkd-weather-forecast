@@ -5,13 +5,10 @@ Handles parsing and calculation of weather metrics
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from typing import Optional, List, Dict, Any, Tuple
-from aws_lambda_powertools import Logger
 
 from domain.entities.weather import Weather
 from infrastructure.adapters.helpers.date_filter_helper import DateFilterHelper
 from infrastructure.adapters.helpers.weather_alerts_analyzer import WeatherAlertsAnalyzer
-
-logger = Logger(child=True)
 
 
 class WeatherDataProcessor:
@@ -47,10 +44,6 @@ class WeatherDataProcessor:
         )
         
         if not forecast_item:
-            logger.warning(
-                f"⚠️  No future forecast available | City: {city_name} | "
-                f"Target: {target_datetime}"
-            )
             raise ValueError("Nenhuma previsão futura disponível")
         
         # Extract forecast data
@@ -75,14 +68,6 @@ class WeatherDataProcessor:
         daily_rain_accumulation = WeatherDataProcessor.calculate_daily_rain_accumulation(
             data['list'],
             target_datetime
-        )
-        
-        logger.debug(
-            f"✅ Weather processed | City: {city_name} | "
-            f"Temp: {forecast_item['main']['temp']:.1f}°C | "
-            f"Rain: {rain_prob:.0f}% | "
-            f"Daily Rain: {daily_rain_accumulation:.1f}mm | "
-            f"Alerts: {len(weather_alerts)}"
         )
         
         # Create Weather entity
@@ -188,14 +173,7 @@ class WeatherDataProcessor:
             "America/Sao_Paulo"
         )
         
-        logger.info(
-            f"🌧️ Daily rain calculation | Target date: {target_date} | "
-            f"Total forecasts: {len(forecasts)} | "
-            f"Day forecasts: {len(day_forecasts)}"
-        )
-        
         if not day_forecasts:
-            logger.info("No forecasts for target date")
             return 0.0
         
         # Sum all rain.3h values for the day
@@ -203,13 +181,5 @@ class WeatherDataProcessor:
         for forecast in day_forecasts:
             rain_3h = forecast.get('rain', {}).get('3h', 0)
             total_rain += rain_3h
-            if rain_3h > 0:
-                forecast_dt = datetime.fromtimestamp(forecast['dt'], tz=ZoneInfo("UTC"))
-                logger.info(
-                    f"   ➕ Rain forecast | Time: {forecast_dt} | "
-                    f"Rain 3h: {rain_3h:.2f}mm | "
-                    f"Running total: {total_rain:.2f}mm"
-                )
         
-        logger.info(f"✅ Daily rain total: {total_rain:.2f}mm")
         return total_rain

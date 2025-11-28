@@ -12,15 +12,12 @@ import os
 from datetime import datetime
 from typing import Optional, List, Dict, Any, Tuple
 from ddtrace import tracer
-from aws_lambda_powertools import Logger
 
 from domain.entities.weather import Weather
 from application.ports.output.weather_repository_port import IWeatherRepository
 from infrastructure.adapters.cache.async_dynamodb_cache import AsyncDynamoDBCache, get_async_cache
 from infrastructure.adapters.config.aiohttp_session_manager import get_aiohttp_session_manager
 from infrastructure.adapters.helpers.weather_data_processor import WeatherDataProcessor
-
-logger = Logger(child=True)
 
 
 class AsyncOpenWeatherRepository(IWeatherRepository):
@@ -227,12 +224,8 @@ class AsyncOpenWeatherRepository(IWeatherRepository):
             
             return results
         
-        except Exception as e:
-            logger.error(
-                "Batch cache save ERROR",
-                items_count=len(weather_data_list),
-                error=str(e)[:200]
-            )
+        except Exception:
+            # Silently fail cache save, não deve impactar o resultado
             return {key: False for key, _ in weather_data_list}
     
     @tracer.wrap(resource="async_repository.batch_get_weather")
