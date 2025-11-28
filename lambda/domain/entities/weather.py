@@ -161,7 +161,7 @@ class Weather:
         else:
             alert_time = forecast_time.replace(tzinfo=ZoneInfo("UTC")).astimezone(brasil_tz)
         
-        # Alertas de PRECIPITAÇÃO baseados em volume (mm/h)
+        # Alertas de PRECIPITAÇÃO baseados em VOLUME (mm/h)
         # Requer probabilidade >= 80% para reduzir falsos positivos
         if rain_1h > 0 and rain_prob >= RAIN_PROBABILITY_THRESHOLD:
             if rain_1h >= 50:
@@ -188,7 +188,7 @@ class Weather:
                     timestamp=alert_time,
                     details={"rain_mm_h": round(rain_1h, 1), "probability_percent": round(rain_prob, 1)}
                 ))
-            elif rain_1h > 0:
+            else:  # rain_1h > 0 mas < 2.5
                 alerts.append(WeatherAlert(
                     code="DRIZZLE",
                     severity=AlertSeverity.INFO,
@@ -222,14 +222,24 @@ class Weather:
                     details=alert_details
                 ))
         
-        # CHUVAS - alertas por código apenas se não houver volume medido
+        # Alertas de CHUVA por código climático (quando não há volume medido)
+        # Códigos 500-599 indicam chuva, mas API nem sempre retorna volume
         elif 500 <= weather_code < 600 and rain_1h == 0:
             if weather_code in [502, 503, 504, 522, 531]:
-                # Chuva forte prevista por código
+                # Chuva forte prevista por código (independente de probabilidade)
                 alerts.append(WeatherAlert(
                     code="HEAVY_RAIN",
                     severity=AlertSeverity.ALERT,
                     description="⚠️ ALERTA: Chuva forte prevista",
+                    timestamp=alert_time,
+                    details={"weather_code": weather_code, "probability_percent": round(rain_prob, 1)}
+                ))
+            elif rain_prob >= RAIN_PROBABILITY_THRESHOLD:
+                # Chuva leve/moderada com alta probabilidade (código 500-501, 520-521, etc)
+                alerts.append(WeatherAlert(
+                    code="RAIN_EXPECTED",
+                    severity=AlertSeverity.INFO,
+                    description="🌧️ Alta probabilidade de chuva",
                     timestamp=alert_time,
                     details={"weather_code": weather_code, "probability_percent": round(rain_prob, 1)}
                 ))
@@ -244,16 +254,19 @@ class Weather:
                 details={"weather_code": weather_code, "temperature_c": round(temperature, 1)}
             ))
         
-        # Alerta RAIN_EXPECTED: alta probabilidade E volume mínimo esperado
-        # Requer: probabilidade >= 80% E volume > 0 (mas não coberto por outros alertas)
-        # Evita alertas para "80% de chance de 0mm" que não fazem sentido
-        elif rain_prob >= RAIN_PROBABILITY_THRESHOLD and rain_1h > 0 and not any(a.code in ["STORM", "STORM_RAIN", "HEAVY_RAIN", "MODERATE_RAIN", "LIGHT_RAIN", "DRIZZLE"] for a in alerts):
+        # Fallback: RAIN_EXPECTED para alta probabilidade SEM volume E SEM código de chuva
+        # Captura casos onde API indica alta probabilidade mas não retorna código nem volume
+        # Evita redundância: só gera se NÃO houver alertas de precipitação
+        elif rain_prob >= RAIN_PROBABILITY_THRESHOLD and not any(
+            a.code in ["STORM", "STORM_RAIN", "HEAVY_RAIN", "MODERATE_RAIN", "LIGHT_RAIN", "DRIZZLE", "RAIN_EXPECTED"]
+            for a in alerts
+        ):
             alerts.append(WeatherAlert(
                 code="RAIN_EXPECTED",
                 severity=AlertSeverity.INFO,
                 description="🌧️ Alta probabilidade de chuva",
                 timestamp=alert_time,
-                details={"probability_percent": round(rain_prob, 1), "rain_mm_h": round(rain_1h, 1)}
+                details={"probability_percent": round(rain_prob, 1)}
             ))
         
         # Alertas de VENTO FORTE

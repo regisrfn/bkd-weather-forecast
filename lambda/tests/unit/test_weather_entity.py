@@ -569,5 +569,91 @@ def test_rainfall_intensity_composite_metric():
     assert weather6.rainfall_intensity == 10.0
 
 
+def test_no_rain_expected_when_volume_alert_exists():
+    """
+    Testa que RAIN_EXPECTED NÃO é gerado quando há alertas de volume
+    (evita redundância)
+    """
+    forecast_time = datetime(2025, 11, 21, 15, 0)
+    
+    # Caso 1: Volume alto + probabilidade alta = só MODERATE_RAIN, sem RAIN_EXPECTED
+    alerts = Weather.get_weather_alert(
+        weather_code=800,  # Céu limpo
+        rain_prob=85,
+        wind_speed=15,
+        forecast_time=forecast_time,
+        rain_1h=12.0,  # Chuva moderada
+        temperature=20.0
+    )
+    alert_codes = [a.code for a in alerts]
+    assert "MODERATE_RAIN" in alert_codes
+    assert "RAIN_EXPECTED" not in alert_codes, "RAIN_EXPECTED não deve ser gerado quando há alerta de volume"
+    
+    # Caso 2: Volume baixo + probabilidade alta = só DRIZZLE, sem RAIN_EXPECTED
+    alerts = Weather.get_weather_alert(
+        weather_code=800,
+        rain_prob=82,
+        wind_speed=10,
+        forecast_time=forecast_time,
+        rain_1h=1.5,  # Garoa
+        temperature=22.0
+    )
+    alert_codes = [a.code for a in alerts]
+    assert "DRIZZLE" in alert_codes
+    assert "RAIN_EXPECTED" not in alert_codes
+
+
+def test_rain_expected_fallback():
+    """
+    Testa que RAIN_EXPECTED é gerado como fallback quando:
+    - Alta probabilidade (>= 80%) MAS sem volume E sem código de chuva forte
+    """
+    forecast_time = datetime(2025, 11, 21, 15, 0)
+    
+    # Caso 1: Alta probabilidade sem volume nem código de chuva = RAIN_EXPECTED
+    alerts = Weather.get_weather_alert(
+        weather_code=800,  # Céu limpo
+        rain_prob=85,
+        wind_speed=15,
+        forecast_time=forecast_time,
+        rain_1h=0.0,  # SEM volume
+        temperature=20.0
+    )
+    alert_codes = [a.code for a in alerts]
+    assert "RAIN_EXPECTED" in alert_codes, "RAIN_EXPECTED deve ser fallback para probabilidade alta sem volume"
+    
+    # Caso 2: Código de chuva leve + probabilidade alta sem volume = RAIN_EXPECTED
+    alerts = Weather.get_weather_alert(
+        weather_code=500,  # Chuva leve
+        rain_prob=85,
+        wind_speed=15,
+        forecast_time=forecast_time,
+        rain_1h=0.0,  # SEM volume
+        temperature=20.0
+    )
+    alert_codes = [a.code for a in alerts]
+    assert "RAIN_EXPECTED" in alert_codes
+    assert alerts[0].details.get("weather_code") == 500, "Deve incluir weather_code nos detalhes"
+
+
+def test_no_rain_expected_when_storm():
+    """
+    Testa que RAIN_EXPECTED NÃO é gerado quando há alerta de tempestade
+    """
+    forecast_time = datetime(2025, 11, 21, 15, 0)
+    
+    alerts = Weather.get_weather_alert(
+        weather_code=210,  # Tempestade
+        rain_prob=85,
+        wind_speed=35,
+        forecast_time=forecast_time,
+        rain_1h=0.0,
+        temperature=20.0
+    )
+    alert_codes = [a.code for a in alerts]
+    assert "STORM" in alert_codes
+    assert "RAIN_EXPECTED" not in alert_codes, "RAIN_EXPECTED não deve ser gerado quando há tempestade"
+
+
 if __name__ == '__main__':
     pytest.main([__file__, '-v'])
