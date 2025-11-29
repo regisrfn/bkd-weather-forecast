@@ -246,11 +246,16 @@ def lambda_handler(event, context: LambdaContext):
     - time: HH:MM (ex: 15:00)
     - If omitted, returns next available forecast
     """
+    # Extrair IP de origem
+    request_context = event.get('requestContext', {}) or {}
+    identity = request_context.get('identity', {}) or {}
+    
     logger.info(
         "Requisição Lambda recebida",
         rota=event.get('path', 'N/A'),
         metodo=event.get('httpMethod', 'N/A'),
-        request_id=getattr(context, 'aws_request_id', 'N/A')
+        request_id=getattr(context, 'aws_request_id', 'N/A'),
+        source_ip=identity.get('sourceIp', 'N/A')
     )
     
     response = app.resolve(event, context)
