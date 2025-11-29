@@ -246,7 +246,8 @@ def lambda_handler(event, context: LambdaContext):
     - time: HH:MM (ex: 15:00)
     - If omitted, returns next available forecast
     """
-    # Extrair IP de origem
+    # Extrair IP de origem e session_id
+    headers = event.get('headers', {}) or {}
     request_context = event.get('requestContext', {}) or {}
     identity = request_context.get('identity', {}) or {}
     
@@ -255,7 +256,8 @@ def lambda_handler(event, context: LambdaContext):
         rota=event.get('path', 'N/A'),
         metodo=event.get('httpMethod', 'N/A'),
         request_id=getattr(context, 'aws_request_id', 'N/A'),
-        source_ip=identity.get('sourceIp', 'N/A')
+        source_ip=identity.get('sourceIp', 'N/A'),
+        session_id=headers.get('x-session-id', 'N/A')
     )
     
     response = app.resolve(event, context)
@@ -265,7 +267,7 @@ def lambda_handler(event, context: LambdaContext):
         response['headers'] = {}
     
     response['headers']['Access-Control-Allow-Origin'] = '*'
-    response['headers']['Access-Control-Allow-Headers'] = 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Requested-With'
+    response['headers']['Access-Control-Allow-Headers'] = 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Requested-With,X-Session-Id'
     response['headers']['Access-Control-Allow-Methods'] = 'GET,POST,OPTIONS'
     response['headers']['Access-Control-Max-Age'] = '86400'
     
