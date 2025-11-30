@@ -237,7 +237,7 @@ resource "aws_api_gateway_integration_response" "health_options" {
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Requested-With,X-Session-Id'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${var.cors_allowed_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
     "method.response.header.Access-Control-Max-Age"       = "'86400'"
@@ -290,7 +290,7 @@ resource "aws_api_gateway_integration_response" "weather_city_options" {
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Requested-With,X-Session-Id'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${var.cors_allowed_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
     "method.response.header.Access-Control-Max-Age"       = "'86400'"
@@ -343,7 +343,7 @@ resource "aws_api_gateway_integration_response" "weather_regional_options" {
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Requested-With,X-Session-Id'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${var.cors_allowed_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'POST,OPTIONS'"
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
     "method.response.header.Access-Control-Max-Age"       = "'86400'"
@@ -396,7 +396,7 @@ resource "aws_api_gateway_integration_response" "cities_neighbors_options" {
   status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Requested-With,X-Session-Id'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${var.cors_allowed_headers}'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
     "method.response.header.Access-Control-Max-Age"       = "'86400'"
@@ -493,6 +493,11 @@ resource "aws_api_gateway_deployment" "main" {
       aws_api_gateway_resource.cities_neighbors_id.id,
       aws_api_gateway_method.cities_neighbors_get.id,
       aws_api_gateway_integration.cities_neighbors_get.id,
+      # CORS integration responses (para forçar redeploy quando headers mudarem)
+      var.enable_cors ? aws_api_gateway_integration_response.health_options[0].id : "",
+      var.enable_cors ? aws_api_gateway_integration_response.weather_city_options[0].id : "",
+      var.enable_cors ? aws_api_gateway_integration_response.weather_regional_options[0].id : "",
+      var.enable_cors ? aws_api_gateway_integration_response.cities_neighbors_options[0].id : "",
       # Proxy fallback
       aws_api_gateway_resource.proxy.id,
       aws_api_gateway_method.proxy.id,
@@ -501,6 +506,7 @@ resource "aws_api_gateway_deployment" "main" {
       aws_api_gateway_integration.lambda_root.id,
       # CORS configuration hash
       var.enable_cors,
+      var.cors_allowed_headers,
     ]))
   }
 }
@@ -543,7 +549,7 @@ resource "aws_api_gateway_gateway_response" "default_4xx" {
 
   response_parameters = {
     "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
-    "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Requested-With,X-Session-Id'"
+    "gatewayresponse.header.Access-Control-Allow-Headers" = "'${var.cors_allowed_headers}'"
     "gatewayresponse.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'"
   }
 }
@@ -555,7 +561,7 @@ resource "aws_api_gateway_gateway_response" "default_5xx" {
 
   response_parameters = {
     "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
-    "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Requested-With,X-Session-Id'"
+    "gatewayresponse.header.Access-Control-Allow-Headers" = "'${var.cors_allowed_headers}'"
     "gatewayresponse.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'"
   }
 }

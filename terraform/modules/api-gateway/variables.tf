@@ -60,3 +60,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "cors_allowed_headers" {
+  description = "Headers permitidos no CORS"
+  type        = string
+  default     = "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Requested-With,x-session-id"
+}
