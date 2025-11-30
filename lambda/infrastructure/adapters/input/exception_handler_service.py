@@ -99,6 +99,20 @@ class ExceptionHandlerService:
         )
     
     @staticmethod
+    def handle_value_error(ex: ValueError) -> Response:
+        """Handle 400 - Validation errors (ValueError)"""
+        logger.warning("Validation error", error=str(ex))
+        return Response(
+            status_code=400,
+            content_type="application/json",
+            body=json.dumps({
+                "type": "ValidationError",
+                "error": "Validation error",
+                "message": str(ex)
+            })
+        )
+    
+    @staticmethod
     def handle_unexpected_error(ex: Exception) -> Response:
         """Handle 500 - Unexpected errors"""
         logger.error("Unexpected error", error=str(ex), exc_info=True)

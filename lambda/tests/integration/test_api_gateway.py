@@ -208,6 +208,59 @@ async def test_get_city_weather_with_date(http_client: httpx.AsyncClient, brazil
         f"tempMin ({data['tempMin']}) should be <= tempMax ({data['tempMax']})"
 
 
+@pytest.mark.asyncio
+async def test_get_city_detailed_forecast(http_client: httpx.AsyncClient):
+    """Testa rota GET /api/weather/city/{cityId}/detailed"""
+    response = await http_client.get(
+        f"{API_BASE_URL}/api/weather/city/{TEST_CITY_ID}/detailed"
+    )
+    
+    assert response.status_code == 200, \
+        f"Expected 200, got {response.status_code}: {response.text}"
+    
+    data = response.json()
+    
+    # Validar estrutura da resposta
+    assert 'cityInfo' in data, "Response should contain cityInfo"
+    assert 'currentWeather' in data, "Response should contain currentWeather"
+    assert 'dailyForecasts' in data, "Response should contain dailyForecasts"
+    assert 'extendedAvailable' in data, "Response should contain extendedAvailable"
+    
+    # Validar cityInfo
+    city_info = data['cityInfo']
+    assert city_info['cityId'] == TEST_CITY_ID
+    assert 'cityName' in city_info
+    
+    # Validar currentWeather
+    current = data['currentWeather']
+    assert 'temperature' in current
+    assert 'humidity' in current
+    assert 'windSpeed' in current
+    assert 'timestamp' in current
+    
+    # Validar dailyForecasts
+    daily = data['dailyForecasts']
+    assert isinstance(daily, list), "dailyForecasts should be a list"
+    assert len(daily) > 0, "Should have at least one daily forecast"
+    
+    # Validar estrutura de cada previsão diária (incluindo wind direction)
+    first_day = daily[0]
+    required_fields = [
+        'date', 'tempMax', 'tempMin', 'precipitationMm',
+        'rainProbability', 'windSpeedMax', 'windDirection',
+        'uvIndex', 'sunrise', 'sunset'
+    ]
+    for field in required_fields:
+        assert field in first_day, f"Daily forecast should contain {field}"
+    
+    # Validar tipos de dados
+    assert isinstance(first_day['windDirection'], int), "windDirection should be int"
+    assert 0 <= first_day['windDirection'] <= 360, "windDirection should be 0-360 degrees"
+    assert isinstance(first_day['uvIndex'], (int, float)), "uvIndex should be numeric"
+    
+    print(f"✓ Detailed forecast: {len(daily)} days, wind direction: {first_day['windDirection']}°")
+
+
 # ============================================================================
 # TESTES DE ENDPOINTS - POST
 # ============================================================================

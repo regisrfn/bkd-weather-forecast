@@ -22,6 +22,9 @@ fi
 # Ativar ambiente virtual
 source .venv/bin/activate
 
+# Configurar PYTHONPATH para incluir o diretório lambda
+export PYTHONPATH="${PWD}/lambda:${PYTHONPATH}"
+
 # Executar testes
 echo ""
 echo "🧪 Executando testes..."

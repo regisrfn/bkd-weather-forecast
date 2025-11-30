@@ -12,6 +12,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from application.use_cases.async_get_neighbor_cities import AsyncGetNeighborCitiesUseCase
 from application.use_cases.async_get_city_weather import AsyncGetCityWeatherUseCase
 from application.use_cases.get_regional_weather import AsyncGetRegionalWeatherUseCase
+from application.use_cases.async_get_city_detailed_forecast import AsyncGetCityDetailedForecastUseCase
 
 # Domain Layer - Exceptions
 from domain.exceptions import (
@@ -26,6 +27,7 @@ from domain.exceptions import (
 from infrastructure.adapters.input.exception_handler_service import ExceptionHandlerService
 from infrastructure.adapters.output.municipalities_repository import get_repository
 from infrastructure.adapters.output.async_weather_repository import get_async_weather_repository
+from infrastructure.adapters.output.async_openmeteo_repository import get_async_openmeteo_repository
 
 # Shared Layer - Utilities
 from shared.config.settings import DEFAULT_RADIUS
@@ -54,6 +56,7 @@ app.exception_handler(CoordinatesNotFoundException)(exception_service.handle_coo
 app.exception_handler(InvalidRadiusException)(exception_service.handle_invalid_radius)
 app.exception_handler(InvalidDateTimeException)(exception_service.handle_invalid_datetime)
 app.exception_handler(WeatherDataNotFoundException)(exception_service.handle_weather_data_not_found)
+app.exception_handler(ValueError)(exception_service.handle_value_error)
 app.exception_handler(Exception)(exception_service.handle_unexpected_error)
 
 
@@ -149,6 +152,58 @@ def get_city_weather_route(city_id: str):
     
     # Convert to API format
     response = weather.to_api_response()
+    
+    return response
+
+
+@app.get("/api/weather/city/<city_id>/detailed")
+def get_city_detailed_forecast_route(city_id: str):
+    """
+    GET /api/weather/city/{cityId}/detailed?date=2025-11-20&time=15:00
+    
+    Returns detailed forecast with extended data:
+    - Current weather (OpenWeather API)
+    - Daily forecasts for 16 days (Open-Meteo API)
+    - UV index, sunrise/sunset, precipitation hours
+    
+    Query params (optional):
+    - date: Date in format YYYY-MM-DD (ex: 2025-11-20)
+    - time: Time in format HH:MM (ex: 15:00)
+    
+    Note: Uses persistent event loop for true client reuse
+    """
+    # Validate city ID
+    CityIdValidator.validate(city_id)
+    
+    # Extract date and time from query string
+    date_str = app.current_event.get_query_string_value(name="date", default_value=None)
+    time_str = app.current_event.get_query_string_value(name="time", default_value=None)
+    
+    # Parse datetime (throws InvalidDateTimeException)
+    target_datetime = DateTimeParser.from_query_params(date_str, time_str)
+    
+    # Get repositories (sync singletons)
+    city_repository = get_repository()
+    weather_repository = get_async_weather_repository()
+    openmeteo_repository = get_async_openmeteo_repository()
+    
+    # Execute async use case
+    async def execute_async():
+        # Execute use case (ASYNC with asyncio.gather for parallel calls)
+        use_case = AsyncGetCityDetailedForecastUseCase(
+            city_repository,
+            weather_repository,
+            openmeteo_repository
+        )
+        extended_forecast = await use_case.execute(city_id, target_datetime)
+        
+        return extended_forecast
+    
+    # Run async code with persistent loop
+    extended_forecast = run_async(execute_async())
+    
+    # Convert to API format
+    response = extended_forecast.to_api_response()
     
     return response
 

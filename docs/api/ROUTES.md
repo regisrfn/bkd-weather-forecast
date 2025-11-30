@@ -904,6 +904,347 @@ class AsyncGetRegionalWeatherUseCase:
 
 ---
 
+## 4. GET /api/weather/city/{cityId}/detailed
+
+### Descrição
+
+Retorna previsão meteorológica detalhada com dados estendidos de até 16 dias. Combina dados do **OpenWeather** (5 dias, 3h intervalo) com **Open-Meteo** (16 dias, dados diários) para fornecer informações astronômicas (nascer/pôr do sol, fase da lua), índice UV, e previsões de longo prazo.
+
+**Performance:** P99 <300ms (2 APIs em paralelo)
+
+### Request
+
+**Method:** `GET`
+
+**Path Parameters:**
+- `cityId` (string, required): Código IBGE da cidade
+
+**Query Parameters:**
+- `date` (string, optional): Data no formato `YYYY-MM-DD`
+- `time` (string, optional): Hora no formato `HH:MM`
+
+**Headers:**
+```
+Accept: application/json
+```
+
+### Response
+
+**Success (200 OK):**
+
+```json
+{
+  "cityInfo": {
+    "cityId": "3543204",
+    "cityName": "Ribeirão do Sul",
+    "state": "SP",
+    "latitude": -22.7572,
+    "longitude": -49.9439
+  },
+  "currentWeather": {
+    "temperature": 28.3,
+    "feelsLike": 29.0,
+    "humidity": 65.0,
+    "pressure": 1013.0,
+    "windSpeed": 12.5,
+    "clouds": 40.0,
+    "visibility": 10000,
+    "weatherDescription": "Parcialmente nublado",
+    "timestamp": "2025-11-30T15:00:00-03:00"
+  },
+  "dailyForecasts": [
+    {
+      "date": "2025-11-30",
+      "tempMax": 32.1,
+      "tempMin": 18.5,
+      "precipitation": 2.5,
+      "precipitationProbability": 30.0,
+      "precipitationHours": 2.0,
+      "windSpeedMax": 15.5,
+      "uvIndexMax": 8.5,
+      "uvRiskLevel": "Alto",
+      "uvRiskColor": "#FF6B00",
+      "sunrise": "05:45:00",
+      "sunset": "18:32:00",
+      "daylightHours": 12.78,
+      "moonPhase": "Lua Crescente",
+      "weatherDescription": "Parcialmente nublado"
+    },
+    {
+      "date": "2025-12-01",
+      "tempMax": 30.5,
+      "tempMin": 19.2,
+      "precipitation": 15.8,
+      "precipitationProbability": 80.0,
+      "precipitationHours": 6.0,
+      "windSpeedMax": 22.3,
+      "uvIndexMax": 6.2,
+      "uvRiskLevel": "Moderado",
+      "uvRiskColor": "#FFD700",
+      "sunrise": "05:44:00",
+      "sunset": "18:33:00",
+      "daylightHours": 12.81,
+      "moonPhase": "Quarto Crescente",
+      "weatherDescription": "Chuva moderada"
+    }
+  ],
+  "extendedAvailable": true
+}
+```
+
+**Campos da resposta:**
+
+#### `cityInfo` (object)
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `cityId` | string | Código IBGE da cidade |
+| `cityName` | string | Nome do município |
+| `state` | string | Sigla do estado (UF) |
+| `latitude` | float | Latitude da cidade |
+| `longitude` | float | Longitude da cidade |
+
+#### `currentWeather` (object)
+
+| Campo | Tipo | Descrição | Unidade |
+|-------|------|-----------|---------|
+| `temperature` | float | Temperatura atual | °C |
+| `feelsLike` | float | Sensação térmica | °C |
+| `humidity` | float | Umidade relativa | % (0-100) |
+| `pressure` | float | Pressão atmosférica | hPa |
+| `windSpeed` | float | Velocidade do vento | km/h |
+| `clouds` | float | Cobertura de nuvens | % (0-100) |
+| `visibility` | float | Visibilidade | metros |
+| `weatherDescription` | string | Descrição do clima | - |
+| `timestamp` | string | Data/hora da previsão (ISO 8601) | - |
+
+#### `dailyForecasts` (array)
+
+Array com até 16 elementos (dias) ordenados por data crescente.
+
+| Campo | Tipo | Descrição | Unidade |
+|-------|------|-----------|---------|
+| `date` | string | Data da previsão (YYYY-MM-DD) | - |
+| `tempMax` | float | Temperatura máxima do dia | °C |
+| `tempMin` | float | Temperatura mínima do dia | °C |
+| `precipitation` | float | Precipitação acumulada | mm |
+| `precipitationProbability` | float | Probabilidade de precipitação | % (0-100) |
+| `precipitationHours` | float | Horas de precipitação estimadas | horas |
+| `windSpeedMax` | float | Velocidade máxima do vento | km/h |
+| `uvIndexMax` | float | Índice UV máximo | 0-11+ |
+| `uvRiskLevel` | string | Nível de risco UV: "Baixo", "Moderado", "Alto", "Muito Alto", "Extremo" | - |
+| `uvRiskColor` | string | Cor hexadecimal do risco UV para UI | - |
+| `sunrise` | string | Horário do nascer do sol (HH:MM:SS) | - |
+| `sunset` | string | Horário do pôr do sol (HH:MM:SS) | - |
+| `daylightHours` | float | Duração do dia (sunset - sunrise) | horas |
+| `moonPhase` | string | Fase da lua: "Lua Nova", "Quarto Crescente", "Lua Cheia", "Quarto Minguante", "Lua Crescente", "Lua Minguante" | - |
+| `weatherDescription` | string | Descrição do clima previsto | - |
+
+#### `extendedAvailable` (boolean)
+
+Indica se dados estendidos (Open-Meteo) estão disponíveis:
+- `true`: Resposta inclui até 16 dias de previsão
+- `false`: Apenas dados do OpenWeather (5 dias) disponíveis
+
+### Índice UV - Níveis de Risco
+
+| UV Index | Nível | Cor | Recomendação |
+|----------|-------|-----|--------------|
+| 0-2 | Baixo | `#00E400` (Verde) | Seguro permanecer ao ar livre |
+| 3-5 | Moderado | `#FFFF00` (Amarelo) | Use protetor solar |
+| 6-7 | Alto | `#FF6B00` (Laranja) | Proteção extra necessária |
+| 8-10 | Muito Alto | `#FF0000` (Vermelho) | Evite exposição ao sol |
+| 11+ | Extremo | `#B000B0` (Roxo) | Evite sair ao ar livre |
+
+### Fases da Lua
+
+Calculadas com base no ciclo lunar de 29.53 dias a partir de uma referência conhecida:
+
+| Fase | Descrição | Ícone sugerido |
+|------|-----------|----------------|
+| Lua Nova | 0-1 dias após lua nova | 🌑 |
+| Lua Crescente | 1-7 dias (crescente) | 🌒 |
+| Quarto Crescente | 7-8 dias | 🌓 |
+| Lua Crescente | 8-14 dias (ainda crescendo) | 🌔 |
+| Lua Cheia | 14-15 dias | 🌕 |
+| Lua Minguante | 15-21 dias (minguando) | 🌖 |
+| Quarto Minguante | 21-22 dias | 🌗 |
+| Lua Minguante | 22-29 dias (ainda minguando) | 🌘 |
+
+**Error (404 Not Found):**
+
+```json
+{
+  "type": "CityNotFoundException",
+  "error": "City not found",
+  "message": "City not found",
+  "details": {
+    "city_id": "9999999"
+  }
+}
+```
+
+**Error (500 Internal Server Error):**
+
+```json
+{
+  "type": "WeatherAPIException",
+  "error": "Failed to fetch weather data",
+  "message": "Both OpenWeather and Open-Meteo APIs failed",
+  "details": {
+    "city_id": "3543204"
+  }
+}
+```
+
+### Exemplos
+
+```bash
+# Previsão detalhada atual
+curl "https://api.example.com/api/weather/city/3543204/detailed"
+
+# Previsão detalhada para data específica
+curl "https://api.example.com/api/weather/city/3543204/detailed?date=2025-12-01"
+
+# Previsão detalhada para data/hora específica
+curl "https://api.example.com/api/weather/city/3543204/detailed?date=2025-12-01&time=15:00"
+```
+
+### Implementação
+
+```python
+@app.get("/api/weather/city/<city_id>/detailed")
+def get_city_detailed_forecast_route(city_id: str):
+    """
+    GET /api/weather/city/{cityId}/detailed?date=2025-11-30&time=15:00
+    Returns detailed forecast with 16-day extended data
+    """
+    import asyncio
+    
+    logger.info("Get city detailed forecast", city_id=city_id)
+    
+    # Extract date and time from query string
+    date_str = app.current_event.get_query_string_value(name="date", default_value=None)
+    time_str = app.current_event.get_query_string_value(name="time", default_value=None)
+    
+    # Parse datetime
+    target_datetime = DateTimeParser.from_query_params(date_str, time_str)
+    
+    # Get repositories (singletons)
+    city_repository = get_repository()
+    weather_repository = get_async_weather_repository()
+    openmeteo_repository = get_async_openmeteo_repository()
+    
+    # Execute use case (async)
+    async def execute_async():
+        use_case = AsyncGetCityDetailedForecastUseCase(
+            city_repository,
+            weather_repository,
+            openmeteo_repository
+        )
+        forecast = await use_case.execute(city_id, target_datetime)
+        return forecast
+    
+    # Run async code
+    forecast = asyncio.run(execute_async())
+    
+    # Log success
+    logger.info(
+        "Detailed forecast fetched",
+        city_id=city_id,
+        city_name=forecast['cityInfo']['cityName'],
+        forecast_days=len(forecast['dailyForecasts']),
+        extended_available=forecast['extendedAvailable']
+    )
+    
+    return forecast
+```
+
+### Fluxo de Execução
+
+```
+1. Request → lambda_handler
+2. Parse datetime (date/time query params)
+3. Validate city_id (CityIdValidator)
+4. Fetch city from repository (CityNotFoundException se não encontrar)
+5. Execute asyncio.gather() paralelo:
+   ├─ OpenWeather API (current + 5 days forecast)
+   └─ Open-Meteo API (16 days extended forecast)
+6. Se Open-Meteo falhar:
+   ├─ Log warning
+   └─ Continue com dados OpenWeather apenas (extendedAvailable: false)
+7. Combinar dados:
+   ├─ cityInfo (do repositório de cidades)
+   ├─ currentWeather (do OpenWeather)
+   └─ dailyForecasts (do Open-Meteo ou OpenWeather)
+8. Calcular dados derivados:
+   ├─ uvRiskLevel e uvRiskColor (baseado em uvIndexMax)
+   ├─ daylightHours (sunset - sunrise)
+   └─ moonPhase (algoritmo simplificado)
+9. Cache DynamoDB (TTL: 6 horas)
+10. Return ExtendedForecast
+```
+
+### Cache Strategy
+
+```python
+# Cache key format
+cache_key = f"openmeteo_{city_id}_{forecast_days}"
+
+# TTL: 6 horas (mais longo que weather normal)
+ttl = datetime.now() + timedelta(hours=6)
+
+# DynamoDB structure
+{
+  "pk": cache_key,
+  "data": {...},
+  "ttl": 1732998000
+}
+```
+
+**Cache separado:**
+- Endpoint `/detailed`: Cache de 6h (dados mudam menos)
+- Endpoint `/city/{id}`: Cache de 3h (dados mudam mais)
+
+### Performance
+
+**Benchmarks:**
+
+| Métrica | Valor |
+|---------|-------|
+| Cold start | ~800-1000ms |
+| Warm cache hit | ~50-80ms |
+| Warm cache miss (parallel APIs) | ~250-350ms |
+| Open-Meteo API latency | ~150-200ms |
+| OpenWeather API latency | ~200-300ms |
+
+**Otimizações:**
+- ✅ APIs chamadas em paralelo com `asyncio.gather()`
+- ✅ Cache DynamoDB com TTL de 6h
+- ✅ Singleton factories (reutilização de sessions)
+- ✅ Graceful degradation (se Open-Meteo falhar, continua com OpenWeather)
+
+### Fontes de Dados
+
+#### OpenWeather Forecast API
+- **URL:** `https://api.openweathermap.org/data/2.5/forecast`
+- **Cobertura:** 5 dias, intervalos de 3h (40 pontos)
+- **Uso:** `currentWeather` (primeira previsão)
+- **Rate limit:** 1000 calls/day (free tier)
+
+#### Open-Meteo API
+- **URL:** `https://api.open-meteo.com/v1/forecast`
+- **Cobertura:** 16 dias, dados diários
+- **Parâmetros:** `temperature_2m_max`, `temperature_2m_min`, `precipitation_sum`, `precipitation_probability_max`, `precipitation_hours`, `windspeed_10m_max`, `uv_index_max`, `sunrise`, `sunset`
+- **Uso:** `dailyForecasts` (até 16 dias)
+- **Rate limit:** Ilimitado (free tier)
+
+**Por que usar duas APIs?**
+- OpenWeather: Dados horários precisos, atual + curto prazo
+- Open-Meteo: Dados diários estendidos, free tier generoso, dados astronômicos
+
+---
+
 ## Exception Handlers
 
 Todos os endpoints usam exception handlers centralizados com AWS Powertools:

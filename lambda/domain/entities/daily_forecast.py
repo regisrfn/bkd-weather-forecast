@@ -1,0 +1,167 @@
+"""
+Daily Forecast Entity - Entidade de domínio para previsões diárias estendidas
+Fonte: Open-Meteo API (até 16 dias de previsão)
+"""
+from dataclasses import dataclass
+from typing import Optional
+
+
+@dataclass
+class DailyForecast:
+    """
+    Entidade de Previsão Diária Estendida
+    
+    Representa dados meteorológicos agregados por dia com informações
+    complementares às previsões horárias do OpenWeather.
+    """
+    date: str  # Formato YYYY-MM-DD
+    temp_min: float  # Temperatura mínima (°C)
+    temp_max: float  # Temperatura máxima (°C)
+    precipitation_mm: float  # Precipitação total do dia (mm)
+    rain_probability: float  # Probabilidade média de chuva (0-100%)
+    wind_speed_max: float  # Velocidade máxima do vento (km/h)
+    wind_direction: int  # Direção dominante do vento (graus 0-360)
+    uv_index: float  # Índice UV máximo (0-11+)
+    sunrise: str  # Horário do nascer do sol (HH:MM)
+    sunset: str  # Horário do pôr do sol (HH:MM)
+    precipitation_hours: float  # Horas de precipitação esperadas (0-24h)
+    
+    @property
+    def daylight_hours(self) -> float:
+        """
+        Calcula duração do dia em horas baseado em sunrise/sunset
+        
+        Returns:
+            Horas de luz do dia (ex: 13.5 para 13h30min)
+        """
+        try:
+            sunrise_parts = self.sunrise.split(':')
+            sunset_parts = self.sunset.split(':')
+            
+            sunrise_minutes = int(sunrise_parts[0]) * 60 + int(sunrise_parts[1])
+            sunset_minutes = int(sunset_parts[0]) * 60 + int(sunset_parts[1])
+            
+            daylight_minutes = sunset_minutes - sunrise_minutes
+            return round(daylight_minutes / 60, 1)
+        except (ValueError, IndexError):
+            return 0.0
+    
+    @property
+    def uv_risk_level(self) -> str:
+        """
+        Retorna nível de risco baseado no índice UV
+        
+        Escala OMS:
+        - 0-2: Baixo (verde)
+        - 3-5: Moderado (amarelo)
+        - 6-7: Alto (laranja)
+        - 8-10: Muito alto (vermelho)
+        - 11+: Extremo (roxo)
+        
+        Returns:
+            String descrevendo o nível de risco
+        """
+        if self.uv_index <= 2:
+            return "Baixo"
+        elif self.uv_index <= 5:
+            return "Moderado"
+        elif self.uv_index <= 7:
+            return "Alto"
+        elif self.uv_index <= 10:
+            return "Muito Alto"
+        else:
+            return "Extremo"
+    
+    @property
+    def uv_risk_color(self) -> str:
+        """
+        Retorna cor CSS para o nível de risco UV
+        
+        Returns:
+            Cor em hexadecimal
+        """
+        if self.uv_index <= 2:
+            return "#4caf50"  # verde
+        elif self.uv_index <= 5:
+            return "#ffeb3b"  # amarelo
+        elif self.uv_index <= 7:
+            return "#ff9800"  # laranja
+        elif self.uv_index <= 10:
+            return "#f44336"  # vermelho
+        else:
+            return "#9c27b0"  # roxo
+    
+    def to_api_response(self) -> dict:
+        """
+        Converte para formato de resposta da API
+        
+        Returns:
+            Dict com dados formatados para JSON
+        """
+        return {
+            'date': self.date,
+            'tempMin': round(self.temp_min, 1),
+            'tempMax': round(self.temp_max, 1),
+            'precipitationMm': round(self.precipitation_mm, 1),
+            'rainProbability': round(self.rain_probability, 1),
+            'windSpeedMax': round(self.wind_speed_max, 1),
+            'windDirection': self.wind_direction,
+            'uvIndex': round(self.uv_index, 1),
+            'uvRiskLevel': self.uv_risk_level,
+            'uvRiskColor': self.uv_risk_color,
+            'sunrise': self.sunrise,
+            'sunset': self.sunset,
+            'precipitationHours': round(self.precipitation_hours, 1),
+            'daylightHours': self.daylight_hours
+        }
+    
+    @staticmethod
+    def from_openmeteo_data(
+        date: str,
+        temp_max: float,
+        temp_min: float,
+        precipitation: float,
+        rain_prob: float,
+        wind_speed: float,
+        wind_direction: int,
+        uv_index: float,
+        sunrise: str,
+        sunset: str,
+        precip_hours: float
+    ) -> 'DailyForecast':
+        """
+        Cria instância a partir de dados da API Open-Meteo
+        
+        Args:
+            date: Data no formato YYYY-MM-DD
+            temp_max: Temperatura máxima
+            temp_min: Temperatura mínima
+            precipitation: Precipitação total (mm)
+            rain_prob: Probabilidade de chuva (0-100)
+            wind_speed: Velocidade máxima do vento (km/h)
+            uv_index: Índice UV máximo
+            sunrise: Nascer do sol (ISO 8601)
+            sunset: Pôr do sol (ISO 8601)
+            precip_hours: Horas de precipitação
+        
+        Returns:
+            Nova instância de DailyForecast
+        """
+        # Extrair apenas HH:MM do timestamp ISO 8601
+        # Ex: "2025-11-30T05:11" -> "05:11"
+        sunrise_time = sunrise.split('T')[1] if 'T' in sunrise else sunrise
+        sunset_time = sunset.split('T')[1] if 'T' in sunset else sunset
+        
+        return DailyForecast(
+            date=date,
+            temp_min=temp_min,
+            temp_max=temp_max,
+            precipitation_mm=precipitation,
+            rain_probability=rain_prob,
+            wind_speed_max=wind_speed,
+            wind_direction=wind_direction,
+            uv_index=uv_index,
+            sunrise=sunrise_time,
+            sunset=sunset_time,
+            precipitation_hours=precip_hours
+        )
