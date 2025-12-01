@@ -13,6 +13,7 @@ from application.ports.output.city_repository_port import ICityRepository
 from infrastructure.adapters.output.async_weather_repository import AsyncOpenWeatherRepository
 from infrastructure.adapters.output.async_openmeteo_repository import AsyncOpenMeteoRepository
 from infrastructure.adapters.helpers.hourly_weather_processor import HourlyWeatherProcessor
+from infrastructure.adapters.helpers.weather_alerts_analyzer import WeatherAlertsAnalyzer
 from shared.config.logger_config import get_logger
 
 logger = get_logger(child=True)
@@ -164,6 +165,55 @@ class AsyncGetCityDetailedForecastUseCase:
                 )
                 daily_forecasts = []
                 extended_available = False
+            
+            # ENRIQUECER ALERTAS: Gerar alertas complexos baseados em hourly forecasts
+            if hourly_forecasts and not isinstance(hourly_forecasts, Exception):
+                try:
+                    # Converter hourly forecasts para formato compatível com WeatherAlertsAnalyzer
+                    # O formato esperado é o mesmo retornado pela OpenWeather API (lista de forecasts 3h)
+                    forecast_dicts = []
+                    for hourly in hourly_forecasts:
+                        # Converter timestamp ISO para Unix timestamp
+                        dt = datetime.fromisoformat(hourly.timestamp)
+                        if dt.tzinfo is None:
+                            from zoneinfo import ZoneInfo
+                            dt = dt.replace(tzinfo=ZoneInfo("America/Sao_Paulo"))
+                        
+                        forecast_dicts.append({
+                            'dt': int(dt.timestamp()),
+                            'weather': [{'id': hourly.weather_code}],
+                            'pop': hourly.precipitation_probability / 100.0,  # Converter % para 0-1
+                            'wind': {
+                                'speed': hourly.wind_speed / 3.6  # km/h -> m/s para compatibilidade
+                            },
+                            'rain': {
+                                '3h': hourly.precipitation * 3  # mm/h -> mm/3h para compatibilidade
+                            } if hourly.precipitation > 0 else {},
+                            'main': {
+                                'temp': hourly.temperature,
+                                'temp_max': hourly.temperature,  # Usar temperatura atual como max (melhor estimativa)
+                                'temp_min': hourly.temperature   # Usar temperatura atual como min
+                            },
+                            'visibility': current_weather.visibility
+                        })
+                    
+                    # Gerar alertas complexos
+                    complex_alerts = WeatherAlertsAnalyzer.collect_all_alerts(
+                        forecasts=forecast_dicts,
+                        target_datetime=target_datetime
+                    )
+                    
+                    if complex_alerts:
+                        # Substituir alertas simples por alertas complexos
+                        current_weather.weather_alert = complex_alerts
+                        logger.info(
+                            f"Generated {len(complex_alerts)} weather alerts from hourly forecasts"
+                        )
+                except Exception as e:
+                    logger.warning(
+                        "Failed to generate complex alerts from hourly forecasts",
+                        error=str(e)
+                    )
             
             # Consolidar em ExtendedForecast
             extended_forecast = ExtendedForecast(
