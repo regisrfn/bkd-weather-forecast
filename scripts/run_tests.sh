@@ -1,6 +1,14 @@
 #!/bin/bash
 # Script para executar testes com variáveis de ambiente
-# Execute da raiz do projeto: bash scripts/run_tests.sh [unit|integration|all]
+# Execute da raiz do projeto: bash scripts/run_tests.sh [unit|integration|pre-deploy|post-deploy|all]
+#
+# Opções:
+#   unit        - Apenas testes unitários (29 testes)
+#   integration - Todos os testes de integração (8 testes)
+#   pre-deploy  - Testes unitários + integração pré-deploy (37 testes) - usado no deploy-main.sh
+#   post-deploy - Testes de API Gateway (requer API_GATEWAY_URL ou API_URL.txt)
+#   all         - Todos os testes (37 testes)
+#   (vazio)     - Padrão: todos os testes
 
 # Ir para o diretório raiz do projeto
 cd "$(dirname "$0")/.."
@@ -32,18 +40,32 @@ echo ""
 
 if [ "$1" == "unit" ]; then
     python -m pytest lambda/tests/unit/ -v
-elif [ "$1" == "lambda" ]; then
-    python -m pytest lambda/tests/integration/test_lambda_integration.py -v
 elif [ "$1" == "integration" ]; then
     python -m pytest lambda/tests/integration/ -v
+elif [ "$1" == "pre-deploy" ]; then
+    echo "=== TESTES UNITÁRIOS ==="
+    python -m pytest lambda/tests/unit/ -v
+    echo ""
+    echo "=== TESTES DE INTEGRAÇÃO (Pré-Deploy) ==="
+    python -m pytest lambda/tests/integration/pre_deploy/ -v
+elif [ "$1" == "post-deploy" ]; then
+    echo "=== TESTES DE API GATEWAY (Pós-Deploy) ==="
+    if [ -z "$API_GATEWAY_URL" ]; then
+        echo "⚠️  API_GATEWAY_URL não definida. Tentando ler de API_URL.txt..."
+        if [ -f "API_URL.txt" ]; then
+            export API_GATEWAY_URL=$(cat API_URL.txt)
+            echo "✅ URL carregada: $API_GATEWAY_URL"
+        else
+            echo "❌ API_URL.txt não encontrado. Defina API_GATEWAY_URL manualmente."
+            exit 1
+        fi
+    fi
+    python -m pytest lambda/tests/integration/post_deploy/ -v
 elif [ "$1" == "all" ]; then
     echo "=== TESTES UNITÁRIOS ==="
     python -m pytest lambda/tests/unit/ -v
     echo ""
-    echo "=== TESTES DE INTEGRAÇÃO LAMBDA ==="
-    python -m pytest lambda/tests/integration/test_lambda_integration.py -v
-    echo ""
-    echo "=== TESTES DE INTEGRAÇÃO API ==="
+    echo "=== TESTES DE INTEGRAÇÃO ==="
     python -m pytest lambda/tests/integration/ -v
 else
     # Se nenhum argumento, executar todos

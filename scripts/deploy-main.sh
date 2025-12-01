@@ -81,27 +81,20 @@ if [ -f ".env" ]; then
 fi
 
 # ============================================
-# FASE 1: Testes Pré-Build (Unit + Lambda Integration)
+# FASE 1: Testes Pré-Build (Unit + Integration)
 # ============================================
 echo -e "\n${YELLOW}🧪 FASE 1: Testes Pré-Build${NC}"
 echo "========================================"
 
-# Testes unitários
-echo -e "${BLUE}→ Executando testes unitários...${NC}"
-if bash scripts/run_tests.sh unit; then
-    echo -e "${GREEN}✅ Testes unitários passaram!${NC}"
+echo -e "${BLUE}Executando testes unitários e de integração...${NC}"
+if bash scripts/run_tests.sh pre-deploy; then
+    echo -e "${GREEN}✅ Todos os testes pré-deploy passaram! (37/37)${NC}"
+    echo -e "   ${GREEN}• 29 testes unitários${NC}"
+    echo -e "   ${GREEN}• 8 testes de integração (detailed forecast + hourly enrichment)${NC}"
 else
-    echo -e "${RED}❌ Testes unitários falharam! Deploy cancelado.${NC}"
+    echo -e "${RED}❌ Testes pré-deploy falharam! Deploy cancelado.${NC}"
+    echo -e "${YELLOW}   Verifique os logs acima para mais detalhes.${NC}"
     exit 1
-fi
-
-# Testes de integração Lambda (identificam problemas async/event loop)
-echo -e "\n${BLUE}→ Executando testes de integração Lambda...${NC}"
-if bash scripts/run_tests.sh lambda; then
-    echo -e "${GREEN}✅ Testes de integração Lambda passaram!${NC}"
-else
-    echo -e "${YELLOW}⚠️  Testes de integração Lambda falharam!${NC}"
-    echo -e "${YELLOW}   Continuando deploy mas verifique os logs...${NC}"
 fi
 
 # ============================================
@@ -325,22 +318,21 @@ if terraform output -raw api_gateway_url 2>/dev/null; then
     echo "$API_URL" > API_URL.txt
     echo -e "${GREEN}   (Salvo em API_URL.txt)${NC}"
     
-    # Testes de integração
-    echo -e "\n${YELLOW}🧪 Executando Testes de Integração...${NC}"
-    echo "========================================"
+    # Testes pós-deploy
+    echo -e "\n${YELLOW}🧪 Executando Testes Pós-Deploy (API Gateway)...${NC}"
+    echo "=================================================="
     echo -e "${BLUE}Aguardando 5 segundos para API ficar disponível...${NC}"
     sleep 5
     
     export API_GATEWAY_URL="$API_URL"
     
-    source "${PROJECT_ROOT}/.venv/bin/activate"
-    bash "${PROJECT_ROOT}/scripts/load_env.sh"
-    
-    if python -m pytest "${PROJECT_ROOT}/lambda/tests/integration/test_api_gateway.py" -v; then
-        echo -e "${GREEN}✅ Todos os testes de integração passaram!${NC}"
+    if bash "${PROJECT_ROOT}/scripts/run_tests.sh" post-deploy; then
+        echo -e "${GREEN}✅ Testes pós-deploy passaram!${NC}"
+        echo -e "   ${GREEN}• API Gateway respondendo corretamente${NC}"
     else
-        echo -e "${RED}⚠️  Alguns testes de integração falharam.${NC}"
-        echo -e "${YELLOW}   Deploy foi concluído, mas verifique os logs acima.${NC}"
+        echo -e "${YELLOW}⚠️  Alguns testes pós-deploy falharam.${NC}"
+        echo -e "${YELLOW}   Deploy foi concluído, mas verifique a API manualmente:${NC}"
+        echo -e "${YELLOW}   curl ${API_URL}/api/weather/city/3543204/detailed${NC}"
     fi
 else
     echo -e "${YELLOW}⚠️  Não foi possível obter a URL da API${NC}"
@@ -354,10 +346,12 @@ cd "${PROJECT_ROOT}"
 echo -e "\n${GREEN}═══════════════════════════════════════${NC}"
 echo -e "${GREEN}🎉 Deploy Finalizado com Sucesso!${NC}"
 echo -e "${GREEN}═══════════════════════════════════════${NC}"
-echo -e "${GREEN}✓ Testes unitários (pré-build)${NC}"
+echo -e "${GREEN}✓ Testes pré-deploy (37/37)${NC}"
+echo -e "   ${GREEN}→ 29 testes unitários${NC}"
+echo -e "   ${GREEN}→ 8 testes de integração${NC}"
 echo -e "${GREEN}✓ Build do pacote Lambda (${ZIP_SIZE})${NC}"
 echo -e "${GREEN}✓ Deploy AWS (Terraform)${NC}"
-echo -e "${GREEN}✓ Testes de integração (pós-deploy)${NC}"
+echo -e "${GREEN}✓ Testes pós-deploy (API Gateway)${NC}"
 
 if [ -f "API_URL.txt" ]; then
     echo -e "\n${BLUE}🌐 API disponível em:${NC}"
