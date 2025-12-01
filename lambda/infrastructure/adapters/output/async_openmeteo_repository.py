@@ -165,18 +165,36 @@ class AsyncOpenMeteoRepository:
         # Iterar sobre todos os dias disponíveis
         for i in range(len(dates)):
             try:
+                # Extrair valores com fallback para None
+                t_max = temp_max[i] if i < len(temp_max) else None
+                t_min = temp_min[i] if i < len(temp_min) else None
+                precip = precipitation[i] if i < len(precipitation) else None
+                r_prob = rain_prob[i] if i < len(rain_prob) else None
+                w_speed = wind_speed[i] if i < len(wind_speed) else None
+                w_dir = wind_direction[i] if i < len(wind_direction) else None
+                uv = uv_index[i] if i < len(uv_index) else None
+                sr = sunrise[i] if i < len(sunrise) else None
+                ss = sunset[i] if i < len(sunset) else None
+                p_hours = precip_hours[i] if i < len(precip_hours) else None
+                
+                # Pular dia se dados essenciais (temperaturas) forem None
+                if t_max is None or t_min is None:
+                    logger.warning(f"Skipping day {dates[i]}: missing temperature data (max={t_max}, min={t_min})")
+                    continue
+                
+                # Usar 0.0 como fallback para dados opcionais (mas não None)
                 forecast = DailyForecast.from_openmeteo_data(
                     date=dates[i],
-                    temp_max=temp_max[i] if i < len(temp_max) else 0.0,
-                    temp_min=temp_min[i] if i < len(temp_min) else 0.0,
-                    precipitation=precipitation[i] if i < len(precipitation) else 0.0,
-                    rain_prob=rain_prob[i] if i < len(rain_prob) else 0.0,
-                    wind_speed=wind_speed[i] if i < len(wind_speed) else 0.0,
-                    wind_direction=int(wind_direction[i]) if i < len(wind_direction) else 0,
-                    uv_index=uv_index[i] if i < len(uv_index) else 0.0,
-                    sunrise=sunrise[i] if i < len(sunrise) else "06:00",
-                    sunset=sunset[i] if i < len(sunset) else "18:00",
-                    precip_hours=precip_hours[i] if i < len(precip_hours) else 0.0
+                    temp_max=t_max,
+                    temp_min=t_min,
+                    precipitation=precip if precip is not None else 0.0,
+                    rain_prob=r_prob if r_prob is not None else 0.0,
+                    wind_speed=w_speed if w_speed is not None else 0.0,
+                    wind_direction=int(w_dir) if w_dir is not None else 0,
+                    uv_index=uv if uv is not None else 0.0,
+                    sunrise=sr if sr is not None else "06:00",
+                    sunset=ss if ss is not None else "18:00",
+                    precip_hours=p_hours if p_hours is not None else 0.0
                 )
                 forecasts.append(forecast)
             except Exception as e:
