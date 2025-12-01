@@ -21,6 +21,7 @@ class HourlyForecast:
     wind_direction: int  # Direção do vento em graus (0-360)
     cloud_cover: int  # Cobertura de nuvens % (0-100)
     weather_code: int  # WMO weather code
+    description: str = ""  # Descrição em português do weather_code
     
     def to_api_response(self) -> dict:
         """
@@ -38,5 +39,6 @@ class HourlyForecast:
             'windSpeed': round(self.wind_speed, 1),
             'windDirection': self.wind_direction,
             'cloudCover': self.cloud_cover,
-            'weatherCode': self.weather_code
+            'weatherCode': self.weather_code,
+            'description': self.description
         }

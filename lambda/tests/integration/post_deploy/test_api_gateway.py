@@ -5,7 +5,7 @@ Testa endpoints reais após deploy na AWS
 import pytest
 import pytest_asyncio
 import httpx
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 from typing import Optional, List, Dict, Any
 import os
@@ -259,6 +259,155 @@ async def test_get_city_detailed_forecast(http_client: httpx.AsyncClient):
     assert isinstance(first_day['uvIndex'], (int, float)), "uvIndex should be numeric"
     
     print(f"✓ Detailed forecast: {len(daily)} days, wind direction: {first_day['windDirection']}°")
+
+
+@pytest.mark.asyncio
+async def test_get_detailed_forecast_with_hourly_data(http_client: httpx.AsyncClient):
+    """Testa se endpoint detalhado retorna dados hourly enriquecidos"""
+    response = await http_client.get(
+        f"{API_BASE_URL}/api/weather/city/{TEST_CITY_ID}/detailed"
+    )
+    
+    assert response.status_code == 200, \
+        f"Expected 200, got {response.status_code}: {response.text}"
+    
+    data = response.json()
+    
+    # ===== VALIDAR HOURLY FORECASTS =====
+    assert 'hourlyForecasts' in data, "Response should contain hourlyForecasts array"
+    
+    hourly = data['hourlyForecasts']
+    assert isinstance(hourly, list), "hourlyForecasts should be a list"
+    assert len(hourly) > 0, "Should have hourly forecasts (up to 168 hours)"
+    
+    print(f"✓ Hourly forecasts: {len(hourly)} hours available")
+    
+    # Validar estrutura de cada forecast horário
+    first_hourly = hourly[0]
+    required_hourly_fields = [
+        'timestamp', 'temperature', 'precipitation', 
+        'precipitationProbability', 'humidity', 'windSpeed',
+        'windDirection', 'cloudCover', 'weatherCode', 'description'
+    ]
+    
+    for field in required_hourly_fields:
+        assert field in first_hourly, f"Hourly forecast should contain {field}"
+    
+    # Validar tipos e ranges dos dados hourly
+    assert isinstance(first_hourly['temperature'], (int, float)), \
+        "Hourly temperature should be numeric"
+    assert -50 <= first_hourly['temperature'] <= 60, \
+        "Hourly temperature in reasonable range"
+    
+    assert isinstance(first_hourly['windDirection'], int), \
+        "Hourly windDirection should be integer"
+    assert 0 <= first_hourly['windDirection'] <= 360, \
+        "Hourly windDirection should be 0-360 degrees"
+    
+    assert isinstance(first_hourly['humidity'], int), \
+        "Hourly humidity should be integer"
+    assert 0 <= first_hourly['humidity'] <= 100, \
+        "Hourly humidity should be 0-100%"
+    
+    assert isinstance(first_hourly['precipitationProbability'], int), \
+        "Precipitation probability should be integer"
+    assert 0 <= first_hourly['precipitationProbability'] <= 100, \
+        "Precipitation probability should be 0-100%"
+    
+    assert isinstance(first_hourly['cloudCover'], int), \
+        "Cloud cover should be integer"
+    assert 0 <= first_hourly['cloudCover'] <= 100, \
+        "Cloud cover should be 0-100%"
+    
+    assert isinstance(first_hourly['weatherCode'], int), \
+        "Weather code should be integer (WMO code)"
+    
+    assert isinstance(first_hourly['description'], str), \
+        "Description should be string"
+    assert len(first_hourly['description']) > 0, \
+        "Description should not be empty"
+    
+    print(f"✓ First hourly forecast validated:")
+    print(f"  - Time: {first_hourly['timestamp']}")
+    print(f"  - Temp: {first_hourly['temperature']}°C")
+    print(f"  - Wind: {first_hourly['windSpeed']}km/h @ {first_hourly['windDirection']}°")
+    print(f"  - Rain: {first_hourly['precipitationProbability']}% ({first_hourly['precipitation']}mm)")
+    print(f"  - Description: {first_hourly['description']}")
+    
+    # ===== VALIDAR ENRIQUECIMENTO DO CURRENT WEATHER =====
+    current = data['currentWeather']
+    
+    # Wind direction deve estar presente (veio do hourly)
+    assert 'windDirection' in current, \
+        "Current weather should have windDirection (from hourly enrichment)"
+    assert isinstance(current['windDirection'], int), \
+        "Current windDirection should be integer"
+    assert 0 <= current['windDirection'] <= 360, \
+        "Current windDirection should be 0-360 degrees"
+    
+    # Campos preservados do OpenWeather
+    assert 'visibility' in current, \
+        "Current weather should preserve visibility from OpenWeather"
+    assert 'pressure' in current, \
+        "Current weather should preserve pressure from OpenWeather"
+    assert 'feelsLike' in current, \
+        "Current weather should preserve feelsLike from OpenWeather"
+    
+    print(f"✓ Current weather enriched with hourly data:")
+    print(f"  - Wind direction: {current['windDirection']}° (from Open-Meteo hourly)")
+    print(f"  - Visibility: {current['visibility']}m (from OpenWeather)")
+    print(f"  - Pressure: {current['pressure']}hPa (from OpenWeather)")
+    print(f"  - Feels like: {current['feelsLike']}°C (from OpenWeather)")
+    
+    # ===== VALIDAR BACKWARD COMPATIBILITY =====
+    # Todos os campos antigos devem estar presentes
+    required_current_fields = [
+        'cityId', 'cityName', 'timestamp', 'temperature',
+        'humidity', 'windSpeed', 'windDirection',  # windDirection é novo mas obrigatório
+        'rainfallProbability', 'rainVolumeHour', 'dailyRainAccumulation',
+        'description', 'feelsLike', 'pressure', 'visibility',
+        'clouds', 'cloudsDescription', 'rainfallIntensity',
+        'tempMin', 'tempMax', 'weatherAlert'
+    ]
+    
+    for field in required_current_fields:
+        assert field in current, \
+            f"Current weather should have {field} (backward compatibility)"
+    
+    print(f"✓ Backward compatibility: All {len(required_current_fields)} fields present")
+    
+    # ===== VALIDAR TIMESTAMPS CONSISTENTES =====
+    # Current weather timestamp deve ser próximo do primeiro hourly
+    current_ts = current['timestamp']
+    first_hourly_ts = first_hourly['timestamp']
+    
+    # Parse timestamps com timezone awareness
+    if 'Z' in current_ts or '+' in current_ts:
+        current_dt = datetime.fromisoformat(current_ts.replace('Z', '+00:00'))
+    else:
+        current_dt = datetime.fromisoformat(current_ts).replace(tzinfo=timezone.utc)
+    
+    if 'Z' in first_hourly_ts or '+' in first_hourly_ts:
+        first_hourly_dt = datetime.fromisoformat(first_hourly_ts.replace('Z', '+00:00'))
+    else:
+        first_hourly_dt = datetime.fromisoformat(first_hourly_ts).replace(tzinfo=timezone.utc)
+    
+    time_diff_hours = abs((current_dt - first_hourly_dt).total_seconds() / 3600)
+    assert time_diff_hours <= 24, \
+        f"Current weather and first hourly should be within same day, got {time_diff_hours:.1f}h diff"
+    
+    print(f"✓ Timestamps consistent (diff: {time_diff_hours:.1f}h)")
+    
+    # ===== VALIDAR QUANTIDADE DE HORAS =====
+    # Open-Meteo fornece até 168 horas (7 dias)
+    assert len(hourly) <= 168, \
+        f"Should have max 168 hourly forecasts, got {len(hourly)}"
+    
+    # Deve ter pelo menos 24 horas disponíveis
+    assert len(hourly) >= 24, \
+        f"Should have at least 24 hourly forecasts, got {len(hourly)}"
+    
+    print(f"✓ Hourly forecasts count: {len(hourly)}/168 hours (valid range)")
 
 
 # ============================================================================

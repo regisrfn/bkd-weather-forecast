@@ -48,7 +48,8 @@ class TestHourlyForecastEntity:
             wind_speed=12.567,
             wind_direction=185,
             cloud_cover=48,
-            weather_code=2
+            weather_code=2,
+            description="Parcialmente nublado"
         )
         
         api_response = forecast.to_api_response()
@@ -63,6 +64,7 @@ class TestHourlyForecastEntity:
         assert 'windDirection' in api_response
         assert 'cloudCover' in api_response
         assert 'weatherCode' in api_response
+        assert 'description' in api_response
         
         # Verificar valores arredondados
         assert api_response['temperature'] == 28.6
@@ -75,6 +77,9 @@ class TestHourlyForecastEntity:
         assert api_response['windDirection'] == 185
         assert api_response['cloudCover'] == 48
         assert api_response['weatherCode'] == 2
+        
+        # Verificar descrição
+        assert api_response['description'] == "Parcialmente nublado"
     
     def test_wind_direction_range(self):
         """Deve aceitar direção do vento de 0-360 graus"""
