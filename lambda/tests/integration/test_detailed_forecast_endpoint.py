@@ -45,7 +45,37 @@ class TestDetailedForecastEndpoint:
         assert 'temperature' in current
         assert 'humidity' in current
         assert 'windSpeed' in current
+        assert 'windDirection' in current, "Should contain wind direction"
         assert 'timestamp' in current
+        assert 'visibility' in current, "Should preserve OpenWeather visibility"
+        assert 'pressure' in current, "Should preserve OpenWeather pressure"
+        assert 'feelsLike' in current, "Should preserve OpenWeather feels_like"
+        
+        # Validar tipos e ranges
+        assert isinstance(current['windDirection'], int), "windDirection should be int"
+        assert 0 <= current['windDirection'] <= 360, "windDirection should be 0-360 degrees"
+        
+        # Validar hourlyForecasts (novo campo)
+        assert 'hourlyForecasts' in body, "Response should contain hourlyForecasts"
+        hourly = body['hourlyForecasts']
+        assert isinstance(hourly, list), "hourlyForecasts should be a list"
+        
+        # Se houver dados hourly, validar estrutura
+        if len(hourly) > 0:
+            first_hourly = hourly[0]
+            assert 'timestamp' in first_hourly
+            assert 'temperature' in first_hourly
+            assert 'precipitation' in first_hourly
+            assert 'precipitationProbability' in first_hourly
+            assert 'humidity' in first_hourly
+            assert 'windSpeed' in first_hourly
+            assert 'windDirection' in first_hourly
+            assert 'cloudCover' in first_hourly
+            assert 'weatherCode' in first_hourly
+            
+            # Validar tipos
+            assert isinstance(first_hourly['windDirection'], int)
+            assert 0 <= first_hourly['windDirection'] <= 360
         
         # Validar dailyForecasts
         daily = body['dailyForecasts']
