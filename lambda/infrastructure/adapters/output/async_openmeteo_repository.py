@@ -129,12 +129,133 @@ class AsyncOpenMeteoRepository:
                 response.raise_for_status()
                 data = await response.json()
             
-            # 💾 Salvar no cache (async, TTL 6h = 21600 segundos)
+            # 💾 Salvar no cache (async, TTL 1h = 3600 segundos)
             if self.cache and self.cache.is_enabled():
-                await self.cache.set(cache_key, data, ttl_seconds=21600)
+                await self.cache.set(cache_key, data, ttl_seconds=3600)
         
         # 🔄 Processar dados e retornar List[DailyForecast]
         return self._process_daily_data(data)
+    
+    @tracer.wrap(resource="async_openmeteo.get_hourly_forecast")
+    async def get_hourly_forecast(
+        self,
+        city_id: str,
+        latitude: float,
+        longitude: float,
+        forecast_hours: int = 168  # 7 days = 168 hours
+    ) -> List:
+        """
+        Busca previsões horárias do Open-Meteo de forma ASSÍNCRONA
+        
+        Flow:
+        1. Cache GET async (DynamoDB, prefix: openmeteo_hourly_{city_id})
+        2. Se MISS: HTTP GET async (Open-Meteo API, sem GIL)
+        3. Cache SET async (DynamoDB, TTL 1h)
+        4. Parse e retorna List[HourlyForecast]
+        
+        Args:
+            city_id: ID da cidade (chave de cache)
+            latitude: Latitude
+            longitude: Longitude
+            forecast_hours: Número de horas de previsão (default 168 = 7 dias)
+        
+        Returns:
+            Lista de HourlyForecast (até 168 horas)
+        
+        Raises:
+            aiohttp.ClientError: Se API falhar
+        """
+        from domain.entities.hourly_forecast import HourlyForecast
+        
+        cache_key = f"openmeteo_hourly_{city_id}"
+        
+        # 🔍 Tentar cache primeiro (async, sem GIL)
+        data = None
+        if self.cache and self.cache.is_enabled():
+            data = await self.cache.get(cache_key)
+            if data:
+                logger.info("Open-Meteo hourly cache hit", cache_key=cache_key)
+        
+        # 📡 Cache MISS: chamar API (async HTTP, sem GIL)
+        if data is None:
+            logger.info("Open-Meteo hourly cache miss, fetching from API", cache_key=cache_key)
+            
+            url = f"{self.base_url}/forecast"
+            params = {
+                'latitude': latitude,
+                'longitude': longitude,
+                'hourly': ','.join([
+                    'temperature_2m',
+                    'precipitation',
+                    'precipitation_probability',
+                    'relative_humidity_2m',
+                    'wind_speed_10m',
+                    'wind_direction_10m',
+                    'cloud_cover',
+                    'weather_code'
+                ]),
+                'timezone': 'America/Sao_Paulo',
+                'forecast_days': min(16, (forecast_hours // 24) + 1)
+            }
+            
+            session = await self.session_manager.get_session()
+            
+            async with session.get(url, params=params) as response:
+                response.raise_for_status()
+                data = await response.json()
+            
+            # 💾 Salvar no cache (async, TTL 1h = 3600 segundos)
+            if self.cache and self.cache.is_enabled():
+                await self.cache.set(cache_key, data, ttl_seconds=3600)
+        
+        # 🔄 Processar dados e retornar List[HourlyForecast]
+        return self._process_hourly_data(data, forecast_hours)
+    
+    def _process_hourly_data(self, data: Dict[str, Any], max_hours: int) -> List:
+        """
+        Processa dados hourly da API Open-Meteo e retorna lista de HourlyForecast
+        
+        Args:
+            data: Resposta completa da API Open-Meteo
+            max_hours: Número máximo de horas a processar
+        
+        Returns:
+            Lista de HourlyForecast parseados
+        """
+        from domain.entities.hourly_forecast import HourlyForecast
+        
+        hourly = data.get('hourly', {})
+        
+        times = hourly.get('time', [])
+        temps = hourly.get('temperature_2m', [])
+        precip = hourly.get('precipitation', [])
+        precip_prob = hourly.get('precipitation_probability', [])
+        humidity = hourly.get('relative_humidity_2m', [])
+        wind_speed = hourly.get('wind_speed_10m', [])
+        wind_dir = hourly.get('wind_direction_10m', [])
+        clouds = hourly.get('cloud_cover', [])
+        weather_codes = hourly.get('weather_code', [])
+        
+        forecasts = []
+        for i in range(min(len(times), max_hours)):
+            try:
+                forecast = HourlyForecast(
+                    timestamp=times[i],
+                    temperature=temps[i] if i < len(temps) else 0.0,
+                    precipitation=precip[i] if i < len(precip) else 0.0,
+                    precipitation_probability=int(precip_prob[i]) if i < len(precip_prob) else 0,
+                    humidity=int(humidity[i]) if i < len(humidity) else 0,
+                    wind_speed=wind_speed[i] if i < len(wind_speed) else 0.0,
+                    wind_direction=int(wind_dir[i]) if i < len(wind_dir) else 0,
+                    cloud_cover=int(clouds[i]) if i < len(clouds) else 0,
+                    weather_code=int(weather_codes[i]) if i < len(weather_codes) else 0
+                )
+                forecasts.append(forecast)
+            except Exception as e:
+                logger.warning(f"Failed to parse hour {i}: {e}")
+                continue
+        
+        return forecasts
     
     def _process_daily_data(self, data: Dict[str, Any]) -> List[DailyForecast]:
         """

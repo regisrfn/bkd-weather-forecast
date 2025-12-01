@@ -1,6 +1,6 @@
 """
 Async Use Case: Get City Detailed Forecast
-Consolida dados atuais (OpenWeather) com previsões estendidas (Open-Meteo)
+Consolida dados atuais (Open-Meteo hourly prioritariamente) com previsões estendidas
 """
 import asyncio
 from typing import Optional
@@ -12,6 +12,7 @@ from domain.exceptions import CityNotFoundException, CoordinatesNotFoundExceptio
 from application.ports.output.city_repository_port import ICityRepository
 from infrastructure.adapters.output.async_weather_repository import AsyncOpenWeatherRepository
 from infrastructure.adapters.output.async_openmeteo_repository import AsyncOpenMeteoRepository
+from infrastructure.adapters.helpers.hourly_weather_processor import HourlyWeatherProcessor
 from shared.config.logger_config import get_logger
 
 logger = get_logger(child=True)
@@ -22,8 +23,10 @@ class AsyncGetCityDetailedForecastUseCase:
     Async use case: Get detailed forecast with extended data
     
     Combina:
-    - OpenWeather: Dados atuais detalhados (5 dias, 3h interval)
-    - Open-Meteo: Previsões diárias estendidas (16 dias)
+    - Open-Meteo Hourly: Dados atuais da hora mais próxima (PRIORITÁRIO)
+    - OpenWeather: Fallback para dados atuais (se hourly falhar)
+    - Open-Meteo Daily: Previsões diárias estendidas (16 dias)
+    - Open-Meteo Hourly: Array de previsões horárias (168 horas)
     
     Executa chamadas em paralelo para otimizar latência.
     """
@@ -81,8 +84,9 @@ class AsyncGetCityDetailedForecastUseCase:
             longitude=city.longitude
         )
         
-        # Execute both API calls in parallel (ASYNC - sem GIL)
+        # Execute THREE API calls in parallel (ASYNC - sem GIL)
         try:
+            # Task 1: OpenWeather current weather (fallback)
             current_weather_task = self.weather_repository.get_current_weather(
                 city.id,
                 city.latitude,
@@ -91,6 +95,7 @@ class AsyncGetCityDetailedForecastUseCase:
                 target_datetime
             )
             
+            # Task 2: Open-Meteo daily forecasts
             extended_forecast_task = self.openmeteo_repository.get_extended_forecast(
                 city.id,
                 city.latitude,
@@ -98,25 +103,63 @@ class AsyncGetCityDetailedForecastUseCase:
                 forecast_days=16
             )
             
-            # Await both tasks concurrently
-            current_weather, daily_forecasts = await asyncio.gather(
+            # Task 3: Open-Meteo hourly forecasts (NOVO)
+            hourly_forecast_task = self.openmeteo_repository.get_hourly_forecast(
+                city.id,
+                city.latitude,
+                city.longitude,
+                forecast_hours=168
+            )
+            
+            # Await all three tasks concurrently
+            current_weather, daily_forecasts, hourly_forecasts = await asyncio.gather(
                 current_weather_task,
                 extended_forecast_task,
+                hourly_forecast_task,
                 return_exceptions=True  # Continue even if one fails
             )
             
             # Verificar se houve erros
             extended_available = True
             
-            # Se current_weather falhou, propagar erro (dados atuais são essenciais)
+            # Processar hourly forecasts
+            if isinstance(hourly_forecasts, Exception):
+                logger.warning(
+                    "Failed to fetch hourly forecast from Open-Meteo",
+                    error=str(hourly_forecasts)
+                )
+                hourly_forecasts = []
+            
+            # ENRIQUECER current weather com dados hourly (manter dados completos do OpenWeather)
+            if hourly_forecasts and not isinstance(current_weather, Exception):
+                try:
+                    # Enriquecer com dados hourly mais precisos
+                    enriched_weather = HourlyWeatherProcessor.enrich_weather_with_hourly(
+                        base_weather=current_weather,
+                        hourly_forecasts=hourly_forecasts,
+                        target_datetime=target_datetime
+                    )
+                    
+                    if enriched_weather:
+                        logger.info("Enriched current weather with Open-Meteo hourly data")
+                        current_weather = enriched_weather
+                    else:
+                        logger.warning("Failed to enrich with hourly data, using OpenWeather only")
+                except Exception as e:
+                    logger.warning(
+                        "Failed to enrich current weather with hourly data, using OpenWeather only",
+                        error=str(e)
+                    )
+            
+            # Se current_weather falhou E não conseguimos usar hourly, propagar erro
             if isinstance(current_weather, Exception):
                 logger.error("Failed to fetch current weather", error=str(current_weather))
                 raise current_weather
             
-            # Se Open-Meteo falhou, continuar apenas com dados atuais
+            # Se Open-Meteo daily falhou, continuar apenas com dados atuais
             if isinstance(daily_forecasts, Exception):
                 logger.warning(
-                    "Failed to fetch extended forecast from Open-Meteo, continuing with OpenWeather only",
+                    "Failed to fetch extended forecast from Open-Meteo, continuing with current weather only",
                     error=str(daily_forecasts)
                 )
                 daily_forecasts = []
@@ -128,6 +171,7 @@ class AsyncGetCityDetailedForecastUseCase:
                 city_name=city.name,
                 current_weather=current_weather,
                 daily_forecasts=daily_forecasts,
+                hourly_forecasts=hourly_forecasts if not isinstance(hourly_forecasts, Exception) else [],
                 extended_available=extended_available
             )
             
@@ -135,7 +179,8 @@ class AsyncGetCityDetailedForecastUseCase:
                 "Detailed forecast fetched successfully",
                 city_id=city_id,
                 extended_available=extended_available,
-                forecast_days=len(daily_forecasts)
+                forecast_days=len(daily_forecasts),
+                hourly_hours=len(hourly_forecasts) if not isinstance(hourly_forecasts, Exception) else 0
             )
             
             return extended_forecast

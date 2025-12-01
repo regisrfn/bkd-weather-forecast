@@ -50,6 +50,7 @@ class WeatherDataProcessor:
         weather_code = forecast_item['weather'][0]['id']
         rain_prob = forecast_item.get('pop', 0) * 100
         wind_speed = forecast_item['wind']['speed'] * 3.6
+        wind_direction = forecast_item['wind'].get('deg', 0)
         forecast_time = datetime.fromtimestamp(forecast_item['dt'], tz=ZoneInfo("UTC"))
         
         # Generate alerts from all future forecasts
@@ -78,6 +79,7 @@ class WeatherDataProcessor:
             temperature=forecast_item['main']['temp'],
             humidity=forecast_item['main']['humidity'],
             wind_speed=wind_speed,
+            wind_direction=wind_direction,
             rain_probability=rain_prob,
             rain_1h=forecast_item.get('rain', {}).get('3h', 0) / 3,
             rain_accumulated_day=daily_rain_accumulation,

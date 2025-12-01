@@ -65,6 +65,7 @@ class Weather:
     temperature: float  # °C
     humidity: float  # %
     wind_speed: float  # km/h
+    wind_direction: int = 0  # Direção do vento (graus 0-360)
     rain_probability: float = 0.0  # Probabilidade de chuva (0-100%)
     rain_1h: float = 0.0  # mm na última hora (opcional, para dados históricos)
     rain_accumulated_day: float = 0.0  # Acumulado de chuva esperado no dia (mm)
@@ -349,6 +350,7 @@ class Weather:
             'temperature': round(self.temperature, 1),
             'humidity': round(self.humidity, 1),
             'windSpeed': round(self.wind_speed, 1),
+            'windDirection': self.wind_direction,
             'description': self.description,
             'feelsLike': round(self.feels_like, 1),
             'pressure': round(self.pressure, 1),
