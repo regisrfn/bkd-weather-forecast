@@ -197,17 +197,25 @@ class AsyncGetCityDetailedForecastUseCase:
                             'visibility': current_weather.visibility
                         })
                     
-                    # Gerar alertas complexos
-                    complex_alerts = WeatherAlertsAnalyzer.collect_all_alerts(
+                    # Gerar alertas complexos do Open-Meteo
+                    openmeteo_alerts = WeatherAlertsAnalyzer.collect_all_alerts(
                         forecasts=forecast_dicts,
                         target_datetime=target_datetime
                     )
                     
-                    if complex_alerts:
-                        # Substituir alertas simples por alertas complexos
-                        current_weather.weather_alert = complex_alerts
+                    if openmeteo_alerts:
+                        # MERGE: Combinar alertas do OpenWeather com alertas do Open-Meteo
+                        # Mantém alertas originais do OpenWeather e adiciona novos do Open-Meteo (sem duplicatas)
+                        existing_codes = {alert.code for alert in current_weather.weather_alert}
+                        
+                        for alert in openmeteo_alerts:
+                            if alert.code not in existing_codes:
+                                current_weather.weather_alert.append(alert)
+                                existing_codes.add(alert.code)
+                        
                         logger.info(
-                            f"Generated {len(complex_alerts)} weather alerts from hourly forecasts"
+                            f"Merged alerts: {len(current_weather.weather_alert)} total "
+                            f"(OpenWeather + {len(openmeteo_alerts)} from Open-Meteo)"
                         )
                 except Exception as e:
                     logger.warning(

@@ -55,6 +55,21 @@ class TestDetailedForecastEndpoint:
         assert isinstance(current['windDirection'], int), "windDirection should be int"
         assert 0 <= current['windDirection'] <= 360, "windDirection should be 0-360 degrees"
         
+        # Log informações sobre alertas (para debug)
+        print(f"\n=== CURRENT WEATHER DEBUG ===")
+        print(f"Timestamp: {current.get('timestamp', 'N/A')}")
+        print(f"Temperature: {current.get('temperature', 'N/A')}°C")
+        print(f"Precipitation: {current.get('rainfallIntensity', 'N/A')} mm/h")
+        
+        if 'weatherAlert' in current:
+            alerts = current['weatherAlert']
+            print(f"Number of alerts: {len(alerts)}")
+            for alert in alerts:
+                print(f"  {alert.get('code', 'N/A')}: {alert.get('description', 'N/A')} @ {alert.get('timestamp', 'N/A')}")
+        else:
+            print("No weatherAlert field found")
+        print("="*50)
+        
         # Validar hourlyForecasts (novo campo)
         assert 'hourlyForecasts' in body, "Response should contain hourlyForecasts"
         hourly = body['hourlyForecasts']

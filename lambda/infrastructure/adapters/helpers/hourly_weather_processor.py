@@ -45,10 +45,19 @@ class HourlyWeatherProcessor:
             logger.warning("Empty hourly forecasts list")
             return None
         
+        # Determinar datetime de referência
+        # Se target_datetime fornecido, usar ele; senão, usar AGORA para buscar hora mais recente
+        # (não usar base_weather.timestamp pois pode ser futuro do OpenWeather)
+        if target_datetime:
+            reference_datetime = target_datetime
+        else:
+            # Usar hora atual para buscar a previsão hourly mais recente
+            reference_datetime = datetime.now(tz=ZoneInfo("America/Sao_Paulo"))
+        
         # Encontrar hora mais próxima
         closest_forecast = HourlyWeatherProcessor._find_closest_hourly(
             hourly_forecasts,
-            target_datetime or base_weather.timestamp
+            reference_datetime
         )
         
         if closest_forecast is None:
@@ -71,8 +80,8 @@ class HourlyWeatherProcessor:
             hourly_timestamp
         )
         
-        # Gerar alertas atualizados com dados hourly
-        weather_alerts = Weather.get_weather_alert(
+        # Gerar alertas atualizados com dados hourly (apenas para hora atual)
+        hourly_alerts = Weather.get_weather_alert(
             weather_code=closest_forecast.weather_code,
             rain_prob=float(closest_forecast.precipitation_probability),
             wind_speed=closest_forecast.wind_speed,
@@ -81,6 +90,16 @@ class HourlyWeatherProcessor:
             temperature=closest_forecast.temperature,
             visibility=base_weather.visibility  # Manter do OpenWeather
         )
+        
+        # MERGE: Combinar alertas do OpenWeather (incluindo eventos futuros) com alertas hourly
+        # Mantém alertas originais e adiciona novos sem duplicar por código
+        merged_alerts = list(base_weather.weather_alert) if base_weather.weather_alert else []
+        existing_codes = {alert.code for alert in merged_alerts}
+        
+        for alert in hourly_alerts:
+            if alert.code not in existing_codes:
+                merged_alerts.append(alert)
+                existing_codes.add(alert.code)
         
         # ENRIQUECER: Criar novo Weather mantendo dados completos do OpenWeather
         return Weather(
@@ -99,7 +118,7 @@ class HourlyWeatherProcessor:
             weather_code=closest_forecast.weather_code,
             temp_min=temp_min,
             temp_max=temp_max,
-            weather_alert=weather_alerts,
+            weather_alert=merged_alerts,  # Usar alertas mesclados
             # Dados OPENWEATHER (manter) - campos que Open-Meteo não fornece
             description=HourlyWeatherProcessor._get_weather_description(closest_forecast.weather_code),
             feels_like=base_weather.feels_like,  # ✅ Mantém do OpenWeather
