@@ -39,6 +39,8 @@ class TestDetailedForecastEndpoint:
         city_info = body['cityInfo']
         assert city_info['cityId'] == '3543204'
         assert city_info['cityName'] == 'Ribeirão do Sul'
+        assert 'state' in city_info, "cityInfo should contain state field"
+        assert city_info['state'] == 'SP', "State should be SP for Ribeirão do Sul"
         
         # Validar currentWeather
         current = body['currentWeather']

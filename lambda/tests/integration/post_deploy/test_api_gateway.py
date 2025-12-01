@@ -230,6 +230,7 @@ async def test_get_city_detailed_forecast(http_client: httpx.AsyncClient):
     city_info = data['cityInfo']
     assert city_info['cityId'] == TEST_CITY_ID
     assert 'cityName' in city_info
+    assert 'state' in city_info, "cityInfo should contain state field"
     
     # Validar currentWeather
     current = data['currentWeather']

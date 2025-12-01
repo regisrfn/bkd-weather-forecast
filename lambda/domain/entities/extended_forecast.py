@@ -21,6 +21,7 @@ class ExtendedForecast:
     """
     city_id: str
     city_name: str
+    city_state: str
     current_weather: Weather  # Dados atuais detalhados (prioritariamente Open-Meteo hourly)
     daily_forecasts: List[DailyForecast] = field(default_factory=list)  # Até 16 dias
     hourly_forecasts: List[HourlyForecast] = field(default_factory=list)  # Até 168 horas (7 dias)
@@ -36,7 +37,8 @@ class ExtendedForecast:
         return {
             'cityInfo': {
                 'cityId': self.city_id,
-                'cityName': self.city_name
+                'cityName': self.city_name,
+                'state': self.city_state
             },
             'currentWeather': self.current_weather.to_api_response(),
             'dailyForecasts': [forecast.to_api_response() for forecast in self.daily_forecasts],

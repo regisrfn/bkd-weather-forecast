@@ -227,6 +227,7 @@ class AsyncGetCityDetailedForecastUseCase:
             extended_forecast = ExtendedForecast(
                 city_id=city.id,
                 city_name=city.name,
+                city_state=city.state,
                 current_weather=current_weather,
                 daily_forecasts=daily_forecasts,
                 hourly_forecasts=hourly_forecasts if not isinstance(hourly_forecasts, Exception) else [],
