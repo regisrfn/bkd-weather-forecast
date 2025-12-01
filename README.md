@@ -6,7 +6,7 @@ API Backend em Python para previsões meteorológicas com **Clean Architecture**
 [![AWS Lambda](https://img.shields.io/badge/AWS-Lambda-orange.svg)](https://aws.amazon.com/lambda/)
 [![Architecture](https://img.shields.io/badge/Architecture-Clean-green.svg)](docs/architecture/CLEAN_ARCHITECTURE_DETAILED.md)
 [![Async](https://img.shields.io/badge/100%25-Async-purple.svg)](docs/infrastructure/ASYNC_OPERATIONS.md)
-[![Tests](https://img.shields.io/badge/Tests-34%2F34-success.svg)](docs/development/TESTING.md)
+[![Tests](https://img.shields.io/badge/Tests-37%2F37-success.svg)](docs/development/TESTING.md)
 
 ## 🚀 Quick Start
 
@@ -180,7 +180,7 @@ lambda/
 | **Cache** | DynamoDB com TTL (3 horas) |
 | **Weather API** | OpenWeather Forecast (5 dias, 3h interval) |
 | **Deploy** | Terraform, AWS API Gateway |
-| **Testing** | pytest, pytest-asyncio (34/34 testes passando) |
+| **Testing** | pytest, pytest-asyncio (37/37 testes passando) |
 | **Observability** | AWS Powertools Logger (structured logs) |
 
 ## 🧪 Testes
@@ -203,9 +203,9 @@ python scripts/performance_test_100_cities.py
 
 ### Status atual
 
-✅ **34/34 testes passando**
-- Integration tests - Endpoints completos
-- Unit tests - Entidades, utilities, validators
+✅ **37/37 testes passando**
+- Integration tests - Endpoints completos (8 testes)
+- Unit tests - Entidades, helpers, repositories (29 testes)
 
 📖 **Guia completo de testes:** [Testing Guide](docs/development/TESTING.md)
 
