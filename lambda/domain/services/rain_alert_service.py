@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import List, Optional, Tuple
 
-from domain.entities.weather import (
+from domain.alerts.primitives import (
     AlertSeverity,
     WeatherAlert,
     RAIN_INTENSITY_REFERENCE,

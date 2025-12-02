@@ -7,22 +7,16 @@ from zoneinfo import ZoneInfo
 from typing import Optional, List
 from enum import Enum
 
-
-# Threshold de probabilidade para alertas de precipitação
-RAIN_PROBABILITY_THRESHOLD = 80  # Mínimo de 80% para gerar alertas de chuva
-
-# Threshold de referência para intensidade de chuva (métrica composta)
-# Define que 30mm/h com 100% de probabilidade = 100 pontos de intensidade
-# Threshold maior permite melhor distribuição visual de chuvas fortes
-RAIN_INTENSITY_REFERENCE = 30.0  # mm/h
-
-
-class AlertSeverity(Enum):
-    """Níveis de severidade de alertas climáticos"""
-    INFO = "info"  # Informativo
-    WARNING = "warning"  # Atenção
-    ALERT = "alert"  # Alerta
-    DANGER = "danger"  # Perigo
+from domain.alerts.primitives import (
+    AlertSeverity,
+    WeatherAlert,
+    RAIN_PROBABILITY_THRESHOLD,
+    RAIN_INTENSITY_REFERENCE
+)
+from domain.services.rain_alert_service import RainAlertService, RainAlertInput
+from domain.services.wind_alert_service import WindAlertService, WindAlertInput
+from domain.services.visibility_alert_service import VisibilityAlertService, VisibilityAlertInput
+from domain.services.temperature_alert_service import TemperatureAlertService, TemperatureAlertInput
 
 
 class CloudCoverage(Enum):
@@ -32,28 +26,6 @@ class CloudCoverage(Enum):
     SCATTERED_CLOUDS = "Parcialmente nublado"  # 26-50%
     BROKEN_CLOUDS = "Nublado"  # 51-84%
     OVERCAST = "Céu encoberto"  # 85-100%
-
-
-@dataclass
-class WeatherAlert:
-    """Alerta climático estruturado"""
-    code: str  # Código do alerta (ex: "STORM", "HEAVY_RAIN", "STRONG_WIND")
-    severity: AlertSeverity  # Nível de severidade
-    description: str  # Descrição em português
-    timestamp: datetime  # Data/hora do alerta (quando se aplica)
-    details: Optional[dict] = None  # Detalhes adicionais opcionais (ex: velocidade vento, mm chuva)
-    
-    def to_dict(self) -> dict:
-        """Converte para dicionário para resposta da API"""
-        result = {
-            'code': self.code,
-            'severity': self.severity.value,
-            'description': self.description,
-            'timestamp': self.timestamp.isoformat()
-        }
-        if self.details is not None:
-            result['details'] = self.details
-        return result
 
 
 @dataclass
@@ -162,86 +134,26 @@ class Weather:
         else:
             alert_time = forecast_time.replace(tzinfo=ZoneInfo("UTC")).astimezone(brasil_tz)
 
-        # Alertas de PRECIPITAÇÃO via serviço de domínio
-        try:
-            from domain.services.rain_alert_service import RainAlertService, RainAlertInput
-            rain_alerts = RainAlertService.generate_alerts(
-                RainAlertInput(
-                    weather_code=weather_code,
-                    rain_prob=rain_prob,
-                    rain_1h=rain_1h,
-                    forecast_time=alert_time
-                )
-            )
-            alerts.extend(rain_alerts)
-        except Exception:
-            # Em caso de falha no serviço, segue com outros alertas para não bloquear
-            pass
-
-        # NEVE
-        if 600 <= weather_code < 700:
-            alerts.append(WeatherAlert(
-                code="SNOW",
-                severity=AlertSeverity.INFO,
-                description="❄️ Neve (raro no Brasil)",
-                timestamp=alert_time,
-                details={"weather_code": weather_code, "temperature_c": round(temperature, 1)}
-            ))
-        
-        # Alertas de VENTO FORTE
-        if wind_speed >= 50:
-            alerts.append(WeatherAlert(
-                code="STRONG_WIND",
-                severity=AlertSeverity.ALERT,
-                description="💨 ALERTA: Ventos fortes",
-                timestamp=alert_time,
-                details={"wind_speed_kmh": round(wind_speed, 1)}
-            ))
-        elif wind_speed >= 30:
-            alerts.append(WeatherAlert(
-                code="MODERATE_WIND",
-                severity=AlertSeverity.INFO,
-                description="💨 Ventos moderados",
-                timestamp=alert_time,
-                details={"wind_speed_kmh": round(wind_speed, 1)}
-            ))
-        
-        # Alertas de TEMPERATURA (frio considerando contexto brasileiro)
-        if temperature > 0:  # Apenas se temperatura foi fornecida
-            if temperature < 8:
-                alerts.append(WeatherAlert(
-                    code="VERY_COLD",
-                    severity=AlertSeverity.DANGER,
-                    description="🥶 ALERTA: Frio intenso",
-                    timestamp=alert_time,
-                    details={"temperature_c": round(temperature, 1)}
-                ))
-            elif temperature < 12:
-                alerts.append(WeatherAlert(
-                    code="COLD",
-                    severity=AlertSeverity.ALERT,
-                    description="🧊 Frio",
-                    timestamp=alert_time,
-                    details={"temperature_c": round(temperature, 1)}
-                ))
-        
-        # Alertas de VISIBILIDADE
-        if visibility < 1000:  # Menos de 1km
-            alerts.append(WeatherAlert(
-                code="LOW_VISIBILITY",
-                severity=AlertSeverity.ALERT,
-                description="🌫️ ALERTA: Visibilidade reduzida",
-                timestamp=alert_time,
-                details={"visibility_m": int(visibility)}
-            ))
-        elif visibility < 3000:  # Menos de 3km
-            alerts.append(WeatherAlert(
-                code="LOW_VISIBILITY",
-                severity=AlertSeverity.WARNING,
-                description="🌫️ Visibilidade reduzida",
-                timestamp=alert_time,
-                details={"visibility_m": int(visibility)}
-            ))
+        # Alertas via serviços de domínio
+        alerts.extend(RainAlertService.generate_alerts(RainAlertInput(
+            weather_code=weather_code,
+            rain_prob=rain_prob,
+            rain_1h=rain_1h,
+            forecast_time=alert_time
+        )))
+        alerts.extend(WindAlertService.generate_alerts(WindAlertInput(
+            wind_speed=wind_speed,
+            forecast_time=alert_time
+        )))
+        alerts.extend(VisibilityAlertService.generate_alerts(VisibilityAlertInput(
+            visibility_m=visibility,
+            forecast_time=alert_time
+        )))
+        alerts.extend(TemperatureAlertService.generate_alerts(TemperatureAlertInput(
+            temperature_c=temperature,
+            weather_code=weather_code,
+            forecast_time=alert_time
+        )))
         
         # Deduplica alertas: mantém apenas um alerta por code
         # Prioriza pelo timestamp mais próximo (menor timestamp = mais urgente)
