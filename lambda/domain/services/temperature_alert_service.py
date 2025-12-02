@@ -8,6 +8,7 @@ from datetime import datetime
 from typing import List
 
 from domain.alerts.primitives import AlertSeverity, WeatherAlert
+from domain.services.base_alert_service import BaseAlertService
 
 WMO_SNOW_CODES = {71, 73, 75, 77, 85, 86}
 
@@ -19,7 +20,7 @@ class TemperatureAlertInput:
     forecast_time: datetime
 
 
-class TemperatureAlertService:
+class TemperatureAlertService(BaseAlertService):
     """Gera alertas de frio e neve."""
 
     @staticmethod
@@ -28,31 +29,34 @@ class TemperatureAlertService:
 
         # Neve
         if 600 <= data.weather_code < 700 or data.weather_code in WMO_SNOW_CODES:
-            alerts.append(WeatherAlert(
+            alerts.append(BaseAlertService.create_alert(
                 code="SNOW",
                 severity=AlertSeverity.INFO,
                 description="❄️ Neve (raro no Brasil)",
                 timestamp=data.forecast_time,
-                details={"weather_code": data.weather_code, "temperature_c": round(data.temperature_c, 1)}
+                details=BaseAlertService.round_details({
+                    "weather_code": data.weather_code,
+                    "temperature_c": data.temperature_c
+                })
             ))
 
         # Frio (apenas se temperatura fornecida)
         if data.temperature_c > 0:
             if data.temperature_c < 8:
-                alerts.append(WeatherAlert(
+                alerts.append(BaseAlertService.create_alert(
                     code="VERY_COLD",
                     severity=AlertSeverity.DANGER,
                     description="🥶 ALERTA: Frio intenso",
                     timestamp=data.forecast_time,
-                    details={"temperature_c": round(data.temperature_c, 1)}
+                    details=BaseAlertService.round_details({"temperature_c": data.temperature_c})
                 ))
             elif data.temperature_c < 12:
-                alerts.append(WeatherAlert(
+                alerts.append(BaseAlertService.create_alert(
                     code="COLD",
                     severity=AlertSeverity.ALERT,
                     description="🧊 Frio",
                     timestamp=data.forecast_time,
-                    details={"temperature_c": round(data.temperature_c, 1)}
+                    details=BaseAlertService.round_details({"temperature_c": data.temperature_c})
                 ))
 
         return alerts

@@ -8,6 +8,7 @@ from datetime import datetime
 from typing import List
 
 from domain.alerts.primitives import AlertSeverity, WeatherAlert
+from domain.services.base_alert_service import BaseAlertService
 
 
 @dataclass(frozen=True)
@@ -16,7 +17,7 @@ class WindAlertInput:
     forecast_time: datetime
 
 
-class WindAlertService:
+class WindAlertService(BaseAlertService):
     """Gera alertas de vento a partir da velocidade (km/h)."""
 
     @staticmethod
@@ -24,20 +25,20 @@ class WindAlertService:
         alerts: List[WeatherAlert] = []
 
         if data.wind_speed >= 50:
-            alerts.append(WeatherAlert(
+            alerts.append(BaseAlertService.create_alert(
                 code="STRONG_WIND",
                 severity=AlertSeverity.ALERT,
                 description="💨 ALERTA: Ventos fortes",
                 timestamp=data.forecast_time,
-                details={"wind_speed_kmh": round(data.wind_speed, 1)}
+                details=BaseAlertService.round_details({"wind_speed_kmh": data.wind_speed})
             ))
         elif data.wind_speed >= 30:
-            alerts.append(WeatherAlert(
+            alerts.append(BaseAlertService.create_alert(
                 code="MODERATE_WIND",
                 severity=AlertSeverity.INFO,
                 description="💨 Ventos moderados",
                 timestamp=data.forecast_time,
-                details={"wind_speed_kmh": round(data.wind_speed, 1)}
+                details=BaseAlertService.round_details({"wind_speed_kmh": data.wind_speed})
             ))
 
         return alerts

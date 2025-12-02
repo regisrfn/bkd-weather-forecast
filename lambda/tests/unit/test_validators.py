@@ -86,10 +86,10 @@ class TestCityIdValidator:
         assert result == "3543204"
     
     def test_validate_city_id_with_whitespace(self):
-        """Testa exceção com espaços (não aceita espaços no ID)"""
-        # O validator verifica isdigit() antes de strip(), então falha com espaços
-        with pytest.raises(ValueError):
-            CityIdValidator.validate("  3543204  ")
+        """Testa que trim é feito automaticamente"""
+        # O novo validator faz trim antes de validar
+        result = CityIdValidator.validate("  3543204  ")
+        assert result == "3543204"
     
     def test_validate_city_id_empty_string(self):
         """Testa exceção com string vazia"""
@@ -110,7 +110,7 @@ class TestCityIdValidator:
         with pytest.raises(ValueError) as exc_info:
             CityIdValidator.validate("abc123")
         
-        assert "Invalid city ID format" in str(exc_info.value)
+        assert "Invalid city_id format" in str(exc_info.value)
     
     def test_validate_city_id_with_letters(self):
         """Testa exceção com letras no ID"""

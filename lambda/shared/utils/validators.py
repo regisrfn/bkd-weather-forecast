@@ -2,7 +2,103 @@
 Validators Utility
 Input validation with domain exceptions
 """
+from typing import Any, Type
 from domain.exceptions import InvalidRadiusException
+
+
+class GenericValidator:
+    """Validador genérico para reduzir duplicação de código"""
+    
+    @staticmethod
+    def validate_range(
+        value: float,
+        min_val: float,
+        max_val: float,
+        param_name: str,
+        exception_class: Type[Exception] = ValueError
+    ) -> float:
+        """
+        Valida se valor numérico está dentro do range
+        
+        Args:
+            value: Valor a validar
+            min_val: Valor mínimo permitido
+            max_val: Valor máximo permitido
+            param_name: Nome do parâmetro (para mensagem de erro)
+            exception_class: Classe de exceção a lançar
+        
+        Returns:
+            Valor validado
+        
+        Raises:
+            exception_class: Se valor fora do range
+        """
+        if not (min_val <= value <= max_val):
+            # Tenta criar exceção com details se suportado
+            try:
+                raise exception_class(
+                    f"{param_name} must be between {min_val} and {max_val}",
+                    details={
+                        param_name: value,
+                        "min": min_val,
+                        "max": max_val
+                    }
+                )
+            except TypeError:
+                # Fallback: exceção sem details
+                raise exception_class(
+                    f"{param_name} must be between {min_val} and {max_val}"
+                )
+        return value
+    
+    @staticmethod
+    def validate_not_empty(
+        value: str,
+        param_name: str,
+        exception_class: Type[Exception] = ValueError
+    ) -> str:
+        """
+        Valida se string não está vazia
+        
+        Args:
+            value: String a validar
+            param_name: Nome do parâmetro (para mensagem de erro)
+            exception_class: Classe de exceção a lançar
+        
+        Returns:
+            String validada e trimmed
+        
+        Raises:
+            exception_class: Se string vazia
+        """
+        if not value or not value.strip():
+            raise exception_class(f"{param_name} cannot be empty")
+        return value.strip()
+    
+    @staticmethod
+    def validate_numeric_string(
+        value: str,
+        param_name: str,
+        exception_class: Type[Exception] = ValueError
+    ) -> str:
+        """
+        Valida se string é numérica
+        
+        Args:
+            value: String a validar
+            param_name: Nome do parâmetro
+            exception_class: Classe de exceção a lançar
+        
+        Returns:
+            String validada
+        
+        Raises:
+            exception_class: Se não for numérica
+        """
+        trimmed = GenericValidator.validate_not_empty(value, param_name, exception_class)
+        if not trimmed.isdigit():
+            raise exception_class(f"Invalid {param_name} format: {value}")
+        return trimmed
 
 
 class RadiusValidator:
@@ -25,12 +121,13 @@ class RadiusValidator:
         Raises:
             InvalidRadiusException: If radius is out of range
         """
-        if not RadiusValidator.MIN_RADIUS <= radius <= RadiusValidator.MAX_RADIUS:
-            raise InvalidRadiusException(
-                f"Radius must be between {RadiusValidator.MIN_RADIUS} and {RadiusValidator.MAX_RADIUS} km",
-                details={"radius": radius, "min": RadiusValidator.MIN_RADIUS, "max": RadiusValidator.MAX_RADIUS}
-            )
-        return radius
+        return GenericValidator.validate_range(
+            value=radius,
+            min_val=RadiusValidator.MIN_RADIUS,
+            max_val=RadiusValidator.MAX_RADIUS,
+            param_name="radius",
+            exception_class=InvalidRadiusException
+        )
 
 
 class CityIdValidator:
@@ -50,11 +147,8 @@ class CityIdValidator:
         Raises:
             ValueError: If city_id is empty or invalid format
         """
-        if not city_id or not city_id.strip():
-            raise ValueError("City ID cannot be empty")
-        
-        # City IDs should be numeric strings
-        if not city_id.isdigit():
-            raise ValueError(f"Invalid city ID format: {city_id}")
-        
-        return city_id.strip()
+        return GenericValidator.validate_numeric_string(
+            value=city_id,
+            param_name="city_id",
+            exception_class=ValueError
+        )
