@@ -55,7 +55,7 @@ class WeatherEnricher:
         else:
             ref_dt = target_datetime.replace(tzinfo=brasil_tz)
         
-        # Buscar forecast mais próximo
+        # Buscar forecast mais próximo (passado ou futuro)
         closest_forecast = None
         min_diff = float('inf')
         
@@ -73,12 +73,17 @@ class WeatherEnricher:
             logger.warning("Não foi possível encontrar forecast mais próximo")
             return base_weather
         
+        # Criar timestamp enriquecido com timezone correto
+        enriched_timestamp = datetime.fromisoformat(closest_forecast.timestamp)
+        if enriched_timestamp.tzinfo is None:
+            enriched_timestamp = enriched_timestamp.replace(tzinfo=brasil_tz)
+        
         # Criar Weather enriquecido mantendo dados do OpenWeather
         enriched = Weather(
             city_id=base_weather.city_id,
             city_name=base_weather.city_name,
             # Dados ENRICHED do OpenMeteo (mais precisos)
-            timestamp=datetime.fromisoformat(closest_forecast.timestamp),
+            timestamp=enriched_timestamp,
             temperature=closest_forecast.temperature,
             humidity=float(closest_forecast.humidity),
             wind_speed=closest_forecast.wind_speed,
