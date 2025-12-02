@@ -161,92 +161,25 @@ class Weather:
             alert_time = forecast_time.astimezone(brasil_tz)
         else:
             alert_time = forecast_time.replace(tzinfo=ZoneInfo("UTC")).astimezone(brasil_tz)
-        
-        # Alertas de PRECIPITAÇÃO baseados em VOLUME (mm/h)
-        # Requer probabilidade >= 80% para reduzir falsos positivos
-        if rain_1h > 0 and rain_prob >= RAIN_PROBABILITY_THRESHOLD:
-            if rain_1h >= 50:
-                alerts.append(WeatherAlert(
-                    code="HEAVY_RAIN",
-                    severity=AlertSeverity.ALERT,
-                    description="⚠️ ALERTA: Chuva forte",
-                    timestamp=alert_time,
-                    details={"rain_mm_h": round(rain_1h, 1), "probability_percent": round(rain_prob, 1)}
-                ))
-            elif rain_1h >= 10:
-                alerts.append(WeatherAlert(
-                    code="MODERATE_RAIN",
-                    severity=AlertSeverity.WARNING,
-                    description="🌧️ Chuva moderada",
-                    timestamp=alert_time,
-                    details={"rain_mm_h": round(rain_1h, 1), "probability_percent": round(rain_prob, 1)}
-                ))
-            elif rain_1h >= 2.5:
-                alerts.append(WeatherAlert(
-                    code="LIGHT_RAIN",
-                    severity=AlertSeverity.INFO,
-                    description="🌧️ Chuva fraca",
-                    timestamp=alert_time,
-                    details={"rain_mm_h": round(rain_1h, 1), "probability_percent": round(rain_prob, 1)}
-                ))
-            else:  # rain_1h > 0 mas < 2.5
-                alerts.append(WeatherAlert(
-                    code="DRIZZLE",
-                    severity=AlertSeverity.INFO,
-                    description="🌦️ Garoa",
-                    timestamp=alert_time,
-                    details={"rain_mm_h": round(rain_1h, 1), "probability_percent": round(rain_prob, 1)}
-                ))
-        
-        # Alertas por código climático - TEMPESTADES
-        if 200 <= weather_code < 300:
-            if weather_code in [200, 201, 202, 210, 211, 212, 221]:
-                alert_details = {"weather_code": weather_code, "probability_percent": round(rain_prob, 1)}
-                if rain_1h > 0:
-                    alert_details["rain_mm_h"] = round(rain_1h, 1)
-                alerts.append(WeatherAlert(
-                    code="STORM",
-                    severity=AlertSeverity.DANGER,
-                    description="⚠️ ALERTA: Tempestade com raios",
-                    timestamp=alert_time,
-                    details=alert_details
-                ))
-            else:
-                alert_details = {"weather_code": weather_code, "probability_percent": round(rain_prob, 1)}
-                if rain_1h > 0:
-                    alert_details["rain_mm_h"] = round(rain_1h, 1)
-                alerts.append(WeatherAlert(
-                    code="STORM_RAIN",
-                    severity=AlertSeverity.ALERT,
-                    description="⚠️ Tempestade com chuva",
-                    timestamp=alert_time,
-                    details=alert_details
-                ))
-        
-        # Alertas de CHUVA por código climático (quando não há volume medido)
-        # Códigos 500-599 indicam chuva, mas API nem sempre retorna volume
-        elif 500 <= weather_code < 600 and rain_1h == 0:
-            if weather_code in [502, 503, 504, 522, 531]:
-                # Chuva forte prevista por código (independente de probabilidade)
-                alerts.append(WeatherAlert(
-                    code="HEAVY_RAIN",
-                    severity=AlertSeverity.ALERT,
-                    description="⚠️ ALERTA: Chuva forte prevista",
-                    timestamp=alert_time,
-                    details={"weather_code": weather_code, "probability_percent": round(rain_prob, 1)}
-                ))
-            elif rain_prob >= RAIN_PROBABILITY_THRESHOLD:
-                # Chuva leve/moderada com alta probabilidade (código 500-501, 520-521, etc)
-                alerts.append(WeatherAlert(
-                    code="RAIN_EXPECTED",
-                    severity=AlertSeverity.INFO,
-                    description="🌧️ Alta probabilidade de chuva",
-                    timestamp=alert_time,
-                    details={"weather_code": weather_code, "probability_percent": round(rain_prob, 1)}
-                ))
-        
+
+        # Alertas de PRECIPITAÇÃO via serviço de domínio
+        try:
+            from domain.services.rain_alert_service import RainAlertService, RainAlertInput
+            rain_alerts = RainAlertService.generate_alerts(
+                RainAlertInput(
+                    weather_code=weather_code,
+                    rain_prob=rain_prob,
+                    rain_1h=rain_1h,
+                    forecast_time=alert_time
+                )
+            )
+            alerts.extend(rain_alerts)
+        except Exception:
+            # Em caso de falha no serviço, segue com outros alertas para não bloquear
+            pass
+
         # NEVE
-        elif 600 <= weather_code < 700:
+        if 600 <= weather_code < 700:
             alerts.append(WeatherAlert(
                 code="SNOW",
                 severity=AlertSeverity.INFO,

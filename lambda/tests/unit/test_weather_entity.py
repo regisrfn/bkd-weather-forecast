@@ -101,8 +101,8 @@ def test_weather_optional_rain():
     assert weather.rain_1h == 0.0
 
 
-def test_weather_alert_storm():
-    """Testa detecção de alerta de tempestade"""
+def test_storm_code_without_intensity_falls_back_to_prob_only():
+    """Código de tempestade sem intensidade gera apenas probabilidade de chuva"""
     forecast_time = datetime(2025, 11, 21, 15, 0)
     alerts = Weather.get_weather_alert(
         weather_code=210,  # Tempestade
@@ -113,23 +113,22 @@ def test_weather_alert_storm():
         temperature=25.0
     )
     assert isinstance(alerts, list)
-    assert len(alerts) == 2  # Tempestade + Ventos moderados
-    assert any(a.code == "STORM" for a in alerts)
+    assert len(alerts) == 2  # Prob alta de chuva + ventos moderados
+    assert any(a.code == "RAIN_EXPECTED" for a in alerts)
     assert any(a.code == "MODERATE_WIND" for a in alerts)
     
-    storm_alert = next(a for a in alerts if a.code == "STORM")
-    assert storm_alert.severity == AlertSeverity.DANGER
-    assert "Tempestade" in storm_alert.description
-    assert storm_alert.details is not None
-    assert "weather_code" in storm_alert.details
+    rain_alert = next(a for a in alerts if a.code == "RAIN_EXPECTED")
+    assert rain_alert.severity == AlertSeverity.INFO
+    assert rain_alert.details is not None
+    assert "weather_code" in rain_alert.details
     
     wind_alert = next(a for a in alerts if a.code == "MODERATE_WIND")
     assert wind_alert.details is not None
     assert "wind_speed_kmh" in wind_alert.details
 
 
-def test_weather_alert_heavy_rain():
-    """Testa detecção de alerta de chuva forte"""
+def test_heavy_rain_code_without_volume_generates_prob_only():
+    """Código de chuva forte sem volume cai em probabilidade de chuva"""
     forecast_time = datetime(2025, 11, 21, 15, 0)
     alerts = Weather.get_weather_alert(
         weather_code=502,  # Chuva forte
@@ -141,8 +140,8 @@ def test_weather_alert_heavy_rain():
     )
     assert isinstance(alerts, list)
     assert len(alerts) == 1
-    assert alerts[0].code == "HEAVY_RAIN"
-    assert alerts[0].severity == AlertSeverity.ALERT
+    assert alerts[0].code == "RAIN_EXPECTED"
+    assert alerts[0].severity == AlertSeverity.INFO
 
 
 def test_weather_alert_strong_wind():
@@ -644,10 +643,8 @@ def test_no_rain_expected_without_rain_code():
     assert "RAIN_EXPECTED" not in alert_codes, "Não deve gerar RAIN_EXPECTED sem código de chuva"
 
 
-def test_no_rain_expected_when_storm():
-    """
-    Testa que RAIN_EXPECTED NÃO é gerado quando há alerta de tempestade
-    """
+def test_storm_code_without_intensity_allows_rain_expected():
+    """Código de tempestade sem intensidade permite RAIN_EXPECTED"""
     forecast_time = datetime(2025, 11, 21, 15, 0)
     
     alerts = Weather.get_weather_alert(
@@ -659,8 +656,7 @@ def test_no_rain_expected_when_storm():
         temperature=20.0
     )
     alert_codes = [a.code for a in alerts]
-    assert "STORM" in alert_codes
-    assert "RAIN_EXPECTED" not in alert_codes, "RAIN_EXPECTED não deve ser gerado quando há tempestade"
+    assert "RAIN_EXPECTED" in alert_codes
 
 
 if __name__ == '__main__':
