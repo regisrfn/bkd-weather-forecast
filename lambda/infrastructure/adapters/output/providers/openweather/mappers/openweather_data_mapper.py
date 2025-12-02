@@ -9,6 +9,7 @@ from typing import Optional, Dict, Any, List, Tuple
 from domain.entities.weather import Weather
 from domain.constants import App
 from domain.services.weather_alert_orchestrator import WeatherAlertOrchestrator
+from domain.alerts.primitives import WeatherAlert
 
 
 class OpenWeatherDataMapper:
@@ -131,12 +132,20 @@ class OpenWeatherDataMapper:
         Returns:
             Lista de alertas WeatherAlert
         """
+        from collections import defaultdict
+        from domain.constants import Weather as WeatherConstants
+        from domain.alerts.primitives import AlertSeverity
+        
         brasil_tz = ZoneInfo(App.TIMEZONE)
         time_window_end = ref_dt + timedelta(hours=12)
         
         all_alerts = []
+        daily_extremes: Dict[datetime, Dict] = defaultdict(lambda: {
+            'temps': [],
+            'first_forecast': None
+        })
         
-        # Analisar próximas previsões (máximo 8 = 24h)
+        # Analisar próximas previsões (máximo 8 = 24h para alertas imediatos)
         for forecast_raw in raw_forecasts[:8]:
             dt_unix = forecast_raw.get('dt', 0)
             forecast_dt = datetime.fromtimestamp(dt_unix, tz=ZoneInfo('UTC')).astimezone(brasil_tz)
@@ -171,6 +180,96 @@ class OpenWeatherDataMapper:
             )
             
             all_alerts.extend(forecast_alerts)
+        
+        # Analisar TODOS os forecasts para TEMP_DROP/RISE (até 5 dias)
+        for forecast_raw in raw_forecasts:
+            dt_unix = forecast_raw.get('dt', 0)
+            forecast_dt = datetime.fromtimestamp(dt_unix, tz=ZoneInfo('UTC')).astimezone(brasil_tz)
+            
+            # Apenas forecasts futuros
+            if forecast_dt <= ref_dt:
+                continue
+            
+            main = forecast_raw.get('main', {})
+            temperature = main.get('temp', 0.0)
+            
+            # Acumular por dia
+            date_key = forecast_dt.date()
+            daily_extremes[date_key]['temps'].append(temperature)
+            if daily_extremes[date_key]['first_forecast'] is None:
+                daily_extremes[date_key]['first_forecast'] = forecast_dt
+        
+        # Analisar trends de temperatura
+        if len(daily_extremes) >= 2:
+            daily_data = []
+            for date_key in sorted(daily_extremes.keys()):
+                data = daily_extremes[date_key]
+                temps = data['temps']
+                if temps and data['first_forecast']:
+                    daily_data.append({
+                        'date': date_key,
+                        'max': max(temps),
+                        'min': min(temps),
+                        'first_timestamp': data['first_forecast']
+                    })
+            
+            # Encontrar maior variação
+            max_drop = None
+            max_rise = None
+            
+            for i in range(len(daily_data) - 1):
+                day1 = daily_data[i]
+                for j in range(i + 1, min(i + 4, len(daily_data))):
+                    day2 = daily_data[j]
+                    variation = day2['max'] - day1['max']
+                    days_between = (day2['date'] - day1['date']).days
+                    
+                    if abs(variation) >= WeatherConstants.TEMP_VARIATION_THRESHOLD:
+                        alert_time = day1['first_timestamp']
+                        
+                        if variation < 0:  # Drop
+                            if max_drop is None or abs(variation) > abs(max_drop['variation']):
+                                max_drop = {
+                                    'variation': variation,
+                                    'alert': WeatherAlert(
+                                        code="TEMP_DROP",
+                                        severity=AlertSeverity.INFO,
+                                        description=f"🌡️ Queda de temperatura ({abs(variation):.0f}°C em {days_between} {'dia' if days_between == 1 else 'dias'})",
+                                        timestamp=alert_time,
+                                        details={
+                                            "day_1_date": day1['date'].isoformat(),
+                                            "day_1_max_c": round(day1['max'], 1),
+                                            "day_2_date": day2['date'].isoformat(),
+                                            "day_2_max_c": round(day2['max'], 1),
+                                            "variation_c": round(variation, 1),
+                                            "days_between": days_between
+                                        }
+                                    )
+                                }
+                        else:  # Rise
+                            if max_rise is None or variation > max_rise['variation']:
+                                max_rise = {
+                                    'variation': variation,
+                                    'alert': WeatherAlert(
+                                        code="TEMP_RISE",
+                                        severity=AlertSeverity.WARNING,
+                                        description=f"🌡️ Aumento de temperatura (+{variation:.0f}°C em {days_between} {'dia' if days_between == 1 else 'dias'})",
+                                        timestamp=alert_time,
+                                        details={
+                                            "day_1_date": day1['date'].isoformat(),
+                                            "day_1_max_c": round(day1['max'], 1),
+                                            "day_2_date": day2['date'].isoformat(),
+                                            "day_2_max_c": round(day2['max'], 1),
+                                            "variation_c": round(variation, 1),
+                                            "days_between": days_between
+                                        }
+                                    )
+                                }
+            
+            if max_drop:
+                all_alerts.append(max_drop['alert'])
+            if max_rise:
+                all_alerts.append(max_rise['alert'])
         
         # Deduplicar alertas: manter apenas um por code (o mais próximo)
         unique_alerts = {}

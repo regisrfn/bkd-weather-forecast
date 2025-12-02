@@ -168,15 +168,11 @@ class GetCityDetailedForecastUseCase:
             # OpenMeteo alerts have PRIORITY over OpenWeather alerts (replace, not merge)
             if hourly_forecasts and not isinstance(hourly_forecasts, Exception):
                 try:
-                    logger.info(f"Generating alerts from {len(hourly_forecasts)} hourly forecasts")
-                    
                     # Usar generate_alerts_next_7days para alertas em tempo real
                     # (não usar target_datetime - queremos alertas dos próximos 7 dias a partir de AGORA)
                     openmeteo_alerts = AlertsGenerator.generate_alerts_next_7days(
                         forecasts=hourly_forecasts
                     )
-                    
-                    logger.info(f"Generated {len(openmeteo_alerts)} alerts from OpenMeteo")
                     
                     # OpenMeteo alerts REPLACE OpenWeather alerts (prioridade)
                     # Manter apenas alertas do OpenWeather que NÃO existem no OpenMeteo
@@ -193,8 +189,8 @@ class GetCityDetailedForecastUseCase:
                         current_weather.weather_alert = openmeteo_alerts + openweather_unique
                         
                         logger.info(
-                            f"Alerts updated: {len(openmeteo_alerts)} from OpenMeteo, "
-                            f"{len(openweather_unique)} unique from OpenWeather"
+                            f"Enhanced alerts: {len(current_weather.weather_alert)} total "
+                            f"({len(openmeteo_alerts)} OpenMeteo + {len(openweather_unique)} OpenWeather)"
                         )
                         
                 except Exception as e:

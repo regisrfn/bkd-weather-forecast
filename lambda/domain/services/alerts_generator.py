@@ -77,6 +77,12 @@ class AlertsGenerator:
         # Deduplicação por código
         alerts_by_code: Dict[str, WeatherAlert] = {}
         
+        # Acumular extremos diários para análise de temperatura
+        daily_extremes: Dict[datetime, Dict] = defaultdict(lambda: {
+            'temps': [],
+            'first_forecast': None
+        })
+        
         for forecast, timestamp in next_7days_forecasts:
             # Normalizar campos
             rain_prob = float(getattr(forecast, 'rain_probability', 0) or getattr(forecast, 'precipitation_probability', 0))
@@ -103,12 +109,30 @@ class AlertsGenerator:
                     alerts_by_code[alert.code] = alert
                 elif alert.timestamp < alerts_by_code[alert.code].timestamp:
                     alerts_by_code[alert.code] = alert
+            
+            # Acumular extremos diários para trends de temperatura
+            date_key = timestamp.astimezone(brasil_tz).date()
+            daily = daily_extremes[date_key]
+            daily['temps'].append(temperature)
+            if daily['first_forecast'] is None:
+                daily['first_forecast'] = (forecast, timestamp)
         
         # Adicionar rain_ends_at
         AlertsGenerator._add_rain_end_times(
             list(alerts_by_code.values()),
             [f for f, _ in next_7days_forecasts]
         )
+        
+        # Analisar trends de temperatura (TEMP_DROP e TEMP_RISE)
+        temp_alerts = AlertsGenerator._analyze_temperature_trends_optimized(
+            daily_extremes,
+            brasil_tz
+        )
+        
+        # Adicionar alertas de temperatura (sem duplicatas)
+        for alert in temp_alerts:
+            if alert.code not in alerts_by_code:
+                alerts_by_code[alert.code] = alert
         
         return list(alerts_by_code.values())
     
