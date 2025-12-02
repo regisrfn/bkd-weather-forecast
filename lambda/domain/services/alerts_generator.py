@@ -121,7 +121,7 @@ class AlertsGenerator:
             # 1. HEAVY_RAIN_DAY - Chuva acumulada alta no dia
             if precipitation > 0 and rain_prob > 60:
                 # Usar rainfall_intensity já calculado pela entidade
-                rainfall_intensity = getattr(fc, 'rainfall_intensity', 0.0)
+                rainfall_intensity = getattr(forecast, 'rainfall_intensity', 0.0)
                 
                 if rainfall_intensity >= 25 and precipitation > 20:
                     severity = AlertSeverity.WARNING if precipitation < 50 else AlertSeverity.ALERT
