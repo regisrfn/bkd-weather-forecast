@@ -44,27 +44,15 @@ A API de previsão do tempo inclui um sistema avançado de alertas meteorológic
 | `timestamp` | string | Data/hora quando o alerta se aplica (ISO 8601) |
 | `details` | object | Informações adicionais opcionais com valores numéricos |
 
-## 📌 Importante: Threshold de Probabilidade
+## 📌 Critérios de chuva (intensidade primeiro)
 
-**Todos os alertas baseados em volume de chuva requerem probabilidade >= 80%** para serem gerados. Isso inclui:
-- DRIZZLE (Garoa) - requer volume > 0 E probabilidade >= 80%
-- LIGHT_RAIN (Chuva fraca) - requer volume >= 2.5 mm/h E probabilidade >= 80%
-- MODERATE_RAIN (Chuva moderada) - requer volume >= 10 mm/h E probabilidade >= 80%
-- HEAVY_RAIN (Chuva forte por volume) - requer volume >= 50 mm/h E probabilidade >= 80%
-
-**RAIN_EXPECTED é um alerta para códigos de chuva sem volume:**
-- Gerado quando há código de chuva leve (500-501, 520-521, etc) com probabilidade >= 80% MAS sem volume medido
-- Inclui `weather_code` nos detalhes para rastreabilidade
-- NÃO é gerado se:
-  - Não houver código de chuva (seria contraditório: "80% de 0mm")
-  - Código for de chuva forte (502-504, 522, 531) - esses geram HEAVY_RAIN
-  - Já houver alertas de volume ou tempestade
-
-**Exceções que SEMPRE geram alerta (independente da probabilidade):**
-- STORM / STORM_RAIN - Tempestades (códigos 2xx)
-- HEAVY_RAIN por código (códigos 502, 503, 504, 522, 531)
-
-Este threshold reduz falsos positivos enquanto mantém alertas críticos de tempestades.
+- Alertas de chuva (DRIZZLE/LIGHT/MODERATE/HEAVY) são gerados **apenas** pela intensidade composta (`rainfallIntensity`), que combina volume × probabilidade. Códigos climáticos não forçam alerta sozinhos.
+- STORM (códigos 2xx/95/96/99) só aparece se a intensidade atingir pelo menos o limiar de chuva moderada.
+- **RAIN_EXPECTED** é gerado apenas quando:
+  - `rain_1h == 0` **e** `rainfallIntensity == 0`
+  - Probabilidade >= `RAIN_PROBABILITY_THRESHOLD` (80%)
+  - Existe código de chuva (WMO/OWM)
+  - Não há alertas de volume/intensidade para o mesmo horário
 
 ## 📊 Métrica de Intensidade de Chuva (rainfallIntensity)
 
