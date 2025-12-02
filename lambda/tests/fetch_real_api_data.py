@@ -20,13 +20,13 @@ from domain.constants import API
 async def fetch_real_data():
     """Busca dados reais para Ribeirão Preto"""
     
-    # Coordenadas de Ribeirão Preto
+    # Coordenadas de Ribeirão do Sul
     RIBEIRAO_PRETO = {
-        "city_id": "3451682",
-        "name": "Ribeirão Preto",
+        "city_id": "3451693",
+        "name": "Ribeirão do Sul",
         "state": "SP",
-        "latitude": -21.1704,
-        "longitude": -47.8103
+        "latitude": -22.7797,
+        "longitude": -49.9586
     }
     
     print("🌍 Buscando dados reais das APIs...")
