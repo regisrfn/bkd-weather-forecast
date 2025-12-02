@@ -9,6 +9,7 @@ from typing import Optional, Dict, Any, List
 from domain.entities.weather import Weather
 from domain.entities.daily_forecast import DailyForecast
 from domain.entities.hourly_forecast import HourlyForecast
+from domain.helpers.rainfall_calculator import calculate_rainfall_intensity
 from domain.constants import App, Weather as WeatherConstants
 from domain.services.weather_alert_orchestrator import WeatherAlertOrchestrator
 from domain.alerts.primitives import WeatherAlert, AlertSeverity
@@ -115,6 +116,14 @@ class OpenWeatherDataMapper:
                         self.temp_max = raw_data.get('temp', {}).get('max', 0.0)
                         self.temp_min = raw_data.get('temp', {}).get('min', 0.0)
                         self.uv_index = raw_data.get('uvi', 0.0)
+                        
+                        # Calcular rainfall_intensity (OpenWeather não fornece precip_hours para daily)
+                        # Usamos 24h como período padrão para dados diários
+                        if self.precipitation > 0 and self.rain_probability > 0:
+                            precip_per_hour = self.precipitation / 24.0
+                            self.rainfall_intensity = calculate_rainfall_intensity(self.rain_probability, precip_per_hour)
+                        else:
+                            self.rainfall_intensity = 0.0
                 
                 daily_forecasts.append(DailyForecastAdapter(day_raw, day_dt))
             
@@ -233,11 +242,8 @@ class OpenWeatherDataMapper:
             precipitation_hours = (rain_probability / 100) * 12.0  # Estimativa
             
             # Calcular rainfall_intensity: (volume * probabilidade) / referência
-            # Para dados diários, usamos precipitação distribuída nas horas de chuva
-            if precipitation_hours > 0 and precipitation_mm > 0:
-                precip_per_hour = precipitation_mm / precipitation_hours
-            else:
-                precip_per_hour = 0.0
+            # Para dados diários do OpenWeather, usamos 24h como período padrão
+            precip_per_hour = precipitation_mm / 24.0 if precipitation_mm > 0 else 0.0
             rainfall_intensity = calculate_rainfall_intensity(rain_probability, precip_per_hour)
             
             forecast = DailyForecast(

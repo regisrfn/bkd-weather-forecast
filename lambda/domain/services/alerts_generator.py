@@ -26,6 +26,7 @@ class ForecastLike(Protocol):
     wind_direction: int
     rain_probability: float | int
     precipitation: float
+    rainfall_intensity: float  # Intensidade composta 0-100
     weather_code: int
 
 
@@ -119,12 +120,8 @@ class AlertsGenerator:
             # Alertas específicos para previsões diárias (quando disponível)
             # 1. HEAVY_RAIN_DAY - Chuva acumulada alta no dia
             if precipitation > 0 and rain_prob > 60:
-                from domain.services.rain_alert_service import RainAlertService
-                avg_rain_per_hour = precipitation / 24.0
-                rainfall_intensity = RainAlertService.compute_rainfall_intensity(
-                    rain_prob=rain_prob,
-                    rain_1h=avg_rain_per_hour
-                )
+                # Usar rainfall_intensity já calculado pela entidade
+                rainfall_intensity = getattr(fc, 'rainfall_intensity', 0.0)
                 
                 if rainfall_intensity >= 25 and precipitation > 20:
                     severity = AlertSeverity.WARNING if precipitation < 50 else AlertSeverity.ALERT
