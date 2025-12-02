@@ -2,12 +2,13 @@
 OpenWeather Data Mapper - Transforma dados da API OpenWeather para entities
 LOCALIZAÇÃO: infrastructure (transforma dados externos → domínio)
 """
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from typing import Optional, Dict, Any, List, Tuple
 
 from domain.entities.weather import Weather
 from domain.constants import App
+from domain.services.weather_alert_orchestrator import WeatherAlertOrchestrator
 
 
 class OpenWeatherDataMapper:
@@ -94,8 +95,14 @@ class OpenWeatherDataMapper:
         if not selected_forecast:
             raise ValueError("Nenhuma previsão futura disponível")
         
+        # Gerar alertas analisando as próximas 12 horas de previsões
+        alerts = OpenWeatherDataMapper._generate_alerts_from_forecasts(
+            raw_forecasts=raw_forecasts,
+            ref_dt=ref_dt
+        )
+        
         # Extrair dados do forecast selecionado
-        return OpenWeatherDataMapper._parse_forecast_item(
+        weather = OpenWeatherDataMapper._parse_forecast_item(
             forecast_raw=selected_forecast,
             city_id=city_id,
             city_name=city_name,
@@ -103,6 +110,79 @@ class OpenWeatherDataMapper:
             temp_max_day=max(temps_day) if temps_day else None,
             rain_accumulated_day=rain_day
         )
+        
+        # Adicionar alertas gerados
+        weather.weather_alert = alerts
+        
+        return weather
+    
+    @staticmethod
+    def _generate_alerts_from_forecasts(
+        raw_forecasts: List[Dict[str, Any]],
+        ref_dt: datetime
+    ) -> List:
+        """
+        Gera alertas analisando as próximas horas de previsão
+        
+        Args:
+            raw_forecasts: Lista de forecasts raw do OpenWeather
+            ref_dt: Datetime de referência (now ou target)
+        
+        Returns:
+            Lista de alertas WeatherAlert
+        """
+        brasil_tz = ZoneInfo(App.TIMEZONE)
+        time_window_end = ref_dt + timedelta(hours=12)
+        
+        all_alerts = []
+        
+        # Analisar próximas previsões (máximo 8 = 24h)
+        for forecast_raw in raw_forecasts[:8]:
+            dt_unix = forecast_raw.get('dt', 0)
+            forecast_dt = datetime.fromtimestamp(dt_unix, tz=ZoneInfo('UTC')).astimezone(brasil_tz)
+            
+            # Apenas forecasts futuros dentro da janela de 12h
+            if forecast_dt <= ref_dt or forecast_dt > time_window_end:
+                continue
+            
+            # Extrair dados
+            main = forecast_raw.get('main', {})
+            weather_list = forecast_raw.get('weather', [{}])
+            weather_info = weather_list[0] if weather_list else {}
+            wind = forecast_raw.get('wind', {})
+            rain = forecast_raw.get('rain', {})
+            
+            # Calcular rainfall
+            rain_3h = rain.get('3h', 0.0)
+            rain_1h = rain_3h / 3.0
+            rain_prob = forecast_raw.get('pop', 0.0) * 100
+            wind_speed_ms = wind.get('speed', 0.0)
+            wind_speed_kmh = wind_speed_ms * 3.6
+            
+            # Gerar alertas para este forecast
+            forecast_alerts = WeatherAlertOrchestrator.generate_alerts(
+                weather_code=weather_info.get('id', 0),
+                rain_prob=rain_prob,
+                wind_speed=wind_speed_kmh,
+                forecast_time=forecast_dt,
+                rain_1h=rain_1h,
+                temperature=main.get('temp', 0.0),
+                visibility=forecast_raw.get('visibility', 10000)
+            )
+            
+            all_alerts.extend(forecast_alerts)
+        
+        # Deduplicar alertas: manter apenas um por code (o mais próximo)
+        unique_alerts = {}
+        for alert in all_alerts:
+            if alert.code not in unique_alerts:
+                unique_alerts[alert.code] = alert
+            else:
+                # Manter o mais próximo (menor timestamp)
+                if alert.timestamp < unique_alerts[alert.code].timestamp:
+                    unique_alerts[alert.code] = alert
+        
+        return list(unique_alerts.values())
     
     @staticmethod
     def _parse_forecast_item(
@@ -181,7 +261,7 @@ class OpenWeatherDataMapper:
             pressure=pressure,
             visibility=visibility,
             clouds=cloud_cover,
-            weather_alert=[],  # Alertas gerados externamente
+            weather_alert=[],  # Será populado pelo mapper principal
             weather_code=weather_code,
             temp_min=temp_min,
             temp_max=temp_max

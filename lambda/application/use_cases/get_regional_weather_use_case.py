@@ -195,4 +195,5 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
             target_datetime=target_datetime
         )
         
+        # Alertas já foram gerados pelo mapper do provider
         return weather
