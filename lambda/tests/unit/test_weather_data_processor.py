@@ -11,6 +11,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from infrastructure.adapters.helpers.weather_data_processor import WeatherDataProcessor
 from domain.entities.weather import Weather
+from infrastructure.adapters.helpers import date_filter_helper
 
 
 @pytest.fixture
@@ -82,6 +83,24 @@ class TestProcessWeatherData:
         
         with pytest.raises(ValueError, match="Nenhuma previsão futura disponível"):
             WeatherDataProcessor.process_weather_data(data, city_name, None)
+
+    def test_process_weather_data_missing_closest_forecast(self, monkeypatch, test_data):
+        """Should raise if closest forecast selection fails."""
+        city_name = "Ibirarema"
+
+        # Force select_closest_forecast to return None to hit safeguard
+        monkeypatch.setattr(
+            date_filter_helper.DateFilterHelper,
+            "select_closest_forecast",
+            lambda forecasts, target: None
+        )
+
+        with pytest.raises(ValueError, match="Nenhuma previsão futura disponível"):
+            WeatherDataProcessor.process_weather_data(
+                test_data,
+                city_name,
+                None
+            )
 
 
 class TestGetDailyTempExtremes:
@@ -232,6 +251,18 @@ class TestCalculateDailyRainAccumulation:
         
         # Should sum only first 4 forecasts: 2+3+4+5 = 14mm
         assert total_rain == 14.0
+
+    def test_calculate_daily_rain_accumulation_naive_target(self, test_data):
+        """Should handle naive datetime by injecting timezone."""
+        forecasts = test_data['list'][:2]
+        target_dt = datetime(2025, 11, 27, 12, 0)  # naive
+
+        total_rain = WeatherDataProcessor.calculate_daily_rain_accumulation(
+            forecasts,
+            target_dt
+        )
+
+        assert total_rain >= 0.0
 
 
 if __name__ == '__main__':

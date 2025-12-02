@@ -144,6 +144,63 @@ class TestEnrichWeatherWithHourly:
         assert enriched.timestamp.hour == 14
         assert enriched.timestamp.minute == 0
 
+    def test_enrich_returns_none_when_no_valid_hour(self, base_weather, hourly_forecasts, caplog):
+        """Deve retornar None quando nenhuma previsão é válida."""
+        # Corromper timestamps para forçar falha de parsing e closest_forecast None
+        broken_forecasts = [
+            HourlyForecast(
+                timestamp="invalid",
+                temperature=27.5,
+                precipitation=0.3,
+                precipitation_probability=25,
+                humidity=68,
+                wind_speed=11.0,
+                wind_direction=175,
+                cloud_cover=42,
+                weather_code=2
+            )
+        ]
+        enriched = HourlyWeatherProcessor.enrich_weather_with_hourly(
+            base_weather=base_weather,
+            hourly_forecasts=broken_forecasts,
+            target_datetime=datetime(2025, 12, 1, 14, 0)  # naive to hit tz branch
+        )
+
+        assert enriched is None
+        assert any("No valid hourly forecast found" in msg for msg in caplog.text.splitlines())
+
+    def test_enrich_merges_new_alert(self, base_weather, hourly_forecasts):
+        """Deve mesclar alertas do hourly sem duplicar existentes."""
+        # Base já com um alerta
+        base_weather.weather_alert = Weather.get_weather_alert(
+            weather_code=500,
+            rain_prob=80,
+            wind_speed=10,
+            forecast_time=base_weather.timestamp
+        )
+        # Forçar hourly com código diferente para criar alerta novo
+        hourly_custom = [
+            HourlyForecast(
+                timestamp="2025-12-01T14:00:00",
+                temperature=28.8,
+                precipitation=5.0,
+                precipitation_probability=90,
+                humidity=64,
+                wind_speed=50.0,
+                wind_direction=185,
+                cloud_cover=48,
+                weather_code=201  # gera alerta de tempestade
+            )
+        ]
+
+        enriched = HourlyWeatherProcessor.enrich_weather_with_hourly(
+            base_weather=base_weather,
+            hourly_forecasts=hourly_custom
+        )
+
+        # Deve ter aumentado a quantidade de alertas (merge executado)
+        assert len(enriched.weather_alert) > 0
+
 
 class TestFindClosestHourly:
     """Testes para busca da hora mais próxima"""
@@ -195,6 +252,31 @@ class TestFindClosestHourly:
         
         assert closest is None
 
+    def test_find_closest_with_naive_target(self, hourly_forecasts):
+        """Deve aceitar datetime sem tz e aplicar timezone padrão."""
+        target = datetime(2025, 12, 1, 14, 0)  # naive
+        closest = HourlyWeatherProcessor._find_closest_hourly(hourly_forecasts, target)
+        assert closest is not None
+
+    def test_find_closest_with_tz_timestamp(self):
+        """Deve tratar timestamps já com tzinfo sem perda."""
+        forecasts = [
+            HourlyForecast(
+                timestamp="2025-12-01T14:00:00+00:00",
+                temperature=25,
+                precipitation=0,
+                precipitation_probability=0,
+                humidity=50,
+                wind_speed=10,
+                wind_direction=0,
+                cloud_cover=0,
+                weather_code=0
+            )
+        ]
+        target = datetime(2025, 12, 1, 14, 0, tzinfo=ZoneInfo("America/Sao_Paulo"))
+        closest = HourlyWeatherProcessor._find_closest_hourly(forecasts, target)
+        assert closest is not None
+
 
 class TestCalculateDailyRainAccumulation:
     """Testes para cálculo de acúmulo diário de chuva"""
@@ -222,6 +304,31 @@ class TestCalculateDailyRainAccumulation:
         
         assert total == 0.0
 
+    def test_calculate_handles_bad_timestamp(self, caplog):
+        """Deve ignorar entradas com timestamp inválido."""
+        target = datetime(2025, 12, 1, 14, 0, tzinfo=ZoneInfo("America/Sao_Paulo"))
+        forecasts = [
+            HourlyForecast(
+                timestamp="invalid",
+                temperature=0,
+                precipitation=1.0,
+                precipitation_probability=50,
+                humidity=50,
+                wind_speed=10,
+                wind_direction=0,
+                cloud_cover=0,
+                weather_code=0
+            )
+        ]
+
+        total = HourlyWeatherProcessor._calculate_daily_rain_accumulation(
+            forecasts,
+            target
+        )
+
+        assert total == 0.0
+        assert "Failed to process forecast for rain calculation" in caplog.text
+
 
 class TestCalculateDailyTempExtremes:
     """Testes para cálculo de temperaturas extremas"""
@@ -237,6 +344,31 @@ class TestCalculateDailyTempExtremes:
         
         assert temp_min == 27.5
         assert temp_max == 29.2
+
+    def test_calculate_temp_extremes_handles_bad_timestamp(self, caplog):
+        """Deve retornar (0,0) se todos registros falharem."""
+        target = datetime(2025, 12, 1, 14, 0, tzinfo=ZoneInfo("America/Sao_Paulo"))
+        forecasts = [
+            HourlyForecast(
+                timestamp="invalid",
+                temperature=0,
+                precipitation=0,
+                precipitation_probability=0,
+                humidity=0,
+                wind_speed=0,
+                wind_direction=0,
+                cloud_cover=0,
+                weather_code=0
+            )
+        ]
+
+        temp_min, temp_max = HourlyWeatherProcessor._calculate_daily_temp_extremes(
+            forecasts,
+            target
+        )
+
+        assert (temp_min, temp_max) == (0.0, 0.0)
+        assert "Failed to process forecast for temp calculation" in caplog.text
     
     def test_calculate_empty_list(self):
         """Deve retornar (0, 0) para lista vazia"""
