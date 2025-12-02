@@ -13,6 +13,10 @@ httpx==0.27.0  # Cliente HTTP async para testes de integração
 # Datadog para desenvolvimento local
 ddtrace==4.0.0
 
+# Servidor local de desenvolvimento
+flask==3.1.0
+flask-cors==5.0.0
+
 # Ferramentas de análise e visualização
 matplotlib==3.9.2
 numpy==2.1.3
