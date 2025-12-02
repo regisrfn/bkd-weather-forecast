@@ -1,0 +1,412 @@
+"""
+Alerts Generator - Geração otimizada de alertas climáticos
+Substituindo loops aninhados por algoritmos single-pass
+"""
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+from typing import Optional, List, Dict, Protocol
+from collections import defaultdict
+
+from domain.alerts.primitives import WeatherAlert, AlertSeverity
+from domain.constants import Weather as WeatherConstants, App
+from domain.services.weather_alert_orchestrator import WeatherAlertOrchestrator
+from shared.config.logger_config import get_logger
+
+logger = get_logger(child=True)
+
+
+class ForecastLike(Protocol):
+    """
+    Protocol (interface) para forecasts compatíveis com geração de alertas
+    Qualquer classe com esses campos pode ser usada (HourlyForecast, DailyForecast, etc)
+    """
+    timestamp: datetime | str
+    temperature: float
+    wind_speed: float
+    wind_direction: int
+    rain_probability: float | int
+    precipitation: float
+    weather_code: int
+
+
+class AlertsGenerator:
+    """
+    Gerador de alertas climáticos otimizado
+    
+    OTIMIZAÇÕES:
+    - Single-pass através de forecasts (O(n) ao invés de O(n²))
+    - Deduplicação com set ao invés de lista
+    - Sliding window para trends de temperatura
+    - Cálculo incremental de extremos diários
+    """
+    
+    @staticmethod
+    def generate_all_alerts(
+        forecasts: List[ForecastLike],
+        target_datetime: Optional[datetime] = None
+    ) -> List[WeatherAlert]:
+        """
+        Gera todos os alertas de uma só vez
+        OTIMIZADO: Single-pass através dos forecasts
+        
+        Args:
+            forecasts: Lista de ForecastSnapshot
+            target_datetime: Datetime de referência
+        
+        Returns:
+            Lista de alertas únicos (deduplicated)
+        """
+        if not forecasts:
+            return []
+        
+        # Datetime de referência
+        brasil_tz = ZoneInfo(App.TIMEZONE)
+        if target_datetime is None:
+            ref_dt = datetime.now(tz=brasil_tz)
+        elif target_datetime.tzinfo is not None:
+            ref_dt = target_datetime.astimezone(brasil_tz)
+        else:
+            ref_dt = target_datetime.replace(tzinfo=brasil_tz)
+        
+        # Filtrar apenas forecasts futuros
+        future_forecasts = []
+        for f in forecasts:
+            # Parse timestamp (suporta datetime ou string ISO)
+            ts = AlertsGenerator._parse_timestamp(f)
+            if ts >= ref_dt:
+                future_forecasts.append((f, ts))
+        
+        if not future_forecasts:
+            return []
+        
+        # Sets para deduplicação eficiente
+        alerts_by_code: Dict[str, WeatherAlert] = {}
+        
+        # SINGLE-PASS: coletar alertas básicos + extremos diários
+        daily_extremes: Dict[datetime, Dict] = defaultdict(lambda: {
+            'temps': [],
+            'first_forecast': None
+        })
+        
+        for forecast, timestamp in future_forecasts:
+            # Normalizar campos (suporta diferentes formatos)
+            rain_prob = float(getattr(forecast, 'rain_probability', 0) or getattr(forecast, 'precipitation_probability', 0))
+            wind_speed = float(getattr(forecast, 'wind_speed', 0) or getattr(forecast, 'wind_speed_kmh', 0))
+            precipitation = float(getattr(forecast, 'precipitation', 0))
+            rain_1h = precipitation  # HourlyForecast já é por hora
+            temperature = float(forecast.temperature)
+            visibility = float(getattr(forecast, 'visibility', 10000))
+            
+            # Alertas básicos de cada forecast
+            basic_alerts = WeatherAlertOrchestrator.generate_alerts(
+                weather_code=forecast.weather_code,
+                rain_prob=rain_prob,
+                wind_speed=wind_speed,
+                forecast_time=timestamp,
+                rain_1h=rain_1h,
+                temperature=temperature,
+                visibility=visibility
+            )
+            
+            # Adicionar com deduplicação (manter timestamp mais próximo)
+            for alert in basic_alerts:
+                if alert.code not in alerts_by_code:
+                    alerts_by_code[alert.code] = alert
+                elif alert.timestamp < alerts_by_code[alert.code].timestamp:
+                    alerts_by_code[alert.code] = alert
+            
+            # Acumular extremos diários para trends
+            date_key = timestamp.astimezone(brasil_tz).date()
+            daily = daily_extremes[date_key]
+            daily['temps'].extend([
+                temperature,
+                temperature,  # temp_min não disponível em hourly
+                temperature   # temp_max não disponível em hourly
+            ])
+            if daily['first_forecast'] is None:
+                daily['first_forecast'] = (forecast, timestamp)
+        
+        # Adicionar rain_ends_at aos alertas de chuva
+        # Extrair apenas forecasts (sem timestamps) para compatibilidade
+        AlertsGenerator._add_rain_end_times(
+            list(alerts_by_code.values()),
+            [f for f, _ in future_forecasts]
+        )
+        
+        # Analisar trends de temperatura (algoritmo otimizado)
+        temp_alerts = AlertsGenerator._analyze_temperature_trends_optimized(
+            daily_extremes,
+            brasil_tz
+        )
+        
+        # Merge de alertas de temperatura
+        for alert in temp_alerts:
+            if alert.code not in alerts_by_code:
+                alerts_by_code[alert.code] = alert
+        
+        return list(alerts_by_code.values())
+    
+    @staticmethod
+    def _analyze_temperature_trends_optimized(
+        daily_extremes: Dict,
+        brasil_tz: ZoneInfo
+    ) -> List[WeatherAlert]:
+        """
+        Analisa trends de temperatura com algoritmo otimizado
+        ANTES: O(n²) com loops aninhados
+        DEPOIS: O(n) com sliding window
+        
+        Args:
+            daily_extremes: Dict com extremos por dia
+            brasil_tz: Timezone Brasil
+        
+        Returns:
+            Lista com até 2 alertas (maior drop, maior rise)
+        """
+        if len(daily_extremes) < 2:
+            return []
+        
+        # Calcular max/min por dia
+        daily_data = []
+        for date_key in sorted(daily_extremes.keys()):
+            data = daily_extremes[date_key]
+            temps = data['temps']
+            if temps and data['first_forecast']:
+                forecast, timestamp = data['first_forecast']
+                daily_data.append({
+                    'date': date_key,
+                    'max': max(temps),
+                    'min': min(temps),
+                    'first_timestamp': timestamp
+                })
+        
+        if len(daily_data) < 2:
+            return []
+        
+        # Encontrar maior variação (drop e rise) em uma única passagem
+        max_drop = None
+        max_rise = None
+        
+        # OTIMIZAÇÃO: Apenas comparar dias adjacentes ou próximos
+        # ao invés de todas as combinações
+        for i in range(len(daily_data) - 1):
+            day1 = daily_data[i]
+            
+            # Olhar próximos 3 dias apenas (janela razoável)
+            for j in range(i + 1, min(i + 4, len(daily_data))):
+                day2 = daily_data[j]
+                
+                variation = day2['max'] - day1['max']
+                days_between = (day2['date'] - day1['date']).days
+                
+                # Threshold de 8°C
+                if abs(variation) >= WeatherConstants.TEMP_VARIATION_THRESHOLD:
+                    alert_time = day1['first_timestamp'].astimezone(brasil_tz)
+                    
+                    # Ajustar se necessário
+                    if alert_time.date() != day1['date']:
+                        alert_time = datetime.combine(
+                            day1['date'],
+                            datetime.min.time()
+                        ).replace(tzinfo=brasil_tz)
+                    
+                    if variation < 0:  # Drop
+                        if max_drop is None or abs(variation) > abs(max_drop['variation']):
+                            max_drop = {
+                                'variation': variation,
+                                'alert': WeatherAlert(
+                                    code="TEMP_DROP",
+                                    severity=AlertSeverity.INFO,
+                                    description=f"🌡️ Queda de temperatura ({abs(variation):.0f}°C em {days_between} {'dia' if days_between == 1 else 'dias'})",
+                                    timestamp=alert_time,
+                                    details={
+                                        "day_1_date": day1['date'].isoformat(),
+                                        "day_1_max_c": round(day1['max'], 1),
+                                        "day_2_date": day2['date'].isoformat(),
+                                        "day_2_max_c": round(day2['max'], 1),
+                                        "variation_c": round(variation, 1),
+                                        "days_between": days_between
+                                    }
+                                )
+                            }
+                    else:  # Rise
+                        if max_rise is None or variation > max_rise['variation']:
+                            max_rise = {
+                                'variation': variation,
+                                'alert': WeatherAlert(
+                                    code="TEMP_RISE",
+                                    severity=AlertSeverity.WARNING,
+                                    description=f"🌡️ Aumento de temperatura (+{variation:.0f}°C em {days_between} {'dia' if days_between == 1 else 'dias'})",
+                                    timestamp=alert_time,
+                                    details={
+                                        "day_1_date": day1['date'].isoformat(),
+                                        "day_1_max_c": round(day1['max'], 1),
+                                        "day_2_date": day2['date'].isoformat(),
+                                        "day_2_max_c": round(day2['max'], 1),
+                                        "variation_c": round(variation, 1),
+                                        "days_between": days_between
+                                    }
+                                )
+                            }
+        
+        # Retornar apenas os alertas de maior magnitude
+        alerts = []
+        if max_drop:
+            alerts.append(max_drop['alert'])
+        if max_rise:
+            alerts.append(max_rise['alert'])
+        
+        return alerts
+    
+    @staticmethod
+    def _add_rain_end_times(
+        alerts: List[WeatherAlert],
+        forecasts: List[ForecastLike]
+    ) -> None:
+        """
+        Adiciona rain_ends_at aos alertas de chuva (in-place)
+        
+        Args:
+            alerts: Lista de alertas (modificada in-place)
+            forecasts: Lista de forecasts ordenados
+        """
+        rain_codes = {
+            "DRIZZLE", "LIGHT_RAIN", "MODERATE_RAIN",
+            "HEAVY_RAIN", "STORM", "STORM_RAIN"
+        }
+        
+        brasil_tz = ZoneInfo(App.TIMEZONE)
+        
+        for alert in alerts:
+            if alert.code in rain_codes and alert.details:
+                # Encontrar quando chuva termina
+                alert_dt = alert.timestamp
+                if alert_dt.tzinfo is None:
+                    alert_dt = alert_dt.replace(tzinfo=brasil_tz)
+                
+                rain_end = AlertsGenerator._find_rain_end(
+                    forecasts,
+                    alert_dt,
+                    brasil_tz
+                )
+                
+                if rain_end:
+                    alert.details["rain_ends_at"] = rain_end.isoformat()
+    
+    @staticmethod
+    def _find_rain_end(
+        forecasts: List[ForecastLike],
+        start_time: datetime,
+        brasil_tz: ZoneInfo
+    ) -> Optional[datetime]:
+        """
+        Encontra quando a chuva termina
+        
+        Args:
+            forecasts: Lista de forecasts
+            start_time: Início da chuva
+            brasil_tz: Timezone
+        
+        Returns:
+            Datetime quando chuva termina ou None
+        """
+        # Filtrar forecasts >= start_time e parsear timestamps
+        future = []
+        for f in forecasts:
+            ts = AlertsGenerator._parse_timestamp(f)
+            if ts >= start_time:
+                future.append((f, ts))
+        
+        future.sort(key=lambda x: x[1])
+        
+        last_rain_time = None
+        
+        for forecast, timestamp in future:
+            if AlertsGenerator._is_raining(forecast):
+                last_rain_time = timestamp.astimezone(brasil_tz)
+            elif last_rain_time:
+                # Primeira hora sem chuva após chuva
+                break
+        
+        # Adicionar 1h ao último forecast com chuva
+        if last_rain_time:
+            return last_rain_time + timedelta(hours=1)
+        
+        return None
+    
+    @staticmethod
+    def _is_raining(forecast: ForecastLike) -> bool:
+        """
+        Determina se está chovendo neste forecast
+        
+        Args:
+            forecast: ForecastLike
+        
+        Returns:
+            True se está chovendo
+        """
+        # Normalizar campos (suporta diferentes formatos)
+        rain_prob = float(getattr(forecast, 'rain_probability', 0) or getattr(forecast, 'precipitation_probability', 0))
+        precipitation = float(getattr(forecast, 'precipitation', 0))
+        rain_3h = precipitation * 3.0  # Converter 1h para 3h
+        
+        # Verificar intensidade
+        rain_1h = rain_3h / 3.0
+        intensity = (rain_1h * rain_prob / 100.0) / WeatherConstants.RAIN_INTENSITY_REFERENCE * 100.0
+        
+        if intensity >= 1.0:
+            return True
+        
+        if rain_3h > 0 and rain_prob >= 40:
+            return True
+        
+        # Verificar códigos de precipitação
+        code = forecast.weather_code
+        
+        # OpenWeather
+        if 200 <= code < 700:
+            return True
+        
+        # WMO (Open-Meteo)
+        if code in WeatherConstants.WMO_DRIZZLE:
+            return True
+        if code in WeatherConstants.WMO_RAIN:
+            return True
+        if code in WeatherConstants.WMO_RAIN_SHOWERS:
+            return True
+        if code in WeatherConstants.WMO_THUNDERSTORM:
+            return True
+        
+        return False
+    
+    @staticmethod
+    def _parse_timestamp(forecast: ForecastLike) -> datetime:
+        """
+        Parse timestamp de forecast (suporta datetime ou string ISO)
+        
+        Args:
+            forecast: Forecast com timestamp
+        
+        Returns:
+            datetime timezone-aware
+        """
+        timestamp = forecast.timestamp
+        
+        # Já é datetime
+        if isinstance(timestamp, datetime):
+            if timestamp.tzinfo is None:
+                return timestamp.replace(tzinfo=ZoneInfo('UTC'))
+            return timestamp
+        
+        # É string ISO (de HourlyForecast/DailyForecast)
+        if isinstance(timestamp, str):
+            try:
+                dt = datetime.fromisoformat(timestamp)
+                if dt.tzinfo is None:
+                    dt = dt.replace(tzinfo=ZoneInfo(App.TIMEZONE))
+                return dt
+            except Exception:
+                return datetime.now(tz=ZoneInfo('UTC'))
+        
+        # Fallback
+        return datetime.now(tz=ZoneInfo('UTC'))

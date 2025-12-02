@@ -9,10 +9,10 @@ from aws_lambda_powertools.event_handler import APIGatewayRestResolver, CORSConf
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
 # Application Layer - Use Cases (ASYNC)
-from application.use_cases.async_get_neighbor_cities import AsyncGetNeighborCitiesUseCase
-from application.use_cases.async_get_city_weather import AsyncGetCityWeatherUseCase
-from application.use_cases.get_regional_weather import AsyncGetRegionalWeatherUseCase
-from application.use_cases.async_get_city_detailed_forecast import AsyncGetCityDetailedForecastUseCase
+from application.use_cases.get_neighbor_cities_use_case import AsyncGetNeighborCitiesUseCase
+from application.use_cases.get_city_weather_use_case import AsyncGetCityWeatherUseCase
+from application.use_cases.get_regional_weather_use_case import GetRegionalWeatherUseCase
+from application.use_cases.get_city_detailed_forecast_use_case import GetCityDetailedForecastUseCase
 
 # Domain Layer - Exceptions
 from domain.exceptions import (
@@ -26,8 +26,7 @@ from domain.exceptions import (
 # Infrastructure Layer - Adapters
 from infrastructure.adapters.input.exception_handler_service import ExceptionHandlerService
 from infrastructure.adapters.output.municipalities_repository import get_repository
-from infrastructure.adapters.output.async_weather_repository import get_async_weather_repository
-from infrastructure.adapters.output.async_openmeteo_repository import get_async_openmeteo_repository
+from infrastructure.adapters.output.providers.weather_provider_factory import get_weather_provider_factory, ProviderStrategy
 
 # Shared Layer - Utilities
 from shared.config.settings import DEFAULT_RADIUS
@@ -132,14 +131,15 @@ def get_city_weather_route(city_id: str):
     # Parse datetime (throws InvalidDateTimeException)
     target_datetime = DateTimeParser.from_query_params(date_str, time_str)
     
-    # Get repositories (sync singletons)
+    # Get city repository e weather provider via factory
     city_repository = get_repository()
-    weather_repository = get_async_weather_repository()
+    factory = get_weather_provider_factory(strategy=ProviderStrategy.HYBRID)
+    weather_provider = factory.get_current_weather_provider()
     
     # Execute async use case
     async def execute_async():
         # Execute use case (ASYNC)
-        use_case = AsyncGetCityWeatherUseCase(city_repository, weather_repository)
+        use_case = AsyncGetCityWeatherUseCase(city_repository, weather_provider)
         weather = await use_case.execute(city_id, target_datetime)
         
         # Update city_id in Weather entity
@@ -182,18 +182,21 @@ def get_city_detailed_forecast_route(city_id: str):
     # Parse datetime (throws InvalidDateTimeException)
     target_datetime = DateTimeParser.from_query_params(date_str, time_str)
     
-    # Get repositories (sync singletons)
+    # Get city repository e providers via factory
     city_repository = get_repository()
-    weather_repository = get_async_weather_repository()
-    openmeteo_repository = get_async_openmeteo_repository()
+    factory = get_weather_provider_factory(strategy=ProviderStrategy.HYBRID)
+    current_provider = factory.get_current_weather_provider()
+    daily_provider = factory.get_daily_forecast_provider()
+    hourly_provider = factory.get_hourly_forecast_provider()
     
     # Execute async use case
     async def execute_async():
         # Execute use case (ASYNC with asyncio.gather for parallel calls)
-        use_case = AsyncGetCityDetailedForecastUseCase(
-            city_repository,
-            weather_repository,
-            openmeteo_repository
+        use_case = GetCityDetailedForecastUseCase(
+            city_repository=city_repository,
+            current_weather_provider=current_provider,
+            daily_forecast_provider=daily_provider,
+            hourly_forecast_provider=hourly_provider
         )
         extended_forecast = await use_case.execute(city_id, target_datetime)
         
@@ -245,14 +248,18 @@ def post_regional_weather_route():
     # Parse datetime (throws InvalidDateTimeException)
     target_datetime = DateTimeParser.from_query_params(date_str, time_str)
     
-    # Get repositories (sync singletons)
+    # Get city repository e weather provider via factory
     city_repository = get_repository()
-    weather_repository = get_async_weather_repository()
+    factory = get_weather_provider_factory(strategy=ProviderStrategy.HYBRID)
+    weather_provider = factory.get_current_weather_provider()
     
     # Execute async use case
     async def execute_async():
         # Execute use case (ASYNC with asyncio.gather)
-        use_case = AsyncGetRegionalWeatherUseCase(city_repository, weather_repository)
+        use_case = GetRegionalWeatherUseCase(
+            city_repository=city_repository,
+            weather_provider=weather_provider
+        )
         weather_list = await use_case.execute(city_ids, target_datetime)
         
         return weather_list

@@ -1,9 +1,16 @@
 """
 Fixtures compartilhadas para testes de integração
 """
+import os
 import pytest
 import json
 from typing import Dict, Any, Optional
+
+# Executa integrações apenas quando explicitamente solicitado
+pytestmark = pytest.mark.skipif(
+    not os.environ.get("RUN_INTEGRATION_TESTS"),
+    reason="Integration tests requerem acesso a APIs externas e AWS",
+)
 
 
 class MockContext:
