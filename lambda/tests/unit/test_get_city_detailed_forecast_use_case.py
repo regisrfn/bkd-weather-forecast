@@ -139,9 +139,10 @@ async def test_execute_success_enriches_and_merges_alerts(monkeypatch, city_repo
         description="Chuva breve",
         timestamp=datetime.now(tz=ZoneInfo("America/Sao_Paulo")),
     )
+    # Usar generate_alerts_next_7days que é o método correto para o use case
     monkeypatch.setattr(
         alerts_generator.AlertsGenerator,
-        "generate_all_alerts",
+        "generate_alerts_next_7days",
         lambda forecasts, target_datetime=None: [alert],
     )
 
@@ -171,7 +172,7 @@ async def test_execute_continues_without_daily_data(monkeypatch, city_repository
     )
     monkeypatch.setattr(
         alerts_generator.AlertsGenerator,
-        "generate_all_alerts",
+        "generate_alerts_next_7days",
         lambda forecasts, target_datetime=None: [],
     )
 
