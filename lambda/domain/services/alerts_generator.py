@@ -42,14 +42,16 @@ class AlertsGenerator:
     
     @staticmethod
     def generate_alerts_next_7days(
-        forecasts: List[ForecastLike]
+        forecasts: List[ForecastLike],
+        target_datetime: Optional[datetime] = None
     ) -> List[WeatherAlert]:
         """
-        Gera alertas analisando os próximos 7 dias a partir de AGORA
+        Gera alertas analisando os próximos 7 dias a partir de uma data de referência
         Usado para alertas em tempo real (não históricos)
         
         Args:
             forecasts: Lista de forecasts (qualquer horário)
+            target_datetime: Data de referência (padrão: datetime.now())
         
         Returns:
             Lista de alertas únicos dos próximos 7 dias
@@ -58,7 +60,15 @@ class AlertsGenerator:
             return []
         
         brasil_tz = ZoneInfo(App.TIMEZONE)
-        now = datetime.now(tz=brasil_tz)
+        
+        # Normalizar target_datetime
+        if target_datetime is None:
+            now = datetime.now(tz=brasil_tz)
+        elif target_datetime.tzinfo is None:
+            now = target_datetime.replace(tzinfo=brasil_tz)
+        else:
+            now = target_datetime.astimezone(brasil_tz)
+        
         future_limit = now + timedelta(days=7)
         
         # Filtrar apenas próximos 7 dias
