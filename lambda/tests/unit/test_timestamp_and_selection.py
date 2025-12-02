@@ -22,6 +22,7 @@ class TestTimestampValidation:
             wind_speed=10.0,
             wind_direction=180,
             precipitation_probability=30,
+                rainfall_intensity=0.0,
             precipitation=0.0,
             weather_code=800,
             cloud_cover=50
@@ -45,6 +46,7 @@ class TestTimestampValidation:
             wind_speed=10.0,
             wind_direction=180,
             precipitation_probability=30,
+                rainfall_intensity=0.0,
             precipitation=0.0,
             weather_code=800,
             cloud_cover=50
@@ -82,6 +84,7 @@ class TestClosestForecastSelection:
                 wind_speed=10.0,
                 wind_direction=180,
                 precipitation_probability=30,
+                rainfall_intensity=0.0,
                 precipitation=0.0,
                 weather_code=800,
                 cloud_cover=50
@@ -93,6 +96,7 @@ class TestClosestForecastSelection:
                 wind_speed=10.0,
                 wind_direction=180,
                 precipitation_probability=30,
+                rainfall_intensity=0.0,
                 precipitation=0.0,
                 weather_code=800,
                 cloud_cover=50
@@ -104,6 +108,7 @@ class TestClosestForecastSelection:
                 wind_speed=10.0,
                 wind_direction=180,
                 precipitation_probability=30,
+                rainfall_intensity=0.0,
                 precipitation=0.0,
                 weather_code=800,
                 cloud_cover=50
@@ -129,6 +134,7 @@ class TestClosestForecastSelection:
                 wind_speed=10.0,
                 wind_direction=180,
                 precipitation_probability=30,
+                rainfall_intensity=0.0,
                 precipitation=0.0,
                 weather_code=800,
                 cloud_cover=50
@@ -140,6 +146,7 @@ class TestClosestForecastSelection:
                 wind_speed=10.0,
                 wind_direction=180,
                 precipitation_probability=30,
+                rainfall_intensity=0.0,
                 precipitation=0.0,
                 weather_code=800,
                 cloud_cover=50
@@ -165,6 +172,7 @@ class TestClosestForecastSelection:
                 wind_speed=10.0,
                 wind_direction=180,
                 precipitation_probability=30,
+                rainfall_intensity=0.0,
                 precipitation=0.0,
                 weather_code=800,
                 cloud_cover=50
@@ -176,6 +184,7 @@ class TestClosestForecastSelection:
                 wind_speed=10.0,
                 wind_direction=180,
                 precipitation_probability=30,
+                rainfall_intensity=0.0,
                 precipitation=0.0,
                 weather_code=800,
                 cloud_cover=50
@@ -208,6 +217,7 @@ class TestClosestForecastSelection:
                 wind_speed=10.0,
                 wind_direction=180,
                 precipitation_probability=30,
+                rainfall_intensity=0.0,
                 precipitation=0.0,
                 weather_code=800,
                 cloud_cover=50
@@ -219,6 +229,7 @@ class TestClosestForecastSelection:
                 wind_speed=10.0,
                 wind_direction=180,
                 precipitation_probability=30,
+                rainfall_intensity=0.0,
                 precipitation=0.0,
                 weather_code=800,
                 cloud_cover=50
@@ -255,6 +266,7 @@ class TestCurrentWeatherSelection:
                 wind_speed=10.0,
                 wind_direction=180,
                 precipitation_probability=30,
+                rainfall_intensity=0.0,
                 precipitation=0.0,
                 weather_code=800,
                 cloud_cover=50
@@ -266,6 +278,7 @@ class TestCurrentWeatherSelection:
                 wind_speed=10.0,
                 wind_direction=180,
                 precipitation_probability=30,
+                rainfall_intensity=0.0,
                 precipitation=0.0,
                 weather_code=800,
                 cloud_cover=50
@@ -277,6 +290,7 @@ class TestCurrentWeatherSelection:
                 wind_speed=10.0,
                 wind_direction=180,
                 precipitation_probability=30,
+                rainfall_intensity=0.0,
                 precipitation=0.0,
                 weather_code=800,
                 cloud_cover=50
@@ -302,6 +316,7 @@ class TestCurrentWeatherSelection:
                 wind_speed=10.0,
                 wind_direction=180,
                 precipitation_probability=30,
+                rainfall_intensity=0.0,
                 precipitation=0.0,
                 weather_code=800,
                 cloud_cover=50
@@ -313,6 +328,7 @@ class TestCurrentWeatherSelection:
                 wind_speed=10.0,
                 wind_direction=180,
                 precipitation_probability=30,
+                rainfall_intensity=0.0,
                 precipitation=0.0,
                 weather_code=800,
                 cloud_cover=50
@@ -346,6 +362,7 @@ class TestDailyForecastDateMatching:
                 temp_min=20.0,
                 precipitation_mm=0.0,
                 rain_probability=10.0,
+            rainfall_intensity=0.0,
                 wind_speed_max=15.0,
                 wind_direction=180,
                 uv_index=5.0,
@@ -359,6 +376,7 @@ class TestDailyForecastDateMatching:
                 temp_min=22.0,
                 precipitation_mm=0.0,
                 rain_probability=10.0,
+            rainfall_intensity=0.0,
                 wind_speed_max=15.0,
                 wind_direction=180,
                 uv_index=5.0,
@@ -389,6 +407,7 @@ class TestDailyForecastDateMatching:
                 temp_min=20.0,
                 precipitation_mm=0.0,
                 rain_probability=10.0,
+            rainfall_intensity=0.0,
                 wind_speed_max=15.0,
                 wind_direction=180,
                 uv_index=5.0,

@@ -162,6 +162,7 @@ class TestOpenMeteoDataMapper:
             temperature=25.0,
             precipitation=2.5,
             precipitation_probability=80,
+            rainfall_intensity=6.67,  # (2.5 * 80/100) / 30 * 100
             humidity=70,
             wind_speed=15.0,
             wind_direction=180,

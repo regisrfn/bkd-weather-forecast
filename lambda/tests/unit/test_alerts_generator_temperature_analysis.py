@@ -23,6 +23,7 @@ def _hourly(ts_str: str, temp: float = 25.0) -> HourlyForecast:
         temperature=temp,
         precipitation=0.0,
         precipitation_probability=0.0,
+        rainfall_intensity=0.0,
         humidity=60,
         wind_speed=5.0,
         wind_direction=180,

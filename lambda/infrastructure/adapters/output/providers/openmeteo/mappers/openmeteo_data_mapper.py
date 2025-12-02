@@ -8,6 +8,7 @@ from datetime import datetime
 from domain.entities.daily_forecast import DailyForecast
 from domain.entities.hourly_forecast import HourlyForecast
 from domain.entities.weather import Weather
+from domain.helpers.rainfall_calculator import calculate_rainfall_intensity
 from domain.constants import Weather as WeatherConstants
 from shared.config.logger_config import get_logger
 
@@ -119,12 +120,18 @@ class OpenMeteoDataMapper:
         for i in range(limit):
             try:
                 weather_code = int(weather_codes[i]) if i < len(weather_codes) else 0
+                precipitation_mm = precip[i] if i < len(precip) else 0.0
+                precipitation_prob = int(precip_prob[i]) if i < len(precip_prob) else 0
+                
+                # Calcular rainfall_intensity
+                rainfall_intensity = calculate_rainfall_intensity(precipitation_prob, precipitation_mm)
                 
                 forecast = HourlyForecast(
                     timestamp=times[i],
                     temperature=temps[i] if i < len(temps) else 0.0,
-                    precipitation=precip[i] if i < len(precip) else 0.0,
-                    precipitation_probability=int(precip_prob[i]) if i < len(precip_prob) else 0,
+                    precipitation=precipitation_mm,
+                    precipitation_probability=precipitation_prob,
+                    rainfall_intensity=rainfall_intensity,
                     humidity=int(humidity[i]) if i < len(humidity) else 0,
                     wind_speed=wind_speed[i] if i < len(wind_speed) else 0.0,
                     wind_direction=int(wind_dir[i]) if i < len(wind_dir) else 0,

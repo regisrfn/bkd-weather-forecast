@@ -16,6 +16,7 @@ class HourlyForecast:
     temperature: float  # Temperatura em °C
     precipitation: float  # Precipitação em mm
     precipitation_probability: int  # Probabilidade de precipitação % (0-100)
+    rainfall_intensity: float  # Intensidade composta 0-100 (volume * probabilidade)
     humidity: int  # Umidade relativa % (0-100)
     wind_speed: float  # Velocidade do vento em km/h
     wind_direction: int  # Direção do vento em graus (0-360)
@@ -35,6 +36,7 @@ class HourlyForecast:
             'temperature': round(self.temperature, 1),
             'precipitation': round(self.precipitation, 1),
             'precipitationProbability': self.precipitation_probability,
+            'rainfallIntensity': round(self.rainfall_intensity, 1),
             'humidity': self.humidity,
             'windSpeed': round(self.wind_speed, 1),
             'windDirection': self.wind_direction,

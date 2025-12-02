@@ -17,11 +17,13 @@ from domain.services.alerts_generator import AlertsGenerator
 
 
 def _hourly(ts: str, temp: float = 25.0, code: int = 61) -> HourlyForecast:
+    from domain.helpers.rainfall_calculator import calculate_rainfall_intensity
     return HourlyForecast(
         timestamp=ts,
         temperature=temp,
         precipitation=1.0,
         precipitation_probability=80,
+        rainfall_intensity=calculate_rainfall_intensity(80, 1.0),
         humidity=60,
         wind_speed=10.0,
         wind_direction=180,

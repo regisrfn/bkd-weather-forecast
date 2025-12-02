@@ -232,12 +232,21 @@ class OpenWeatherDataMapper:
             # One Call não fornece diretamente, aproximamos
             precipitation_hours = (rain_probability / 100) * 12.0  # Estimativa
             
+            # Calcular rainfall_intensity: (volume * probabilidade) / referência
+            # Para dados diários, usamos precipitação distribuída nas horas de chuva
+            if precipitation_hours > 0 and precipitation_mm > 0:
+                precip_per_hour = precipitation_mm / precipitation_hours
+            else:
+                precip_per_hour = 0.0
+            rainfall_intensity = calculate_rainfall_intensity(rain_probability, precip_per_hour)
+            
             forecast = DailyForecast(
                 date=date_str,
                 temp_min=temp_min,
                 temp_max=temp_max,
                 precipitation_mm=precipitation_mm,
                 rain_probability=rain_probability,
+                rainfall_intensity=rainfall_intensity,
                 wind_speed_max=wind_speed_kmh,
                 wind_direction=wind_direction,
                 uv_index=uv_index,
@@ -300,11 +309,15 @@ class OpenWeatherDataMapper:
             weather_code = weather_info.get('id', 0)
             description = weather_info.get('description', '')
             
+            # Calcular rainfall_intensity
+            rainfall_intensity = calculate_rainfall_intensity(precipitation_probability, precipitation)
+            
             forecast = HourlyForecast(
                 timestamp=timestamp_str,
                 temperature=temperature,
                 precipitation=precipitation,
                 precipitation_probability=precipitation_probability,
+                rainfall_intensity=rainfall_intensity,
                 humidity=humidity,
                 wind_speed=wind_speed_kmh,
                 wind_direction=wind_direction,

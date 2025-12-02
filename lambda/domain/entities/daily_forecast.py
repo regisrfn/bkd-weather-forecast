@@ -5,6 +5,8 @@ Fonte: Open-Meteo API (até 16 dias de previsão)
 from dataclasses import dataclass
 from typing import Optional
 
+from domain.helpers.rainfall_calculator import calculate_rainfall_intensity
+
 
 @dataclass
 class DailyForecast:
@@ -19,6 +21,7 @@ class DailyForecast:
     temp_max: float  # Temperatura máxima (°C)
     precipitation_mm: float  # Precipitação total do dia (mm)
     rain_probability: float  # Probabilidade média de chuva (0-100%)
+    rainfall_intensity: float  # Intensidade composta 0-100 (volume * probabilidade)
     wind_speed_max: float  # Velocidade máxima do vento (km/h)
     wind_direction: int  # Direção dominante do vento (graus 0-360)
     uv_index: float  # Índice UV máximo (0-11+)
@@ -104,6 +107,7 @@ class DailyForecast:
             'tempMax': round(self.temp_max, 1),
             'precipitationMm': round(self.precipitation_mm, 1),
             'rainProbability': round(self.rain_probability, 1),
+            'rainfallIntensity': round(self.rainfall_intensity, 1),
             'windSpeedMax': round(self.wind_speed_max, 1),
             'windDirection': self.wind_direction,
             'uvIndex': round(self.uv_index, 1),
@@ -152,12 +156,21 @@ class DailyForecast:
         sunrise_time = sunrise.split('T')[1] if 'T' in sunrise else sunrise
         sunset_time = sunset.split('T')[1] if 'T' in sunset else sunset
         
+        # Calcular rainfall_intensity: (volume * probabilidade) / referência
+        # Para dados diários, usamos precipitação distribuída nas horas de chuva
+        if precip_hours > 0 and precipitation > 0:
+            precip_per_hour = precipitation / precip_hours
+        else:
+            precip_per_hour = 0.0
+        rainfall_intensity = calculate_rainfall_intensity(rain_prob, precip_per_hour)
+        
         return DailyForecast(
             date=date,
             temp_min=temp_min,
             temp_max=temp_max,
             precipitation_mm=precipitation,
             rain_probability=rain_prob,
+            rainfall_intensity=rainfall_intensity,
             wind_speed_max=wind_speed,
             wind_direction=wind_direction,
             uv_index=uv_index,
