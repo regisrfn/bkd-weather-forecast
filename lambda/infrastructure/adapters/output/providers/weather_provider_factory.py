@@ -93,12 +93,12 @@ class WeatherProviderFactory:
             Provider apropriado baseado na estratégia
         """
         if self.strategy == ProviderStrategy.OPENWEATHER_PRIMARY:
-            # OpenWeather não suporta hourly verdadeiro, usar OpenMeteo
-            return self._get_openmeteo()
+            # OpenWeather One Call 3.0 tem hourly (48h) - usar para consistência com alertas
+            return self._get_openweather()
         elif self.strategy == ProviderStrategy.OPENMETEO_PRIMARY:
             return self._get_openmeteo()
         elif self.strategy == ProviderStrategy.HYBRID:
-            return self._get_openmeteo()  # OpenMeteo melhor para hourly
+            return self._get_openweather()  # OpenWeather para consistência com current/alertas
         elif self.strategy == ProviderStrategy.OPENMETEO_ONLY:
             return self._get_openmeteo()
         
