@@ -18,12 +18,13 @@ class TestTimestampValidation:
         forecast = HourlyForecast(
             timestamp="2025-12-02T15:00:00-03:00",
             temperature=25.0,
-            humidity=60.0,
+            humidity=60,
             wind_speed=10.0,
             wind_direction=180,
-            precipitation_probability=30.0,
+            precipitation_probability=30,
             precipitation=0.0,
-            weather_code=800
+            weather_code=800,
+            cloud_cover=50
         )
         
         # Parse timestamp
@@ -40,12 +41,13 @@ class TestTimestampValidation:
         forecast = HourlyForecast(
             timestamp="2025-12-02T15:00:00-03:00",
             temperature=25.0,
-            humidity=60.0,
+            humidity=60,
             wind_speed=10.0,
             wind_direction=180,
-            precipitation_probability=30.0,
+            precipitation_probability=30,
             precipitation=0.0,
-            weather_code=800
+            weather_code=800,
+            cloud_cover=50
         )
         
         # Deve fazer parse sem erros
@@ -76,32 +78,35 @@ class TestClosestForecastSelection:
             HourlyForecast(
                 timestamp="2025-12-02T14:00:00-03:00",
                 temperature=24.0,
-                humidity=60.0,
+                humidity=60,
                 wind_speed=10.0,
                 wind_direction=180,
-                precipitation_probability=30.0,
+                precipitation_probability=30,
                 precipitation=0.0,
-                weather_code=800
+                weather_code=800,
+                cloud_cover=50
             ),
             HourlyForecast(
                 timestamp="2025-12-02T15:00:00-03:00",  # MATCH EXATO
                 temperature=25.0,
-                humidity=60.0,
+                humidity=60,
                 wind_speed=10.0,
                 wind_direction=180,
-                precipitation_probability=30.0,
+                precipitation_probability=30,
                 precipitation=0.0,
-                weather_code=800
+                weather_code=800,
+                cloud_cover=50
             ),
             HourlyForecast(
                 timestamp="2025-12-02T16:00:00-03:00",
                 temperature=26.0,
-                humidity=60.0,
+                humidity=60,
                 wind_speed=10.0,
                 wind_direction=180,
-                precipitation_probability=30.0,
+                precipitation_probability=30,
                 precipitation=0.0,
-                weather_code=800
+                weather_code=800,
+                cloud_cover=50
             ),
         ]
         
@@ -120,22 +125,24 @@ class TestClosestForecastSelection:
             HourlyForecast(
                 timestamp="2025-12-02T15:00:00-03:00",  # 30min antes
                 temperature=25.0,
-                humidity=60.0,
+                humidity=60,
                 wind_speed=10.0,
                 wind_direction=180,
-                precipitation_probability=30.0,
+                precipitation_probability=30,
                 precipitation=0.0,
-                weather_code=800
+                weather_code=800,
+                cloud_cover=50
             ),
             HourlyForecast(
                 timestamp="2025-12-02T16:00:00-03:00",  # 30min depois
                 temperature=26.0,
-                humidity=60.0,
+                humidity=60,
                 wind_speed=10.0,
                 wind_direction=180,
-                precipitation_probability=30.0,
+                precipitation_probability=30,
                 precipitation=0.0,
-                weather_code=800
+                weather_code=800,
+                cloud_cover=50
             ),
         ]
         
@@ -154,22 +161,24 @@ class TestClosestForecastSelection:
             HourlyForecast(
                 timestamp="2025-12-02T15:00:00-03:00",  # 30min antes
                 temperature=25.0,
-                humidity=60.0,
+                humidity=60,
                 wind_speed=10.0,
                 wind_direction=180,
-                precipitation_probability=30.0,
+                precipitation_probability=30,
                 precipitation=0.0,
-                weather_code=800
+                weather_code=800,
+                cloud_cover=50
             ),
             HourlyForecast(
                 timestamp="2025-12-02T16:00:00-03:00",  # 30min depois
                 temperature=26.0,
-                humidity=60.0,
+                humidity=60,
                 wind_speed=10.0,
                 wind_direction=180,
-                precipitation_probability=30.0,
+                precipitation_probability=30,
                 precipitation=0.0,
-                weather_code=800
+                weather_code=800,
+                cloud_cover=50
             ),
         ]
         
@@ -195,22 +204,24 @@ class TestClosestForecastSelection:
             HourlyForecast(
                 timestamp="2025-12-02T15:00:00-03:00",
                 temperature=25.0,
-                humidity=60.0,
+                humidity=60,
                 wind_speed=10.0,
                 wind_direction=180,
-                precipitation_probability=30.0,
+                precipitation_probability=30,
                 precipitation=0.0,
-                weather_code=800
+                weather_code=800,
+                cloud_cover=50
             ),
             HourlyForecast(
                 timestamp="2025-12-02T16:00:00-03:00",
                 temperature=26.0,
-                humidity=60.0,
+                humidity=60,
                 wind_speed=10.0,
                 wind_direction=180,
-                precipitation_probability=30.0,
+                precipitation_probability=30,
                 precipitation=0.0,
-                weather_code=800
+                weather_code=800,
+                cloud_cover=50
             ),
         ]
         
@@ -240,32 +251,35 @@ class TestCurrentWeatherSelection:
             HourlyForecast(
                 timestamp=(now - timedelta(hours=1)).isoformat(),
                 temperature=24.0,
-                humidity=60.0,
+                humidity=60,
                 wind_speed=10.0,
                 wind_direction=180,
-                precipitation_probability=30.0,
+                precipitation_probability=30,
                 precipitation=0.0,
-                weather_code=800
+                weather_code=800,
+                cloud_cover=50
             ),
             HourlyForecast(
                 timestamp=now.isoformat(),
                 temperature=25.0,
-                humidity=60.0,
+                humidity=60,
                 wind_speed=10.0,
                 wind_direction=180,
-                precipitation_probability=30.0,
+                precipitation_probability=30,
                 precipitation=0.0,
-                weather_code=800
+                weather_code=800,
+                cloud_cover=50
             ),
             HourlyForecast(
                 timestamp=(now + timedelta(hours=1)).isoformat(),
                 temperature=26.0,
-                humidity=60.0,
+                humidity=60,
                 wind_speed=10.0,
                 wind_direction=180,
-                precipitation_probability=30.0,
+                precipitation_probability=30,
                 precipitation=0.0,
-                weather_code=800
+                weather_code=800,
+                cloud_cover=50
             ),
         ]
         
@@ -284,22 +298,24 @@ class TestCurrentWeatherSelection:
             HourlyForecast(
                 timestamp=(now - timedelta(hours=2)).isoformat(),  # Passado
                 temperature=23.0,
-                humidity=60.0,
+                humidity=60,
                 wind_speed=10.0,
                 wind_direction=180,
-                precipitation_probability=30.0,
+                precipitation_probability=30,
                 precipitation=0.0,
-                weather_code=800
+                weather_code=800,
+                cloud_cover=50
             ),
             HourlyForecast(
                 timestamp=(now + timedelta(minutes=30)).isoformat(),  # Futuro próximo
                 temperature=25.0,
-                humidity=60.0,
+                humidity=60,
                 wind_speed=10.0,
                 wind_direction=180,
-                precipitation_probability=30.0,
+                precipitation_probability=30,
                 precipitation=0.0,
-                weather_code=800
+                weather_code=800,
+                cloud_cover=50
             ),
         ]
         
@@ -328,21 +344,27 @@ class TestDailyForecastDateMatching:
                 date="2025-12-04",
                 temp_max=30.0,
                 temp_min=20.0,
-                weather_code=800,
-                precipitation_sum=0.0,
-                precipitation_probability_max=10.0,
+                precipitation_mm=0.0,
+                rain_probability=10.0,
                 wind_speed_max=15.0,
-                wind_direction_dominant=180
+                wind_direction=180,
+                uv_index=5.0,
+                sunrise="06:00",
+                sunset="18:00",
+                precipitation_hours=0.0
             ),
             DailyForecast(
                 date="2025-12-05",  # MATCH
                 temp_max=32.0,
                 temp_min=22.0,
-                weather_code=800,
-                precipitation_sum=0.0,
-                precipitation_probability_max=10.0,
+                precipitation_mm=0.0,
+                rain_probability=10.0,
                 wind_speed_max=15.0,
-                wind_direction_dominant=180
+                wind_direction=180,
+                uv_index=5.0,
+                sunrise="06:00",
+                sunset="18:00",
+                precipitation_hours=0.0
             ),
         ]
         
@@ -365,11 +387,14 @@ class TestDailyForecastDateMatching:
                 date="2025-12-04",
                 temp_max=30.0,
                 temp_min=20.0,
-                weather_code=800,
-                precipitation_sum=0.0,
-                precipitation_probability_max=10.0,
+                precipitation_mm=0.0,
+                rain_probability=10.0,
                 wind_speed_max=15.0,
-                wind_direction_dominant=180
+                wind_direction=180,
+                uv_index=5.0,
+                sunrise="06:00",
+                sunset="18:00",
+                precipitation_hours=0.0
             ),
         ]
         
