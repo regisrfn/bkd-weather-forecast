@@ -107,7 +107,7 @@ class DailyForecast:
             'tempMax': round(self.temp_max, 1),
             'precipitationMm': round(self.precipitation_mm, 1),
             'rainProbability': round(self.rain_probability, 1),
-            'rainfallIntensity': round(self.rainfall_intensity, 1),
+            'rainfallIntensity': int(round(self.rainfall_intensity)),
             'windSpeedMax': round(self.wind_speed_max, 1),
             'windDirection': self.wind_direction,
             'uvIndex': round(self.uv_index, 1),

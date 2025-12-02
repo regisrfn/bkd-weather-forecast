@@ -36,7 +36,7 @@ class HourlyForecast:
             'temperature': round(self.temperature, 1),
             'precipitation': round(self.precipitation, 1),
             'precipitationProbability': self.precipitation_probability,
-            'rainfallIntensity': round(self.rainfall_intensity, 1),
+            'rainfallIntensity': int(round(self.rainfall_intensity)),
             'humidity': self.humidity,
             'windSpeed': round(self.wind_speed, 1),
             'windDirection': self.wind_direction,
