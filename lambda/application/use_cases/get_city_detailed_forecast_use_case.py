@@ -164,23 +164,37 @@ class GetCityDetailedForecastUseCase:
                         error=str(e)
                     )
             
-            # Generate enhanced alerts from hourly forecasts
+            # Generate enhanced alerts from hourly forecasts (next 7 days)
+            # OpenMeteo alerts have PRIORITY over OpenWeather alerts (replace, not merge)
             if hourly_forecasts and not isinstance(hourly_forecasts, Exception):
                 try:
-                    # AlertsGenerator agora aceita HourlyForecast diretamente (via Protocol)
-                    additional_alerts = AlertsGenerator.generate_all_alerts(
-                        forecasts=hourly_forecasts,  # Passa HourlyForecast diretamente
-                        target_datetime=target_datetime
+                    logger.info(f"Generating alerts from {len(hourly_forecasts)} hourly forecasts")
+                    
+                    # Usar generate_alerts_next_7days para alertas em tempo real
+                    # (não usar target_datetime - queremos alertas dos próximos 7 dias a partir de AGORA)
+                    openmeteo_alerts = AlertsGenerator.generate_alerts_next_7days(
+                        forecasts=hourly_forecasts
                     )
                     
-                    # Merge alerts
-                    if additional_alerts:
-                        current_weather = WeatherEnricher.merge_alerts(
-                            base_weather=current_weather,
-                            additional_alerts=additional_alerts
-                        )
+                    logger.info(f"Generated {len(openmeteo_alerts)} alerts from OpenMeteo")
+                    
+                    # OpenMeteo alerts REPLACE OpenWeather alerts (prioridade)
+                    # Manter apenas alertas do OpenWeather que NÃO existem no OpenMeteo
+                    if openmeteo_alerts:
+                        openmeteo_codes = {alert.code for alert in openmeteo_alerts}
+                        
+                        # Filtrar alertas do OpenWeather (remover códigos duplicados)
+                        openweather_unique = [
+                            alert for alert in current_weather.weather_alert
+                            if alert.code not in openmeteo_codes
+                        ]
+                        
+                        # Substituir: OpenMeteo first, depois OpenWeather únicos
+                        current_weather.weather_alert = openmeteo_alerts + openweather_unique
+                        
                         logger.info(
-                            f"Merged {len(additional_alerts)} additional alerts"
+                            f"Alerts updated: {len(openmeteo_alerts)} from OpenMeteo, "
+                            f"{len(openweather_unique)} unique from OpenWeather"
                         )
                         
                 except Exception as e:

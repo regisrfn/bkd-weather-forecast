@@ -41,6 +41,78 @@ class AlertsGenerator:
     """
     
     @staticmethod
+    def generate_alerts_next_7days(
+        forecasts: List[ForecastLike]
+    ) -> List[WeatherAlert]:
+        """
+        Gera alertas analisando os próximos 7 dias a partir de AGORA
+        Usado para alertas em tempo real (não históricos)
+        
+        Args:
+            forecasts: Lista de forecasts (qualquer horário)
+        
+        Returns:
+            Lista de alertas únicos dos próximos 7 dias
+        """
+        if not forecasts:
+            return []
+        
+        brasil_tz = ZoneInfo(App.TIMEZONE)
+        now = datetime.now(tz=brasil_tz)
+        future_limit = now + timedelta(days=7)
+        
+        # Filtrar apenas próximos 7 dias
+        next_7days_forecasts = []
+        for f in forecasts:
+            ts = AlertsGenerator._parse_timestamp(f)
+            if now <= ts <= future_limit:
+                next_7days_forecasts.append((f, ts))
+        
+        if not next_7days_forecasts:
+            return []
+        
+        # Ordenar por timestamp
+        next_7days_forecasts.sort(key=lambda x: x[1])
+        
+        # Deduplicação por código
+        alerts_by_code: Dict[str, WeatherAlert] = {}
+        
+        for forecast, timestamp in next_7days_forecasts:
+            # Normalizar campos
+            rain_prob = float(getattr(forecast, 'rain_probability', 0) or getattr(forecast, 'precipitation_probability', 0))
+            wind_speed = float(getattr(forecast, 'wind_speed', 0) or getattr(forecast, 'wind_speed_kmh', 0))
+            precipitation = float(getattr(forecast, 'precipitation', 0))
+            rain_1h = precipitation
+            temperature = float(forecast.temperature)
+            visibility = float(getattr(forecast, 'visibility', 10000))
+            
+            # Gerar alertas básicos
+            basic_alerts = WeatherAlertOrchestrator.generate_alerts(
+                weather_code=forecast.weather_code,
+                rain_prob=rain_prob,
+                wind_speed=wind_speed,
+                forecast_time=timestamp,
+                rain_1h=rain_1h,
+                temperature=temperature,
+                visibility=visibility
+            )
+            
+            # Deduplicar mantendo timestamp mais próximo
+            for alert in basic_alerts:
+                if alert.code not in alerts_by_code:
+                    alerts_by_code[alert.code] = alert
+                elif alert.timestamp < alerts_by_code[alert.code].timestamp:
+                    alerts_by_code[alert.code] = alert
+        
+        # Adicionar rain_ends_at
+        AlertsGenerator._add_rain_end_times(
+            list(alerts_by_code.values()),
+            [f for f, _ in next_7days_forecasts]
+        )
+        
+        return list(alerts_by_code.values())
+    
+    @staticmethod
     def generate_all_alerts(
         forecasts: List[ForecastLike],
         target_datetime: Optional[datetime] = None
