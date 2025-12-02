@@ -41,20 +41,22 @@ class AlertsGenerator:
     """
     
     @staticmethod
-    def generate_alerts_next_7days(
+    def generate_alerts_next_days(
         forecasts: List[ForecastLike],
-        target_datetime: Optional[datetime] = None
+        target_datetime: Optional[datetime] = None,
+        days_limit: int = 7
     ) -> List[WeatherAlert]:
         """
-        Gera alertas analisando os próximos 7 dias a partir de uma data de referência
+        Gera alertas analisando os próximos N dias a partir de uma data de referência
         Usado para alertas em tempo real (não históricos)
         
         Args:
             forecasts: Lista de forecasts (qualquer horário)
             target_datetime: Data de referência (padrão: datetime.now())
+            days_limit: Número de dias para analisar (padrão: 7)
         
         Returns:
-            Lista de alertas únicos dos próximos 7 dias
+            Lista de alertas únicos dos próximos N dias
         """
         if not forecasts:
             return []
@@ -69,20 +71,20 @@ class AlertsGenerator:
         else:
             now = target_datetime.astimezone(brasil_tz)
         
-        future_limit = now + timedelta(days=7)
+        future_limit = now + timedelta(days=days_limit)
         
-        # Filtrar apenas próximos 7 dias
-        next_7days_forecasts = []
+        # Filtrar apenas próximos N dias
+        next_days_forecasts = []
         for f in forecasts:
             ts = AlertsGenerator._parse_timestamp(f)
             if now <= ts <= future_limit:
-                next_7days_forecasts.append((f, ts))
+                next_days_forecasts.append((f, ts))
         
-        if not next_7days_forecasts:
+        if not next_days_forecasts:
             return []
         
         # Ordenar por timestamp
-        next_7days_forecasts.sort(key=lambda x: x[1])
+        next_days_forecasts.sort(key=lambda x: x[1])
         
         # Deduplicação por código
         alerts_by_code: Dict[str, WeatherAlert] = {}
@@ -93,7 +95,7 @@ class AlertsGenerator:
             'first_forecast': None
         })
         
-        for forecast, timestamp in next_7days_forecasts:
+        for forecast, timestamp in next_days_forecasts:
             # Normalizar campos
             rain_prob = float(getattr(forecast, 'rain_probability', 0) or getattr(forecast, 'precipitation_probability', 0))
             wind_speed = float(getattr(forecast, 'wind_speed', 0) or getattr(forecast, 'wind_speed_kmh', 0))
@@ -101,6 +103,7 @@ class AlertsGenerator:
             rain_1h = precipitation
             temperature = float(forecast.temperature)
             visibility = float(getattr(forecast, 'visibility', 10000))
+            uv_index = float(getattr(forecast, 'uv_index', 0))
             
             # Gerar alertas básicos
             basic_alerts = WeatherAlertOrchestrator.generate_alerts(
@@ -113,6 +116,64 @@ class AlertsGenerator:
                 visibility=visibility
             )
             
+            # Alertas específicos para previsões diárias (quando disponível)
+            # 1. HEAVY_RAIN_DAY - Chuva acumulada alta no dia
+            if precipitation > 0 and rain_prob > 60:
+                from domain.services.rain_alert_service import RainAlertService
+                avg_rain_per_hour = precipitation / 24.0
+                rainfall_intensity = RainAlertService.compute_rainfall_intensity(
+                    rain_prob=rain_prob,
+                    rain_1h=avg_rain_per_hour
+                )
+                
+                if rainfall_intensity >= 25 and precipitation > 20:
+                    severity = AlertSeverity.WARNING if precipitation < 50 else AlertSeverity.ALERT
+                    basic_alerts.append(WeatherAlert(
+                        code="HEAVY_RAIN_DAY",
+                        severity=severity,
+                        description=f"🌧️ Chuva forte prevista ({precipitation:.0f}mm acumulados)",
+                        timestamp=timestamp,
+                        details={
+                            "date": timestamp.date().isoformat(),
+                            "precipitation_mm": round(precipitation, 1),
+                            "rain_probability": round(rain_prob, 0),
+                            "intensity": round(rainfall_intensity, 1)
+                        }
+                    ))
+            
+            # 2. STRONG_WIND_DAY - Vento forte sustentado
+            if wind_speed > WeatherConstants.WIND_SPEED_WARNING:
+                if wind_speed >= WeatherConstants.WIND_SPEED_DANGER:
+                    severity = AlertSeverity.ALERT
+                    description = f"💨 Ventos muito fortes previstos ({wind_speed:.0f} km/h)"
+                else:
+                    severity = AlertSeverity.WARNING
+                    description = f"💨 Ventos fortes previstos ({wind_speed:.0f} km/h)"
+                
+                basic_alerts.append(WeatherAlert(
+                    code="STRONG_WIND_DAY",
+                    severity=severity,
+                    description=description,
+                    timestamp=timestamp,
+                    details={
+                        "date": timestamp.date().isoformat(),
+                        "wind_speed_kmh": round(wind_speed, 1)
+                    }
+                ))
+            
+            # 3. EXTREME_UV - Índice UV extremo
+            if uv_index >= 11:
+                basic_alerts.append(WeatherAlert(
+                    code="EXTREME_UV",
+                    severity=AlertSeverity.WARNING,
+                    description=f"☀️ Índice UV extremo ({uv_index:.0f})",
+                    timestamp=timestamp,
+                    details={
+                        "date": timestamp.date().isoformat(),
+                        "uv_index": round(uv_index, 1)
+                    }
+                ))
+            
             # Deduplicar mantendo timestamp mais próximo
             for alert in basic_alerts:
                 if alert.code not in alerts_by_code:
@@ -124,13 +185,18 @@ class AlertsGenerator:
             date_key = timestamp.astimezone(brasil_tz).date()
             daily = daily_extremes[date_key]
             daily['temps'].append(temperature)
+            # Usar temp_max/temp_min se disponível (para daily forecasts)
+            temp_max = getattr(forecast, 'temp_max', temperature)
+            temp_min = getattr(forecast, 'temp_min', temperature)
+            if temp_max != temperature or temp_min != temperature:
+                daily['temps'].extend([temp_max, temp_min])
             if daily['first_forecast'] is None:
                 daily['first_forecast'] = (forecast, timestamp)
         
         # Adicionar rain_ends_at
         AlertsGenerator._add_rain_end_times(
             list(alerts_by_code.values()),
-            [f for f, _ in next_7days_forecasts]
+            [f for f, _ in next_days_forecasts]
         )
         
         # Analisar trends de temperatura (TEMP_DROP e TEMP_RISE)

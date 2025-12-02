@@ -8,8 +8,8 @@ import os
 class API:
     """Constantes de APIs externas"""
     
-    # OpenWeather
-    OPENWEATHER_BASE_URL = "https://api.openweathermap.org/data/2.5"
+    # OpenWeather One Call API 3.0
+    OPENWEATHER_BASE_URL = "https://api.openweathermap.org/data/3.0"
     OPENWEATHER_API_KEY = os.environ.get('OPENWEATHER_API_KEY', '')
     
     # Open-Meteo

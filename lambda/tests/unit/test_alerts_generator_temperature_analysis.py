@@ -46,7 +46,7 @@ class TestAlertsGeneratorTemperatureAnalysis:
             _hourly((now + timedelta(days=3, hours=12)).isoformat(), temp=33.0),  # Rise 13°C
         ]
         
-        result = AlertsGenerator.generate_alerts_next_7days(forecasts, target_datetime=now)
+        result = AlertsGenerator.generate_alerts_next_days(forecasts, target_datetime=now)
         
         codes = {a.code for a in result}
         # Deve ter TEMP_DROP e TEMP_RISE
@@ -62,7 +62,7 @@ class TestAlertsGeneratorTemperatureAnalysis:
             _hourly((now + timedelta(days=1, hours=12)).isoformat(), temp=17.0),  # Exatamente -8°C
         ]
         
-        result = AlertsGenerator.generate_alerts_next_7days(forecasts, target_datetime=now)
+        result = AlertsGenerator.generate_alerts_next_days(forecasts, target_datetime=now)
         
         temp_alerts = [a for a in result if a.code == "TEMP_DROP"]
         assert len(temp_alerts) > 0
@@ -77,7 +77,7 @@ class TestAlertsGeneratorTemperatureAnalysis:
             for i in range(1, 24)
         ]
         
-        result = AlertsGenerator.generate_alerts_next_7days(forecasts, target_datetime=now)
+        result = AlertsGenerator.generate_alerts_next_days(forecasts, target_datetime=now)
         
         temp_alerts = [a for a in result if "TEMP" in a.code]
         assert len(temp_alerts) == 0
@@ -88,7 +88,7 @@ class TestAlertsGeneratorTemperatureAnalysis:
         
         # Testar com datetime direto
         forecasts = [_hourly((now + timedelta(hours=12)).isoformat(), temp=25.0)]
-        result = AlertsGenerator.generate_alerts_next_7days(forecasts, target_datetime=now)
+        result = AlertsGenerator.generate_alerts_next_days(forecasts, target_datetime=now)
         assert isinstance(result, list)
 
     def test_generate_all_alerts_with_custom_target(self):
@@ -114,7 +114,7 @@ class TestAlertsGeneratorTemperatureAnalysis:
             _hourly((now + timedelta(days=1, hours=12)).isoformat(), temp=5.0),  # -35°C!
         ]
         
-        result = AlertsGenerator.generate_alerts_next_7days(forecasts, target_datetime=now)
+        result = AlertsGenerator.generate_alerts_next_days(forecasts, target_datetime=now)
         
         temp_drop = [a for a in result if a.code == "TEMP_DROP"]
         assert len(temp_drop) > 0
@@ -130,7 +130,7 @@ class TestAlertsGeneratorTemperatureAnalysis:
             temp = 25.0 + day  # 25, 26, 27, 28, 29, 30, 31
             forecasts.append(_hourly((now + timedelta(days=day, hours=12)).isoformat(), temp=temp))
         
-        result = AlertsGenerator.generate_alerts_next_7days(forecasts, target_datetime=now)
+        result = AlertsGenerator.generate_alerts_next_days(forecasts, target_datetime=now)
         
         temp_alerts = [a for a in result if "TEMP" in a.code and ("DROP" in a.code or "RISE" in a.code)]
         assert len(temp_alerts) == 0
@@ -146,7 +146,7 @@ class TestAlertsGeneratorTemperatureAnalysis:
             _hourly((now + timedelta(days=3, hours=12)).isoformat(), temp=15.0),  # -14°C (maior)
         ]
         
-        result = AlertsGenerator.generate_alerts_next_7days(forecasts, target_datetime=now)
+        result = AlertsGenerator.generate_alerts_next_days(forecasts, target_datetime=now)
         
         temp_drop = [a for a in result if a.code == "TEMP_DROP"]
         # Deve ter apenas 1 (deduplicado), com a maior variação
@@ -162,7 +162,7 @@ class TestAlertsGeneratorTemperatureAnalysis:
             _hourly((now + timedelta(days=1, hours=12)).isoformat(), temp=35.0),
         ]
         
-        result = AlertsGenerator.generate_alerts_next_7days(forecasts, target_datetime=now)
+        result = AlertsGenerator.generate_alerts_next_days(forecasts, target_datetime=now)
         
         temp_rise = [a for a in result if a.code == "TEMP_RISE"]
         assert len(temp_rise) > 0
@@ -177,7 +177,7 @@ class TestAlertsGeneratorTemperatureAnalysis:
             _hourly((now + timedelta(days=1, hours=12)).isoformat(), temp=20.0),
         ]
         
-        result = AlertsGenerator.generate_alerts_next_7days(forecasts, target_datetime=now)
+        result = AlertsGenerator.generate_alerts_next_days(forecasts, target_datetime=now)
         
         temp_drop = [a for a in result if a.code == "TEMP_DROP"]
         assert len(temp_drop) > 0
@@ -192,7 +192,7 @@ class TestAlertsGeneratorTemperatureAnalysis:
             _hourly((now + timedelta(days=2, hours=12)).isoformat(), temp=18.0),  # 2 dias depois
         ]
         
-        result = AlertsGenerator.generate_alerts_next_7days(forecasts, target_datetime=now)
+        result = AlertsGenerator.generate_alerts_next_days(forecasts, target_datetime=now)
         
         temp_drop = [a for a in result if a.code == "TEMP_DROP"]
         assert len(temp_drop) > 0
@@ -208,7 +208,7 @@ class TestAlertsGeneratorTemperatureAnalysis:
             _hourly("2024-07-02T14:00:00-03:00", temp=20.0),
         ]
         
-        result = AlertsGenerator.generate_alerts_next_7days(forecasts, target_datetime=naive_dt)
+        result = AlertsGenerator.generate_alerts_next_days(forecasts, target_datetime=naive_dt)
         
         temp_alerts = [a for a in result if "TEMP" in a.code]
         assert len(temp_alerts) > 0

@@ -1,13 +1,14 @@
 """
 Async Use Case: Get City Detailed Forecast
-Refatorado para usar providers desacoplados e serviços de domínio otimizados
+Refatorado para usar One Call API 3.0 com estratégia híbrida para 16 dias
 """
 import asyncio
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 from ddtrace import tracer
 
 from domain.entities.extended_forecast import ExtendedForecast
+from domain.entities.daily_forecast import DailyForecast
 from domain.exceptions import CityNotFoundException, CoordinatesNotFoundException
 from application.ports.output.weather_provider_port import IWeatherProvider
 from domain.services.weather_enricher import WeatherEnricher
@@ -22,11 +23,10 @@ class GetCityDetailedForecastUseCase:
     """
     Async use case: Get detailed forecast with extended data
     
-    Combina dados de múltiplos providers:
-    - Current weather (provider configurável)
-    - Daily forecasts (provider com suporte daily)
-    - Hourly forecasts (provider com suporte hourly)
-    - Enriquecimento opcional entre providers
+    Estratégia Híbrida 16 dias:
+    - OpenWeather One Call 3.0: current + hourly (48h) + daily (8 dias)
+    - Open-Meteo: daily (16 dias) como complemento
+    - Combina: OpenWeather dias 1-8 + Open-Meteo dias 9-16
     """
     
     def __init__(
@@ -40,6 +40,74 @@ class GetCityDetailedForecastUseCase:
         self.current_weather_provider = current_weather_provider
         self.daily_forecast_provider = daily_forecast_provider
         self.hourly_forecast_provider = hourly_forecast_provider
+    
+    def _combine_daily_forecasts(
+        self,
+        openweather_forecasts: any,
+        openmeteo_forecasts: any
+    ) -> List[DailyForecast]:
+        """
+        Combina previsões daily: OpenWeather (dias 1-8) + Open-Meteo (dias 9-16)
+        
+        Estratégia:
+        1. Se OpenWeather OK: usa dias 1-8 do OpenWeather
+        2. Complementa com dias 9-16 do Open-Meteo
+        3. Se OpenWeather falhar: usa todos 16 dias do Open-Meteo
+        
+        Args:
+            openweather_forecasts: Lista de 8 DailyForecast ou Exception
+            openmeteo_forecasts: Lista de 16 DailyForecast ou Exception
+        
+        Returns:
+            Lista combinada de até 16 DailyForecast
+        """
+        # Se ambos falharam, retornar lista vazia
+        if isinstance(openweather_forecasts, Exception) and isinstance(openmeteo_forecasts, Exception):
+            logger.error(
+                "Both OpenWeather and Open-Meteo daily forecasts failed",
+                ow_error=str(openweather_forecasts),
+                om_error=str(openmeteo_forecasts)
+            )
+            return []
+        
+        # Se apenas Open-Meteo disponível, usar todos 16 dias
+        if isinstance(openweather_forecasts, Exception):
+            logger.warning(
+                "OpenWeather daily failed, using Open-Meteo 16 days",
+                error=str(openweather_forecasts)
+            )
+            return openmeteo_forecasts if not isinstance(openmeteo_forecasts, Exception) else []
+        
+        # Se apenas OpenWeather disponível, usar os 8 dias
+        if isinstance(openmeteo_forecasts, Exception):
+            logger.warning(
+                "Open-Meteo daily failed, using OpenWeather 8 days only",
+                error=str(openmeteo_forecasts)
+            )
+            return openweather_forecasts if not isinstance(openweather_forecasts, Exception) else []
+        
+        # Ambos OK: combinar OpenWeather (1-8) + Open-Meteo (9-16)
+        # Criar mapa de datas do Open-Meteo
+        openmeteo_by_date = {forecast.date: forecast for forecast in openmeteo_forecasts}
+        
+        # Pegar dias 1-8 do OpenWeather
+        combined = list(openweather_forecasts[:8])
+        
+        # Adicionar dias 9-16 do Open-Meteo que não estão no OpenWeather
+        used_dates = {forecast.date for forecast in combined}
+        
+        for forecast in openmeteo_forecasts:
+            if forecast.date not in used_dates:
+                combined.append(forecast)
+                if len(combined) >= 16:
+                    break
+        
+        logger.info(
+            f"Combined daily forecasts: {len(combined)} days "
+            f"(OpenWeather: {len(openweather_forecasts)}, Open-Meteo: {len([f for f in openmeteo_forecasts if f.date not in used_dates])} additional)"
+        )
+        
+        return combined[:16]  # Garantir máximo 16 dias
     
     @tracer.wrap(resource="use_case.async_get_city_detailed_forecast")
     async def execute(
@@ -85,56 +153,74 @@ class GetCityDetailedForecastUseCase:
             hourly_provider=self.hourly_forecast_provider.provider_name
         )
         
-        # Execute THREE API calls in parallel (ASYNC - sem GIL)
+        # Execute FOUR API calls in parallel (ASYNC - sem GIL)
+        # Strategy: OpenWeather (8 days) + Open-Meteo (16 days) para combinar
         try:
-            # Task 1: Current weather
+            # Task 1: Current weather (com alertas de 8 dias para rota detalhada)
             current_task = self.current_weather_provider.get_current_weather(
                 latitude=city.latitude,
                 longitude=city.longitude,
                 city_id=city.id,
                 city_name=city.name,
-                target_datetime=target_datetime
+                target_datetime=target_datetime,
+                include_daily_alerts=True  # Inclui alertas de médio prazo (8 dias)
             )
             
-            # Task 2: Daily forecasts
-            daily_task = self.daily_forecast_provider.get_daily_forecast(
+            # Task 2: OpenWeather Daily forecasts (8 dias)
+            openweather_daily_task = self.current_weather_provider.get_daily_forecast(
+                latitude=city.latitude,
+                longitude=city.longitude,
+                city_id=city.id,
+                days=8
+            )
+            
+            # Task 3: Open-Meteo Daily forecasts (16 dias - para complementar)
+            openmeteo_daily_task = self.daily_forecast_provider.get_daily_forecast(
                 latitude=city.latitude,
                 longitude=city.longitude,
                 city_id=city.id,
                 days=16
             )
             
-            # Task 3: Hourly forecasts
+            # Task 4: Hourly forecasts (48h OpenWeather)
             hourly_task = self.hourly_forecast_provider.get_hourly_forecast(
                 latitude=city.latitude,
                 longitude=city.longitude,
                 city_id=city.id,
-                hours=168
+                hours=48
             )
             
-            # Await all three tasks concurrently
-            current_weather, daily_forecasts, hourly_forecasts = await asyncio.gather(
+            # Await all four tasks concurrently
+            results = await asyncio.gather(
                 current_task,
-                daily_task,
+                openweather_daily_task,
+                openmeteo_daily_task,
                 hourly_task,
                 return_exceptions=True  # Continue even if one fails
+            )
+            
+            current_weather = results[0]
+            openweather_daily = results[1]
+            openmeteo_daily = results[2]
+            hourly_forecasts = results[3]
+            
+            # Combinar daily forecasts: OpenWeather (dias 1-8) + Open-Meteo (dias 9-16)
+            daily_forecasts = self._combine_daily_forecasts(
+                openweather_forecasts=openweather_daily,
+                openmeteo_forecasts=openmeteo_daily
             )
             
             # Handle errors
             extended_available = True
             
-            # Process current weather
+            # Process current weather (critical - must succeed)
             if isinstance(current_weather, Exception):
                 logger.error("Failed to fetch current weather", error=str(current_weather))
                 raise current_weather
             
-            # Process daily forecasts
-            if isinstance(daily_forecasts, Exception):
-                logger.warning(
-                    "Failed to fetch daily forecast, continuing with current only",
-                    error=str(daily_forecasts)
-                )
-                daily_forecasts = []
+            # Daily forecasts já foram combinados
+            if not daily_forecasts:
+                logger.warning("No daily forecasts available")
                 extended_available = False
             
             # Process hourly forecasts
@@ -145,67 +231,13 @@ class GetCityDetailedForecastUseCase:
                 )
                 hourly_forecasts = []
             
-            # Enrich current weather with hourly data if available and different providers
-            if (hourly_forecasts and 
-                not isinstance(hourly_forecasts, Exception) and
-                self.current_weather_provider.provider_name != self.hourly_forecast_provider.provider_name):
-                try:
-                    enriched = WeatherEnricher.enrich_with_hourly_data(
-                        base_weather=current_weather,
-                        hourly_forecasts=hourly_forecasts,
-                        target_datetime=target_datetime
-                    )
-                    if enriched:
-                        current_weather = enriched
-                        logger.info("Current weather enriched with hourly data")
-                except Exception as e:
-                    logger.warning(
-                        "Failed to enrich current weather with hourly data",
-                        error=str(e)
-                    )
-            
-            # Generate enhanced alerts from hourly forecasts (next 7 days)
-            # OpenMeteo alerts have PRIORITY over OpenWeather alerts (replace, not merge)
-            if hourly_forecasts and not isinstance(hourly_forecasts, Exception):
-                try:
-                    # Usar generate_alerts_next_7days para alertas em tempo real
-                    # (não usar target_datetime - queremos alertas dos próximos 7 dias a partir de AGORA)
-                    openmeteo_alerts = AlertsGenerator.generate_alerts_next_7days(
-                        forecasts=hourly_forecasts
-                    )
-                    
-                    # OpenMeteo alerts REPLACE OpenWeather alerts (prioridade)
-                    # Manter apenas alertas do OpenWeather que NÃO existem no OpenMeteo
-                    if openmeteo_alerts:
-                        openmeteo_codes = {alert.code for alert in openmeteo_alerts}
-                        
-                        # Filtrar alertas do OpenWeather (remover códigos duplicados)
-                        openweather_unique = [
-                            alert for alert in current_weather.weather_alert
-                            if alert.code not in openmeteo_codes
-                        ]
-                        
-                        # Substituir: OpenMeteo first, depois OpenWeather únicos
-                        current_weather.weather_alert = openmeteo_alerts + openweather_unique
-                        
-                        logger.info(
-                            f"Enhanced alerts: {len(current_weather.weather_alert)} total "
-                            f"({len(openmeteo_alerts)} OpenMeteo + {len(openweather_unique)} OpenWeather)"
-                        )
-                        
-                except Exception as e:
-                    logger.warning(
-                        "Failed to generate enhanced alerts from hourly data",
-                        error=str(e)
-                    )
-            
             # Create ExtendedForecast
             extended_forecast = ExtendedForecast(
                 city_id=city.id,
                 city_name=city.name,
                 city_state=city.state,
                 current_weather=current_weather,
-                daily_forecasts=daily_forecasts if not isinstance(daily_forecasts, Exception) else [],
+                daily_forecasts=daily_forecasts,
                 hourly_forecasts=hourly_forecasts if not isinstance(hourly_forecasts, Exception) else [],
                 extended_available=extended_available
             )
@@ -214,7 +246,7 @@ class GetCityDetailedForecastUseCase:
                 "Detailed forecast fetched successfully",
                 city_id=city_id,
                 extended_available=extended_available,
-                forecast_days=len(daily_forecasts) if not isinstance(daily_forecasts, Exception) else 0,
+                forecast_days=len(daily_forecasts),
                 hourly_hours=len(hourly_forecasts) if not isinstance(hourly_forecasts, Exception) else 0,
                 total_alerts=len(current_weather.weather_alert)
             )

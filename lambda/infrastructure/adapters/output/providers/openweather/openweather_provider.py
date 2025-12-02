@@ -1,4 +1,4 @@
-"""OpenWeather Provider - Implementação do provider para OpenWeatherMap API"""
+"""OpenWeather Provider - Implementação do provider para OpenWeather One Call API 3.0"""
 
 from typing import Optional, List
 from datetime import datetime
@@ -16,11 +16,12 @@ from infrastructure.adapters.output.http.aiohttp_session_manager import get_aioh
 
 class OpenWeatherProvider(IWeatherProvider):
     """
-    Provider para OpenWeatherMap Forecast API
+    Provider para OpenWeather One Call API 3.0
     
     Características:
-    - Previsões de 5 dias com intervalos de 3 horas
-    - Dados atuais detalhados (visibility, pressure, feels_like)
+    - Current weather detalhado (visibility, pressure, feels_like, uvi)
+    - Previsões horárias de 48 horas
+    - Previsões diárias de 8 dias (temp, pop, uvi, sunrise/sunset, moon_phase)
     - Cache DynamoDB com TTL de 3 horas
     - 100% async com aiohttp
     """
@@ -67,11 +68,11 @@ class OpenWeatherProvider(IWeatherProvider):
     
     @property
     def supports_daily_forecast(self) -> bool:
-        return False  # OpenWeather fornece dados 3h, não daily agregado
+        return True  # One Call suporta até 8 dias
     
     @property
     def supports_hourly_forecast(self) -> bool:
-        return False  # OpenWeather fornece 3h, não verdadeiro hourly
+        return True  # One Call suporta até 48 horas
     
     @tracer.wrap(resource="openweather.get_current_weather")
     async def get_current_weather(
@@ -80,16 +81,28 @@ class OpenWeatherProvider(IWeatherProvider):
         longitude: float,
         city_id: str,
         city_name: str,
-        target_datetime: Optional[datetime] = None
+        target_datetime: Optional[datetime] = None,
+        include_daily_alerts: bool = False
     ) -> Weather:
         """
-        Busca dados meteorológicos do OpenWeather
+        Busca dados meteorológicos atuais do OpenWeather One Call API 3.0
         
         Flow:
         1. Tenta cache DynamoDB (async)
-        2. Se MISS: chama API OpenWeather (async HTTP)
+        2. Se MISS: chama One Call API (async HTTP)
         3. Salva no cache (TTL 3h)
-        4. Processa e retorna Weather entity
+        4. Processa campo 'current' e retorna Weather entity
+        
+        Args:
+            latitude: Latitude da cidade
+            longitude: Longitude da cidade
+            city_id: ID da cidade
+            city_name: Nome da cidade
+            target_datetime: Datetime específico (opcional)
+            include_daily_alerts: Se True, inclui alertas de médio prazo (8 dias)
+        
+        Returns:
+            Weather entity completo
         """
         cache_key = f"{Cache.PREFIX_OPENWEATHER}{city_id}"
         
@@ -98,15 +111,16 @@ class OpenWeatherProvider(IWeatherProvider):
         if self.cache and self.cache.is_enabled():
             data = await self.cache.get(cache_key)
         
-        # 📡 Cache MISS: chamar API
+        # 📡 Cache MISS: chamar One Call API
         if data is None:
-            url = f"{self.base_url}/forecast"
+            url = f"{self.base_url}/onecall"
             params = {
                 'lat': latitude,
                 'lon': longitude,
                 'appid': self.api_key,
                 'units': 'metric',
-                'lang': 'pt_br'
+                'lang': 'pt_br',
+                'exclude': 'minutely,alerts'  # Incluir hourly e daily para temp_min/max
             }
             
             session = await self.session_manager.get_session()
@@ -120,40 +134,141 @@ class OpenWeatherProvider(IWeatherProvider):
                 await self.cache.set(cache_key, data, ttl_seconds=Cache.TTL_OPENWEATHER)
         
         # 🔄 Processar dados usando mapper de infrastructure
-        return OpenWeatherDataMapper.map_forecast_response_to_weather(
+        return OpenWeatherDataMapper.map_onecall_current_to_weather(
             data=data,
             city_id=city_id,
             city_name=city_name,
-            target_datetime=target_datetime
+            target_datetime=target_datetime,
+            include_daily_alerts=include_daily_alerts
         )
     
+    @tracer.wrap(resource="openweather.get_daily_forecast")
     async def get_daily_forecast(
         self,
         latitude: float,
         longitude: float,
         city_id: str,
-        days: int = 16
+        days: int = 8
     ) -> List[DailyForecast]:
         """
-        OpenWeather não suporta previsões daily agregadas
+        Busca previsões diárias do OpenWeather One Call API 3.0
+        
+        Flow:
+        1. Valida days (máximo 8)
+        2. Tenta cache DynamoDB
+        3. Se MISS: chama One Call API
+        4. Processa campo 'daily' e retorna lista de DailyForecast
+        
+        Args:
+            latitude: Latitude da cidade
+            longitude: Longitude da cidade
+            city_id: ID da cidade (para cache)
+            days: Número de dias (1-8, padrão 8)
+        
+        Returns:
+            Lista de DailyForecast (até 8 dias)
+        
+        Raises:
+            ValueError: Se days > 8
         """
-        raise NotImplementedError(
-            "OpenWeather não suporta previsões daily. Use OpenMeteoProvider."
-        )
+        if days < 1 or days > 8:
+            raise ValueError(f"OpenWeather One Call suporta até 8 dias, recebeu {days}")
+        
+        cache_key = f"{Cache.PREFIX_OPENWEATHER}{city_id}_daily"
+        
+        # 🔍 Tentar cache primeiro
+        data = None
+        if self.cache and self.cache.is_enabled():
+            data = await self.cache.get(cache_key)
+        
+        # 📡 Cache MISS: chamar One Call API
+        if data is None:
+            url = f"{self.base_url}/onecall"
+            params = {
+                'lat': latitude,
+                'lon': longitude,
+                'appid': self.api_key,
+                'units': 'metric',
+                'lang': 'pt_br',
+                'exclude': 'current,minutely,hourly,alerts'
+            }
+            
+            session = await self.session_manager.get_session()
+            
+            async with session.get(url, params=params) as response:
+                response.raise_for_status()
+                data = await response.json()
+            
+            # 💾 Salvar no cache
+            if self.cache and self.cache.is_enabled():
+                await self.cache.set(cache_key, data, ttl_seconds=Cache.TTL_OPENWEATHER)
+        
+        # 🔄 Processar dados
+        return OpenWeatherDataMapper.map_onecall_daily_to_forecasts(data, max_days=days)
     
+    @tracer.wrap(resource="openweather.get_hourly_forecast")
     async def get_hourly_forecast(
         self,
         latitude: float,
         longitude: float,
         city_id: str,
-        hours: int = 168
+        hours: int = 48
     ) -> List[HourlyForecast]:
         """
-        OpenWeather não suporta previsões horárias verdadeiras (apenas 3h)
+        Busca previsões horárias do OpenWeather One Call API 3.0
+        
+        Flow:
+        1. Valida hours (máximo 48)
+        2. Tenta cache DynamoDB
+        3. Se MISS: chama One Call API
+        4. Processa campo 'hourly' e retorna lista de HourlyForecast
+        
+        Args:
+            latitude: Latitude da cidade
+            longitude: Longitude da cidade
+            city_id: ID da cidade (para cache)
+            hours: Número de horas (1-48, padrão 48)
+        
+        Returns:
+            Lista de HourlyForecast (até 48 horas)
+        
+        Raises:
+            ValueError: Se hours > 48
         """
-        raise NotImplementedError(
-            "OpenWeather não suporta previsões hourly. Use OpenMeteoProvider."
-        )
+        if hours < 1 or hours > 48:
+            raise ValueError(f"OpenWeather One Call suporta até 48 horas, recebeu {hours}")
+        
+        cache_key = f"{Cache.PREFIX_OPENWEATHER}{city_id}_hourly"
+        
+        # 🔍 Tentar cache primeiro
+        data = None
+        if self.cache and self.cache.is_enabled():
+            data = await self.cache.get(cache_key)
+        
+        # 📡 Cache MISS: chamar One Call API
+        if data is None:
+            url = f"{self.base_url}/onecall"
+            params = {
+                'lat': latitude,
+                'lon': longitude,
+                'appid': self.api_key,
+                'units': 'metric',
+                'lang': 'pt_br',
+                'exclude': 'current,minutely,daily,alerts'
+            }
+            
+            session = await self.session_manager.get_session()
+            
+            async with session.get(url, params=params) as response:
+                response.raise_for_status()
+                data = await response.json()
+            
+            # 💾 Salvar no cache
+            if self.cache and self.cache.is_enabled():
+                await self.cache.set(cache_key, data, ttl_seconds=Cache.TTL_OPENWEATHER)
+        
+        # 🔄 Processar dados
+        return OpenWeatherDataMapper.map_onecall_hourly_to_forecasts(data, max_hours=hours)
 
 
 # Factory singleton

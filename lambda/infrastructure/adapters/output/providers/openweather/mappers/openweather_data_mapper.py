@@ -1,348 +1,158 @@
 """
-OpenWeather Data Mapper - Transforma dados da API OpenWeather para entities
+OpenWeather Data Mapper - Transforma dados da One Call API 3.0 para entities
 LOCALIZAÇÃO: infrastructure (transforma dados externos → domínio)
 """
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
-from typing import Optional, Dict, Any, List, Tuple
+from typing import Optional, Dict, Any, List
 
 from domain.entities.weather import Weather
-from domain.constants import App
+from domain.entities.daily_forecast import DailyForecast
+from domain.entities.hourly_forecast import HourlyForecast
+from domain.constants import App, Weather as WeatherConstants
 from domain.services.weather_alert_orchestrator import WeatherAlertOrchestrator
-from domain.alerts.primitives import WeatherAlert
+from domain.alerts.primitives import WeatherAlert, AlertSeverity
 
 
 class OpenWeatherDataMapper:
     """
-    Mapper para transformar respostas da API OpenWeather em entities de domínio
+    Mapper para transformar respostas da One Call API 3.0 em entities de domínio
     
-    Responsabilidade: Traduzir formato OpenWeather → Domain entities
+    Responsabilidade: Traduzir formato OpenWeather One Call → Domain entities
     Localização: Infrastructure (conhece detalhes da API externa)
     """
     
     @staticmethod
-    def map_forecast_response_to_weather(
+    def map_onecall_current_to_weather(
         data: Dict[str, Any],
         city_id: str,
         city_name: str,
-        target_datetime: Optional[datetime] = None
+        target_datetime: Optional[datetime] = None,
+        include_daily_alerts: bool = False
     ) -> Weather:
         """
-        Mapeia resposta /forecast da API OpenWeather para Weather entity
-        
-        OTIMIZADO: Single-pass através dos forecasts
-        - Seleciona forecast mais próximo do target
-        - Calcula extremos diários
-        - Acumula precipitação diária
-        - Tudo em um único loop
+        Mapeia campo 'current' da One Call API 3.0 para Weather entity
         
         Args:
-            data: Resposta raw da API OpenWeather (/forecast endpoint)
+            data: Resposta raw da One Call API (/onecall endpoint)
             city_id: ID da cidade
             city_name: Nome da cidade
-            target_datetime: Datetime alvo (None = mais próximo futuro)
+            target_datetime: Datetime alvo (usado para calcular alertas)
+            include_daily_alerts: Se True, inclui alertas de médio prazo (8 dias) para rota detalhada
         
         Returns:
-            Weather entity completo
-        
-        Raises:
-            ValueError: Se não há previsões disponíveis
+            Weather entity completo com dados atuais
         """
-        raw_forecasts = data.get('list', [])
-        if not raw_forecasts:
-            raise ValueError("Nenhuma previsão disponível na resposta")
-        
-        # Obter datetime de referência
-        brasil_tz = ZoneInfo(App.TIMEZONE)
-        if target_datetime is None:
-            ref_dt = datetime.now(tz=brasil_tz)
-        elif target_datetime.tzinfo is not None:
-            ref_dt = target_datetime.astimezone(brasil_tz)
-        else:
-            ref_dt = target_datetime.replace(tzinfo=brasil_tz)
-        
-        # SINGLE-PASS: processar tudo em um loop
-        selected_forecast = None
-        min_diff = float('inf')
-        temps_day = []
-        rain_day = 0.0
-        target_date = ref_dt.date()
-        
-        for forecast_raw in raw_forecasts:
-            # Parse timestamp
-            dt_unix = forecast_raw.get('dt', 0)
-            forecast_dt = datetime.fromtimestamp(dt_unix, tz=ZoneInfo('UTC')).astimezone(brasil_tz)
-            
-            # Selecionar forecast mais próximo do target (futuro apenas)
-            if forecast_dt >= ref_dt:
-                diff = abs((forecast_dt - ref_dt).total_seconds())
-                if diff < min_diff:
-                    min_diff = diff
-                    selected_forecast = forecast_raw
-            
-            # Acumular dados do dia alvo para cálculos
-            if forecast_dt.date() == target_date:
-                main = forecast_raw.get('main', {})
-                temps_day.extend([
-                    main.get('temp', 0),
-                    main.get('temp_min', 0),
-                    main.get('temp_max', 0)
-                ])
-                
-                # Rain volume (3h window)
-                rain = forecast_raw.get('rain', {})
-                rain_day += rain.get('3h', 0.0)
-        
-        if not selected_forecast:
-            raise ValueError("Nenhuma previsão futura disponível")
-        
-        # Gerar alertas analisando as próximas 12 horas de previsões
-        alerts = OpenWeatherDataMapper._generate_alerts_from_forecasts(
-            raw_forecasts=raw_forecasts,
-            ref_dt=ref_dt
-        )
-        
-        # Extrair dados do forecast selecionado
-        weather = OpenWeatherDataMapper._parse_forecast_item(
-            forecast_raw=selected_forecast,
-            city_id=city_id,
-            city_name=city_name,
-            temp_min_day=min(temps_day) if temps_day else None,
-            temp_max_day=max(temps_day) if temps_day else None,
-            rain_accumulated_day=rain_day
-        )
-        
-        # Adicionar alertas gerados
-        weather.weather_alert = alerts
-        
-        return weather
-    
-    @staticmethod
-    def _generate_alerts_from_forecasts(
-        raw_forecasts: List[Dict[str, Any]],
-        ref_dt: datetime
-    ) -> List:
-        """
-        Gera alertas analisando as próximas horas de previsão
-        
-        Args:
-            raw_forecasts: Lista de forecasts raw do OpenWeather
-            ref_dt: Datetime de referência (now ou target)
-        
-        Returns:
-            Lista de alertas WeatherAlert
-        """
-        from collections import defaultdict
-        from domain.constants import Weather as WeatherConstants
-        from domain.alerts.primitives import AlertSeverity
+        current = data.get('current', {})
+        if not current:
+            raise ValueError("Campo 'current' não encontrado na resposta One Call")
         
         brasil_tz = ZoneInfo(App.TIMEZONE)
-        time_window_end = ref_dt + timedelta(hours=12)
-        
-        all_alerts = []
-        daily_extremes: Dict[datetime, Dict] = defaultdict(lambda: {
-            'temps': [],
-            'first_forecast': None
-        })
-        
-        # Analisar próximas previsões (máximo 8 = 24h para alertas imediatos)
-        for forecast_raw in raw_forecasts[:8]:
-            dt_unix = forecast_raw.get('dt', 0)
-            forecast_dt = datetime.fromtimestamp(dt_unix, tz=ZoneInfo('UTC')).astimezone(brasil_tz)
-            
-            # Apenas forecasts futuros dentro da janela de 12h
-            if forecast_dt <= ref_dt or forecast_dt > time_window_end:
-                continue
-            
-            # Extrair dados
-            main = forecast_raw.get('main', {})
-            weather_list = forecast_raw.get('weather', [{}])
-            weather_info = weather_list[0] if weather_list else {}
-            wind = forecast_raw.get('wind', {})
-            rain = forecast_raw.get('rain', {})
-            
-            # Calcular rainfall
-            rain_3h = rain.get('3h', 0.0)
-            rain_1h = rain_3h / 3.0
-            rain_prob = forecast_raw.get('pop', 0.0) * 100
-            wind_speed_ms = wind.get('speed', 0.0)
-            wind_speed_kmh = wind_speed_ms * 3.6
-            
-            # Gerar alertas para este forecast
-            forecast_alerts = WeatherAlertOrchestrator.generate_alerts(
-                weather_code=weather_info.get('id', 0),
-                rain_prob=rain_prob,
-                wind_speed=wind_speed_kmh,
-                forecast_time=forecast_dt,
-                rain_1h=rain_1h,
-                temperature=main.get('temp', 0.0),
-                visibility=forecast_raw.get('visibility', 10000)
-            )
-            
-            all_alerts.extend(forecast_alerts)
-        
-        # Analisar TODOS os forecasts para TEMP_DROP/RISE (até 5 dias)
-        for forecast_raw in raw_forecasts:
-            dt_unix = forecast_raw.get('dt', 0)
-            forecast_dt = datetime.fromtimestamp(dt_unix, tz=ZoneInfo('UTC')).astimezone(brasil_tz)
-            
-            # Apenas forecasts futuros
-            if forecast_dt <= ref_dt:
-                continue
-            
-            main = forecast_raw.get('main', {})
-            temperature = main.get('temp', 0.0)
-            
-            # Acumular por dia
-            date_key = forecast_dt.date()
-            daily_extremes[date_key]['temps'].append(temperature)
-            if daily_extremes[date_key]['first_forecast'] is None:
-                daily_extremes[date_key]['first_forecast'] = forecast_dt
-        
-        # Analisar trends de temperatura
-        if len(daily_extremes) >= 2:
-            daily_data = []
-            for date_key in sorted(daily_extremes.keys()):
-                data = daily_extremes[date_key]
-                temps = data['temps']
-                if temps and data['first_forecast']:
-                    daily_data.append({
-                        'date': date_key,
-                        'max': max(temps),
-                        'min': min(temps),
-                        'first_timestamp': data['first_forecast']
-                    })
-            
-            # Encontrar maior variação
-            max_drop = None
-            max_rise = None
-            
-            for i in range(len(daily_data) - 1):
-                day1 = daily_data[i]
-                for j in range(i + 1, min(i + 4, len(daily_data))):
-                    day2 = daily_data[j]
-                    variation = day2['max'] - day1['max']
-                    days_between = (day2['date'] - day1['date']).days
-                    
-                    if abs(variation) >= WeatherConstants.TEMP_VARIATION_THRESHOLD:
-                        alert_time = day1['first_timestamp']
-                        
-                        if variation < 0:  # Drop
-                            if max_drop is None or abs(variation) > abs(max_drop['variation']):
-                                max_drop = {
-                                    'variation': variation,
-                                    'alert': WeatherAlert(
-                                        code="TEMP_DROP",
-                                        severity=AlertSeverity.INFO,
-                                        description=f"🌡️ Queda de temperatura ({abs(variation):.0f}°C em {days_between} {'dia' if days_between == 1 else 'dias'})",
-                                        timestamp=alert_time,
-                                        details={
-                                            "day_1_date": day1['date'].isoformat(),
-                                            "day_1_max_c": round(day1['max'], 1),
-                                            "day_2_date": day2['date'].isoformat(),
-                                            "day_2_max_c": round(day2['max'], 1),
-                                            "variation_c": round(variation, 1),
-                                            "days_between": days_between
-                                        }
-                                    )
-                                }
-                        else:  # Rise
-                            if max_rise is None or variation > max_rise['variation']:
-                                max_rise = {
-                                    'variation': variation,
-                                    'alert': WeatherAlert(
-                                        code="TEMP_RISE",
-                                        severity=AlertSeverity.WARNING,
-                                        description=f"🌡️ Aumento de temperatura (+{variation:.0f}°C em {days_between} {'dia' if days_between == 1 else 'dias'})",
-                                        timestamp=alert_time,
-                                        details={
-                                            "day_1_date": day1['date'].isoformat(),
-                                            "day_1_max_c": round(day1['max'], 1),
-                                            "day_2_date": day2['date'].isoformat(),
-                                            "day_2_max_c": round(day2['max'], 1),
-                                            "variation_c": round(variation, 1),
-                                            "days_between": days_between
-                                        }
-                                    )
-                                }
-            
-            if max_drop:
-                all_alerts.append(max_drop['alert'])
-            if max_rise:
-                all_alerts.append(max_rise['alert'])
-        
-        # Deduplicar alertas: manter apenas um por code (o mais próximo)
-        unique_alerts = {}
-        for alert in all_alerts:
-            if alert.code not in unique_alerts:
-                unique_alerts[alert.code] = alert
-            else:
-                # Manter o mais próximo (menor timestamp)
-                if alert.timestamp < unique_alerts[alert.code].timestamp:
-                    unique_alerts[alert.code] = alert
-        
-        return list(unique_alerts.values())
-    
-    @staticmethod
-    def _parse_forecast_item(
-        forecast_raw: Dict[str, Any],
-        city_id: str,
-        city_name: str,
-        temp_min_day: Optional[float] = None,
-        temp_max_day: Optional[float] = None,
-        rain_accumulated_day: float = 0.0
-    ) -> Weather:
-        """
-        Parse um item individual da lista de forecasts OpenWeather
-        
-        Args:
-            forecast_raw: Item raw da API
-            city_id: ID da cidade
-            city_name: Nome da cidade
-            temp_min_day: Temperatura mínima do dia (pré-calculada)
-            temp_max_day: Temperatura máxima do dia (pré-calculada)
-            rain_accumulated_day: Chuva acumulada do dia (pré-calculada)
-        
-        Returns:
-            Weather entity
-        """
-        # Extrair seções
-        main = forecast_raw.get('main', {})
-        weather_list = forecast_raw.get('weather', [{}])
-        weather_info = weather_list[0] if weather_list else {}
-        wind = forecast_raw.get('wind', {})
-        clouds = forecast_raw.get('clouds', {})
-        rain = forecast_raw.get('rain', {})
         
         # Parse timestamp
-        dt_unix = forecast_raw.get('dt', 0)
-        timestamp = datetime.fromtimestamp(dt_unix, tz=ZoneInfo('UTC'))
+        dt_unix = current.get('dt', 0)
+        timestamp = datetime.fromtimestamp(dt_unix, tz=ZoneInfo('UTC')).astimezone(brasil_tz)
         
-        # Extrair dados
-        temperature = main.get('temp', 0.0)
-        humidity = main.get('humidity', 0.0)
-        pressure = main.get('pressure', 0.0)
-        feels_like = main.get('feels_like', 0.0)
+        # Extrair dados meteorológicos
+        weather_list = current.get('weather', [{}])
+        weather_info = weather_list[0] if weather_list else {}
         
-        # Temperaturas do item (fallback se não temos dados do dia)
-        temp_min = temp_min_day if temp_min_day is not None else main.get('temp_min', temperature)
-        temp_max = temp_max_day if temp_max_day is not None else main.get('temp_max', temperature)
+        temperature = current.get('temp', 0.0)
+        feels_like = current.get('feels_like', temperature)
+        pressure = current.get('pressure', 0.0)
+        humidity = current.get('humidity', 0.0)
+        dew_point = current.get('dew_point', 0.0)
+        uvi = current.get('uvi', 0.0)
+        clouds = current.get('clouds', 0.0)
+        visibility = current.get('visibility', 10000)
+        wind_speed_ms = current.get('wind_speed', 0.0)
+        wind_speed_kmh = wind_speed_ms * 3.6
+        wind_direction = current.get('wind_deg', 0)
         
-        # Vento
-        wind_speed_ms = wind.get('speed', 0.0)
-        wind_speed_kmh = wind_speed_ms * 3.6  # m/s → km/h
-        wind_direction = wind.get('deg', 0)
+        # Precipitação (One Call pode ter rain.1h e snow.1h)
+        rain = current.get('rain', {})
+        snow = current.get('snow', {})
+        rain_1h = rain.get('1h', 0.0) + snow.get('1h', 0.0)
         
-        # Precipitação
-        rain_3h = rain.get('3h', 0.0)
-        rain_1h = rain_3h / 3.0  # Aproximação
-        rain_probability = forecast_raw.get('pop', 0.0) * 100  # 0-1 → 0-100
-        
-        # Outros
-        visibility = forecast_raw.get('visibility', 10000)
-        cloud_cover = clouds.get('all', 0.0)
         description = weather_info.get('description', '')
         weather_code = weather_info.get('id', 0)
+        
+        # Gerar alertas analisando hourly forecasts se disponível (48h - curto prazo)
+        alerts = []
+        if 'hourly' in data:
+            alerts = OpenWeatherDataMapper._generate_alerts_from_hourly(
+                hourly_data=data['hourly'],  # Todas as 48 horas disponíveis
+                ref_dt=target_datetime or timestamp
+            )
+        
+        # Adicionar alertas de médio prazo (8 dias) para rota detalhada
+        if include_daily_alerts and 'daily' in data:
+            # Converter dados raw do OpenWeather para ForecastLike
+            from domain.services.alerts_generator import AlertsGenerator
+            
+            daily_forecasts = []
+            for day_raw in data['daily']:
+                dt_unix = day_raw.get('dt', 0)
+                day_dt = datetime.fromtimestamp(dt_unix, tz=ZoneInfo('UTC')).astimezone(ZoneInfo(App.TIMEZONE))
+                
+                # Apenas dias futuros
+                if day_dt.date() <= (target_datetime or timestamp).date():
+                    continue
+                
+                temp_data = day_raw.get('temp', {})
+                wind_speed_ms = day_raw.get('wind_speed', 0.0)
+                
+                # Criar objeto simples compatível com ForecastLike
+                class DailyForecastAdapter:
+                    def __init__(self, raw_data, dt):
+                        self.timestamp = dt
+                        self.temperature = raw_data.get('temp', {}).get('day', 0.0)
+                        self.wind_speed = raw_data.get('wind_speed', 0.0) * 3.6  # m/s -> km/h
+                        self.wind_direction = raw_data.get('wind_deg', 0)
+                        self.rain_probability = raw_data.get('pop', 0.0) * 100
+                        self.precipitation = raw_data.get('rain', 0.0) + raw_data.get('snow', 0.0)
+                        self.weather_code = raw_data.get('weather', [{}])[0].get('id', 0) if raw_data.get('weather') else 0
+                        self.temp_max = raw_data.get('temp', {}).get('max', 0.0)
+                        self.temp_min = raw_data.get('temp', {}).get('min', 0.0)
+                        self.uv_index = raw_data.get('uvi', 0.0)
+                
+                daily_forecasts.append(DailyForecastAdapter(day_raw, day_dt))
+            
+            if daily_forecasts:
+                # Usar AlertsGenerator centralizado com limite de 10 dias
+                daily_alerts = AlertsGenerator.generate_alerts_next_days(
+                    forecasts=daily_forecasts,
+                    target_datetime=target_datetime or timestamp,
+                    days_limit=10  # 8 dias de previsão + margem
+                )
+                
+                # Filtrar apenas alertas de médio prazo (não duplicar os de curto prazo)
+                medium_term_codes = {'TEMP_DROP', 'TEMP_RISE', 'HEAVY_RAIN_DAY', 'STRONG_WIND_DAY', 'EXTREME_UV'}
+                daily_alerts = [a for a in daily_alerts if a.code in medium_term_codes]
+                
+                alerts.extend(daily_alerts)
+                
+                # Deduplicar após combinação (manter o mais próximo)
+                unique_alerts = {}
+                for alert in alerts:
+                    if alert.code not in unique_alerts:
+                        unique_alerts[alert.code] = alert
+                    else:
+                        if alert.timestamp < unique_alerts[alert.code].timestamp:
+                            unique_alerts[alert.code] = alert
+                alerts = list(unique_alerts.values())
+        
+        # Extrair temp min/max do dia de 'daily' se disponível
+        temp_min = temperature
+        temp_max = temperature
+        rain_accumulated_day = rain_1h
+        
+        if 'daily' in data and len(data['daily']) > 0:
+            today = data['daily'][0]
+            temp_data = today.get('temp', {})
+            temp_min = temp_data.get('min', temperature)
+            temp_max = temp_data.get('max', temperature)
+            rain_accumulated_day = today.get('rain', 0.0) + today.get('snow', 0.0)
         
         return Weather(
             city_id=city_id,
@@ -352,16 +162,219 @@ class OpenWeatherDataMapper:
             humidity=humidity,
             wind_speed=wind_speed_kmh,
             wind_direction=wind_direction,
-            rain_probability=rain_probability,
+            rain_probability=0.0,  # Current não tem probability
             rain_1h=rain_1h,
             rain_accumulated_day=rain_accumulated_day,
             description=description,
             feels_like=feels_like,
             pressure=pressure,
             visibility=visibility,
-            clouds=cloud_cover,
-            weather_alert=[],  # Será populado pelo mapper principal
+            clouds=clouds,
+            weather_alert=alerts,
             weather_code=weather_code,
             temp_min=temp_min,
             temp_max=temp_max
         )
+    
+    @staticmethod
+    def map_onecall_daily_to_forecasts(
+        data: Dict[str, Any],
+        max_days: int = 8
+    ) -> List[DailyForecast]:
+        """
+        Mapeia campo 'daily' da One Call API 3.0 para lista de DailyForecast
+        
+        Args:
+            data: Resposta raw da One Call API
+            max_days: Número máximo de dias a retornar (padrão 8)
+        
+        Returns:
+            Lista de DailyForecast entities (até max_days elementos)
+        """
+        daily_list = data.get('daily', [])
+        if not daily_list:
+            raise ValueError("Campo 'daily' não encontrado na resposta One Call")
+        
+        brasil_tz = ZoneInfo(App.TIMEZONE)
+        forecasts = []
+        
+        for day_data in daily_list[:max_days]:
+            # Parse date
+            dt_unix = day_data.get('dt', 0)
+            forecast_date = datetime.fromtimestamp(dt_unix, tz=ZoneInfo('UTC')).astimezone(brasil_tz)
+            date_str = forecast_date.strftime('%Y-%m-%d')
+            
+            # Temperaturas
+            temp_data = day_data.get('temp', {})
+            temp_min = temp_data.get('min', 0.0)
+            temp_max = temp_data.get('max', 0.0)
+            
+            # Precipitação
+            precipitation_mm = day_data.get('rain', 0.0) + day_data.get('snow', 0.0)
+            rain_probability = day_data.get('pop', 0.0) * 100  # 0-1 → 0-100
+            
+            # Vento
+            wind_speed_ms = day_data.get('wind_speed', 0.0)
+            wind_speed_kmh = wind_speed_ms * 3.6
+            wind_direction = day_data.get('wind_deg', 0)
+            
+            # UV e astronômicos
+            uv_index = day_data.get('uvi', 0.0)
+            sunrise_unix = day_data.get('sunrise', 0)
+            sunset_unix = day_data.get('sunset', 0)
+            
+            sunrise_dt = datetime.fromtimestamp(sunrise_unix, tz=brasil_tz)
+            sunset_dt = datetime.fromtimestamp(sunset_unix, tz=brasil_tz)
+            sunrise_str = sunrise_dt.strftime('%H:%M')
+            sunset_str = sunset_dt.strftime('%H:%M')
+            
+            # Precipitation hours (estimativa baseada em probabilidade)
+            # One Call não fornece diretamente, aproximamos
+            precipitation_hours = (rain_probability / 100) * 12.0  # Estimativa
+            
+            forecast = DailyForecast(
+                date=date_str,
+                temp_min=temp_min,
+                temp_max=temp_max,
+                precipitation_mm=precipitation_mm,
+                rain_probability=rain_probability,
+                wind_speed_max=wind_speed_kmh,
+                wind_direction=wind_direction,
+                uv_index=uv_index,
+                sunrise=sunrise_str,
+                sunset=sunset_str,
+                precipitation_hours=precipitation_hours
+            )
+            
+            forecasts.append(forecast)
+        
+        return forecasts
+    
+    @staticmethod
+    def map_onecall_hourly_to_forecasts(
+        data: Dict[str, Any],
+        max_hours: int = 48
+    ) -> List[HourlyForecast]:
+        """
+        Mapeia campo 'hourly' da One Call API 3.0 para lista de HourlyForecast
+        
+        Args:
+            data: Resposta raw da One Call API
+            max_hours: Número máximo de horas a retornar (padrão 48)
+        
+        Returns:
+            Lista de HourlyForecast entities (até max_hours elementos)
+        """
+        hourly_list = data.get('hourly', [])
+        if not hourly_list:
+            raise ValueError("Campo 'hourly' não encontrado na resposta One Call")
+        
+        brasil_tz = ZoneInfo(App.TIMEZONE)
+        forecasts = []
+        
+        for hour_data in hourly_list[:max_hours]:
+            # Parse timestamp
+            dt_unix = hour_data.get('dt', 0)
+            forecast_dt = datetime.fromtimestamp(dt_unix, tz=ZoneInfo('UTC')).astimezone(brasil_tz)
+            timestamp_str = forecast_dt.strftime('%Y-%m-%dT%H:%M')
+            
+            # Dados meteorológicos
+            temperature = hour_data.get('temp', 0.0)
+            humidity = hour_data.get('humidity', 0)
+            clouds = hour_data.get('clouds', 0)
+            
+            # Vento
+            wind_speed_ms = hour_data.get('wind_speed', 0.0)
+            wind_speed_kmh = wind_speed_ms * 3.6
+            wind_direction = hour_data.get('wind_deg', 0)
+            
+            # Precipitação
+            rain = hour_data.get('rain', {})
+            snow = hour_data.get('snow', {})
+            precipitation = rain.get('1h', 0.0) + snow.get('1h', 0.0)
+            precipitation_probability = int(hour_data.get('pop', 0.0) * 100)
+            
+            # Weather code e descrição
+            weather_list = hour_data.get('weather', [{}])
+            weather_info = weather_list[0] if weather_list else {}
+            weather_code = weather_info.get('id', 0)
+            description = weather_info.get('description', '')
+            
+            forecast = HourlyForecast(
+                timestamp=timestamp_str,
+                temperature=temperature,
+                precipitation=precipitation,
+                precipitation_probability=precipitation_probability,
+                humidity=humidity,
+                wind_speed=wind_speed_kmh,
+                wind_direction=wind_direction,
+                cloud_cover=clouds,
+                weather_code=weather_code,
+                description=description
+            )
+            
+            forecasts.append(forecast)
+        
+        return forecasts
+    
+    @staticmethod
+    def _generate_alerts_from_hourly(
+        hourly_data: List[Dict[str, Any]],
+        ref_dt: datetime
+    ) -> List:
+        """
+        Gera alertas analisando previsões horárias (até 48h)
+        
+        Args:
+            hourly_data: Lista de forecasts hourly (todas as horas disponíveis, até 48)
+            ref_dt: Datetime de referência
+        
+        Returns:
+            Lista de WeatherAlert
+        """
+        all_alerts = []
+        brasil_tz = ZoneInfo(App.TIMEZONE)
+        
+        for hour_data in hourly_data:
+            dt_unix = hour_data.get('dt', 0)
+            forecast_dt = datetime.fromtimestamp(dt_unix, tz=ZoneInfo('UTC')).astimezone(brasil_tz)
+            
+            # Extrair dados
+            weather_list = hour_data.get('weather', [{}])
+            weather_info = weather_list[0] if weather_list else {}
+            
+            rain = hour_data.get('rain', {})
+            snow = hour_data.get('snow', {})
+            rain_1h = rain.get('1h', 0.0) + snow.get('1h', 0.0)
+            rain_prob = hour_data.get('pop', 0.0) * 100
+            
+            wind_speed_ms = hour_data.get('wind_speed', 0.0)
+            wind_speed_kmh = wind_speed_ms * 3.6
+            
+            temperature = hour_data.get('temp', 0.0)
+            visibility = hour_data.get('visibility', 10000)
+            
+            # Gerar alertas
+            hour_alerts = WeatherAlertOrchestrator.generate_alerts(
+                weather_code=weather_info.get('id', 0),
+                rain_prob=rain_prob,
+                wind_speed=wind_speed_kmh,
+                forecast_time=forecast_dt,
+                rain_1h=rain_1h,
+                temperature=temperature,
+                visibility=visibility
+            )
+            
+            all_alerts.extend(hour_alerts)
+        
+        # Deduplicar por code
+        unique_alerts = {}
+        for alert in all_alerts:
+            if alert.code not in unique_alerts:
+                unique_alerts[alert.code] = alert
+            else:
+                # Manter o mais próximo
+                if alert.timestamp < unique_alerts[alert.code].timestamp:
+                    unique_alerts[alert.code] = alert
+        
+        return list(unique_alerts.values())
