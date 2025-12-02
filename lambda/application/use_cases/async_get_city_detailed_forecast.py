@@ -8,6 +8,7 @@ from datetime import datetime
 from ddtrace import tracer
 
 from domain.entities.extended_forecast import ExtendedForecast
+from domain.entities.forecast_snapshot import ForecastSnapshot
 from domain.exceptions import CityNotFoundException, CoordinatesNotFoundException
 from application.ports.output.city_repository_port import ICityRepository
 from infrastructure.adapters.output.async_weather_repository import AsyncOpenWeatherRepository
@@ -169,37 +170,18 @@ class AsyncGetCityDetailedForecastUseCase:
             # ENRIQUECER ALERTAS: Gerar alertas complexos baseados em hourly forecasts
             if hourly_forecasts and not isinstance(hourly_forecasts, Exception):
                 try:
-                    # Converter hourly forecasts para formato compatível com WeatherAlertsAnalyzer
-                    # O formato esperado é o mesmo retornado pela OpenWeather API (lista de forecasts 3h)
-                    forecast_dicts = []
-                    for hourly in hourly_forecasts:
-                        # Converter timestamp ISO para Unix timestamp
-                        dt = datetime.fromisoformat(hourly.timestamp)
-                        if dt.tzinfo is None:
-                            from zoneinfo import ZoneInfo
-                            dt = dt.replace(tzinfo=ZoneInfo("America/Sao_Paulo"))
-                        
-                        forecast_dicts.append({
-                            'dt': int(dt.timestamp()),
-                            'weather': [{'id': hourly.weather_code}],
-                            'pop': hourly.precipitation_probability / 100.0,  # Converter % para 0-1
-                            'wind': {
-                                'speed': hourly.wind_speed / 3.6  # km/h -> m/s para compatibilidade
-                            },
-                            'rain': {
-                                '3h': hourly.precipitation * 3  # mm/h -> mm/3h para compatibilidade
-                            } if hourly.precipitation > 0 else {},
-                            'main': {
-                                'temp': hourly.temperature,
-                                'temp_max': hourly.temperature,  # Usar temperatura atual como max (melhor estimativa)
-                                'temp_min': hourly.temperature   # Usar temperatura atual como min
-                            },
-                            'visibility': current_weather.visibility
-                        })
+                    # Converter hourly forecasts para snapshots normalizados
+                    forecast_snapshots = [
+                        ForecastSnapshot.from_openmeteo_hourly(
+                            hourly,
+                            visibility=current_weather.visibility
+                        )
+                        for hourly in hourly_forecasts
+                    ]
                     
                     # Gerar alertas complexos do Open-Meteo
                     openmeteo_alerts = WeatherAlertsAnalyzer.collect_all_alerts(
-                        forecasts=forecast_dicts,
+                        forecasts=forecast_snapshots,
                         target_datetime=target_datetime
                     )
                     

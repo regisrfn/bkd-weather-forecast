@@ -3,11 +3,13 @@ Weather Alerts Analyzer - Centralized alert generation and analysis logic
 """
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
-from typing import Optional, List
+from typing import Optional, List, Sequence
 from aws_lambda_powertools import Logger
 
+from domain.entities.forecast_snapshot import ForecastSnapshot
 from domain.entities.weather import Weather, WeatherAlert, AlertSeverity
 from infrastructure.adapters.helpers.date_filter_helper import DateFilterHelper
+from domain.alerts.primitives import RAIN_INTENSITY_REFERENCE
 
 logger = Logger(child=True)
 
@@ -20,7 +22,7 @@ class WeatherAlertsAnalyzer:
     
     @staticmethod
     def collect_all_alerts(
-        forecasts: List[dict],
+        forecasts: Sequence,
         target_datetime: Optional[datetime] = None
     ) -> List[WeatherAlert]:
         """
@@ -34,6 +36,7 @@ class WeatherAlertsAnalyzer:
         Returns:
             List of unique weather alerts
         """
+        normalized = ForecastSnapshot.from_list(forecasts)
         all_alerts = []
         seen_codes = set()
         
@@ -41,33 +44,18 @@ class WeatherAlertsAnalyzer:
         reference_datetime = DateFilterHelper.get_reference_datetime(target_datetime, "UTC")
         
         # Filter future forecasts
-        future_forecasts = DateFilterHelper.filter_future_forecasts(forecasts, reference_datetime)
+        future_forecasts = DateFilterHelper.filter_future_forecasts(normalized, reference_datetime)
         
         # Generate basic alerts from each forecast
         for forecast_item in future_forecasts:
-            weather_code = forecast_item['weather'][0]['id']
-            rain_prob = forecast_item.get('pop', 0) * 100
-            wind_speed = forecast_item['wind']['speed'] * 3.6
-            forecast_time = datetime.fromtimestamp(forecast_item['dt'], tz=ZoneInfo("UTC"))
-            
-            # Extract precipitation volume (mm/h)
-            rain_1h = forecast_item.get('rain', {}).get('3h', 0) / 3 if forecast_item.get('rain') else 0
-            
-            # Extract temperature
-            temperature = forecast_item['main']['temp']
-            
-            # Extract visibility
-            visibility = forecast_item.get('visibility', 10000)
-            
-            # Generate alerts using Weather entity's logic
             alerts = Weather.get_weather_alert(
-                weather_code=weather_code,
-                rain_prob=rain_prob,
-                wind_speed=wind_speed,
-                forecast_time=forecast_time,
-                rain_1h=rain_1h,
-                temperature=temperature,
-                visibility=visibility
+                weather_code=forecast_item.weather_code,
+                rain_prob=forecast_item.rain_probability,
+                wind_speed=forecast_item.wind_speed_kmh,
+                forecast_time=forecast_item.timestamp,
+                rain_1h=forecast_item.rain_1h,
+                temperature=forecast_item.temperature,
+                visibility=forecast_item.visibility
             )
             
             # Add only new alerts (by code)
@@ -115,7 +103,7 @@ class WeatherAlertsAnalyzer:
     
     @staticmethod
     def find_rain_end_time(
-        forecasts: List[dict],
+        forecasts: Sequence,
         alert_timestamp: datetime
     ) -> Optional[datetime]:
         """
@@ -129,6 +117,7 @@ class WeatherAlertsAnalyzer:
             End time of rain in Brazil timezone (or None if continuous rain)
         """
         brasil_tz = ZoneInfo("America/Sao_Paulo")
+        normalized = ForecastSnapshot.from_list(forecasts)
         
         # Ensure alert_timestamp is in UTC
         if alert_timestamp.tzinfo is None:
@@ -137,44 +126,30 @@ class WeatherAlertsAnalyzer:
             alert_timestamp = alert_timestamp.astimezone(ZoneInfo("UTC"))
         
         # Filter forecasts >= alert timestamp
-        future = [
-            f for f in forecasts 
-            if datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")) >= alert_timestamp
-        ]
+        future = sorted(
+            [f for f in normalized if f.timestamp >= alert_timestamp],
+            key=lambda f: f.timestamp
+        )
         
         last_rain_time = None
+        window_hours = WeatherAlertsAnalyzer._forecast_window_hours(future)
         
         for forecast in future:
-            rain_volume = forecast.get('rain', {}).get('3h', 0)
-            weather_code = forecast['weather'][0]['id']
-            rain_prob = forecast.get('pop', 0) * 100
-            
-            # Check if rain is expected (threshold 80% probability)
-            has_rain = (
-                200 <= weather_code < 300 or  # Storm - always consider
-                (rain_volume > 0 and rain_prob >= 80) or  # Volume with high probability
-                (500 <= weather_code < 600 and rain_prob >= 80)  # Rain code with high probability
-            )
-            
-            if has_rain:
-                # Update last rain time
-                last_rain_time = datetime.fromtimestamp(
-                    forecast['dt'], 
-                    tz=ZoneInfo("UTC")
-                ).astimezone(brasil_tz)
-            else:
-                # First forecast without rain = end
+            if WeatherAlertsAnalyzer._is_precipitating(forecast):
+                last_rain_time = forecast.timestamp.astimezone(brasil_tz)
+            elif last_rain_time:
+                # First forecast after rain ends
                 break
         
-        # Add 3 hours to last rain timestamp (end of forecast interval)
+        # Add forecast window to last rain timestamp (end of forecast interval)
         if last_rain_time:
-            last_rain_time = last_rain_time + timedelta(hours=3)
+            last_rain_time = last_rain_time + timedelta(hours=window_hours)
         
         return last_rain_time
     
     @staticmethod
     def analyze_temperature_trend(
-        forecasts: List[dict],
+        forecasts: Sequence,
         reference_datetime: datetime
     ) -> List[WeatherAlert]:
         """
@@ -188,14 +163,15 @@ class WeatherAlertsAnalyzer:
         Returns:
             List of temperature trend alerts (TEMP_DROP, TEMP_RISE)
         """
-        if not forecasts:
+        normalized = ForecastSnapshot.from_list(forecasts)
+        if not normalized:
             return []
         
         alerts = []
         brasil_tz = ZoneInfo("America/Sao_Paulo")
         
         # Group forecasts by day and calculate extremes
-        daily_temps = WeatherAlertsAnalyzer._calculate_daily_extremes(forecasts)
+        daily_temps = WeatherAlertsAnalyzer._calculate_daily_extremes(normalized)
         
         if not daily_temps:
             return []
@@ -278,20 +254,21 @@ class WeatherAlertsAnalyzer:
         return alerts
     
     @staticmethod
-    def _calculate_daily_extremes(forecasts: List[dict]) -> dict:
+    def _calculate_daily_extremes(forecasts: Sequence) -> dict:
         """
         Calculate daily temperature extremes
         
         Args:
-            forecasts: List of forecasts
+            forecasts: List of forecasts (raw dict or ForecastSnapshot)
         
         Returns:
             Dict with date as key and temp info as value
         """
+        normalized = ForecastSnapshot.from_list(forecasts)
         daily_temps = {}
         
-        for forecast in forecasts:
-            forecast_dt = datetime.fromtimestamp(forecast['dt'], tz=ZoneInfo("UTC"))
+        for forecast in normalized:
+            forecast_dt = forecast.timestamp
             date_key = forecast_dt.date()
             
             if date_key not in daily_temps:
@@ -302,12 +279,68 @@ class WeatherAlertsAnalyzer:
                     'first_timestamp': forecast_dt
                 }
             
-            temp = forecast['main']['temp']
-            temp_max = forecast['main']['temp_max']
-            temp_min = forecast['main']['temp_min']
+            temp = forecast.temperature
+            temp_max = forecast.temp_max
+            temp_min = forecast.temp_min
             
             daily_temps[date_key]['temps'].extend([temp, temp_max, temp_min])
             daily_temps[date_key]['max'] = max(daily_temps[date_key]['max'], temp, temp_max, temp_min)
             daily_temps[date_key]['min'] = min(daily_temps[date_key]['min'], temp, temp_max, temp_min)
         
         return daily_temps
+
+    @staticmethod
+    def _rain_intensity_score(forecast: ForecastSnapshot) -> float:
+        """
+        Calculate composite rain intensity (0-100) using volume + probability.
+        Mirrors Weather.rainfall_intensity but without requiring the entity.
+        """
+        if forecast.rain_volume_3h <= 0:
+            return 0.0
+        rain_1h = forecast.rain_volume_3h / 3.0
+        composite = (rain_1h * forecast.rain_probability / 100.0) / RAIN_INTENSITY_REFERENCE * 100.0
+        return max(0.0, min(100.0, composite))
+
+    @staticmethod
+    def _code_indicates_precipitation(weather_code: int) -> bool:
+        """
+        Identify precipitation codes for both OpenWeather and WMO (Open-Meteo).
+        """
+        # OpenWeather ranges: 2xx thunderstorm, 3xx drizzle, 5xx rain, 6xx snow
+        if 200 <= weather_code < 700:
+            return True
+        # WMO ranges (Open-Meteo): drizzle 51-57, rain 61-67, showers 80-82, thunderstorm 95-99
+        if 51 <= weather_code <= 57:
+            return True
+        if 61 <= weather_code <= 67:
+            return True
+        if 80 <= weather_code <= 82:
+            return True
+        if 95 <= weather_code <= 99:
+            return True
+        return False
+
+    @staticmethod
+    def _is_precipitating(forecast: ForecastSnapshot) -> bool:
+        """
+        Decide if a forecast represents ongoing precipitation using intensity and codes.
+        """
+        intensity = WeatherAlertsAnalyzer._rain_intensity_score(forecast)
+        if intensity >= 1.0:
+            return True
+        if forecast.rain_volume_3h > 0 and forecast.rain_probability >= 40:
+            return True
+        return WeatherAlertsAnalyzer._code_indicates_precipitation(forecast.weather_code)
+
+    @staticmethod
+    def _forecast_window_hours(forecasts: List[ForecastSnapshot]) -> float:
+        """
+        Estimate forecast window (hours) based on the first two points.
+        Defaults to 3h when not enough data.
+        """
+        if len(forecasts) < 2:
+            return 3.0
+        first, second = forecasts[0], forecasts[1]
+        diff_hours = abs((second.timestamp - first.timestamp).total_seconds()) / 3600.0
+        # Clamp to reasonable bounds (OpenWeather =3h, Open-Meteo hourly =1h)
+        return max(1.0, min(3.0, diff_hours))

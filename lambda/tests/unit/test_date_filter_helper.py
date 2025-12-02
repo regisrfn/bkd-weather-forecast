@@ -9,6 +9,7 @@ import pytest
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from infrastructure.adapters.helpers.date_filter_helper import DateFilterHelper
+from domain.entities.forecast_snapshot import ForecastSnapshot
 
 
 class TestGetReferenceDatetime:
@@ -60,8 +61,8 @@ class TestFilterFutureForecasts:
         result = DateFilterHelper.filter_future_forecasts(sample_forecasts, reference)
         
         assert len(result) == 2
-        assert result[0]['dt'] == 1700010000
-        assert result[1]['dt'] == 1700020000
+        assert int(result[0].timestamp.timestamp()) == 1700010000
+        assert int(result[1].timestamp.timestamp()) == 1700020000
     
     def test_filter_future_forecasts_empty_list(self):
         """Test with empty forecast list"""
@@ -133,8 +134,8 @@ class TestSelectClosestForecast:
         
         result = DateFilterHelper.select_closest_forecast(sample_forecasts, target)
         
-        assert result['dt'] == 1764244800
-        assert result['main']['temp'] == 25
+        assert int(result.timestamp.timestamp()) == 1764244800
+        assert result.temperature == 25
     
     def test_select_closest_forecast_between_two(self, sample_forecasts):
         """Test selecting closest when target is between forecasts"""
@@ -144,7 +145,7 @@ class TestSelectClosestForecast:
         result = DateFilterHelper.select_closest_forecast(sample_forecasts, target)
         
         # Should select the closest one
-        assert result['dt'] in [1764180000, 1764244800]
+        assert int(result.timestamp.timestamp()) in [1764180000, 1764244800]
     
     def test_select_closest_forecast_none_returns_now(self, sample_forecasts):
         """Test with None target datetime"""
@@ -160,7 +161,7 @@ class TestSelectClosestForecast:
         result = DateFilterHelper.select_closest_forecast(sample_forecasts, target)
         
         # Should return last available forecast
-        assert result['dt'] == 1764280800
+        assert int(result.timestamp.timestamp()) == 1764280800
     
     def test_select_closest_forecast_empty_list(self):
         """Test with empty forecast list"""
@@ -176,8 +177,8 @@ class TestSelectClosestForecast:
         result = DateFilterHelper.select_closest_forecast(sample_forecasts, target)
         
         # Should return 18:00 forecast (closest match)
-        assert result['dt'] == 1764244800  # 18:00
-        assert result['main']['temp'] == 25
+        assert int(result.timestamp.timestamp()) == 1764244800  # 18:00
+        assert result.temperature == 25
     
     def test_select_closest_forecast_no_target_only_future(self, sample_forecasts):
         """Test that None target only considers future forecasts"""
@@ -192,7 +193,7 @@ class TestSelectClosestForecast:
         result = DateFilterHelper.select_closest_forecast(past_forecasts, None)
         
         # Should only consider future forecasts
-        result_dt = datetime.fromtimestamp(result['dt'], tz=ZoneInfo("UTC"))
+        result_dt = result.timestamp
         assert result_dt >= now
 
 
@@ -222,6 +223,7 @@ class TestGroupForecastsByDay:
         for date_key, forecasts in result.items():
             assert isinstance(forecasts, list)
             assert len(forecasts) >= 1
+            assert all(isinstance(f, ForecastSnapshot) for f in forecasts)
     
     def test_group_forecasts_by_day_empty_list(self):
         """Test with empty forecast list"""

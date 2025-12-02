@@ -7,6 +7,7 @@ from zoneinfo import ZoneInfo
 from typing import Optional, List, Dict, Any, Tuple
 
 from domain.entities.weather import Weather
+from domain.entities.forecast_snapshot import ForecastSnapshot
 from infrastructure.adapters.helpers.date_filter_helper import DateFilterHelper
 from infrastructure.adapters.helpers.weather_alerts_analyzer import WeatherAlertsAnalyzer
 
@@ -37,37 +38,34 @@ class WeatherDataProcessor:
         Raises:
             ValueError: If no future forecasts available
         """
+        forecasts = ForecastSnapshot.from_list(data.get('list', []))
+        if not forecasts:
+            raise ValueError("Nenhuma previsão futura disponível")
+        
         # Select forecast
         forecast_item = DateFilterHelper.select_closest_forecast(
-            data['list'],
+            forecasts,
             target_datetime
         )
         
         if not forecast_item:
             raise ValueError("Nenhuma previsão futura disponível")
         
-        # Extract forecast data
-        weather_code = forecast_item['weather'][0]['id']
-        rain_prob = forecast_item.get('pop', 0) * 100
-        wind_speed = forecast_item['wind']['speed'] * 3.6
-        wind_direction = forecast_item['wind'].get('deg', 0)
-        forecast_time = datetime.fromtimestamp(forecast_item['dt'], tz=ZoneInfo("UTC"))
-        
         # Generate alerts from all future forecasts
         weather_alerts = WeatherAlertsAnalyzer.collect_all_alerts(
-            data['list'],
+            forecasts,
             target_datetime
         )
         
         # Calculate daily temperature extremes
         temp_min_day, temp_max_day = WeatherDataProcessor.get_daily_temp_extremes(
-            data['list'],
+            forecasts,
             target_datetime
         )
         
         # Calculate daily rain accumulation
         daily_rain_accumulation = WeatherDataProcessor.calculate_daily_rain_accumulation(
-            data['list'],
+            forecasts,
             target_datetime
         )
         
@@ -75,28 +73,28 @@ class WeatherDataProcessor:
         return Weather(
             city_id='',  # Filled by use case
             city_name=city_name,
-            timestamp=forecast_time,
-            temperature=forecast_item['main']['temp'],
-            humidity=forecast_item['main']['humidity'],
-            wind_speed=wind_speed,
-            wind_direction=wind_direction,
-            rain_probability=rain_prob,
-            rain_1h=forecast_item.get('rain', {}).get('3h', 0) / 3,
+            timestamp=forecast_item.timestamp,
+            temperature=forecast_item.temperature,
+            humidity=forecast_item.humidity,
+            wind_speed=forecast_item.wind_speed_kmh,
+            wind_direction=forecast_item.wind_direction,
+            rain_probability=forecast_item.rain_probability,
+            rain_1h=forecast_item.rain_1h,
             rain_accumulated_day=daily_rain_accumulation,
-            description=forecast_item['weather'][0].get('description', ''),
-            feels_like=forecast_item['main'].get('feels_like', 0),
-            pressure=forecast_item['main'].get('pressure', 0),
-            visibility=forecast_item.get('visibility', 0),
-            clouds=forecast_item.get('clouds', {}).get('all', 0),
+            description=forecast_item.description,
+            feels_like=forecast_item.feels_like,
+            pressure=forecast_item.pressure,
+            visibility=forecast_item.visibility,
+            clouds=forecast_item.clouds,
             weather_alert=weather_alerts,
-            weather_code=weather_code,
+            weather_code=forecast_item.weather_code,
             temp_min=temp_min_day,
             temp_max=temp_max_day
         )
     
     @staticmethod
     def get_daily_temp_extremes(
-        forecasts: List[dict],
+        forecasts: List[Any],
         target_datetime: Optional[datetime]
     ) -> Tuple[float, float]:
         """
@@ -107,13 +105,14 @@ class WeatherDataProcessor:
         to get accurate daily extremes.
         
         Args:
-            forecasts: List of forecasts
+            forecasts: List of forecasts (raw dict or ForecastSnapshot)
             target_datetime: Target date (None = today)
         
         Returns:
             Tuple (temp_min, temp_max) for the entire day
         """
-        if not forecasts:
+        normalized = ForecastSnapshot.from_list(forecasts)
+        if not normalized:
             return (0.0, 0.0)
         
         # Get target date
@@ -123,39 +122,41 @@ class WeatherDataProcessor:
         # Filter forecasts for target day (ALL forecasts for the day, not just future)
         # This ensures we get the true daily min/max regardless of query time
         day_forecasts = [
-            f for f in forecasts
-            if datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")).date() == target_date
+            f for f in normalized
+            if f.timestamp.date() == target_date
         ]
         
         if not day_forecasts:
             # Fallback: first forecast available
-            return (forecasts[0]['main']['temp_min'], forecasts[0]['main']['temp_max'])
+            first_forecast = normalized[0]
+            return (first_forecast.temp_min, first_forecast.temp_max)
         
         # Extract all temperatures from the day
         temps = []
         for f in day_forecasts:
-            temps.append(f['main']['temp'])
-            temps.append(f['main']['temp_min'])
-            temps.append(f['main']['temp_max'])
+            temps.append(f.temperature)
+            temps.append(f.temp_min)
+            temps.append(f.temp_max)
         
         return (min(temps), max(temps))
     
     @staticmethod
     def calculate_daily_rain_accumulation(
-        forecasts: List[dict],
+        forecasts: List[Any],
         target_datetime: Optional[datetime]
     ) -> float:
         """
         Calculate total expected rain accumulation for the target day
         
         Args:
-            forecasts: List of forecasts from API
+            forecasts: List of forecasts from API (raw dict or ForecastSnapshot)
             target_datetime: Reference datetime (None = today in Brazil timezone)
         
         Returns:
             Total expected rain accumulation for the day (mm)
         """
-        if not forecasts:
+        normalized = ForecastSnapshot.from_list(forecasts)
+        if not normalized:
             return 0.0
         
         # Get reference datetime in Brazil timezone for date comparison
@@ -169,19 +170,17 @@ class WeatherDataProcessor:
         target_date = reference_datetime.date()
         
         # Filter forecasts for target day in Brazil timezone
-        day_forecasts = DateFilterHelper.filter_by_date(
-            forecasts,
-            target_date,
-            "America/Sao_Paulo"
-        )
+        day_forecasts = [
+            f for f in normalized
+            if f.timestamp.astimezone(ZoneInfo("America/Sao_Paulo")).date() == target_date
+        ]
         
         if not day_forecasts:
             return 0.0
         
-        # Sum all rain.3h values for the day
+        # Sum all rain values for the day
         total_rain = 0.0
         for forecast in day_forecasts:
-            rain_3h = forecast.get('rain', {}).get('3h', 0)
-            total_rain += rain_3h
+            total_rain += forecast.rain_volume_3h
         
         return total_rain

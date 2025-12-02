@@ -4,7 +4,9 @@ Eliminates code duplication in weather repository
 """
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from typing import Optional, List
+from typing import Optional, List, Sequence
+
+from domain.entities.forecast_snapshot import ForecastSnapshot
 
 
 class DateFilterHelper:
@@ -40,59 +42,61 @@ class DateFilterHelper:
     
     @staticmethod
     def filter_future_forecasts(
-        forecasts: List[dict],
+        forecasts: Sequence,
         reference_datetime: datetime
-    ) -> List[dict]:
+    ) -> List[ForecastSnapshot]:
         """
         Filter forecasts to only include future ones
         
         Args:
-            forecasts: List of forecast dictionaries
+            forecasts: List of forecasts (raw dict or ForecastSnapshot)
             reference_datetime: Reference datetime (must have timezone)
         
         Returns:
             List of future forecasts
         """
-        if not forecasts:
+        normalized = ForecastSnapshot.from_list(forecasts)
+        if not normalized:
             return []
         
         return [
-            f for f in forecasts
-            if datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")) >= reference_datetime
+            f for f in normalized
+            if f.timestamp >= reference_datetime
         ]
     
     @staticmethod
     def filter_by_date(
-        forecasts: List[dict],
+        forecasts: Sequence,
         target_date,
         timezone: str = "America/Sao_Paulo"
-    ) -> List[dict]:
+    ) -> List[ForecastSnapshot]:
         """
         Filter forecasts by a specific date
         
         Args:
-            forecasts: List of forecast dictionaries
+            forecasts: List of forecasts (raw dict or ForecastSnapshot)
             target_date: Target date (date object)
             timezone: Timezone to use for date comparison
         
         Returns:
             List of forecasts for the target date
         """
-        if not forecasts:
+        normalized = ForecastSnapshot.from_list(forecasts)
+        if not normalized:
             return []
         
         tz = ZoneInfo(timezone)
         
         return [
-            f for f in forecasts
-            if datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")).astimezone(tz).date() == target_date
+            f for f in normalized
+            if f.timestamp.astimezone(tz).date() == target_date
         ]
     
     @staticmethod
     def select_closest_forecast(
-        forecasts: List[dict],
+        forecasts: Sequence,
         target_datetime: Optional[datetime] = None
-    ) -> Optional[dict]:
+    ) -> Optional[ForecastSnapshot]:
         """
         Select the forecast closest to the target datetime
         Returns last available forecast if target is beyond forecast range
@@ -103,39 +107,39 @@ class DateFilterHelper:
           Example: Query 18:01 returns 18:00 forecast if available
         
         Args:
-            forecasts: List of forecast dictionaries
+            forecasts: List of forecasts (raw dict or ForecastSnapshot)
             target_datetime: Target datetime (None = now, future only)
         
         Returns:
             Selected forecast or None if list is empty
         """
-        if not forecasts:
+        normalized = ForecastSnapshot.from_list(forecasts)
+        if not normalized:
             return None
         
         reference_datetime = DateFilterHelper.get_reference_datetime(target_datetime, "UTC")
         
         # If no specific target was provided (using current time), only consider future
         if target_datetime is None:
-            future_forecasts = DateFilterHelper.filter_future_forecasts(forecasts, reference_datetime)
+            future_forecasts = DateFilterHelper.filter_future_forecasts(normalized, reference_datetime)
             
             if not future_forecasts:
                 # No future forecasts - return last available (day 5)
-                return forecasts[-1]
+                return normalized[-1]
             
             # Find closest future forecast
             closest_forecast = min(
                 future_forecasts,
                 key=lambda f: abs(
-                    datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")) - reference_datetime
+                    f.timestamp - reference_datetime
                 ).total_seconds()
             )
         else:
             # Specific target provided - find closest forecast (can be past)
-            # This allows queries like 18:01 to match 18:00 forecast
             closest_forecast = min(
-                forecasts,
+                normalized,
                 key=lambda f: abs(
-                    datetime.fromtimestamp(f['dt'], tz=ZoneInfo("UTC")) - reference_datetime
+                    f.timestamp - reference_datetime
                 ).total_seconds()
             )
         
@@ -143,28 +147,28 @@ class DateFilterHelper:
     
     @staticmethod
     def group_forecasts_by_day(
-        forecasts: List[dict],
+        forecasts: Sequence,
         timezone: str = "America/Sao_Paulo"
     ) -> dict:
         """
         Group forecasts by date
         
         Args:
-            forecasts: List of forecast dictionaries
+            forecasts: List of forecasts (raw dict or ForecastSnapshot)
             timezone: Timezone for date grouping
         
         Returns:
             Dict with date as key and forecast list as value
         """
-        if not forecasts:
+        normalized = ForecastSnapshot.from_list(forecasts)
+        if not normalized:
             return {}
         
         tz = ZoneInfo(timezone)
         grouped = {}
         
-        for forecast in forecasts:
-            forecast_dt = datetime.fromtimestamp(forecast['dt'], tz=ZoneInfo("UTC"))
-            date_key = forecast_dt.astimezone(tz).date()
+        for forecast in normalized:
+            date_key = forecast.timestamp.astimezone(tz).date()
             
             if date_key not in grouped:
                 grouped[date_key] = []
