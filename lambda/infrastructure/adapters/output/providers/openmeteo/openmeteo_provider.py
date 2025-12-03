@@ -5,6 +5,9 @@ from datetime import datetime
 from ddtrace import tracer
 
 from application.ports.output.weather_provider_port import IWeatherProvider
+from shared.config.logger_config import get_logger
+
+logger = get_logger(child=True)
 from domain.entities.weather import Weather
 from domain.entities.daily_forecast import DailyForecast
 from domain.entities.hourly_forecast import HourlyForecast
@@ -79,19 +82,46 @@ class OpenMeteoProvider(IWeatherProvider):
         OpenMeteo fornece dados atuais via hourly forecast
         Busca forecast hourly e extrai hora mais próxima
         """
+        from datetime import datetime as dt
+        from zoneinfo import ZoneInfo
+        
         hourly_forecasts = await self.get_hourly_forecast(
             latitude=latitude,
             longitude=longitude,
             city_id=city_id,
-            hours=24  # Apenas próximas 24h para current
+            hours=168  # 7 dias para garantir que temos a hora solicitada
         )
         
         if not hourly_forecasts:
             raise ValueError("Nenhuma previsão horária disponível no OpenMeteo")
         
-        # Converter primeiro hourly para Weather entity
+        # Se target_datetime não fornecido, usar agora
+        if target_datetime is None:
+            target_datetime = dt.now(tz=ZoneInfo("America/Sao_Paulo"))
+        elif target_datetime.tzinfo is None:
+            target_datetime = target_datetime.replace(tzinfo=ZoneInfo("America/Sao_Paulo"))
+        
+        # Encontrar forecast mais próximo do target_datetime
+        closest_forecast = None
+        min_diff = None
+        
+        for forecast in hourly_forecasts:
+            forecast_dt = dt.fromisoformat(forecast.timestamp)
+            if forecast_dt.tzinfo is None:
+                forecast_dt = forecast_dt.replace(tzinfo=ZoneInfo("America/Sao_Paulo"))
+            
+            diff = abs((forecast_dt - target_datetime).total_seconds())
+            
+            if min_diff is None or diff < min_diff:
+                min_diff = diff
+                closest_forecast = forecast
+        
+        if closest_forecast is None:
+            closest_forecast = hourly_forecasts[0]
+        
+        # Converter para Weather entity
         return OpenMeteoDataMapper.map_hourly_to_weather(
-            hourly_forecast=hourly_forecasts[0],
+            hourly_forecast=closest_forecast,
             city_id=city_id,
             city_name=city_name
         )
@@ -132,6 +162,8 @@ class OpenMeteoProvider(IWeatherProvider):
                 'daily': ','.join([
                     'temperature_2m_max',
                     'temperature_2m_min',
+                    'apparent_temperature_max',
+                    'apparent_temperature_min',
                     'precipitation_sum',
                     'precipitation_probability_mean',
                     'wind_speed_10m_max',
@@ -190,12 +222,17 @@ class OpenMeteoProvider(IWeatherProvider):
                 'longitude': longitude,
                 'hourly': ','.join([
                     'temperature_2m',
+                    'apparent_temperature',
                     'precipitation',
                     'precipitation_probability',
                     'relative_humidity_2m',
                     'wind_speed_10m',
                     'wind_direction_10m',
                     'cloud_cover',
+                    'pressure_msl',
+                    'visibility',
+                    'uv_index',
+                    'is_day',
                     'weather_code'
                 ]),
                 'timezone': 'America/Sao_Paulo',

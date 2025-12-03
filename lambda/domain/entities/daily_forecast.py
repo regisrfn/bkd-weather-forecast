@@ -29,6 +29,8 @@ class DailyForecast:
     sunrise: str  # Horário do nascer do sol (HH:MM)
     sunset: str  # Horário do pôr do sol (HH:MM)
     precipitation_hours: float  # Horas de precipitação esperadas (0-24h)
+    apparent_temp_min: Optional[float] = None  # Sensação térmica mínima (°C)
+    apparent_temp_max: Optional[float] = None  # Sensação térmica máxima (°C)
     weather_code: int = 0  # Código proprietário da condição climática
     description: str = ""  # Descrição em português
     
@@ -124,7 +126,7 @@ class DailyForecast:
         Returns:
             Dict com dados formatados para JSON
         """
-        return {
+        response = {
             'date': self.date,
             'tempMin': round(self.temp_min, 1),
             'tempMax': round(self.temp_max, 1),
@@ -143,6 +145,14 @@ class DailyForecast:
             'weatherCode': self.weather_code,
             'description': self.description
         }
+        
+        # Adicionar apparent temperatures se disponíveis
+        if self.apparent_temp_min is not None:
+            response['apparentTempMin'] = round(self.apparent_temp_min, 1)
+        if self.apparent_temp_max is not None:
+            response['apparentTempMax'] = round(self.apparent_temp_max, 1)
+        
+        return response
     
     @staticmethod
     def from_openmeteo_data(
@@ -156,7 +166,9 @@ class DailyForecast:
         uv_index: float,
         sunrise: str,
         sunset: str,
-        precip_hours: float
+        precip_hours: float,
+        apparent_temp_min: Optional[float] = None,
+        apparent_temp_max: Optional[float] = None
     ) -> 'DailyForecast':
         """
         Cria instância a partir de dados da API Open-Meteo
@@ -201,5 +213,7 @@ class DailyForecast:
             uv_index=uv_index,
             sunrise=sunrise_time,
             sunset=sunset_time,
-            precipitation_hours=precip_hours
+            precipitation_hours=precip_hours,
+            apparent_temp_min=apparent_temp_min,
+            apparent_temp_max=apparent_temp_max
         )

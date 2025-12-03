@@ -42,6 +42,67 @@ class AlertsGenerator:
     """
     
     @staticmethod
+    async def generate_alerts_for_weather(
+        weather_provider,
+        latitude: float,
+        longitude: float,
+        city_id: str,
+        target_datetime: Optional[datetime] = None,
+        days_limit: int = 7
+    ) -> List[WeatherAlert]:
+        """
+        Gera alertas combinando hourly (48h) + daily (5 dias) forecasts
+        Método auxiliar para evitar duplicação nos use cases
+        
+        Args:
+            weather_provider: Provider para buscar dados meteorológicos
+            latitude: Latitude da cidade
+            longitude: Longitude da cidade
+            city_id: ID da cidade
+            target_datetime: Data/hora de referência (padrão: agora)
+            days_limit: Número de dias para análise (padrão: 7)
+        
+        Returns:
+            Lista de alertas dos próximos N dias
+        """
+        try:
+            # Buscar hourly forecasts (48h = 2 dias, granularidade horária)
+            hourly_forecasts = await weather_provider.get_hourly_forecast(
+                latitude=latitude,
+                longitude=longitude,
+                city_id=city_id,
+                hours=48
+            )
+            
+            # Buscar daily forecasts (7 dias, para cobrir dias 3-7)
+            daily_forecasts = await weather_provider.get_daily_forecast(
+                latitude=latitude,
+                longitude=longitude,
+                city_id=city_id,
+                days=7
+            )
+            
+            # Combinar: hourly (dias 1-2) + daily (dias 3-7)
+            combined_forecasts = list(hourly_forecasts) if hourly_forecasts else []
+            
+            if daily_forecasts and len(daily_forecasts) > 2:
+                # Adicionar daily dos dias 3-7 (índices 2-6)
+                combined_forecasts.extend(daily_forecasts[2:days_limit])
+            
+            # Gerar alertas com os forecasts combinados
+            alerts = AlertsGenerator.generate_alerts_next_days(
+                forecasts=combined_forecasts,
+                target_datetime=target_datetime,
+                days_limit=days_limit
+            )
+            
+            return alerts
+            
+        except Exception as e:
+            logger.warning(f"Failed to generate alerts: {e}")
+            return []
+    
+    @staticmethod
     def generate_alerts_next_days(
         forecasts: List[ForecastLike],
         target_datetime: Optional[datetime] = None,
@@ -97,12 +158,21 @@ class AlertsGenerator:
         })
         
         for forecast, timestamp in next_days_forecasts:
-            # Normalizar campos
+            # Normalizar campos (DailyForecast vs HourlyForecast)
             rain_prob = float(getattr(forecast, 'rain_probability', 0) or getattr(forecast, 'precipitation_probability', 0))
-            wind_speed = float(getattr(forecast, 'wind_speed', 0) or getattr(forecast, 'wind_speed_kmh', 0))
-            precipitation = float(getattr(forecast, 'precipitation', 0))
+            wind_speed = float(getattr(forecast, 'wind_speed', 0) or getattr(forecast, 'wind_speed_max', 0) or getattr(forecast, 'wind_speed_kmh', 0))
+            precipitation = float(getattr(forecast, 'precipitation', 0) or getattr(forecast, 'precipitation_mm', 0))
             rain_1h = precipitation
-            temperature = float(forecast.temperature)
+            
+            # Temperature: HourlyForecast tem 'temperature', DailyForecast tem 'temp_min' e 'temp_max'
+            if hasattr(forecast, 'temperature'):
+                temperature = float(forecast.temperature)
+            else:
+                # Para DailyForecast, usar média
+                temp_min = float(getattr(forecast, 'temp_min', 20.0))
+                temp_max = float(getattr(forecast, 'temp_max', 30.0))
+                temperature = (temp_min + temp_max) / 2.0
+            
             visibility = float(getattr(forecast, 'visibility', 10000))
             uv_index = float(getattr(forecast, 'uv_index', 0))
             
@@ -551,15 +621,27 @@ class AlertsGenerator:
     @staticmethod
     def _parse_timestamp(forecast: ForecastLike) -> datetime:
         """
-        Parse timestamp de forecast (suporta datetime ou string ISO)
+        Parse timestamp de forecast (suporta datetime, string ISO, ou date string)
         
         Args:
-            forecast: Forecast com timestamp
+            forecast: Forecast com timestamp ou date
         
         Returns:
             datetime timezone-aware
         """
-        timestamp = forecast.timestamp
+        # Tentar pegar timestamp (HourlyForecast)
+        timestamp = getattr(forecast, 'timestamp', None)
+        
+        # Se não tem timestamp, tentar date (DailyForecast)
+        if timestamp is None:
+            date_str = getattr(forecast, 'date', None)
+            if date_str:
+                # Converter "YYYY-MM-DD" para datetime no início do dia
+                try:
+                    dt = datetime.fromisoformat(f"{date_str}T00:00:00")
+                    return dt.replace(tzinfo=ZoneInfo(App.TIMEZONE))
+                except Exception:
+                    return datetime.now(tz=ZoneInfo('UTC'))
         
         # Já é datetime
         if isinstance(timestamp, datetime):

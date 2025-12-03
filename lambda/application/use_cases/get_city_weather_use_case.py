@@ -68,6 +68,21 @@ class AsyncGetCityWeatherUseCase(IGetCityWeatherUseCase):
             target_datetime=target_datetime
         )
         
+        # Gerar alertas combinando hourly (48h) + daily (5 dias)
+        from domain.services.alerts_generator import AlertsGenerator
+        
+        alerts = await AlertsGenerator.generate_alerts_for_weather(
+            weather_provider=self.weather_provider,
+            latitude=city.latitude,
+            longitude=city.longitude,
+            city_id=city.id,
+            target_datetime=target_datetime,
+            days_limit=7
+        )
+        
+        if alerts:
+            object.__setattr__(weather, 'weather_alert', alerts)
+        
         logger.info(
             "Weather fetched successfully",
             city_id=city_id,

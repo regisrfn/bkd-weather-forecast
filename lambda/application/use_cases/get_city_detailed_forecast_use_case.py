@@ -182,7 +182,7 @@ class GetCityDetailedForecastUseCase:
                 days=16
             )
             
-            # Task 4: Hourly forecasts (48h OpenWeather)
+            # Task 4: Hourly forecasts (48h para resposta da API)
             hourly_task = self.hourly_forecast_provider.get_hourly_forecast(
                 latitude=city.latitude,
                 longitude=city.longitude,
@@ -217,6 +217,21 @@ class GetCityDetailedForecastUseCase:
             if isinstance(current_weather, Exception):
                 logger.error("Failed to fetch current weather", error=str(current_weather))
                 raise current_weather
+            
+            # Gerar alertas para current weather usando hourly (2 dias) + daily (5 dias)
+            from domain.services.alerts_generator import AlertsGenerator
+            
+            alerts = await AlertsGenerator.generate_alerts_for_weather(
+                weather_provider=self.current_weather_provider,
+                latitude=city.latitude,
+                longitude=city.longitude,
+                city_id=city.id,
+                target_datetime=target_datetime,
+                days_limit=7
+            )
+            
+            if alerts:
+                object.__setattr__(current_weather, 'weather_alert', alerts)
             
             # Daily forecasts já foram combinados
             if not daily_forecasts:

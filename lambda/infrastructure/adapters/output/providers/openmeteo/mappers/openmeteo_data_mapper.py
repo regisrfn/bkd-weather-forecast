@@ -77,6 +77,8 @@ class OpenMeteoDataMapper:
         dates = daily.get('time', [])
         temp_max = daily.get('temperature_2m_max', [])
         temp_min = daily.get('temperature_2m_min', [])
+        apparent_temp_max = daily.get('apparent_temperature_max', [])
+        apparent_temp_min = daily.get('apparent_temperature_min', [])
         precipitation = daily.get('precipitation_sum', [])
         rain_prob = daily.get('precipitation_probability_mean', [])
         wind_speed = daily.get('wind_speed_10m_max', [])
@@ -110,7 +112,9 @@ class OpenMeteoDataMapper:
                     uv_index=uv_index[i] if i < len(uv_index) else 0.0,
                     sunrise=sunrise[i] if i < len(sunrise) else "06:00",
                     sunset=sunset[i] if i < len(sunset) else "18:00",
-                    precip_hours=precip_hours[i] if i < len(precip_hours) else 0.0
+                    precip_hours=precip_hours[i] if i < len(precip_hours) else 0.0,
+                    apparent_temp_min=apparent_temp_min[i] if i < len(apparent_temp_min) else None,
+                    apparent_temp_max=apparent_temp_max[i] if i < len(apparent_temp_max) else None
                 )
                 forecasts.append(forecast)
                 
@@ -141,12 +145,17 @@ class OpenMeteoDataMapper:
         # Extrair arrays
         times = hourly.get('time', [])
         temps = hourly.get('temperature_2m', [])
+        apparent_temps = hourly.get('apparent_temperature', [])
         precip = hourly.get('precipitation', [])
         precip_prob = hourly.get('precipitation_probability', [])
         humidity = hourly.get('relative_humidity_2m', [])
         wind_speed = hourly.get('wind_speed_10m', [])
         wind_dir = hourly.get('wind_direction_10m', [])
         clouds = hourly.get('cloud_cover', [])
+        pressure = hourly.get('pressure_msl', [])
+        visibility_data = hourly.get('visibility', [])
+        uv_index = hourly.get('uv_index', [])
+        is_day = hourly.get('is_day', [])
         weather_codes = hourly.get('weather_code', [])
         
         # Limitar ao número máximo de horas
@@ -172,6 +181,11 @@ class OpenMeteoDataMapper:
                     wind_speed=wind_speed[i] if i < len(wind_speed) else 0.0,
                     wind_direction=int(wind_dir[i]) if i < len(wind_dir) else 0,
                     cloud_cover=int(clouds[i]) if i < len(clouds) else 0,
+                    pressure=pressure[i] if i < len(pressure) else None,
+                    visibility=visibility_data[i] if i < len(visibility_data) else None,
+                    uv_index=uv_index[i] if i < len(uv_index) else None,
+                    is_day=int(is_day[i]) if i < len(is_day) else None,
+                    apparent_temperature=apparent_temps[i] if i < len(apparent_temps) else None,
                     weather_code=0,  # Será calculado pela entidade via classify_weather_condition
                     description=""  # Será calculado pela entidade via classify_weather_condition
                 )
@@ -201,17 +215,31 @@ class OpenMeteoDataMapper:
         Returns:
             Weather entity
         """
-        # Calcular feels_like
-        feels_like_calc = calculate_feels_like(
-            hourly_forecast.temperature,
-            float(hourly_forecast.humidity),
-            hourly_forecast.wind_speed
-        )
+        from zoneinfo import ZoneInfo
+        
+        # Usar apparent_temperature da API se disponível, senão calcular
+        if hourly_forecast.apparent_temperature is not None:
+            feels_like_calc = hourly_forecast.apparent_temperature
+        else:
+            feels_like_calc = calculate_feels_like(
+                hourly_forecast.temperature,
+                float(hourly_forecast.humidity),
+                hourly_forecast.wind_speed
+            )
+        
+        # Usar pressure e visibility da API, com fallbacks para valores padrão
+        pressure_value = hourly_forecast.pressure if hourly_forecast.pressure is not None else 1013.0
+        visibility_value = hourly_forecast.visibility if hourly_forecast.visibility is not None else 10000.0
+        
+        # Converter timestamp para datetime com timezone
+        timestamp_dt = datetime.fromisoformat(hourly_forecast.timestamp)
+        if timestamp_dt.tzinfo is None:
+            timestamp_dt = timestamp_dt.replace(tzinfo=ZoneInfo("America/Sao_Paulo"))
         
         return Weather(
             city_id=city_id,
             city_name=city_name,
-            timestamp=datetime.fromisoformat(hourly_forecast.timestamp),
+            timestamp=timestamp_dt,
             temperature=hourly_forecast.temperature,
             humidity=float(hourly_forecast.humidity),
             wind_speed=hourly_forecast.wind_speed,
@@ -221,8 +249,8 @@ class OpenMeteoDataMapper:
             rain_accumulated_day=0.0,  # Calculado externamente se necessário
             description="",  # Será calculado pela entidade via classify_weather_condition
             feels_like=feels_like_calc,
-            pressure=1013.0,  # Valor padrão (nível do mar)
-            visibility=10000.0,  # Valor padrão (10km)
+            pressure=pressure_value,
+            visibility=visibility_value,
             clouds=float(hourly_forecast.cloud_cover),
             weather_alert=[],  # Gerados externamente
             weather_code=0,  # Será calculado pela entidade via classify_weather_condition
