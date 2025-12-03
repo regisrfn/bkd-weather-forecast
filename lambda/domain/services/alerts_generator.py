@@ -162,7 +162,20 @@ class AlertsGenerator:
             rain_prob = float(getattr(forecast, 'rain_probability', 0) or getattr(forecast, 'precipitation_probability', 0))
             wind_speed = float(getattr(forecast, 'wind_speed', 0) or getattr(forecast, 'wind_speed_max', 0) or getattr(forecast, 'wind_speed_kmh', 0))
             precipitation = float(getattr(forecast, 'precipitation', 0) or getattr(forecast, 'precipitation_mm', 0))
-            rain_1h = precipitation
+            
+            # Calcular rain_1h corretamente baseado no tipo de forecast
+            if hasattr(forecast, 'precipitation'):
+                # HourlyForecast: já está em mm/h
+                rain_1h = precipitation
+            else:
+                # DailyForecast: converter acumulado diário para taxa horária média
+                # Usar precipitation_hours se disponível, senão estimar baseado em probabilidade
+                precip_hours = float(getattr(forecast, 'precipitation_hours', 0))
+                if precip_hours > 0 and precipitation > 0:
+                    rain_1h = precipitation / precip_hours
+                else:
+                    # Fallback: distribuir em 24h (conservador)
+                    rain_1h = precipitation / 24.0 if precipitation > 0 else 0.0
             
             # Temperature: HourlyForecast tem 'temperature', DailyForecast tem 'temp_min' e 'temp_max'
             if hasattr(forecast, 'temperature'):
