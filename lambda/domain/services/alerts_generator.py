@@ -539,7 +539,7 @@ class AlertsGenerator:
         brasil_tz: ZoneInfo
     ) -> Optional[datetime]:
         """
-        Encontra quando a chuva termina
+        Encontra quando a chuva termina usando rainfall_intensity >= 1
         
         Args:
             forecasts: Lista de forecasts
@@ -547,29 +547,46 @@ class AlertsGenerator:
             brasil_tz: Timezone
         
         Returns:
-            Datetime quando chuva termina ou None
+            Datetime quando chuva termina ou None se não conseguir identificar
         """
-        # Filtrar forecasts >= start_time e parsear timestamps
-        future = []
+        # Filtrar apenas HourlyForecasts >= start_time
+        hourly_forecasts = []
         for f in forecasts:
+            # Apenas HourlyForecast (tem timestamp e não tem temp_min)
+            if not hasattr(f, 'timestamp') or hasattr(f, 'temp_min'):
+                continue
+            
             ts = AlertsGenerator._parse_timestamp(f)
             if ts >= start_time:
-                future.append((f, ts))
+                hourly_forecasts.append((f, ts))
         
-        future.sort(key=lambda x: x[1])
+        if not hourly_forecasts:
+            return None
+        
+        hourly_forecasts.sort(key=lambda x: x[1])
         
         last_rain_time = None
+        consecutive_no_rain = 0
         
-        for forecast, timestamp in future:
-            if AlertsGenerator._is_raining(forecast):
+        for forecast, timestamp in hourly_forecasts:
+            # Calcular rainfall_intensity
+            intensity = getattr(forecast, 'rainfall_intensity', 0)
+            
+            if intensity >= 1:
+                # Está chovendo
                 last_rain_time = timestamp.astimezone(brasil_tz)
-            elif last_rain_time:
-                # Primeira hora sem chuva após chuva
-                break
+                consecutive_no_rain = 0
+            else:
+                # Não está chovendo
+                consecutive_no_rain += 1
+                
+                # Se tiver 2 horas consecutivas sem chuva, termina
+                if last_rain_time and consecutive_no_rain >= 2:
+                    # Retorna última hora com chuva + 1h
+                    return last_rain_time + timedelta(hours=1)
         
-        # Adicionar 1h ao último forecast com chuva
-        if last_rain_time:
-            return last_rain_time + timedelta(hours=1)
+        # Se não encontrou 2h consecutivas sem chuva, retornar None
+        return None
         
         return None
     
@@ -586,7 +603,14 @@ class AlertsGenerator:
         """
         # Normalizar campos (suporta diferentes formatos)
         rain_prob = float(getattr(forecast, 'rain_probability', 0) or getattr(forecast, 'precipitation_probability', 0))
-        precipitation = float(getattr(forecast, 'precipitation', 0))
+        
+        # Para HourlyForecast: precipitation_mm
+        # Para DailyForecast: precipitation
+        precipitation = float(
+            getattr(forecast, 'precipitation_mm', None) or 
+            getattr(forecast, 'precipitation', 0)
+        )
+        
         rain_3h = precipitation * 3.0  # Converter 1h para 3h
         
         # Verificar intensidade
@@ -599,14 +623,9 @@ class AlertsGenerator:
         if rain_3h > 0 and rain_prob >= 40:
             return True
         
-        # Verificar códigos de precipitação
+        # Verificar códigos de precipitação WMO (Open-Meteo APENAS)
         code = forecast.weather_code
         
-        # OpenWeather
-        if 200 <= code < 700:
-            return True
-        
-        # WMO (Open-Meteo)
         if code in WeatherConstants.WMO_DRIZZLE:
             return True
         if code in WeatherConstants.WMO_RAIN:
