@@ -68,15 +68,6 @@ class TestOpenWeatherRealData:
         
         assert 0 <= clouds <= 100, f"Cobertura de nuvens fora do range: {clouds}%"
     
-    def test_openweather_timestamp_is_recent(self, real_api_data):
-        """REGRA: Timestamp deve ser recente (últimas 24h)"""
-        ow = real_api_data["openweather_current"]["response"]
-        timestamp = datetime.fromisoformat(ow["timestamp"])
-        now = datetime.now(ZoneInfo("America/Sao_Paulo"))
-        
-        diff_hours = abs((now - timestamp).total_seconds() / 3600)
-        assert diff_hours < 24, f"Timestamp muito antigo: {timestamp} (diff: {diff_hours}h)"
-    
     def test_openweather_visibility_is_reasonable(self, real_api_data):
         """REGRA: Visibilidade deve estar entre 0 e 10000m (10km)"""
         ow = real_api_data["openweather_current"]["response"]

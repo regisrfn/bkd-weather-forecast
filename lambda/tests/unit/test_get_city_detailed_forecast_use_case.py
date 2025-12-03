@@ -130,7 +130,6 @@ async def test_execute_success_enriches_and_merges_alerts(city_repository, provi
 
     # Configure all async methods
     current_provider.get_current_weather.return_value = base_weather
-    current_provider.get_daily_forecast = AsyncMock(return_value=_make_daily())
     daily_provider.get_daily_forecast.return_value = _make_daily()
     hourly_provider.get_hourly_forecast.return_value = _make_hourly()
 
@@ -144,9 +143,8 @@ async def test_execute_success_enriches_and_merges_alerts(city_repository, provi
     assert len(result.daily_forecasts) > 0
     assert len(result.hourly_forecasts) > 0
     
-    # Verificar que todos os providers foram chamados
+    # Verificar que todos os providers foram chamados (agora são apenas 3 calls)
     current_provider.get_current_weather.assert_called_once()
-    current_provider.get_daily_forecast.assert_called_once()
     daily_provider.get_daily_forecast.assert_called_once()
     hourly_provider.get_hourly_forecast.assert_called_once()
 
@@ -157,7 +155,6 @@ async def test_execute_continues_without_daily_data(monkeypatch, city_repository
     current_provider, daily_provider, hourly_provider = providers
 
     current_provider.get_current_weather.return_value = _make_weather()
-    current_provider.get_daily_forecast = AsyncMock(side_effect=RuntimeError("openweather daily boom"))
     daily_provider.get_daily_forecast.side_effect = RuntimeError("daily boom")
     hourly_provider.get_hourly_forecast.return_value = _make_hourly()
 

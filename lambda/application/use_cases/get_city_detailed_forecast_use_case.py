@@ -23,10 +23,9 @@ class GetCityDetailedForecastUseCase:
     """
     Async use case: Get detailed forecast with extended data
     
-    Estratégia Híbrida 16 dias:
-    - OpenWeather One Call 3.0: current + hourly (48h) + daily (8 dias)
-    - Open-Meteo: daily (16 dias) como complemento
-    - Combina: OpenWeather dias 1-8 + Open-Meteo dias 9-16
+    Estratégia Open-Meteo Only:
+    - Open-Meteo: current + hourly (48h) + daily (16 dias)
+    - Uma única fonte de dados consistente
     """
     
     def __init__(
@@ -40,74 +39,6 @@ class GetCityDetailedForecastUseCase:
         self.current_weather_provider = current_weather_provider
         self.daily_forecast_provider = daily_forecast_provider
         self.hourly_forecast_provider = hourly_forecast_provider
-    
-    def _combine_daily_forecasts(
-        self,
-        openweather_forecasts: any,
-        openmeteo_forecasts: any
-    ) -> List[DailyForecast]:
-        """
-        Combina previsões daily: OpenWeather (dias 1-8) + Open-Meteo (dias 9-16)
-        
-        Estratégia:
-        1. Se OpenWeather OK: usa dias 1-8 do OpenWeather
-        2. Complementa com dias 9-16 do Open-Meteo
-        3. Se OpenWeather falhar: usa todos 16 dias do Open-Meteo
-        
-        Args:
-            openweather_forecasts: Lista de 8 DailyForecast ou Exception
-            openmeteo_forecasts: Lista de 16 DailyForecast ou Exception
-        
-        Returns:
-            Lista combinada de até 16 DailyForecast
-        """
-        # Se ambos falharam, retornar lista vazia
-        if isinstance(openweather_forecasts, Exception) and isinstance(openmeteo_forecasts, Exception):
-            logger.error(
-                "Both OpenWeather and Open-Meteo daily forecasts failed",
-                ow_error=str(openweather_forecasts),
-                om_error=str(openmeteo_forecasts)
-            )
-            return []
-        
-        # Se apenas Open-Meteo disponível, usar todos 16 dias
-        if isinstance(openweather_forecasts, Exception):
-            logger.warning(
-                "OpenWeather daily failed, using Open-Meteo 16 days",
-                error=str(openweather_forecasts)
-            )
-            return openmeteo_forecasts if not isinstance(openmeteo_forecasts, Exception) else []
-        
-        # Se apenas OpenWeather disponível, usar os 8 dias
-        if isinstance(openmeteo_forecasts, Exception):
-            logger.warning(
-                "Open-Meteo daily failed, using OpenWeather 8 days only",
-                error=str(openmeteo_forecasts)
-            )
-            return openweather_forecasts if not isinstance(openweather_forecasts, Exception) else []
-        
-        # Ambos OK: combinar OpenWeather (1-8) + Open-Meteo (9-16)
-        # Criar mapa de datas do Open-Meteo
-        openmeteo_by_date = {forecast.date: forecast for forecast in openmeteo_forecasts}
-        
-        # Pegar dias 1-8 do OpenWeather
-        combined = list(openweather_forecasts[:8])
-        
-        # Adicionar dias 9-16 do Open-Meteo que não estão no OpenWeather
-        used_dates = {forecast.date for forecast in combined}
-        
-        for forecast in openmeteo_forecasts:
-            if forecast.date not in used_dates:
-                combined.append(forecast)
-                if len(combined) >= 16:
-                    break
-        
-        logger.info(
-            f"Combined daily forecasts: {len(combined)} days "
-            f"(OpenWeather: {len(openweather_forecasts)}, Open-Meteo: {len([f for f in openmeteo_forecasts if f.date not in used_dates])} additional)"
-        )
-        
-        return combined[:16]  # Garantir máximo 16 dias
     
     @tracer.wrap(resource="use_case.async_get_city_detailed_forecast")
     async def execute(
@@ -153,36 +84,28 @@ class GetCityDetailedForecastUseCase:
             hourly_provider=self.hourly_forecast_provider.provider_name
         )
         
-        # Execute FOUR API calls in parallel (ASYNC - sem GIL)
-        # Strategy: OpenWeather (8 days) + Open-Meteo (16 days) para combinar
+        # Execute THREE API calls in parallel (ASYNC - sem GIL)
+        # Strategy: Open-Meteo ONLY (16 days)
         try:
-            # Task 1: Current weather (com alertas de 8 dias para rota detalhada)
+            # Task 1: Current weather (com alertas de 16 dias para rota detalhada)
             current_task = self.current_weather_provider.get_current_weather(
                 latitude=city.latitude,
                 longitude=city.longitude,
                 city_id=city.id,
                 city_name=city.name,
                 target_datetime=target_datetime,
-                include_daily_alerts=True  # Inclui alertas de médio prazo (8 dias)
+                include_daily_alerts=True  # Inclui alertas de médio prazo (16 dias)
             )
             
-            # Task 2: OpenWeather Daily forecasts (8 dias)
-            openweather_daily_task = self.current_weather_provider.get_daily_forecast(
-                latitude=city.latitude,
-                longitude=city.longitude,
-                city_id=city.id,
-                days=8
-            )
-            
-            # Task 3: Open-Meteo Daily forecasts (16 dias - para complementar)
-            openmeteo_daily_task = self.daily_forecast_provider.get_daily_forecast(
+            # Task 2: Open-Meteo Daily forecasts (16 dias)
+            daily_task = self.daily_forecast_provider.get_daily_forecast(
                 latitude=city.latitude,
                 longitude=city.longitude,
                 city_id=city.id,
                 days=16
             )
             
-            # Task 4: Hourly forecasts (48h para resposta da API)
+            # Task 3: Hourly forecasts (48h para resposta da API)
             hourly_task = self.hourly_forecast_provider.get_hourly_forecast(
                 latitude=city.latitude,
                 longitude=city.longitude,
@@ -190,25 +113,22 @@ class GetCityDetailedForecastUseCase:
                 hours=48
             )
             
-            # Await all four tasks concurrently
+            # Await all three tasks concurrently
             results = await asyncio.gather(
                 current_task,
-                openweather_daily_task,
-                openmeteo_daily_task,
+                daily_task,
                 hourly_task,
                 return_exceptions=True  # Continue even if one fails
             )
             
             current_weather = results[0]
-            openweather_daily = results[1]
-            openmeteo_daily = results[2]
-            hourly_forecasts = results[3]
+            daily_forecasts = results[1]
+            hourly_forecasts = results[2]
             
-            # Combinar daily forecasts: OpenWeather (dias 1-8) + Open-Meteo (dias 9-16)
-            daily_forecasts = self._combine_daily_forecasts(
-                openweather_forecasts=openweather_daily,
-                openmeteo_forecasts=openmeteo_daily
-            )
+            # Validate daily_forecasts
+            if isinstance(daily_forecasts, Exception):
+                logger.error("Failed to fetch daily forecasts", error=str(daily_forecasts))
+                daily_forecasts = []
             
             # Handle errors
             extended_available = True
