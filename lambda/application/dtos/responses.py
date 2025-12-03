@@ -195,15 +195,15 @@ class NeighborCitiesResponse:
     
     @staticmethod
     def from_cities(
-        cities: List[City],
+        cities: List['NeighborCity'],
         center_city_id: str,
         radius_km: float
     ) -> 'NeighborCitiesResponse':
         """
-        Converte lista de City entities para DTO
+        Converte lista de NeighborCity entities para DTO
         
         Args:
-            cities: Lista de City entities
+            cities: Lista de NeighborCity entities
             center_city_id: ID da cidade central
             radius_km: Raio usado
         
@@ -211,7 +211,7 @@ class NeighborCitiesResponse:
             NeighborCitiesResponse DTO
         """
         return NeighborCitiesResponse(
-            cities=[c.to_dict() for c in cities],
+            cities=[c.to_api_response() for c in cities],
             center_city_id=center_city_id,
             radius_km=radius_km,
             total_cities=len(cities)

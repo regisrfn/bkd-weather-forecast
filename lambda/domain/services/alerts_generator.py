@@ -173,8 +173,8 @@ class AlertsGenerator:
                 temp_max = float(getattr(forecast, 'temp_max', 30.0))
                 temperature = (temp_min + temp_max) / 2.0
             
-            visibility = float(getattr(forecast, 'visibility', 10000))
-            uv_index = float(getattr(forecast, 'uv_index', 0))
+            visibility = float(getattr(forecast, 'visibility', None) or 10000)
+            uv_index = float(getattr(forecast, 'uv_index', None) or 0)
             
             # Gerar alertas básicos
             basic_alerts = WeatherAlertOrchestrator.generate_alerts(
@@ -334,15 +334,18 @@ class AlertsGenerator:
             precipitation = float(getattr(forecast, 'precipitation', 0))
             rain_1h = precipitation  # HourlyForecast já é por hora
             temperature = float(forecast.temperature)
-            visibility = float(getattr(forecast, 'visibility', 10000))
+            visibility = float(getattr(forecast, 'visibility', None) or 10000)
             
             # Alertas básicos de cada forecast
+            # Calcular rainfall_intensity se disponível
+            rainfall_intensity = float(getattr(forecast, 'rainfall_intensity', 0))
+            
             basic_alerts = WeatherAlertOrchestrator.generate_alerts(
-                weather_code=forecast.weather_code,
                 rain_prob=rain_prob,
                 wind_speed=wind_speed,
                 forecast_time=timestamp,
                 rain_1h=rain_1h,
+                rainfall_intensity=rainfall_intensity,
                 temperature=temperature,
                 visibility=visibility
             )

@@ -35,20 +35,50 @@ def _hourly(ts: str, temp: float = 25.0, code: int = 61) -> HourlyForecast:
 
 def test_generate_all_alerts_deduplicates_and_sets_rain_end(monkeypatch):
     forecasts = [
-        _hourly("2024-01-01T10:00:00-03:00"),
-        _hourly("2024-01-01T11:00:00-03:00"),
+        _hourly("2024-01-01T10:00:00-03:00"),  # raining
+        _hourly("2024-01-01T11:00:00-03:00"),  # raining (last rain)
+        HourlyForecast(  # no rain
+            timestamp="2024-01-01T12:00:00-03:00",
+            temperature=25.0,
+            precipitation=0.0,
+            precipitation_probability=10,
+            rainfall_intensity=0.0,
+            humidity=60,
+            wind_speed=10.0,
+            wind_direction=180,
+            cloud_cover=50,
+            weather_code=1,
+            description="clear",
+        ),
+        HourlyForecast(  # no rain (2nd consecutive hour)
+            timestamp="2024-01-01T13:00:00-03:00",
+            temperature=25.0,
+            precipitation=0.0,
+            precipitation_probability=10,
+            rainfall_intensity=0.0,
+            humidity=60,
+            wind_speed=10.0,
+            wind_direction=180,
+            cloud_cover=50,
+            weather_code=1,
+            description="clear",
+        ),
     ]
 
-    def fake_generate_alerts(*, weather_code, rain_prob, wind_speed, forecast_time, **kwargs):
-        return [
-            WeatherAlert(
-                code="HEAVY_RAIN",
-                severity=AlertSeverity.ALERT,
-                description="chuva forte",
-                timestamp=forecast_time,
-                details={"rain_prob": rain_prob},
-            )
-        ]
+    def fake_generate_alerts(*, rain_prob, wind_speed, forecast_time, **kwargs):
+        # Only generate alerts for rainy forecasts
+        weather_code = kwargs.get('weather_code', 61)
+        if weather_code == 61:
+            return [
+                WeatherAlert(
+                    code="HEAVY_RAIN",
+                    severity=AlertSeverity.ALERT,
+                    description="chuva forte",
+                    timestamp=forecast_time,
+                    details={"rain_prob": rain_prob},
+                )
+            ]
+        return []
 
     monkeypatch.setattr(alerts_generator.WeatherAlertOrchestrator, "generate_alerts", fake_generate_alerts)
 

@@ -26,6 +26,12 @@ class MockForecast:
     @property
     def precipitation_probability(self):
         return self.rain_probability
+    
+    @property
+    def rainfall_intensity(self):
+        """Calcula rainfall_intensity para testes"""
+        from domain.helpers.rainfall_calculator import calculate_rainfall_intensity
+        return calculate_rainfall_intensity(self.rain_probability, self.precipitation)
 
 
 class TestAlertsGeneratorEdgeCases:
