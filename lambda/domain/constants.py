@@ -237,22 +237,23 @@ class WeatherCondition:
             else:
                 return (WeatherCondition.STORM_LIGHT, WeatherCondition.STORM_LIGHT_DESC)
         
-        # PRIORIDADE 2: Chuva (baseada em rainfall_intensity)
+        # PRIORIDADE 2: Chuva (baseada em rainfall_intensity - métrica composta)
         if rainfall_intensity >= 25:
-            if precipitation >= 50 or rainfall_intensity >= 60:
+            if rainfall_intensity >= 60:
                 return (WeatherCondition.VERY_HEAVY_RAIN, WeatherCondition.VERY_HEAVY_RAIN_DESC)
-            elif precipitation >= 10 or rainfall_intensity >= 40:
+            elif rainfall_intensity >= 40:
                 return (WeatherCondition.HEAVY_RAIN, WeatherCondition.HEAVY_RAIN_DESC)
-            elif precipitation >= 2.5 or rainfall_intensity >= 30:
+            elif rainfall_intensity >= 30:
                 return (WeatherCondition.MODERATE_RAIN, WeatherCondition.MODERATE_RAIN_DESC)
             else:
                 return (WeatherCondition.LIGHT_RAIN, WeatherCondition.LIGHT_RAIN_DESC)
         
-        # PRIORIDADE 3: Garoa (precipitação baixa mas presente)
-        if precipitation > 0 or (rain_probability >= 60 and rainfall_intensity > 0):
-            if precipitation >= 2.5:
+        # PRIORIDADE 3: Garoa (rainfall_intensity baixo mas presente)
+        # Requer: rainfall_intensity entre 5 e 25 (chuva leve mas detectável)
+        if rainfall_intensity >= 5:
+            if rainfall_intensity >= 15:
                 return (WeatherCondition.HEAVY_DRIZZLE, WeatherCondition.HEAVY_DRIZZLE_DESC)
-            elif precipitation >= 0.5:
+            elif rainfall_intensity >= 10:
                 return (WeatherCondition.MODERATE_DRIZZLE, WeatherCondition.MODERATE_DRIZZLE_DESC)
             else:
                 return (WeatherCondition.LIGHT_DRIZZLE, WeatherCondition.LIGHT_DRIZZLE_DESC)
