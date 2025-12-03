@@ -587,55 +587,6 @@ class AlertsGenerator:
         
         # Se não encontrou 2h consecutivas sem chuva, retornar None
         return None
-        
-        return None
-    
-    @staticmethod
-    def _is_raining(forecast: ForecastLike) -> bool:
-        """
-        Determina se está chovendo neste forecast
-        
-        Args:
-            forecast: ForecastLike
-        
-        Returns:
-            True se está chovendo
-        """
-        # Normalizar campos (suporta diferentes formatos)
-        rain_prob = float(getattr(forecast, 'rain_probability', 0) or getattr(forecast, 'precipitation_probability', 0))
-        
-        # Para HourlyForecast: precipitation_mm
-        # Para DailyForecast: precipitation
-        precipitation = float(
-            getattr(forecast, 'precipitation_mm', None) or 
-            getattr(forecast, 'precipitation', 0)
-        )
-        
-        rain_3h = precipitation * 3.0  # Converter 1h para 3h
-        
-        # Verificar intensidade
-        rain_1h = rain_3h / 3.0
-        intensity = (rain_1h * rain_prob / 100.0) / WeatherConstants.RAIN_INTENSITY_REFERENCE * 100.0
-        
-        if intensity >= 1.0:
-            return True
-        
-        if rain_3h > 0 and rain_prob >= 40:
-            return True
-        
-        # Verificar códigos de precipitação WMO (Open-Meteo APENAS)
-        code = forecast.weather_code
-        
-        if code in WeatherConstants.WMO_DRIZZLE:
-            return True
-        if code in WeatherConstants.WMO_RAIN:
-            return True
-        if code in WeatherConstants.WMO_RAIN_SHOWERS:
-            return True
-        if code in WeatherConstants.WMO_THUNDERSTORM:
-            return True
-        
-        return False
     
     @staticmethod
     def _parse_timestamp(forecast: ForecastLike) -> datetime:
