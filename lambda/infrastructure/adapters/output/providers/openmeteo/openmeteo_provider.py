@@ -1,5 +1,6 @@
 """Open-Meteo Provider - Implementação do provider para Open-Meteo API"""
 
+import asyncio
 from typing import Optional, List
 from datetime import datetime
 from ddtrace import tracer
@@ -81,16 +82,27 @@ class OpenMeteoProvider(IWeatherProvider):
         """
         OpenMeteo fornece dados atuais via hourly forecast
         Busca forecast hourly e extrai hora mais próxima
+        Também busca temperaturas min/max do dia
         """
         from datetime import datetime as dt
         from zoneinfo import ZoneInfo
         
-        hourly_forecasts = await self.get_hourly_forecast(
+        # Buscar hourly e daily em paralelo
+        hourly_task = self.get_hourly_forecast(
             latitude=latitude,
             longitude=longitude,
             city_id=city_id,
             hours=168  # 7 dias para garantir que temos a hora solicitada
         )
+        
+        daily_task = self.get_daily_forecast(
+            latitude=latitude,
+            longitude=longitude,
+            city_id=city_id,
+            days=1  # Apenas o dia atual para pegar min/max
+        )
+        
+        hourly_forecasts, daily_forecasts = await asyncio.gather(hourly_task, daily_task)
         
         if not hourly_forecasts:
             raise ValueError("Nenhuma previsão horária disponível no OpenMeteo")
@@ -119,11 +131,30 @@ class OpenMeteoProvider(IWeatherProvider):
         if closest_forecast is None:
             closest_forecast = hourly_forecasts[0]
         
+        # Extrair temp_min e temp_max do daily forecast do dia
+        temp_min = 0.0
+        temp_max = 0.0
+        
+        if daily_forecasts:
+            # Pegar o dia correspondente ao target_datetime
+            target_date = target_datetime.date().isoformat()
+            for daily in daily_forecasts:
+                if daily.date == target_date:
+                    temp_min = daily.temp_min
+                    temp_max = daily.temp_max
+                    break
+            # Se não encontrou correspondência, usar o primeiro dia
+            if temp_min == 0.0 and temp_max == 0.0 and daily_forecasts:
+                temp_min = daily_forecasts[0].temp_min
+                temp_max = daily_forecasts[0].temp_max
+        
         # Converter para Weather entity
         return OpenMeteoDataMapper.map_hourly_to_weather(
             hourly_forecast=closest_forecast,
             city_id=city_id,
-            city_name=city_name
+            city_name=city_name,
+            temp_min=temp_min,
+            temp_max=temp_max
         )
     
     @tracer.wrap(resource="openmeteo.get_daily_forecast")

@@ -201,7 +201,9 @@ class OpenMeteoDataMapper:
     def map_hourly_to_weather(
         hourly_forecast: HourlyForecast,
         city_id: str,
-        city_name: str
+        city_name: str,
+        temp_min: float = 0.0,
+        temp_max: float = 0.0
     ) -> Weather:
         """
         Converte HourlyForecast para Weather entity
@@ -211,6 +213,8 @@ class OpenMeteoDataMapper:
             hourly_forecast: Primeiro item do forecast hourly
             city_id: ID da cidade
             city_name: Nome da cidade
+            temp_min: Temperatura mínima do dia (opcional)
+            temp_max: Temperatura máxima do dia (opcional)
         
         Returns:
             Weather entity
@@ -254,6 +258,6 @@ class OpenMeteoDataMapper:
             clouds=float(hourly_forecast.cloud_cover),
             weather_alert=[],  # Gerados externamente
             weather_code=0,  # Será calculado pela entidade via classify_weather_condition
-            temp_min=0.0,  # Calculado externamente
-            temp_max=0.0  # Calculado externamente
+            temp_min=temp_min,
+            temp_max=temp_max
         )
