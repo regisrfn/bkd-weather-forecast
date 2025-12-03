@@ -560,8 +560,8 @@ async def test_error_invalid_body(http_client: httpx.AsyncClient):
 async def test_forecast_date_limits(http_client: httpx.AsyncClient, brazil_tz):
     """Testa limites de data de previsão e comportamento de última previsão disponível"""
     now_brazil = datetime.now(tz=brazil_tz)
-    
-    # Teste 1: Data no limite (4 dias - dentro do limite da OpenWeather)
+
+    # Teste 1: Data no limite (4 dias - dentro do limite do OpenMeteo)
     four_days = now_brazil + timedelta(days=4)
     date_str = four_days.strftime('%Y-%m-%d')
     
@@ -577,11 +577,11 @@ async def test_forecast_date_limits(http_client: httpx.AsyncClient, brazil_tz):
     assert 'timestamp' in data, "Response should contain timestamp"
     forecast_dt = datetime.fromisoformat(data['timestamp'].replace('Z', '+00:00'))
     diff_days = (forecast_dt.replace(tzinfo=None) - now_brazil.replace(tzinfo=None)).days
-    assert diff_days <= 5, \
-        f"Forecast should not exceed 5 days, got {diff_days} days"
+    assert diff_days <= 6, \
+        f"Forecast should not exceed 6 days, got {diff_days} days"
     
     # Teste 2: Data muito no futuro (10 dias - ALÉM do limite)
-    # Deve retornar a ÚLTIMA previsão disponível (dia 5)
+    # Deve retornar a ÚLTIMA previsão disponível (dia 6)
     far_future = now_brazil + timedelta(days=10)
     date_str = far_future.strftime('%Y-%m-%d')
     
@@ -598,13 +598,11 @@ async def test_forecast_date_limits(http_client: httpx.AsyncClient, brazil_tz):
     
     forecast_dt = datetime.fromisoformat(data['timestamp'].replace('Z', '+00:00'))
     now = datetime.now()
-    
-    # A previsão retornada deve estar dentro do limite de 5 dias
+
+    # A previsão retornada deve estar dentro do limite de 6 dias
     diff_days = (forecast_dt.replace(tzinfo=None) - now).days
-    assert 0 <= diff_days <= 5, \
-        f"When requesting far future date, should return last available forecast (day 5), got day {diff_days}"
-    
-    # Validar que é realmente a última previsão (mais próxima do dia 5)
+    assert 0 <= diff_days <= 6, \
+        f"When requesting far future date, should return last available forecast (day 6), got day {diff_days}"    # Validar que é realmente a última previsão (mais próxima do dia 5)
     assert diff_days >= 4, \
         f"Last available forecast should be around day 4-5, got day {diff_days}"
     
@@ -625,12 +623,11 @@ async def test_forecast_date_limits(http_client: httpx.AsyncClient, brazil_tz):
     data = response.json()
     assert 'timestamp' in data, "Response should contain timestamp"
     forecast_dt = datetime.fromisoformat(data['timestamp'].replace('Z', '+00:00'))
-    
-    # Não deve retornar previsão no passado
-    assert forecast_dt.replace(tzinfo=None) >= now - timedelta(hours=3), \
-        f"Should not return forecast in the past, got {forecast_dt}"
-    
-    print(f"✓ Past date test: Requested yesterday, got forecast for {forecast_dt.strftime('%Y-%m-%d %H:%M')}")
+
+    # Quando solicita data no passado, deve retornar primeiro forecast futuro (não no passado)
+    assert forecast_dt.replace(tzinfo=None) >= now, \
+        f"Should return future forecast when requesting past date, got {forecast_dt}"    
+    print(f"✓ Past date test: Requested yesterday, got future forecast for {forecast_dt.strftime('%Y-%m-%d %H:%M')}")
 
 
 @pytest.mark.asyncio
@@ -658,13 +655,11 @@ async def test_last_available_forecast_behavior(http_client: httpx.AsyncClient, 
         
         forecast_dt = datetime.fromisoformat(data['timestamp'].replace('Z', '+00:00'))
         now = datetime.now()
-        
-        # Validar que sempre retorna dentro do limite de 5 dias
+
+        # Validar que sempre retorna dentro do limite de 6 dias
         diff_days = (forecast_dt.replace(tzinfo=None) - now).days
-        assert 0 <= diff_days <= 5, \
-            f"For +{days_ahead} days request, should return last available (≤5 days), got {diff_days} days"
-        
-        # Para datas muito além do limite, deve estar próximo do dia 5
+        assert 0 <= diff_days <= 6, \
+            f"For +{days_ahead} days request, should return last available (≤6 days), got {diff_days} days"        # Para datas muito além do limite, deve estar próximo do dia 5
         if days_ahead >= 7:
             assert diff_days >= 4, \
                 f"For +{days_ahead} days request, last forecast should be around day 4-5, got {diff_days}"
@@ -708,12 +703,10 @@ async def test_regional_last_available_forecast(
         
         forecast_dt = datetime.fromisoformat(weather['timestamp'].replace('Z', '+00:00'))
         diff_days = (forecast_dt.replace(tzinfo=None) - now).days
-        
+
         # Todas as cidades devem retornar última previsão disponível
-        assert 0 <= diff_days <= 5, \
-            f"{weather['cityName']}: Should return last available forecast (≤5 days), got {diff_days} days"
-        
-        # Deve estar próximo do dia 5
+        assert 0 <= diff_days <= 6, \
+            f"{weather['cityName']}: Should return last available forecast (≤6 days), got {diff_days} days"        # Deve estar próximo do dia 5
         assert diff_days >= 4, \
             f"{weather['cityName']}: Last forecast should be around day 4-5, got {diff_days}"
         

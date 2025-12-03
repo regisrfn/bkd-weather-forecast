@@ -113,20 +113,42 @@ class OpenMeteoProvider(IWeatherProvider):
         elif target_datetime.tzinfo is None:
             target_datetime = target_datetime.replace(tzinfo=ZoneInfo("America/Sao_Paulo"))
         
+        now = dt.now(tz=ZoneInfo("America/Sao_Paulo"))
+        
         # Encontrar forecast mais próximo do target_datetime
+        # REGRA: Se target_datetime está no passado, retornar primeiro forecast futuro
+        # REGRA: Se target_datetime está no futuro, retornar o mais próximo disponível
         closest_forecast = None
         min_diff = None
         
+        # Filtrar apenas forecasts futuros em relação ao momento atual
+        future_forecasts = []
         for forecast in hourly_forecasts:
             forecast_dt = dt.fromisoformat(forecast.timestamp)
             if forecast_dt.tzinfo is None:
                 forecast_dt = forecast_dt.replace(tzinfo=ZoneInfo("America/Sao_Paulo"))
             
-            diff = abs((forecast_dt - target_datetime).total_seconds())
-            
-            if min_diff is None or diff < min_diff:
-                min_diff = diff
-                closest_forecast = forecast
+            # Apenas considerar forecasts futuros (não retornar previsões passadas)
+            if forecast_dt >= now:
+                future_forecasts.append((forecast, forecast_dt))
+        
+        # Se não há forecasts futuros, usar o último disponível
+        if not future_forecasts:
+            closest_forecast = hourly_forecasts[-1]
+        else:
+            # Se target_datetime está no passado, retornar o primeiro forecast futuro
+            if target_datetime < now:
+                # Ordenar por timestamp e pegar o primeiro
+                future_forecasts.sort(key=lambda x: x[1])
+                closest_forecast = future_forecasts[0][0]
+            else:
+                # Se target_datetime está no futuro, buscar o mais próximo
+                for forecast, forecast_dt in future_forecasts:
+                    diff = abs((forecast_dt - target_datetime).total_seconds())
+                    
+                    if min_diff is None or diff < min_diff:
+                        min_diff = diff
+                        closest_forecast = forecast
         
         if closest_forecast is None:
             closest_forecast = hourly_forecasts[0]
