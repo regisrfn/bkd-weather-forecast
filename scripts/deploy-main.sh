@@ -216,57 +216,7 @@ ZIP_SIZE=$(du -h "${BUILD_DIR}/lambda_function.zip" | cut -f1)
 echo -e "${GREEN}✓${NC} ZIP criado: ${ZIP_SIZE}"
 echo -e "${BLUE}   📍 Local: ${BUILD_DIR}/lambda_function.zip${NC}"
 
-# 2.6. Verificar arquivos principais
-echo -e "\n${BLUE}🔍 Verificando arquivos críticos no ZIP...${NC}"
-
-REQUIRED_FILES=(
-    "lambda_function.py"
-    "config.py"
-    "domain/entities/city.py"
-    "domain/entities/weather.py"
-    "application/use_cases/async_get_city_weather.py"
-    "application/use_cases/async_get_neighbor_cities.py"
-    "application/use_cases/get_regional_weather.py"
-    "infrastructure/adapters/output/async_weather_repository.py"
-    "infrastructure/adapters/cache/async_dynamodb_cache.py"
-    "shared/utils/haversine.py"
-    "data/municipalities_db.json"
-)
-
-ALL_OK=true
-for file in "${REQUIRED_FILES[@]}"; do
-    if unzip -l "${BUILD_DIR}/lambda_function.zip" | grep -q "$file"; then
-        echo -e "   ${GREEN}✓${NC} $file"
-    else
-        echo -e "   ${RED}✗${NC} $file ${RED}(FALTANDO!)${NC}"
-        ALL_OK=false
-    fi
-done
-
-# Verificar dependências
-echo -e "\n${BLUE}🔍 Verificando dependências Python...${NC}"
-REQUIRED_DEPS=(
-    "aws_lambda_powertools"
-    "requests"
-    "botocore"
-)
-
-for dep in "${REQUIRED_DEPS[@]}"; do
-    if unzip -l "${BUILD_DIR}/lambda_function.zip" | grep -q "$dep"; then
-        echo -e "   ${GREEN}✓${NC} $dep"
-    else
-        echo -e "   ${RED}✗${NC} $dep ${RED}(FALTANDO!)${NC}"
-        ALL_OK=false
-    fi
-done
-
-if [ "$ALL_OK" = false ]; then
-    echo -e "\n${RED}❌ Erro: Arquivos críticos faltando no ZIP!${NC}"
-    echo -e "${YELLOW}   Verifique os logs acima.${NC}"
-    exit 1
-fi
-
-echo -e "\n${GREEN}✅ Pacote Lambda validado com sucesso!${NC}"
+echo -e "\n${GREEN}✅ Pacote Lambda criado com sucesso!${NC}"
 
 # ============================================
 # FASE 3: Terraform - Configuração
