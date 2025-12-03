@@ -74,12 +74,12 @@ class WeatherProviderFactory:
             Provider apropriado baseado na estratégia
         """
         if self.strategy == ProviderStrategy.OPENWEATHER_PRIMARY:
-            # OpenWeather não suporta daily agregado, usar OpenMeteo
-            return self._get_openmeteo()
+            # OpenWeather One Call 3.0 tem daily (8 dias)
+            return self._get_openweather()
         elif self.strategy == ProviderStrategy.OPENMETEO_PRIMARY:
             return self._get_openmeteo()
         elif self.strategy == ProviderStrategy.HYBRID:
-            return self._get_openmeteo()  # OpenMeteo melhor para daily
+            return self._get_openweather()  # OpenWeather dias 1-8, OpenMeteo complementa 9-16
         elif self.strategy == ProviderStrategy.OPENMETEO_ONLY:
             return self._get_openmeteo()
         
