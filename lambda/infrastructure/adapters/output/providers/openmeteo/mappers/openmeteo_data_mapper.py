@@ -4,6 +4,7 @@ LOCALIZAÇÃO: infrastructure (transforma dados externos → domínio)
 """
 from typing import Dict, Any, List
 from datetime import datetime
+import math
 
 from domain.entities.daily_forecast import DailyForecast
 from domain.entities.hourly_forecast import HourlyForecast
@@ -13,6 +14,41 @@ from domain.constants import Weather as WeatherConstants
 from shared.config.logger_config import get_logger
 
 logger = get_logger(child=True)
+
+
+def calculate_feels_like(temp: float, humidity: float, wind_speed: float) -> float:
+    """
+    Calcula sensação térmica (feels like) usando Heat Index ou Wind Chill
+    
+    Args:
+        temp: Temperatura em °C
+        humidity: Umidade relativa em %
+        wind_speed: Velocidade do vento em km/h
+    
+    Returns:
+        Temperatura aparente em °C
+    """
+    # Para temperaturas altas (> 27°C): usar Heat Index
+    if temp > 27:
+        # Fórmula simplificada do Heat Index
+        # HI = T + 0.5555 × (VP - 10)
+        # onde VP = 6.112 × e^(17.67 × T / (T + 243.5)) × (RH / 100)
+        
+        vapor_pressure = 6.112 * math.exp((17.67 * temp) / (temp + 243.5)) * (humidity / 100)
+        heat_index = temp + 0.5555 * (vapor_pressure - 10)
+        return round(heat_index, 1)
+    
+    # Para temperaturas baixas (< 10°C) com vento: usar Wind Chill
+    elif temp < 10 and wind_speed > 4.8:
+        # Fórmula Wind Chill (ajustada para km/h)
+        # WC = 13.12 + 0.6215×T - 11.37×V^0.16 + 0.3965×T×V^0.16
+        
+        v_power = math.pow(wind_speed, 0.16)
+        wind_chill = 13.12 + (0.6215 * temp) - (11.37 * v_power) + (0.3965 * temp * v_power)
+        return round(wind_chill, 1)
+    
+    # Para temperaturas moderadas: retornar temperatura real
+    return temp
 
 
 class OpenMeteoDataMapper:
@@ -136,8 +172,8 @@ class OpenMeteoDataMapper:
                     wind_speed=wind_speed[i] if i < len(wind_speed) else 0.0,
                     wind_direction=int(wind_dir[i]) if i < len(wind_dir) else 0,
                     cloud_cover=int(clouds[i]) if i < len(clouds) else 0,
-                    weather_code=weather_code,
-                    description=OpenMeteoDataMapper.get_wmo_description(weather_code)
+                    weather_code=0,  # Será calculado pela entidade via classify_weather_condition
+                    description=""  # Será calculado pela entidade via classify_weather_condition
                 )
                 forecasts.append(forecast)
                 
@@ -165,6 +201,13 @@ class OpenMeteoDataMapper:
         Returns:
             Weather entity
         """
+        # Calcular feels_like
+        feels_like_calc = calculate_feels_like(
+            hourly_forecast.temperature,
+            float(hourly_forecast.humidity),
+            hourly_forecast.wind_speed
+        )
+        
         return Weather(
             city_id=city_id,
             city_name=city_name,
@@ -176,29 +219,13 @@ class OpenMeteoDataMapper:
             rain_probability=float(hourly_forecast.precipitation_probability),
             rain_1h=hourly_forecast.precipitation,
             rain_accumulated_day=0.0,  # Calculado externamente se necessário
-            description=hourly_forecast.description,
-            feels_like=0.0,  # OpenMeteo não fornece
-            pressure=0.0,  # OpenMeteo não fornece
+            description="",  # Será calculado pela entidade via classify_weather_condition
+            feels_like=feels_like_calc,
+            pressure=1013.0,  # Valor padrão (nível do mar)
             visibility=10000.0,  # Valor padrão (10km)
             clouds=float(hourly_forecast.cloud_cover),
             weather_alert=[],  # Gerados externamente
-            weather_code=hourly_forecast.weather_code,
+            weather_code=0,  # Será calculado pela entidade via classify_weather_condition
             temp_min=0.0,  # Calculado externamente
             temp_max=0.0  # Calculado externamente
-        )
-    
-    @staticmethod
-    def get_wmo_description(weather_code: int) -> str:
-        """
-        Retorna descrição PT-BR para código WMO
-        
-        Args:
-            weather_code: Código WMO
-        
-        Returns:
-            Descrição em português
-        """
-        return WeatherConstants.WMO_DESCRIPTIONS.get(
-            weather_code,
-            "Condição desconhecida"
         )

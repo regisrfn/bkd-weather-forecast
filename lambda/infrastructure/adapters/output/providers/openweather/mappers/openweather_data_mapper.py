@@ -373,13 +373,16 @@ class OpenWeatherDataMapper:
             temperature = hour_data.get('temp', 0.0)
             visibility = hour_data.get('visibility', 10000)
             
+            # Calcular rainfall_intensity
+            rainfall_intensity = min(100, (rain_1h * rain_prob / 100.0) / 30.0 * 100)
+            
             # Gerar alertas
             hour_alerts = WeatherAlertOrchestrator.generate_alerts(
-                weather_code=weather_info.get('id', 0),
                 rain_prob=rain_prob,
                 wind_speed=wind_speed_kmh,
                 forecast_time=forecast_dt,
                 rain_1h=rain_1h,
+                rainfall_intensity=rainfall_intensity,
                 temperature=temperature,
                 visibility=visibility
             )

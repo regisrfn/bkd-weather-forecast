@@ -11,6 +11,7 @@ from domain.alerts.primitives import (
     WeatherAlert,
     RAIN_INTENSITY_REFERENCE
 )
+from domain.constants import WeatherCondition
 
 
 class CloudCoverage(Enum):
@@ -44,6 +45,21 @@ class Weather:
     weather_code: int = 0  # Código da condição climática da API
     temp_min: float = 0.0  # Temperatura mínima (°C)
     temp_max: float = 0.0  # Temperatura máxima (°C)
+    
+    def __post_init__(self):
+        """Auto-classificação usando sistema proprietário de códigos"""
+        if self.weather_code == 0 or self.description == "":
+            code, desc = WeatherCondition.classify_weather_condition(
+                rainfall_intensity=self.rainfall_intensity,
+                precipitation=self.rain_1h,
+                wind_speed=self.wind_speed,
+                clouds=self.clouds,
+                visibility=self.visibility,
+                temperature=self.temperature,
+                rain_probability=self.rain_probability
+            )
+            object.__setattr__(self, 'weather_code', code)
+            object.__setattr__(self, 'description', desc)
     
     @property
     def rainfall_intensity(self) -> int:
@@ -123,6 +139,7 @@ class Weather:
             'clouds': round(self.clouds, 1),
             'cloudsDescription': self.clouds_description,
             'weatherAlert': [alert.to_dict() for alert in self.weather_alert],  # Array de alertas estruturados
+            'weatherCode': self.weather_code,
             'tempMin': round(self.temp_min, 1),
             'tempMax': round(self.temp_max, 1)
         }

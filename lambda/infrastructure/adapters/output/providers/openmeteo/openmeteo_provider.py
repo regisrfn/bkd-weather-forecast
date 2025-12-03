@@ -72,7 +72,8 @@ class OpenMeteoProvider(IWeatherProvider):
         longitude: float,
         city_id: str,
         city_name: str,
-        target_datetime: Optional[datetime] = None
+        target_datetime: Optional[datetime] = None,
+        include_daily_alerts: bool = False  # Compatibilidade com interface
     ) -> Weather:
         """
         OpenMeteo fornece dados atuais via hourly forecast

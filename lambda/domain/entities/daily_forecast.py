@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from domain.helpers.rainfall_calculator import calculate_rainfall_intensity
+from domain.constants import WeatherCondition
 
 
 @dataclass
@@ -28,6 +29,28 @@ class DailyForecast:
     sunrise: str  # Horário do nascer do sol (HH:MM)
     sunset: str  # Horário do pôr do sol (HH:MM)
     precipitation_hours: float  # Horas de precipitação esperadas (0-24h)
+    weather_code: int = 0  # Código proprietário da condição climática
+    description: str = ""  # Descrição em português
+    
+    def __post_init__(self):
+        """Auto-classificação usando sistema proprietário de códigos"""
+        if self.weather_code == 0 or self.description == "":
+            # Para daily forecast, usar temperatura média
+            temp_avg = (self.temp_min + self.temp_max) / 2
+            # Precipitação por hora (se houver horas de chuva)
+            precip_per_hour = self.precipitation_mm / self.precipitation_hours if self.precipitation_hours > 0 else 0
+            
+            code, desc = WeatherCondition.classify_weather_condition(
+                rainfall_intensity=self.rainfall_intensity,
+                precipitation=precip_per_hour,
+                wind_speed=self.wind_speed_max,
+                clouds=50.0,  # Estimativa para daily (não disponível)
+                visibility=10000.0,  # Default para daily
+                temperature=temp_avg,
+                rain_probability=self.rain_probability
+            )
+            object.__setattr__(self, 'weather_code', code)
+            object.__setattr__(self, 'description', desc)
     
     @property
     def daylight_hours(self) -> float:
@@ -116,7 +139,9 @@ class DailyForecast:
             'sunrise': self.sunrise,
             'sunset': self.sunset,
             'precipitationHours': round(self.precipitation_hours, 1),
-            'daylightHours': self.daylight_hours
+            'daylightHours': self.daylight_hours,
+            'weatherCode': self.weather_code,
+            'description': self.description
         }
     
     @staticmethod

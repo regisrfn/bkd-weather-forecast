@@ -51,9 +51,10 @@ def _owm_floor(code: int) -> Optional[Tuple[str, AlertSeverity]]:
 
 @dataclass(frozen=True)
 class RainAlertInput:
-    weather_code: int
+    weather_code: int  # Mantido para compatibilidade, mas não usado mais
     rain_prob: float
     rain_1h: float
+    rainfall_intensity: float  # Intensidade já calculada pela entidade
     forecast_time: datetime
 
 
@@ -98,19 +99,20 @@ class RainAlertService:
     @staticmethod
     def generate_alerts(data: RainAlertInput) -> List[WeatherAlert]:
         """Retorna zero ou um alerta de precipitação."""
-        intensity = RainAlertService.compute_rainfall_intensity(
-            data.rain_prob, data.rain_1h
-        )
+        # Usar rainfall_intensity já calculado ao invés de recalcular
+        intensity = data.rainfall_intensity
 
         intensity_class = RainAlertService._classify_by_intensity(intensity)
-        code_floor = RainAlertService._code_floor(data.weather_code)
-
-        # Gate por intensidade: só gera alertas se passou dos limiares
+        
+        # Sistema proprietário: não depende mais de weather_code
+        # Tempestade detectada por alta intensidade + alta probabilidade
+        is_storm = intensity >= 40 and data.rain_prob >= 70
+        
         chosen = intensity_class
-
-        # Se for código de tempestade e intensidade >= moderada, elevar para STORM
-        if code_floor and code_floor[0] == "STORM" and intensity >= INTENSITY_THRESHOLDS["MODERATE_MIN"]:
-            chosen = code_floor
+        
+        # Se for tempestade (alta intensidade + prob), elevar severidade
+        if is_storm and intensity >= INTENSITY_THRESHOLDS["MODERATE_MIN"]:
+            chosen = ("STORM", AlertSeverity.ALERT)
 
         if chosen:
             code, severity = chosen
@@ -127,10 +129,9 @@ class RainAlertService:
                 )
             ]
 
-        # Fallback: alta probabilidade e código de chuva, MAS sem volume/intensidade
+        # Fallback: alta probabilidade de chuva, MAS sem volume/intensidade
         if (
             data.rain_prob >= RAIN_PROBABILITY_THRESHOLD
-            and RainAlertService._is_rain_code(data.weather_code)
             and data.rain_1h == 0
             and intensity == 0
         ):
@@ -141,7 +142,6 @@ class RainAlertService:
                     description="🌧️ Alta probabilidade de chuva",
                     timestamp=data.forecast_time,
                     details={
-                        "weather_code": data.weather_code,
                         "probability_percent": round(data.rain_prob, 1),
                     },
                 )

@@ -133,7 +133,7 @@ def get_city_weather_route(city_id: str):
     
     # Get city repository e weather provider via factory
     city_repository = get_repository()
-    factory = get_weather_provider_factory(strategy=ProviderStrategy.HYBRID)
+    factory = get_weather_provider_factory(strategy=ProviderStrategy.OPENMETEO_ONLY)
     weather_provider = factory.get_current_weather_provider()
     
     # Execute async use case
@@ -184,7 +184,7 @@ def get_city_detailed_forecast_route(city_id: str):
     
     # Get city repository e providers via factory
     city_repository = get_repository()
-    factory = get_weather_provider_factory(strategy=ProviderStrategy.HYBRID)
+    factory = get_weather_provider_factory(strategy=ProviderStrategy.OPENMETEO_ONLY)
     current_provider = factory.get_current_weather_provider()
     daily_provider = factory.get_daily_forecast_provider()
     hourly_provider = factory.get_hourly_forecast_provider()
@@ -250,7 +250,7 @@ def post_regional_weather_route():
     
     # Get city repository e weather provider via factory
     city_repository = get_repository()
-    factory = get_weather_provider_factory(strategy=ProviderStrategy.HYBRID)
+    factory = get_weather_provider_factory(strategy=ProviderStrategy.OPENMETEO_ONLY)
     weather_provider = factory.get_current_weather_provider()
     
     # Execute async use case

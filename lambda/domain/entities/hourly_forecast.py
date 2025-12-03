@@ -2,6 +2,7 @@
 Hourly Forecast Entity - Entidade de previsão horária do Open-Meteo
 """
 from dataclasses import dataclass
+from domain.constants import WeatherCondition
 
 
 @dataclass
@@ -23,6 +24,22 @@ class HourlyForecast:
     cloud_cover: int  # Cobertura de nuvens % (0-100)
     weather_code: int  # WMO weather code
     description: str = ""  # Descrição em português do weather_code
+    visibility: float = 10000.0  # Visibilidade em metros (default 10km)
+    
+    def __post_init__(self):
+        """Auto-classificação usando sistema proprietário de códigos"""
+        if self.weather_code == 0 or self.description == "":
+            code, desc = WeatherCondition.classify_weather_condition(
+                rainfall_intensity=self.rainfall_intensity,
+                precipitation=self.precipitation,
+                wind_speed=self.wind_speed,
+                clouds=float(self.cloud_cover),
+                visibility=self.visibility,
+                temperature=self.temperature,
+                rain_probability=float(self.precipitation_probability)
+            )
+            object.__setattr__(self, 'weather_code', code)
+            object.__setattr__(self, 'description', desc)
     
     def to_api_response(self) -> dict:
         """

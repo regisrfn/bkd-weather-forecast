@@ -108,11 +108,11 @@ class AlertsGenerator:
             
             # Gerar alertas básicos
             basic_alerts = WeatherAlertOrchestrator.generate_alerts(
-                weather_code=forecast.weather_code,
                 rain_prob=rain_prob,
                 wind_speed=wind_speed,
                 forecast_time=timestamp,
                 rain_1h=rain_1h,
+                rainfall_intensity=getattr(forecast, 'rainfall_intensity', 0.0),
                 temperature=temperature,
                 visibility=visibility
             )

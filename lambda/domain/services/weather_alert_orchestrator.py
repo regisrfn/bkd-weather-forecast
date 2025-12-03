@@ -25,34 +25,28 @@ class WeatherAlertOrchestrator:
     
     @staticmethod
     def generate_alerts(
-        weather_code: int,
         rain_prob: float,
         wind_speed: float,
         forecast_time: datetime,
         rain_1h: float = 0.0,
+        rainfall_intensity: float = 0.0,
         temperature: float = 0.0,
         visibility: float = 10000
     ) -> List[WeatherAlert]:
         """
         Gera alertas climáticos baseado em múltiplos parâmetros
         
+        Sistema proprietário: não depende de weather_code externo (WMO/OW).
+        Alertas gerados apenas via thresholds de métricas reais.
+        
         Retorna apenas UM alerta por code, priorizando pelo timestamp mais próximo.
         
-        Códigos OpenWeatherMap:
-        - 2xx: Tempestade
-        - 3xx: Garoa
-        - 5xx: Chuva
-        - 6xx: Neve
-        - 7xx: Atmosfera (neblina, fumaça, etc)
-        - 800: Céu limpo
-        - 80x: Nuvens
-        
         Args:
-            weather_code: Código da condição climática da API
             rain_prob: Probabilidade de chuva (0-100%)
             wind_speed: Velocidade do vento (km/h)
             forecast_time: Data/hora da previsão
             rain_1h: Volume de precipitação em mm/h (opcional)
+            rainfall_intensity: Intensidade composta 0-100 (opcional)
             temperature: Temperatura em °C (opcional)
             visibility: Visibilidade em metros (opcional, padrão 10000m)
         
@@ -71,9 +65,10 @@ class WeatherAlertOrchestrator:
 
         # Alertas via serviços de domínio
         alerts.extend(RainAlertService.generate_alerts(RainAlertInput(
-            weather_code=weather_code,
+            weather_code=0,  # Não usado mais, apenas para compatibilidade
             rain_prob=rain_prob,
             rain_1h=rain_1h,
+            rainfall_intensity=rainfall_intensity,
             forecast_time=alert_time
         )))
         alerts.extend(WindAlertService.generate_alerts(WindAlertInput(
@@ -86,7 +81,7 @@ class WeatherAlertOrchestrator:
         )))
         alerts.extend(TemperatureAlertService.generate_alerts(TemperatureAlertInput(
             temperature_c=temperature,
-            weather_code=weather_code,
+            weather_code=0,  # Não usado mais, apenas para compatibilidade
             forecast_time=alert_time
         )))
         
