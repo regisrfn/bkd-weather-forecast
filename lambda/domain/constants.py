@@ -16,9 +16,9 @@ class API:
     OPENMETEO_BASE_URL = "https://api.open-meteo.com/v1"
     
     # Timeouts e limites HTTP
-    HTTP_TIMEOUT_TOTAL = 15  # segundos
-    HTTP_TIMEOUT_CONNECT = 5  # segundos
-    HTTP_TIMEOUT_READ = 10  # segundos
+    HTTP_TIMEOUT_TOTAL = 8  # segundos (reduzido para permitir retries dentro de 10s)
+    HTTP_TIMEOUT_CONNECT = 3  # segundos
+    HTTP_TIMEOUT_READ = 5  # segundos
     HTTP_CONNECTION_LIMIT = 100
     HTTP_CONNECTION_LIMIT_PER_HOST = 30
     DNS_CACHE_TTL = 300  # segundos

@@ -4,6 +4,15 @@ import asyncio
 from typing import Optional, List
 from datetime import datetime
 from ddtrace import tracer
+import aiohttp
+from tenacity import (
+    retry,
+    stop_after_attempt,
+    wait_exponential,
+    retry_if_exception_type,
+    before_sleep_log
+)
+import logging
 
 from datetime import datetime as dt
 from zoneinfo import ZoneInfo
@@ -265,9 +274,27 @@ class OpenMeteoProvider(IWeatherProvider):
             
             session = await self.session_manager.get_session()
             
-            async with session.get(url, params=params) as response:
-                response.raise_for_status()
-                data = await response.json()
+            # Retry com exponential backoff para rate limiting
+            @retry(
+                retry=retry_if_exception_type((aiohttp.ClientResponseError, asyncio.TimeoutError)),
+                stop=stop_after_attempt(3),
+                wait=wait_exponential(multiplier=1, min=1, max=4),
+                before_sleep=before_sleep_log(logger, logging.WARNING),
+                reraise=True
+            )
+            async def fetch_with_retry():
+                async with session.get(url, params=params) as response:
+                    # Apenas retry em rate limit (429) e service unavailable (503)
+                    if response.status in [429, 503]:
+                        raise aiohttp.ClientResponseError(
+                            request_info=response.request_info,
+                            history=response.history,
+                            status=response.status
+                        )
+                    response.raise_for_status()
+                    return await response.json()
+            
+            data = await fetch_with_retry()
             
             # 💾 Salvar no cache
             if self.cache and self.cache.is_enabled():
@@ -327,9 +354,27 @@ class OpenMeteoProvider(IWeatherProvider):
             
             session = await self.session_manager.get_session()
             
-            async with session.get(url, params=params) as response:
-                response.raise_for_status()
-                data = await response.json()
+            # Retry com exponential backoff para rate limiting
+            @retry(
+                retry=retry_if_exception_type((aiohttp.ClientResponseError, asyncio.TimeoutError)),
+                stop=stop_after_attempt(3),
+                wait=wait_exponential(multiplier=1, min=1, max=4),
+                before_sleep=before_sleep_log(logger, logging.WARNING),
+                reraise=True
+            )
+            async def fetch_with_retry():
+                async with session.get(url, params=params) as response:
+                    # Apenas retry em rate limit (429) e service unavailable (503)
+                    if response.status in [429, 503]:
+                        raise aiohttp.ClientResponseError(
+                            request_info=response.request_info,
+                            history=response.history,
+                            status=response.status
+                        )
+                    response.raise_for_status()
+                    return await response.json()
+            
+            data = await fetch_with_retry()
             
             # 💾 Salvar no cache
             if self.cache and self.cache.is_enabled():
