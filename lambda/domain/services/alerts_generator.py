@@ -53,7 +53,8 @@ class AlertsGenerator:
         daily_forecasts: Optional[List] = None
     ) -> List[WeatherAlert]:
         """
-        Gera alertas combinando hourly (48h) + daily (5 dias) forecasts
+        Gera alertas inteligentemente usando dados horários disponíveis (até 7 dias)
+        e complementando com dados diários apenas para dias não cobertos
         
         Args:
             weather_provider: Provider para buscar dados (DEPRECATED, use hourly_forecasts/daily_forecasts)
@@ -62,8 +63,8 @@ class AlertsGenerator:
             city_id: ID da cidade (DEPRECATED)
             target_datetime: Data/hora de referência (padrão: agora)
             days_limit: Número de dias para análise (padrão: 7)
-            hourly_forecasts: Previsões horárias pré-buscadas (PREFERRED)
-            daily_forecasts: Previsões diárias pré-buscadas (PREFERRED)
+            hourly_forecasts: Previsões horárias pré-buscadas (PREFERRED - até 7 dias/168h)
+            daily_forecasts: Previsões diárias pré-buscadas (PREFERRED - para complementar)
         
         Returns:
             Lista de alertas dos próximos N dias
@@ -71,12 +72,21 @@ class AlertsGenerator:
         try:
             # Se dados pré-buscados fornecidos, usar diretamente (novo comportamento)
             if hourly_forecasts is not None and daily_forecasts is not None:
-                # Combinar: hourly (dias 1-2) + daily (dias 3-7)
+                # Calcular quais dias têm cobertura horária suficiente
+                covered_days = AlertsGenerator._calculate_hourly_day_coverage(
+                    hourly_forecasts=hourly_forecasts,
+                    target_datetime=target_datetime,
+                    days_limit=days_limit
+                )
+                
+                # Estratégia inteligente: usar hourly para dias cobertos, daily para o resto
                 combined_forecasts = list(hourly_forecasts) if hourly_forecasts else []
                 
-                if daily_forecasts and len(daily_forecasts) > 2:
-                    # Adicionar daily dos dias 3-7 (índices 2-6)
-                    combined_forecasts.extend(daily_forecasts[2:days_limit])
+                # Adicionar daily forecasts apenas para dias NÃO cobertos por hourly
+                if daily_forecasts:
+                    for day_idx in range(days_limit):
+                        if day_idx not in covered_days and day_idx < len(daily_forecasts):
+                            combined_forecasts.append(daily_forecasts[day_idx])
                 
                 # Gerar alertas com os forecasts combinados
                 alerts = AlertsGenerator.generate_alerts_next_days(
@@ -673,3 +683,56 @@ class AlertsGenerator:
         
         # Fallback
         return datetime.now(tz=ZoneInfo('UTC'))
+    
+    @staticmethod
+    def _calculate_hourly_day_coverage(
+        hourly_forecasts: List,
+        target_datetime: Optional[datetime] = None,
+        days_limit: int = 7,
+        min_hours_per_day: int = 20
+    ) -> set:
+        """
+        Calcula quais dias (1-7) possuem cobertura suficiente de dados horários
+        
+        Args:
+            hourly_forecasts: Lista de previsões horárias
+            target_datetime: Data/hora de referência (padrão: agora)
+            days_limit: Número de dias para análise (padrão: 7)
+            min_hours_per_day: Mínimo de horas para considerar dia coberto (padrão: 20)
+        
+        Returns:
+            Set de índices de dias (0-6) que têm cobertura horária suficiente
+        """
+        if not hourly_forecasts:
+            return set()
+        
+        brasil_tz = ZoneInfo(App.TIMEZONE)
+        
+        # Normalizar target_datetime
+        if target_datetime is None:
+            now = datetime.now(tz=brasil_tz)
+        elif target_datetime.tzinfo is None:
+            now = target_datetime.replace(tzinfo=brasil_tz)
+        else:
+            now = target_datetime.astimezone(brasil_tz)
+        
+        # Agrupar forecasts por dia
+        hours_by_day = defaultdict(int)
+        
+        for forecast in hourly_forecasts:
+            ts = AlertsGenerator._parse_timestamp(forecast)
+            
+            # Calcular diferença em dias desde now
+            delta_days = (ts.date() - now.date()).days
+            
+            # Apenas dias dentro do limite (0 a days_limit-1)
+            if 0 <= delta_days < days_limit:
+                hours_by_day[delta_days] += 1
+        
+        # Retornar dias com cobertura suficiente
+        covered_days = {
+            day for day, hours in hours_by_day.items()
+            if hours >= min_hours_per_day
+        }
+        
+        return covered_days

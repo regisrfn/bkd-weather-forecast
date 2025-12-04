@@ -142,8 +142,8 @@ class GetCityDetailedForecastUseCase:
             
             # Gerar alertas usando dados já buscados (sem nova chamada)
             alerts = await AlertsGenerator.generate_alerts_for_weather(
-                hourly_forecasts=hourly_forecasts_full[:48],  # Primeiras 48 horas para alertas
-                daily_forecasts=daily_forecasts[:7] if daily_forecasts else [],  # Primeiros 7 dias
+                hourly_forecasts=hourly_forecasts_full,  # Passa dados completos, função decide o uso
+                daily_forecasts=daily_forecasts if daily_forecasts else [],  # Passa dados completos
                 target_datetime=target_datetime,
                 days_limit=7
             )
