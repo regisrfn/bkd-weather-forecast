@@ -57,20 +57,20 @@ class AlertsGenerator:
         e complementando com dados diários apenas para dias não cobertos
         
         Args:
-            weather_provider: Provider para buscar dados (DEPRECATED, use hourly_forecasts/daily_forecasts)
-            latitude: Latitude da cidade (DEPRECATED)
-            longitude: Longitude da cidade (DEPRECATED)
-            city_id: ID da cidade (DEPRECATED)
             target_datetime: Data/hora de referência (padrão: agora)
             days_limit: Número de dias para análise (padrão: 7)
-            hourly_forecasts: Previsões horárias pré-buscadas (PREFERRED - até 7 dias/168h)
-            daily_forecasts: Previsões diárias pré-buscadas (PREFERRED - para complementar)
+            hourly_forecasts: Previsões horárias pré-buscadas (até 7 dias/168h)
+            daily_forecasts: Previsões diárias pré-buscadas (para complementar dias não cobertos)
         
         Returns:
             Lista de alertas dos próximos N dias
+        
+        Note:
+            Parâmetros weather_provider, latitude, longitude e city_id são mantidos
+            por compatibilidade mas não são mais utilizados.
         """
         try:
-            # Se dados pré-buscados fornecidos, usar diretamente (novo comportamento)
+            # Se dados pré-buscados fornecidos, usar diretamente
             if hourly_forecasts is not None and daily_forecasts is not None:
                 # Calcular quais dias têm cobertura horária suficiente
                 covered_days = AlertsGenerator._calculate_hourly_day_coverage(
@@ -97,42 +97,9 @@ class AlertsGenerator:
                 
                 return alerts
             
-            # Fallback para comportamento antigo (buscar dados)
-            if weather_provider is None:
-                logger.warning("No weather provider or pre-fetched data provided")
-                return []
-            
-            # Buscar hourly forecasts (48h = 2 dias, granularidade horária)
-            hourly_forecasts = await weather_provider.get_hourly_forecast(
-                latitude=latitude,
-                longitude=longitude,
-                city_id=city_id,
-                hours=48
-            )
-            
-            # Buscar daily forecasts (7 dias, para cobrir dias 3-7)
-            daily_forecasts = await weather_provider.get_daily_forecast(
-                latitude=latitude,
-                longitude=longitude,
-                city_id=city_id,
-                days=7
-            )
-            
-            # Combinar: hourly (dias 1-2) + daily (dias 3-7)
-            combined_forecasts = list(hourly_forecasts) if hourly_forecasts else []
-            
-            if daily_forecasts and len(daily_forecasts) > 2:
-                # Adicionar daily dos dias 3-7 (índices 2-6)
-                combined_forecasts.extend(daily_forecasts[2:days_limit])
-            
-            # Gerar alertas com os forecasts combinados
-            alerts = AlertsGenerator.generate_alerts_next_days(
-                forecasts=combined_forecasts,
-                target_datetime=target_datetime,
-                days_limit=days_limit
-            )
-            
-            return alerts
+            # Se dados não foram fornecidos, retornar lista vazia
+            logger.warning("No pre-fetched forecast data provided for alert generation")
+            return []
             
         except Exception as e:
             logger.warning(f"Failed to generate alerts: {e}")
