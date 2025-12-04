@@ -12,7 +12,7 @@ from domain.alerts.primitives import (
     AlertSeverity,
     WeatherAlert,
     RAIN_INTENSITY_REFERENCE,
-    RAIN_PROBABILITY_THRESHOLD,
+    RAIN_EXPECTED_MIN_PROBABILITY,
 )
 
 
@@ -129,11 +129,12 @@ class RainAlertService:
                 )
             ]
 
-        # Fallback: alta probabilidade de chuva, MAS sem volume/intensidade
+        # Fallback: alta probabilidade de chuva com volume mínimo, mas sem classificação de intensidade
+        # Só alerta se tiver volume >= 0.3mm E não caiu em nenhuma classificação acima
         if (
-            data.rain_prob >= RAIN_PROBABILITY_THRESHOLD
-            and data.rain_1h == 0
-            and intensity == 0
+            data.rain_prob >= RAIN_EXPECTED_MIN_PROBABILITY
+            and data.rain_1h >= 0.3
+            and intensity < INTENSITY_THRESHOLDS["DRIZZLE_MIN"]
         ):
             return [
                 WeatherAlert(
@@ -143,6 +144,7 @@ class RainAlertService:
                     timestamp=data.forecast_time,
                     details={
                         "probability_percent": round(data.rain_prob, 1),
+                        "rain_mm_h": round(data.rain_1h, 1),
                     },
                 )
             ]

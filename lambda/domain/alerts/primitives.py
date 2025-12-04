@@ -9,8 +9,8 @@ from datetime import datetime
 from enum import Enum
 from typing import Optional, List
 
-# Threshold de probabilidade para alertas de precipitação sem volume
-RAIN_PROBABILITY_THRESHOLD = 80  # Mínimo de 80% para gerar alertas de chuva
+# Threshold mínimo de probabilidade para alerta RAIN_EXPECTED (fallback)
+RAIN_EXPECTED_MIN_PROBABILITY = 90  # Usado apenas no fallback quando intensity < 1
 
 # Threshold de referência para intensidade de chuva (métrica composta)
 RAIN_INTENSITY_REFERENCE = 30.0  # mm/h
