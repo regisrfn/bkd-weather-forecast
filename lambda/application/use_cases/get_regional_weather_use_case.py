@@ -152,7 +152,6 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
         """
         async with semaphore:
             # Delay de 50ms entre requests para evitar rate limiting
-            await asyncio.sleep(0.05)
             return await self._fetch_single_city(city_id, target_datetime)
     
     async def _fetch_single_city(
