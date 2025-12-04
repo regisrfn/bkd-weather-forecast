@@ -125,8 +125,11 @@ class AsyncDynamoDBCache:
             
             return data
         
-        except Exception:
-            # Silently fail cache get
+        except Exception as e:
+            # Log error for debugging
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warning(f"Failed to get cache for {city_id}: {str(e)}")
             return None
     
     @tracer.wrap(resource="async_cache.set")
@@ -176,8 +179,19 @@ class AsyncDynamoDBCache:
             
             return True
         
-        except Exception:
-            # Silently fail cache set
+        except Exception as e:
+            # Log error for debugging
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(
+                f"Failed to set cache for {city_id}: {str(e)}",
+                extra={
+                    'table_name': self.table_name,
+                    'region': self.region_name,
+                    'enabled': self.enabled
+                },
+                exc_info=True
+            )
             return False
     
     async def batch_set(

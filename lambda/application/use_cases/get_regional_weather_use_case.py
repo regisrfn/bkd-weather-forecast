@@ -10,8 +10,10 @@ from ddtrace import tracer
 from domain.entities.weather import Weather
 from domain.exceptions import CityNotFoundException, CoordinatesNotFoundException
 from application.ports.output.weather_provider_port import IWeatherProvider
+from domain.services.alerts_generator import AlertsGenerator
 from application.ports.input.get_regional_weather_port import IGetRegionalWeatherUseCase
 from application.ports.output.city_repository_port import ICityRepository
+from infrastructure.adapters.output.providers.openmeteo.openmeteo_provider import OpenMeteoProvider
 from shared.config.logger_config import get_logger
 
 logger = get_logger(child=True)
@@ -186,23 +188,36 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
                 details={"city_id": city_id, "city_name": city.name}
             )
         
-        # Get weather via provider
-        weather = await self.weather_provider.get_current_weather(
+        # Fetch hourly and daily data once, reuse for current weather + alerts
+        hourly_task = self.weather_provider.get_hourly_forecast(
             latitude=city.latitude,
             longitude=city.longitude,
+            city_id=city.id,
+            hours=168  # 7 dias - usado para current weather + alertas
+        )
+        
+        daily_task = self.weather_provider.get_daily_forecast(
+            latitude=city.latitude,
+            longitude=city.longitude,
+            city_id=city.id,
+            days=16  # 16 dias para consistência de cache entre rotas
+        )
+        
+        hourly_forecasts, daily_forecasts = await asyncio.gather(hourly_task, daily_task)
+        
+        # Extrair current weather dos dados hourly já buscados
+        weather = OpenMeteoProvider.extract_current_weather_from_hourly(
+            hourly_forecasts=hourly_forecasts,
+            daily_forecasts=daily_forecasts[:1] if daily_forecasts else None,
             city_id=city.id,
             city_name=city.name,
             target_datetime=target_datetime
         )
         
-        # Gerar alertas combinando hourly (48h) + daily (5 dias)
-        from domain.services.alerts_generator import AlertsGenerator
-        
+        # Gerar alertas usando dados já buscados
         alerts = await AlertsGenerator.generate_alerts_for_weather(
-            weather_provider=self.weather_provider,
-            latitude=city.latitude,
-            longitude=city.longitude,
-            city_id=city.id,
+            hourly_forecasts=hourly_forecasts[:48] if hourly_forecasts else [],
+            daily_forecasts=daily_forecasts if daily_forecasts else [],
             target_datetime=target_datetime,
             days_limit=7
         )

@@ -14,6 +14,7 @@ from application.ports.output.weather_provider_port import IWeatherProvider
 from domain.services.weather_enricher import WeatherEnricher
 from domain.services.alerts_generator import AlertsGenerator
 from application.ports.output.city_repository_port import ICityRepository
+from infrastructure.adapters.output.providers.openmeteo.openmeteo_provider import OpenMeteoProvider
 from shared.config.logger_config import get_logger
 
 logger = get_logger(child=True)
@@ -84,20 +85,18 @@ class GetCityDetailedForecastUseCase:
             hourly_provider=self.hourly_forecast_provider.provider_name
         )
         
-        # Execute THREE API calls in parallel (ASYNC - sem GIL)
-        # Strategy: Open-Meteo ONLY (16 days)
+        # Execute TWO API calls in parallel (ASYNC - sem GIL)
+        # Strategy: Open-Meteo ONLY - Fetch once, reuse data
         try:
-            # Task 1: Current weather (com alertas de 16 dias para rota detalhada)
-            current_task = self.current_weather_provider.get_current_weather(
+            # Task 1: Hourly forecasts (168h = 7 dias, reutilizado para tudo)
+            hourly_task = self.hourly_forecast_provider.get_hourly_forecast(
                 latitude=city.latitude,
                 longitude=city.longitude,
                 city_id=city.id,
-                city_name=city.name,
-                target_datetime=target_datetime,
-                include_daily_alerts=True  # Inclui alertas de médio prazo (16 dias)
+                hours=168  # Fetch once: current weather + API response + alerts
             )
             
-            # Task 2: Open-Meteo Daily forecasts (16 dias)
+            # Task 2: Daily forecasts (16 dias para resposta da API)
             daily_task = self.daily_forecast_provider.get_daily_forecast(
                 latitude=city.latitude,
                 longitude=city.longitude,
@@ -105,25 +104,20 @@ class GetCityDetailedForecastUseCase:
                 days=16
             )
             
-            # Task 3: Hourly forecasts (48h para resposta da API)
-            hourly_task = self.hourly_forecast_provider.get_hourly_forecast(
-                latitude=city.latitude,
-                longitude=city.longitude,
-                city_id=city.id,
-                hours=48
-            )
-            
-            # Await all three tasks concurrently
+            # Await both tasks concurrently
             results = await asyncio.gather(
-                current_task,
-                daily_task,
                 hourly_task,
+                daily_task,
                 return_exceptions=True  # Continue even if one fails
             )
             
-            current_weather = results[0]
-            daily_forecasts = results[1]
-            hourly_forecasts = results[2]
+            hourly_forecasts_full = results[0]  # 168 horas
+            daily_forecasts = results[1]  # 16 dias
+            
+            # Validate hourly_forecasts (critical - must succeed)
+            if isinstance(hourly_forecasts_full, Exception):
+                logger.error("Failed to fetch hourly forecasts", error=str(hourly_forecasts_full))
+                raise hourly_forecasts_full
             
             # Validate daily_forecasts
             if isinstance(daily_forecasts, Exception):
@@ -133,19 +127,23 @@ class GetCityDetailedForecastUseCase:
             # Handle errors
             extended_available = True
             
-            # Process current weather (critical - must succeed)
-            if isinstance(current_weather, Exception):
-                logger.error("Failed to fetch current weather", error=str(current_weather))
-                raise current_weather
+            if not daily_forecasts:
+                logger.warning("No daily forecasts available")
+                extended_available = False
             
-            # Gerar alertas para current weather usando hourly (2 dias) + daily (5 dias)
-            from domain.services.alerts_generator import AlertsGenerator
-            
-            alerts = await AlertsGenerator.generate_alerts_for_weather(
-                weather_provider=self.current_weather_provider,
-                latitude=city.latitude,
-                longitude=city.longitude,
+            # Extrair current weather dos dados hourly já buscados (sem nova chamada)
+            current_weather = OpenMeteoProvider.extract_current_weather_from_hourly(
+                hourly_forecasts=hourly_forecasts_full,
+                daily_forecasts=daily_forecasts[:1] if daily_forecasts else None,  # Apenas dia 1 para temp_min/max
                 city_id=city.id,
+                city_name=city.name,
+                target_datetime=target_datetime
+            )
+            
+            # Gerar alertas usando dados já buscados (sem nova chamada)
+            alerts = await AlertsGenerator.generate_alerts_for_weather(
+                hourly_forecasts=hourly_forecasts_full[:48],  # Primeiras 48 horas para alertas
+                daily_forecasts=daily_forecasts[:7] if daily_forecasts else [],  # Primeiros 7 dias
                 target_datetime=target_datetime,
                 days_limit=7
             )
@@ -153,18 +151,8 @@ class GetCityDetailedForecastUseCase:
             if alerts:
                 object.__setattr__(current_weather, 'weather_alert', alerts)
             
-            # Daily forecasts já foram combinados
-            if not daily_forecasts:
-                logger.warning("No daily forecasts available")
-                extended_available = False
-            
-            # Process hourly forecasts
-            if isinstance(hourly_forecasts, Exception):
-                logger.warning(
-                    "Failed to fetch hourly forecast",
-                    error=str(hourly_forecasts)
-                )
-                hourly_forecasts = []
+            # Slice hourly para resposta da API (48h)
+            hourly_forecasts = hourly_forecasts_full[:48] if hourly_forecasts_full else []
             
             # Create ExtendedForecast
             extended_forecast = ExtendedForecast(

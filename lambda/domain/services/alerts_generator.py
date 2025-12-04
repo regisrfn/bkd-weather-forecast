@@ -43,29 +43,55 @@ class AlertsGenerator:
     
     @staticmethod
     async def generate_alerts_for_weather(
-        weather_provider,
-        latitude: float,
-        longitude: float,
-        city_id: str,
+        weather_provider=None,
+        latitude: float = None,
+        longitude: float = None,
+        city_id: str = None,
         target_datetime: Optional[datetime] = None,
-        days_limit: int = 7
+        days_limit: int = 7,
+        hourly_forecasts: Optional[List] = None,
+        daily_forecasts: Optional[List] = None
     ) -> List[WeatherAlert]:
         """
         Gera alertas combinando hourly (48h) + daily (5 dias) forecasts
-        Método auxiliar para evitar duplicação nos use cases
         
         Args:
-            weather_provider: Provider para buscar dados meteorológicos
-            latitude: Latitude da cidade
-            longitude: Longitude da cidade
-            city_id: ID da cidade
+            weather_provider: Provider para buscar dados (DEPRECATED, use hourly_forecasts/daily_forecasts)
+            latitude: Latitude da cidade (DEPRECATED)
+            longitude: Longitude da cidade (DEPRECATED)
+            city_id: ID da cidade (DEPRECATED)
             target_datetime: Data/hora de referência (padrão: agora)
             days_limit: Número de dias para análise (padrão: 7)
+            hourly_forecasts: Previsões horárias pré-buscadas (PREFERRED)
+            daily_forecasts: Previsões diárias pré-buscadas (PREFERRED)
         
         Returns:
             Lista de alertas dos próximos N dias
         """
         try:
+            # Se dados pré-buscados fornecidos, usar diretamente (novo comportamento)
+            if hourly_forecasts is not None and daily_forecasts is not None:
+                # Combinar: hourly (dias 1-2) + daily (dias 3-7)
+                combined_forecasts = list(hourly_forecasts) if hourly_forecasts else []
+                
+                if daily_forecasts and len(daily_forecasts) > 2:
+                    # Adicionar daily dos dias 3-7 (índices 2-6)
+                    combined_forecasts.extend(daily_forecasts[2:days_limit])
+                
+                # Gerar alertas com os forecasts combinados
+                alerts = AlertsGenerator.generate_alerts_next_days(
+                    forecasts=combined_forecasts,
+                    target_datetime=target_datetime,
+                    days_limit=days_limit
+                )
+                
+                return alerts
+            
+            # Fallback para comportamento antigo (buscar dados)
+            if weather_provider is None:
+                logger.warning("No weather provider or pre-fetched data provided")
+                return []
+            
             # Buscar hourly forecasts (48h = 2 dias, granularidade horária)
             hourly_forecasts = await weather_provider.get_hourly_forecast(
                 latitude=latitude,

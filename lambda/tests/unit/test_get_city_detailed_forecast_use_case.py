@@ -119,17 +119,15 @@ def _build_use_case(city_repository, providers):
 async def test_execute_success_enriches_and_merges_alerts(city_repository, providers):
     """
     Testa que o use case:
-    - Chama todos os providers
+    - Chama os providers (apenas hourly e daily, não mais current)
     - Retorna ExtendedForecast com dados
     - Inclui daily e hourly forecasts
     """
     city_repository.get_by_id.return_value = _make_city()
 
     current_provider, daily_provider, hourly_provider = providers
-    base_weather = _make_weather()
 
-    # Configure all async methods
-    current_provider.get_current_weather.return_value = base_weather
+    # Configure all async methods (agora apenas daily e hourly são chamados)
     daily_provider.get_daily_forecast.return_value = _make_daily()
     hourly_provider.get_hourly_forecast.return_value = _make_hourly()
 
@@ -143,8 +141,8 @@ async def test_execute_success_enriches_and_merges_alerts(city_repository, provi
     assert len(result.daily_forecasts) > 0
     assert len(result.hourly_forecasts) > 0
     
-    # Verificar que todos os providers foram chamados (agora são apenas 3 calls)
-    current_provider.get_current_weather.assert_called_once()
+    # Verificar que apenas hourly e daily foram chamados (current_weather não é mais chamado)
+    current_provider.get_current_weather.assert_not_called()
     daily_provider.get_daily_forecast.assert_called_once()
     hourly_provider.get_hourly_forecast.assert_called_once()
 

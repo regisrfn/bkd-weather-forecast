@@ -27,6 +27,8 @@ def weather_provider():
     provider = MagicMock()
     provider.provider_name = "MockProvider"
     provider.get_current_weather = AsyncMock()
+    provider.get_hourly_forecast = AsyncMock()
+    provider.get_daily_forecast = AsyncMock()
     return provider
 
 
@@ -59,22 +61,66 @@ def _make_weather(city_id: str) -> Weather:
 
 @pytest.mark.asyncio
 async def test_execute_returns_only_successful_results(use_case, city_repository, weather_provider):
+    from domain.entities.hourly_forecast import HourlyForecast
+    from domain.entities.daily_forecast import DailyForecast
+    
     city_ids = ["1", "2", "missing"]
     city_repository.get_by_id.side_effect = [
-        _make_city("1", -10, -50),
-        _make_city("2", -11, -51),
-        None
+        _make_city("1", -10, -50),  # Cidade 1 - sucesso
+        _make_city("2", -11, -51),  # Cidade 2 - vai falhar no provider
+        None  # Cidade "missing" - falha no repositório (não chama provider)
     ]
-    weather_provider.get_current_weather.side_effect = [
-        _make_weather("1"),
-        RuntimeError("provider failure")
-    ]
+    
+    # Mock hourly and daily forecasts
+    sample_hourly = HourlyForecast(
+        timestamp="2025-11-27T15:00:00",
+        temperature=25.0,
+        precipitation=0.0,
+        precipitation_probability=30,
+        rainfall_intensity=0.0,
+        humidity=60,
+        wind_speed=10.0,
+        wind_direction=180,
+        cloud_cover=20
+    )
+    
+    sample_daily = DailyForecast(
+        date="2025-11-27",
+        temp_min=18.0,
+        temp_max=32.0,
+        precipitation_mm=0.0,
+        rain_probability=30.0,
+        rainfall_intensity=0.0,
+        wind_speed_max=10.0,
+        wind_direction=180,
+        uv_index=8.0,
+        sunrise="06:00:00",
+        sunset="18:30:00",
+        precipitation_hours=0.0
+    )
+    
+    # Mock para retornar dados válidos sempre que chamado
+    # Cada cidade que não falhar no repositório receberá esses dados
+    # Forçar falha apenas na cidade 2
+    async def mock_hourly(latitude, longitude, city_id, hours):
+        if city_id == "2":
+            raise RuntimeError("provider failure")
+        return [sample_hourly]
+    
+    async def mock_daily(latitude, longitude, city_id, days):
+        if city_id == "2":
+            raise RuntimeError("provider failure")
+        return [sample_daily]
+    
+    weather_provider.get_hourly_forecast = AsyncMock(side_effect=mock_hourly)
+    weather_provider.get_daily_forecast = AsyncMock(side_effect=mock_daily)
 
     result = await use_case.execute(city_ids)
 
     assert len(result) == 1
     assert result[0].city_id == "1"
-    weather_provider.get_current_weather.assert_awaited()
+    weather_provider.get_hourly_forecast.assert_awaited()
+    weather_provider.get_daily_forecast.assert_awaited()
 
 
 @pytest.mark.asyncio
