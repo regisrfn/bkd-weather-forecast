@@ -96,7 +96,6 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
         Returns:
             Lista de Weather entities (apenas sucessos)
         """
-        # Semaphore para limitar concorrência (evitar throttling)
         semaphore = asyncio.Semaphore(50)
         
         # Criar tasks para todas as cidades
@@ -152,6 +151,8 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
             Exception: Se falhar (capturado no gather)
         """
         async with semaphore:
+            # Delay de 50ms entre requests para evitar rate limiting
+            await asyncio.sleep(0.05)
             return await self._fetch_single_city(city_id, target_datetime)
     
     async def _fetch_single_city(
