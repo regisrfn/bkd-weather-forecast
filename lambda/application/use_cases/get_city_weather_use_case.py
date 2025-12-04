@@ -82,7 +82,7 @@ class AsyncGetCityWeatherUseCase(IGetCityWeatherUseCase):
         # Extrair current weather dos dados hourly já buscados
         weather = OpenMeteoProvider.extract_current_weather_from_hourly(
             hourly_forecasts=hourly_forecasts,
-            daily_forecasts=daily_forecasts[:1] if daily_forecasts else None,
+            daily_forecasts=daily_forecasts if daily_forecasts else None,
             city_id=city.id,
             city_name=city.name,
             target_datetime=target_datetime
@@ -90,7 +90,7 @@ class AsyncGetCityWeatherUseCase(IGetCityWeatherUseCase):
         
         # Gerar alertas usando dados já buscados
         alerts = await AlertsGenerator.generate_alerts_for_weather(
-            hourly_forecasts=hourly_forecasts[:48] if hourly_forecasts else [],  # Primeiras 48h
+            hourly_forecasts=hourly_forecasts if hourly_forecasts else [],
             daily_forecasts=daily_forecasts if daily_forecasts else [],
             target_datetime=target_datetime,
             days_limit=7

@@ -134,7 +134,7 @@ class GetCityDetailedForecastUseCase:
             # Extrair current weather dos dados hourly já buscados (sem nova chamada)
             current_weather = OpenMeteoProvider.extract_current_weather_from_hourly(
                 hourly_forecasts=hourly_forecasts_full,
-                daily_forecasts=daily_forecasts[:1] if daily_forecasts else None,  # Apenas dia 1 para temp_min/max
+                daily_forecasts=daily_forecasts if daily_forecasts else None,
                 city_id=city.id,
                 city_name=city.name,
                 target_datetime=target_datetime
