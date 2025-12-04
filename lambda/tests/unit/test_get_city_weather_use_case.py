@@ -129,7 +129,7 @@ async def test_execute_success(use_case, city_repository, weather_provider, samp
         latitude=sample_city.latitude,
         longitude=sample_city.longitude,
         city_id=sample_city.id,
-        days=7
+        days=16
     )
 
 
