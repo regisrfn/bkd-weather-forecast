@@ -154,9 +154,10 @@ class OpenMeteoProvider(IWeatherProvider):
         if closest_forecast is None:
             closest_forecast = hourly_forecasts[0]
         
-        # Extrair temp_min e temp_max do daily forecast do dia
+        # Extrair temp_min, temp_max e rain_accumulated_day do daily forecast do dia
         temp_min = 0.0
         temp_max = 0.0
+        rain_accumulated_day = 0.0
         
         if daily_forecasts:
             # Pegar o dia correspondente ao target_datetime
@@ -165,11 +166,13 @@ class OpenMeteoProvider(IWeatherProvider):
                 if daily.date == target_date:
                     temp_min = daily.temp_min
                     temp_max = daily.temp_max
+                    rain_accumulated_day = daily.precipitation_mm
                     break
             # Se não encontrou correspondência, usar o primeiro dia
             if temp_min == 0.0 and temp_max == 0.0 and daily_forecasts:
                 temp_min = daily_forecasts[0].temp_min
                 temp_max = daily_forecasts[0].temp_max
+                rain_accumulated_day = daily_forecasts[0].precipitation_mm
         
         # Converter para Weather entity
         return OpenMeteoDataMapper.map_hourly_to_weather(
@@ -177,7 +180,8 @@ class OpenMeteoProvider(IWeatherProvider):
             city_id=city_id,
             city_name=city_name,
             temp_min=temp_min,
-            temp_max=temp_max
+            temp_max=temp_max,
+            rain_accumulated_day=rain_accumulated_day
         )
     
     @tracer.wrap(resource="openmeteo.get_current_weather")

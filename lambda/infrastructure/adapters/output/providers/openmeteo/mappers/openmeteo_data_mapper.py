@@ -203,7 +203,8 @@ class OpenMeteoDataMapper:
         city_id: str,
         city_name: str,
         temp_min: float = 0.0,
-        temp_max: float = 0.0
+        temp_max: float = 0.0,
+        rain_accumulated_day: float = 0.0
     ) -> Weather:
         """
         Converte HourlyForecast para Weather entity
@@ -215,6 +216,7 @@ class OpenMeteoDataMapper:
             city_name: Nome da cidade
             temp_min: Temperatura mínima do dia (opcional)
             temp_max: Temperatura máxima do dia (opcional)
+            rain_accumulated_day: Precipitação acumulada do dia (opcional)
         
         Returns:
             Weather entity
@@ -250,7 +252,7 @@ class OpenMeteoDataMapper:
             wind_direction=hourly_forecast.wind_direction,
             rain_probability=float(hourly_forecast.precipitation_probability),
             rain_1h=hourly_forecast.precipitation,
-            rain_accumulated_day=0.0,  # Calculado externamente se necessário
+            rain_accumulated_day=rain_accumulated_day,
             description="",  # Será calculado pela entidade via classify_weather_condition
             feels_like=feels_like_calc,
             pressure=pressure_value,
