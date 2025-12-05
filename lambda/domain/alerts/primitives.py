@@ -12,8 +12,12 @@ from typing import Optional, List
 # Threshold mínimo de probabilidade para alerta RAIN_EXPECTED (fallback)
 RAIN_EXPECTED_MIN_PROBABILITY = 90  # Usado apenas no fallback quando intensity < 1
 
-# Threshold de referência para intensidade de chuva (métrica composta)
-RAIN_INTENSITY_REFERENCE = 30.0  # mm/h
+# Thresholds de referência para cálculo de intensidade de chuva (métrica composta)
+RAIN_INTENSITY_REFERENCE = 30.0  # mm/h - Volume de referência para normalização
+RAIN_PROBABILITY_REFERENCE = 70.0  # % - Probabilidade de referência (ponto central da sigmoide)
+
+# Parâmetros da função sigmoide para cálculo de peso da probabilidade
+RAIN_PROBABILITY_SIGMOID_K = 0.2  # Inclinação da curva sigmoide (maior = transição mais abrupta)
 
 
 class AlertSeverity(Enum):

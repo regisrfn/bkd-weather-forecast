@@ -62,14 +62,6 @@ class RainAlertService:
     """Gera alertas de chuva com base em intensidade composta e códigos."""
 
     @staticmethod
-    def compute_rainfall_intensity(rain_prob: float, rain_1h: float) -> float:
-        """Replica o cálculo do Weather.rainfall_intensity (0-100)."""
-        if rain_1h == 0:
-            return 0.0
-        composite = (rain_1h * (rain_prob / 100.0)) / RAIN_INTENSITY_REFERENCE * 100.0
-        return min(100.0, composite)
-
-    @staticmethod
     def _code_floor(code: int) -> Optional[Tuple[str, AlertSeverity]]:
         if code in CODE_SEVERITY_FLOOR:
             return CODE_SEVERITY_FLOOR[code]
