@@ -155,6 +155,7 @@ class OpenWeatherDataMapper:
         temp_min = temperature
         temp_max = temperature
         rain_accumulated_day = rain_1h
+        is_day = True  # Default: dia
         
         if 'daily' in data and len(data['daily']) > 0:
             today = data['daily'][0]
@@ -162,6 +163,14 @@ class OpenWeatherDataMapper:
             temp_min = temp_data.get('min', temperature)
             temp_max = temp_data.get('max', temperature)
             rain_accumulated_day = today.get('rain', 0.0) + today.get('snow', 0.0)
+            
+            # Calcular is_day comparando timestamp atual com sunrise/sunset
+            sunrise_unix = today.get('sunrise', 0)
+            sunset_unix = today.get('sunset', 0)
+            current_unix = current.get('dt', 0)
+            
+            if sunrise_unix > 0 and sunset_unix > 0:
+                is_day = sunrise_unix <= current_unix < sunset_unix
         
         return Weather(
             city_id=city_id,
@@ -182,7 +191,8 @@ class OpenWeatherDataMapper:
             weather_alert=alerts,
             weather_code=weather_code,
             temp_min=temp_min,
-            temp_max=temp_max
+            temp_max=temp_max,
+            is_day=is_day
         )
     
     @staticmethod

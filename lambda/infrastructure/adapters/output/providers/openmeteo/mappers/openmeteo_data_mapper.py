@@ -242,6 +242,11 @@ class OpenMeteoDataMapper:
         if timestamp_dt.tzinfo is None:
             timestamp_dt = timestamp_dt.replace(tzinfo=ZoneInfo("America/Sao_Paulo"))
         
+        # Determinar is_day a partir do hourly_forecast (OpenMeteo fornece esse campo)
+        is_day_value = True  # Default
+        if hourly_forecast.is_day is not None:
+            is_day_value = bool(hourly_forecast.is_day)
+        
         return Weather(
             city_id=city_id,
             city_name=city_name,
@@ -261,5 +266,6 @@ class OpenMeteoDataMapper:
             weather_alert=[],  # Gerados externamente
             weather_code=0,  # Será calculado pela entidade via classify_weather_condition
             temp_min=temp_min,
-            temp_max=temp_max
+            temp_max=temp_max,
+            is_day=is_day_value
         )

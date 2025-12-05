@@ -45,6 +45,7 @@ class Weather:
     weather_code: int = 0  # Código da condição climática da API
     temp_min: float = 0.0  # Temperatura mínima (°C)
     temp_max: float = 0.0  # Temperatura máxima (°C)
+    is_day: bool = True  # True = dia, False = noite
     
     def __post_init__(self):
         """Auto-classificação usando sistema proprietário de códigos"""
@@ -141,5 +142,6 @@ class Weather:
             'weatherAlert': [alert.to_dict() for alert in self.weather_alert],  # Array de alertas estruturados
             'weatherCode': self.weather_code,
             'tempMin': round(self.temp_min, 1),
-            'tempMax': round(self.temp_max, 1)
+            'tempMax': round(self.temp_max, 1),
+            'isDay': self.is_day
         }
