@@ -35,7 +35,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from lambda_function import lambda_handler
 
 app = Flask(__name__)
-CORS(app)  # Habilitar CORS para todos os endpoints
+# Habilitar CORS para todos os endpoints e origens (desenvolvimento local)
+CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 
 class MockLambdaContext:
     """Mock do contexto Lambda para testes locais"""
