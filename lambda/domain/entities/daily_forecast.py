@@ -118,6 +118,17 @@ class DailyForecast:
             return "#f44336"  # vermelho
         else:
             return "#9c27b0"  # roxo
+
+    @property
+    def wind_direction_arrow(self) -> str:
+        """
+        Retorna uma seta simples apontando para onde o vento sopra
+        (wind_direction representa de onde o vento vem, por isso +180°)
+        """
+        arrows = ['↑', '↗', '→', '↘', '↓', '↙', '←', '↖']
+        blowing_to = (self.wind_direction + 180) % 360
+        index = int((blowing_to + 22.5) // 45) % 8
+        return arrows[index]
     
     def to_api_response(self) -> dict:
         """
@@ -134,7 +145,9 @@ class DailyForecast:
             'rainProbability': round(self.rain_probability, 1),
             'rainfallIntensity': int(round(self.rainfall_intensity)),
             'windSpeedMax': round(self.wind_speed_max, 1),
+            'windSpeed': round(self.wind_speed_max, 1),
             'windDirection': self.wind_direction,
+            'windDirectionArrow': self.wind_direction_arrow,
             'uvIndex': round(self.uv_index, 1),
             'uvRiskLevel': self.uv_risk_level,
             'uvRiskColor': self.uv_risk_color,
