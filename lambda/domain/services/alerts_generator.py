@@ -9,6 +9,7 @@ from collections import defaultdict
 
 from domain.alerts.primitives import WeatherAlert, AlertSeverity
 from domain.constants import Weather as WeatherConstants, App
+from domain.helpers.rainfall_calculator import calculate_rainfall_intensity
 from domain.services.weather_alert_orchestrator import WeatherAlertOrchestrator
 from shared.config.logger_config import get_logger
 
@@ -154,6 +155,17 @@ class AlertsGenerator:
         # Deduplicação por código
         alerts_by_code: Dict[str, WeatherAlert] = {}
         
+        # Acúmulo de precipitação por dia (para HEAVY_RAIN_DAY)
+        daily_precip_stats: Dict[datetime, Dict] = defaultdict(lambda: {
+            'total_precip_mm': 0.0,
+            'max_prob': 0.0,
+            'max_intensity': 0.0,
+            'hours_with_precip': 0.0,
+            'estimated_hours': 0.0,
+            'has_daily_total': False,
+            'first_timestamp': None
+        })
+        
         # Acumular extremos diários para análise de temperatura
         daily_extremes: Dict[datetime, Dict] = defaultdict(lambda: {
             'temps': [],
@@ -165,6 +177,7 @@ class AlertsGenerator:
             rain_prob = float(getattr(forecast, 'rain_probability', 0) or getattr(forecast, 'precipitation_probability', 0))
             wind_speed = float(getattr(forecast, 'wind_speed', 0) or getattr(forecast, 'wind_speed_max', 0) or getattr(forecast, 'wind_speed_kmh', 0))
             precipitation = float(getattr(forecast, 'precipitation', 0) or getattr(forecast, 'precipitation_mm', 0))
+            date_key = timestamp.astimezone(brasil_tz).date()
             
             # Calcular rain_1h corretamente baseado no tipo de forecast
             if hasattr(forecast, 'precipitation'):
@@ -192,6 +205,25 @@ class AlertsGenerator:
             visibility = float(getattr(forecast, 'visibility', None) or 10000)
             uv_index = float(getattr(forecast, 'uv_index', None) or 0)
             
+            # Acumular precipitação diária para alertas de acumulado
+            precip_stats = daily_precip_stats[date_key]
+            precip_stats['max_prob'] = max(precip_stats['max_prob'], rain_prob)
+            precip_stats['max_intensity'] = max(precip_stats['max_intensity'], getattr(forecast, 'rainfall_intensity', 0.0))
+            if precip_stats['first_timestamp'] is None or timestamp < precip_stats['first_timestamp']:
+                precip_stats['first_timestamp'] = timestamp
+            
+            # Diferenciar forecasts diários de horários para acumular corretamente
+            is_daily_forecast = hasattr(forecast, 'temp_min') or hasattr(forecast, 'precipitation_mm') or hasattr(forecast, 'precipitation_hours')
+            if is_daily_forecast:
+                precip_stats['total_precip_mm'] = max(precip_stats['total_precip_mm'], precipitation)
+                precip_stats['has_daily_total'] = True
+                precip_hours_val = float(getattr(forecast, 'precipitation_hours', 0.0) or 0.0)
+                precip_stats['estimated_hours'] = max(precip_stats['estimated_hours'], precip_hours_val)
+            else:
+                precip_stats['total_precip_mm'] += precipitation
+                if precipitation > 0:
+                    precip_stats['hours_with_precip'] += 1
+            
             # Gerar alertas básicos
             basic_alerts = WeatherAlertOrchestrator.generate_alerts(
                 rain_prob=rain_prob,
@@ -204,26 +236,7 @@ class AlertsGenerator:
             )
             
             # Alertas específicos para previsões diárias (quando disponível)
-            # 1. HEAVY_RAIN_DAY - Chuva acumulada alta no dia
-            if precipitation > 0 and rain_prob > 60:
-                # Usar rainfall_intensity já calculado pela entidade
-                rainfall_intensity = getattr(forecast, 'rainfall_intensity', 0.0)
-                
-                if rainfall_intensity >= 25 and precipitation > 20:
-                    severity = AlertSeverity.WARNING if precipitation < 50 else AlertSeverity.ALERT
-                    basic_alerts.append(WeatherAlert(
-                        code="HEAVY_RAIN_DAY",
-                        severity=severity,
-                        description="Chuva forte prevista",
-                        timestamp=timestamp,
-                        details={
-                            "date": timestamp.date().isoformat(),
-                            "precipitationMm": round(precipitation, 1),
-                            "probabilityPercent": round(rain_prob, 0)
-                        }
-                    ))
-            
-            # 2. STRONG_WIND_DAY - Vento forte sustentado
+            # 1. STRONG_WIND_DAY - Vento forte sustentado
             if wind_speed > WeatherConstants.WIND_SPEED_WARNING:
                 if wind_speed >= WeatherConstants.WIND_SPEED_DANGER:
                     severity = AlertSeverity.ALERT
@@ -243,7 +256,7 @@ class AlertsGenerator:
                         }
                     ))
             
-            # 3. EXTREME_UV - Índice UV extremo
+            # 2. EXTREME_UV - Índice UV extremo
             if uv_index >= 11:
                 basic_alerts.append(WeatherAlert(
                     code="EXTREME_UV",
@@ -264,7 +277,6 @@ class AlertsGenerator:
                     alerts_by_code[alert.code] = alert
             
             # Acumular extremos diários para trends de temperatura
-            date_key = timestamp.astimezone(brasil_tz).date()
             daily = daily_extremes[date_key]
             daily['temps'].append(temperature)
             # Usar temp_max/temp_min se disponível (para daily forecasts)
@@ -274,6 +286,17 @@ class AlertsGenerator:
                 daily['temps'].extend([temp_max, temp_min])
             if daily['first_forecast'] is None:
                 daily['first_forecast'] = (forecast, timestamp)
+        
+        # Gerar alertas de acumulado diário (HEAVY_RAIN_DAY) com precipitação consolidada
+        heavy_rain_day_alerts = AlertsGenerator._build_heavy_rain_day_alerts(
+            daily_precip_stats,
+            brasil_tz
+        )
+        for alert in heavy_rain_day_alerts:
+            if alert.code not in alerts_by_code:
+                alerts_by_code[alert.code] = alert
+            elif alert.timestamp < alerts_by_code[alert.code].timestamp:
+                alerts_by_code[alert.code] = alert
         
         # Adicionar rainEndsAt
         AlertsGenerator._add_rain_end_times(
@@ -512,6 +535,60 @@ class AlertsGenerator:
             alerts.append(max_drop['alert'])
         if max_rise:
             alerts.append(max_rise['alert'])
+        
+        return alerts
+    
+    @staticmethod
+    def _build_heavy_rain_day_alerts(
+        daily_precip_stats: Dict,
+        brasil_tz: ZoneInfo
+    ) -> List[WeatherAlert]:
+        """
+        Gera alertas HEAVY_RAIN_DAY usando acumulado diário de chuva.
+        
+        Usa a soma de precipitação do dia (via hourly) ou valor diário fornecido,
+        combinada com a maior probabilidade e intensidade observadas.
+        """
+        alerts: List[WeatherAlert] = []
+        
+        for date_key, stats in daily_precip_stats.items():
+            total_precip = stats["total_precip_mm"]
+            rain_prob = stats["max_prob"]
+            
+            if total_precip <= 0 or rain_prob <= 60:
+                continue
+            
+            # Calcular intensidade efetiva usando horas com chuva ou estimadas
+            hours_for_intensity = stats["hours_with_precip"] or stats["estimated_hours"] or 24.0
+            precip_per_hour = total_precip / hours_for_intensity if hours_for_intensity > 0 else 0.0
+            computed_intensity = calculate_rainfall_intensity(rain_prob, precip_per_hour)
+            effective_intensity = max(stats["max_intensity"], computed_intensity)
+            
+            if effective_intensity < 25 or total_precip <= 20:
+                continue
+            
+            severity = AlertSeverity.WARNING if total_precip < 50 else AlertSeverity.ALERT
+            alert_time = stats["first_timestamp"] or datetime.combine(
+                date_key,
+                datetime.min.time()
+            ).replace(tzinfo=brasil_tz)
+            
+            if alert_time.tzinfo is None:
+                alert_time = alert_time.replace(tzinfo=brasil_tz)
+            else:
+                alert_time = alert_time.astimezone(brasil_tz)
+            
+            alerts.append(WeatherAlert(
+                code="HEAVY_RAIN_DAY",
+                severity=severity,
+                description="Chuva forte prevista",
+                timestamp=alert_time,
+                details={
+                    "date": date_key.isoformat(),
+                    "precipitationMm": round(total_precip, 1),
+                    "probabilityPercent": round(rain_prob, 0)
+                }
+            ))
         
         return alerts
     
