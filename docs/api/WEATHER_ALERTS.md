@@ -22,16 +22,16 @@ A API de previsão do tempo inclui um sistema avançado de alertas meteorológic
   "description": "🌧️ Chuva moderada",
   "timestamp": "2025-11-27T18:00:00-03:00",
   "details": {
-    "rain_mm_h": 15.5,
-    "probability_percent": 85.0,
-    "rain_ends_at": "2025-11-27T21:00:00-03:00"
+    "rainMmH": 15.5,
+    "probabilityPercent": 85.0,
+    "rainEndsAt": "2025-11-27T21:00:00-03:00"
   }
 }
 ```
 
-**Observação sobre `rain_ends_at`:**
+**Observação sobre `rainEndsAt`:**
 - Representa o **fim do último intervalo de 3h com chuva**
-- Exemplo: se tem chuva às 18h, o intervalo é 18h-21h, então `rain_ends_at` será 21h
+- Exemplo: se tem chuva às 18h, o intervalo é 18h-21h, então `rainEndsAt` será 21h
 - Se a chuva continuar além de 5 dias, o campo não é incluído
 
 ### Campos
@@ -61,12 +61,12 @@ A API de previsão do tempo inclui um sistema avançado de alertas meteorológic
 ### Fórmula
 
 ```
-rainfallIntensity = min(100, (rain_1h × rain_probability / 100) / 30.0 × 100)
+rainfallIntensity = min(100, (rain_1h × rainProbability / 100) / 30.0 × 100)
 ```
 
 Onde:
 - `rain_1h`: Volume de precipitação em mm/h (da OpenWeatherMap API)
-- `rain_probability`: Probabilidade de precipitação de 0-100% (campo `pop` da API)
+- `rainProbability`: Probabilidade de precipitação de 0-100% (campo `pop` da API)
 - `30.0`: Threshold de referência (30mm/h = chuva forte)
 
 ### Escala de Valores
@@ -112,7 +112,7 @@ Onde:
 - **Severidade**: `info`
 - **Descrição**: 🌦️ Garoa
 - **Limiar**: < 2.5 mm/h
-- **Details**: `{ "rain_mm_h": 1.5, "probability_percent": 75.0, "rain_ends_at": "2025-11-27T18:00:00-03:00" }`
+- **Details**: `{ "rainMmH": 1.5, "probabilityPercent": 75.0, "rainEndsAt": "2025-11-27T18:00:00-03:00" }`
 - **Uso**: Informar sobre chuva muito leve que não interfere em atividades
 
 #### LIGHT_RAIN
@@ -120,7 +120,7 @@ Onde:
 - **Severidade**: `info`
 - **Descrição**: 🌧️ Chuva fraca
 - **Limiar**: 2.5-10 mm/h
-- **Details**: `{ "rain_mm_h": 5.0, "probability_percent": 80.0, "rain_ends_at": "2025-11-27T19:00:00-03:00" }`
+- **Details**: `{ "rainMmH": 5.0, "probabilityPercent": 80.0, "rainEndsAt": "2025-11-27T19:00:00-03:00" }`
 - **Uso**: Chuva leve, guarda-chuva recomendado
 
 #### MODERATE_RAIN
@@ -128,7 +128,7 @@ Onde:
 - **Severidade**: `warning`
 - **Descrição**: 🌧️ Chuva moderada
 - **Limiar**: 10-50 mm/h
-- **Details**: `{ "rain_mm_h": 15.0, "probability_percent": 85.0, "rain_ends_at": "2025-11-27T21:00:00-03:00" }`
+- **Details**: `{ "rainMmH": 15.0, "probabilityPercent": 85.0, "rainEndsAt": "2025-11-27T21:00:00-03:00" }`
 - **Uso**: Chuva considerável, evitar atividades externas
 
 #### HEAVY_RAIN
@@ -136,15 +136,23 @@ Onde:
 - **Severidade**: `alert`
 - **Descrição**: ⚠️ ALERTA: Chuva forte
 - **Limiar**: > 50 mm/h
-- **Details**: `{ "rain_mm_h": 65.0, "probability_percent": 90.0, "rain_ends_at": "2025-11-28T02:00:00-03:00" }`
+- **Details**: `{ "rainMmH": 65.0, "probabilityPercent": 90.0, "rainEndsAt": "2025-11-28T02:00:00-03:00" }`
 - **Uso**: Chuva intensa, risco de alagamentos
+
+#### HEAVY_RAIN_DAY
+- **Código**: `HEAVY_RAIN_DAY`
+- **Severidade**: `warning` (ou `alert` quando o acumulado diário passa de 50mm)
+- **Descrição**: Chuva forte prevista
+- **Limiar**: Acumulado diário > 20mm com intensidade composta >= 25 (usa previsão diária)
+- **Details**: `{ "date": "2025-11-27", "precipitationMm": 32.0, "probabilityPercent": 75.0 }`
+- **Uso**: Destaca dias com volume alto; exibe apenas acumulado diário e probabilidade
 
 #### RAIN_EXPECTED
 - **Código**: `RAIN_EXPECTED`
 - **Severidade**: `info`
 - **Descrição**: 🌧️ Alta probabilidade de chuva
 - **Limiar**: Códigos de chuva leve (500-501, 520-521, etc) com probabilidade ≥ 80% mas sem volume medido
-- **Details**: `{ "weather_code": 500, "probability_percent": 85.0 }`
+- **Details**: `{ "weatherCode": 500, "probabilityPercent": 85.0 }`
 - **Uso**: Avisar usuário para levar guarda-chuva quando API indica código de chuva mas não retorna volume
 - **Nota**: Gerado apenas quando há código de chuva (500-599) exceto chuva forte, probabilidade alta, mas volume = 0
 
@@ -155,7 +163,7 @@ Onde:
 - **Severidade**: `danger`
 - **Descrição**: ⚠️ ALERTA: Tempestade com raios
 - **Condição**: Códigos OpenWeather 200, 201, 202, 210, 211, 212, 221
-- **Details**: `{ "weather_code": 210, "rain_mm_h": 20.0, "probability_percent": 95.0, "rain_ends_at": "2025-11-28T00:00:00-03:00" }`
+- **Details**: `{ "weatherCode": 210, "rainMmH": 20.0, "probabilityPercent": 95.0, "rainEndsAt": "2025-11-28T00:00:00-03:00" }`
 - **Uso**: Perigo de raios, buscar abrigo imediatamente
 
 #### STORM_RAIN
@@ -163,7 +171,7 @@ Onde:
 - **Severidade**: `alert`
 - **Descrição**: ⚠️ Tempestade com chuva
 - **Condição**: Outros códigos 2xx
-- **Details**: `{ "weather_code": 231, "rain_mm_h": 15.0, "probability_percent": 85.0, "rain_ends_at": "2025-11-27T23:00:00-03:00" }`
+- **Details**: `{ "weatherCode": 231, "rainMmH": 15.0, "probabilityPercent": 85.0, "rainEndsAt": "2025-11-27T23:00:00-03:00" }`
 - **Uso**: Tempestade menos intensa, mas ainda requer cuidado
 
 ### 💨 Vento
@@ -173,7 +181,7 @@ Onde:
 - **Severidade**: `info`
 - **Descrição**: 💨 Ventos moderados
 - **Limiar**: 30-49 km/h
-- **Details**: `{ "wind_speed_kmh": 35.0 }`
+- **Details**: `{ "windSpeedKmh": 35.0 }`
 - **Uso**: Informar sobre vento perceptível
 
 #### STRONG_WIND
@@ -181,7 +189,7 @@ Onde:
 - **Severidade**: `alert`
 - **Descrição**: 💨 ALERTA: Ventos fortes
 - **Limiar**: ≥ 50 km/h
-- **Details**: `{ "wind_speed_kmh": 65.0 }`
+- **Details**: `{ "windSpeedKmh": 65.0 }`
 - **Uso**: Vento forte, cuidado com objetos soltos e árvores
 
 ### 🌡️ Temperatura
@@ -191,7 +199,7 @@ Onde:
 - **Severidade**: `alert`
 - **Descrição**: 🧊 Frio
 - **Limiar**: < 12°C
-- **Details**: `{ "temperature_c": 11.0 }`
+- **Details**: `{ "temperatureC": 11.0 }`
 - **Uso**: Temperatura baixa para padrões brasileiros, agasalhos recomendados
 
 #### VERY_COLD
@@ -199,7 +207,7 @@ Onde:
 - **Severidade**: `danger`
 - **Descrição**: 🥶 ALERTA: Frio intenso
 - **Limiar**: < 8°C
-- **Details**: `{ "temperature_c": 6.0 }`
+- **Details**: `{ "temperatureC": 6.0 }`
 - **Uso**: Frio extremo para Brasil, proteção extra necessária
 
 #### TEMP_DROP
@@ -210,12 +218,12 @@ Onde:
 - **Details**: 
 ```json
 {
-  "day_1_date": "2025-11-27",
-  "day_1_max_c": 28.0,
-  "day_2_date": "2025-11-29",
-  "day_2_max_c": 15.0,
-  "variation_c": -13.0,
-  "days_between": 2
+  "day1Date": "2025-11-27",
+  "day1MaxC": 28.0,
+  "day2Date": "2025-11-29",
+  "day2MaxC": 15.0,
+  "variationC": -13.0,
+  "daysBetween": 2
 }
 ```
 - **Uso**: Alertar sobre mudança brusca de temperatura para preparação. O sistema compara todos os pares de dias e retorna apenas a maior queda detectada.
@@ -228,12 +236,12 @@ Onde:
 - **Details**:
 ```json
 {
-  "day_1_date": "2025-11-27",
-  "day_1_max_c": 18.0,
-  "day_2_date": "2025-11-30",
-  "day_2_max_c": 28.0,
-  "variation_c": 10.0,
-  "days_between": 3
+  "day1Date": "2025-11-27",
+  "day1MaxC": 18.0,
+  "day2Date": "2025-11-30",
+  "day2MaxC": 28.0,
+  "variationC": 10.0,
+  "daysBetween": 3
 }
 ```
 - **Uso**: Informar sobre aquecimento significativo. O sistema compara todos os pares de dias e retorna apenas o maior aumento detectado.
@@ -245,7 +253,7 @@ Onde:
 - **Severidade**: `info`
 - **Descrição**: ❄️ Neve (raro no Brasil)
 - **Condição**: Códigos OpenWeather 600-699
-- **Details**: `{ "weather_code": 600, "temperature_c": 0.5 }`
+- **Details**: `{ "weatherCode": 600, "temperatureC": 0.5 }`
 - **Uso**: Evento raro, principalmente em regiões serranas do Sul
 
 ### 🌫️ Visibilidade
@@ -255,7 +263,7 @@ Onde:
 - **Severidade**: `alert` (< 1km) ou `warning` (< 3km)
 - **Descrição**: 🌫️ ALERTA: Visibilidade reduzida
 - **Limiar**: < 3000 metros
-- **Details**: `{ "visibility_m": 500 }`
+- **Details**: `{ "visibilityMeters": 500 }`
 - **Uso**: Neblina, névoa ou fumaça reduzindo visibilidade. Importante para segurança no trânsito
 
 ## Exemplos de Resposta da API
@@ -274,9 +282,9 @@ Onde:
       "description": "🌧️ Chuva moderada",
       "timestamp": "2025-11-27T15:00:00-03:00",
       "details": {
-        "rain_mm_h": 18.5,
-        "probability_percent": 85.0,
-        "rain_ends_at": "2025-11-27T21:00:00-03:00"
+        "rainMmH": 18.5,
+        "probabilityPercent": 85.0,
+        "rainEndsAt": "2025-11-27T21:00:00-03:00"
       }
     },
     {
@@ -285,7 +293,7 @@ Onde:
       "description": "💨 ALERTA: Ventos fortes",
       "timestamp": "2025-11-27T18:00:00-03:00",
       "details": {
-        "wind_speed_kmh": 55.0
+        "windSpeedKmh": 55.0
       }
     }
   ]
@@ -306,9 +314,9 @@ Onde:
       "description": "⚠️ ALERTA: Chuva forte",
       "timestamp": "2025-11-27T20:00:00-03:00",
       "details": {
-        "rain_mm_h": 60.0,
-        "probability_percent": 90.0,
-        "rain_ends_at": "2025-11-28T02:00:00-03:00"
+        "rainMmH": 60.0,
+        "probabilityPercent": 90.0,
+        "rainEndsAt": "2025-11-28T02:00:00-03:00"
       }
     },
     {
@@ -317,10 +325,10 @@ Onde:
       "description": "⚠️ ALERTA: Tempestade com raios",
       "timestamp": "2025-11-27T21:00:00-03:00",
       "details": {
-        "weather_code": 210,
-        "rain_mm_h": 65.0,
-        "probability_percent": 95.0,
-        "rain_ends_at": "2025-11-28T00:00:00-03:00"
+        "weatherCode": 210,
+        "rainMmH": 65.0,
+        "probabilityPercent": 95.0,
+        "rainEndsAt": "2025-11-28T00:00:00-03:00"
       }
     },
     {
@@ -329,7 +337,7 @@ Onde:
       "description": "💨 ALERTA: Ventos fortes",
       "timestamp": "2025-11-27T21:00:00-03:00",
       "details": {
-        "wind_speed_kmh": 70.0
+        "windSpeedKmh": 70.0
       }
     }
   ]
@@ -350,12 +358,12 @@ Onde:
       "description": "🌡️ Queda de temperatura (13°C em 2 dias)",
       "timestamp": "2025-11-28T00:00:00-03:00",
       "details": {
-        "day_1_date": "2025-11-27",
-        "day_1_max_c": 28.0,
-        "day_2_date": "2025-11-29",
-        "day_2_max_c": 15.0,
-        "variation_c": -13.0,
-        "days_between": 2
+        "day1Date": "2025-11-27",
+        "day1MaxC": 28.0,
+        "day2Date": "2025-11-29",
+        "day2MaxC": 15.0,
+        "variationC": -13.0,
+        "daysBetween": 2
       }
     },
     {
@@ -364,7 +372,7 @@ Onde:
       "description": "🧊 Frio",
       "timestamp": "2025-11-28T06:00:00-03:00",
       "details": {
-        "temperature_c": 11.0
+        "temperatureC": 11.0
       }
     }
   ]
@@ -423,30 +431,30 @@ function formatAlertDetails(alert) {
   const details = alert.details;
   let extraInfo = [];
   
-  if (details.rain_mm_h) {
-    extraInfo.push(`${details.rain_mm_h} mm/h`);
+  if (details.rainMmH) {
+    extraInfo.push(`${details.rainMmH} mm/h`);
   }
-  if (details.probability_percent) {
-    extraInfo.push(`${details.probability_percent}% chance`);
+  if (details.probabilityPercent) {
+    extraInfo.push(`${details.probabilityPercent}% chance`);
   }
-  if (details.rain_ends_at) {
-    const endTime = new Date(details.rain_ends_at);
+  if (details.rainEndsAt) {
+    const endTime = new Date(details.rainEndsAt);
     extraInfo.push(`até ${endTime.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'})}`);
   }
-  if (details.visibility_m) {
-    extraInfo.push(`visibilidade ${details.visibility_m}m`);
+  if (details.visibilityMeters) {
+    extraInfo.push(`visibilidade ${details.visibilityMeters}m`);
   }
-  if (details.wind_speed_kmh) {
-    extraInfo.push(`${details.wind_speed_kmh} km/h`);
+  if (details.windSpeedKmh) {
+    extraInfo.push(`${details.windSpeedKmh} km/h`);
   }
-  if (details.temperature_c !== undefined) {
-    extraInfo.push(`${details.temperature_c}°C`);
+  if (details.temperatureC !== undefined) {
+    extraInfo.push(`${details.temperatureC}°C`);
   }
-  if (details.variation_c) {
-    extraInfo.push(`variação de ${Math.abs(details.variation_c)}°C`);
+  if (details.variationC) {
+    extraInfo.push(`variação de ${Math.abs(details.variationC)}°C`);
   }
-  if (details.days_between) {
-    extraInfo.push(`${details.days_between} ${details.days_between === 1 ? 'dia' : 'dias'}`);
+  if (details.daysBetween) {
+    extraInfo.push(`${details.daysBetween} ${details.daysBetween === 1 ? 'dia' : 'dias'}`);
   }
   
   return extraInfo.length > 0 

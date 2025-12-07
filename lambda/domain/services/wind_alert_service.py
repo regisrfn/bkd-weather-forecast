@@ -30,7 +30,7 @@ class WindAlertService(BaseAlertService):
                 severity=AlertSeverity.ALERT,
                 description="💨 ALERTA: Ventos fortes",
                 timestamp=data.forecast_time,
-                details=BaseAlertService.round_details({"wind_speed_kmh": data.wind_speed})
+                details=BaseAlertService.round_details({"windSpeedKmh": data.wind_speed})
             ))
         elif data.wind_speed >= 30:
             alerts.append(BaseAlertService.create_alert(
@@ -38,7 +38,7 @@ class WindAlertService(BaseAlertService):
                 severity=AlertSeverity.INFO,
                 description="💨 Ventos moderados",
                 timestamp=data.forecast_time,
-                details=BaseAlertService.round_details({"wind_speed_kmh": data.wind_speed})
+                details=BaseAlertService.round_details({"windSpeedKmh": data.wind_speed})
             ))
 
         return alerts

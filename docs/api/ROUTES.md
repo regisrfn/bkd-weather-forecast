@@ -312,7 +312,7 @@ Accept: application/json
       "description": "🌧️ Chuva moderada",
       "timestamp": "2025-11-27T18:00:00-03:00",
       "details": {
-        "rain_mm_h": 15.5
+        "rainMmH": 15.5
       }
     },
     {
@@ -321,7 +321,7 @@ Accept: application/json
       "description": "💨 ALERTA: Ventos fortes",
       "timestamp": "2025-11-27T21:00:00-03:00",
       "details": {
-        "wind_speed_kmh": 65.0
+        "windSpeedKmh": 65.0
       }
     }
   ],
@@ -343,8 +343,8 @@ A API retorna alertas climáticos estruturados no campo `weatherAlert` baseados 
   "description": "🌧️ Chuva moderada",
   "timestamp": "2025-11-27T18:00:00-03:00",
   "details": {
-    "rain_mm_h": 15.5,
-    "probability_percent": 85.0
+    "rainMmH": 15.5,
+    "probabilityPercent": 85.0
   }
 }
 ```
@@ -374,40 +374,41 @@ A API retorna alertas climáticos estruturados no campo `weatherAlert` baseados 
 
 | Código | Severidade | Descrição | Limiar | Details |
 |--------|-----------|-----------|---------|---------|
-| `DRIZZLE` | info | 🌦️ Garoa | < 2.5 mm/h | `rain_mm_h` |
-| `LIGHT_RAIN` | info | 🌧️ Chuva fraca | 2.5-10 mm/h | `rain_mm_h` |
-| `MODERATE_RAIN` | warning | 🌧️ Chuva moderada | 10-50 mm/h | `rain_mm_h` |
-| `HEAVY_RAIN` | alert | ⚠️ ALERTA: Chuva forte | > 50 mm/h | `rain_mm_h` |
-| `RAIN_EXPECTED` | info | 🌧️ Alta probabilidade de chuva | Probabilidade ≥ 70% | `probability_percent` |
+| `DRIZZLE` | info | 🌦️ Garoa | < 2.5 mm/h | `rainMmH` |
+| `LIGHT_RAIN` | info | 🌧️ Chuva fraca | 2.5-10 mm/h | `rainMmH` |
+| `MODERATE_RAIN` | warning | 🌧️ Chuva moderada | 10-50 mm/h | `rainMmH` |
+| `HEAVY_RAIN` | alert | ⚠️ ALERTA: Chuva forte | > 50 mm/h | `rainMmH` |
+| `HEAVY_RAIN_DAY` | warning/alert | 🌧️ Chuva forte prevista (acumulado diário) | > 20mm/dia e intensidade >= 25 | `precipitationMm`, `probabilityPercent` |
+| `RAIN_EXPECTED` | info | 🌧️ Alta probabilidade de chuva | Probabilidade ≥ 70% | `probabilityPercent` |
 
 ##### ⛈️ Alertas de Tempestade
 
 | Código | Severidade | Descrição | Condição | Details |
 |--------|-----------|-----------|----------|---------|
-| `STORM` | danger | ⚠️ ALERTA: Tempestade com raios | Códigos 200-212, 221 | `weather_code`, `rain_mm_h` |
-| `STORM_RAIN` | alert | ⚠️ Tempestade com chuva | Outros códigos 2xx | `weather_code`, `rain_mm_h` |
+| `STORM` | danger | ⚠️ ALERTA: Tempestade com raios | Códigos 200-212, 221 | `weatherCode`, `rainMmH` |
+| `STORM_RAIN` | alert | ⚠️ Tempestade com chuva | Outros códigos 2xx | `weatherCode`, `rainMmH` |
 
 ##### 💨 Alertas de Vento
 
 | Código | Severidade | Descrição | Limiar | Details |
 |--------|-----------|-----------|---------|---------|
-| `MODERATE_WIND` | info | 💨 Ventos moderados | 30-49 km/h | `wind_speed_kmh` |
-| `STRONG_WIND` | alert | 💨 ALERTA: Ventos fortes | ≥ 50 km/h | `wind_speed_kmh` |
+| `MODERATE_WIND` | info | 💨 Ventos moderados | 30-49 km/h | `windSpeedKmh` |
+| `STRONG_WIND` | alert | 💨 ALERTA: Ventos fortes | ≥ 50 km/h | `windSpeedKmh` |
 
 ##### 🌡️ Alertas de Temperatura
 
 | Código | Severidade | Descrição | Limiar | Details |
 |--------|-----------|-----------|---------|---------|
-| `COLD` | alert | 🧊 Frio | < 12°C | `temperature_c` |
-| `VERY_COLD` | danger | 🥶 ALERTA: Frio intenso | < 8°C | `temperature_c` |
-| `TEMP_DROP` | warning | 🌡️ Queda de temperatura | Variação > 8°C entre dias | `day_1_date`, `day_1_max_c`, `day_2_date`, `day_2_max_c`, `variation_c` |
-| `TEMP_RISE` | info | 🌡️ Aumento de temperatura | Variação > 8°C entre dias | `day_1_date`, `day_1_max_c`, `day_2_date`, `day_2_max_c`, `variation_c` |
+| `COLD` | alert | 🧊 Frio | < 12°C | `temperatureC` |
+| `VERY_COLD` | danger | 🥶 ALERTA: Frio intenso | < 8°C | `temperatureC` |
+| `TEMP_DROP` | warning | 🌡️ Queda de temperatura | Variação > 8°C entre dias | `day1Date`, `day1MaxC`, `day2Date`, `day2MaxC`, `variationC` |
+| `TEMP_RISE` | info | 🌡️ Aumento de temperatura | Variação > 8°C entre dias | `day1Date`, `day1MaxC`, `day2Date`, `day2MaxC`, `variationC` |
 
 ##### ❄️ Outros Alertas
 
 | Código | Severidade | Descrição | Condição | Details |
 |--------|-----------|-----------|----------|---------|
-| `SNOW` | info | ❄️ Neve (raro no Brasil) | Códigos 600-699 | `weather_code`, `temperature_c` |
+| `SNOW` | info | ❄️ Neve (raro no Brasil) | Códigos 600-699 | `weatherCode`, `temperatureC` |
 
 #### Exemplos de Details por Tipo de Alerta
 
@@ -415,7 +416,7 @@ A API retorna alertas climáticos estruturados no campo `weatherAlert` baseados 
 ```json
 {
   "details": {
-    "rain_mm_h": 15.5
+    "rainMmH": 15.5
   }
 }
 ```
@@ -424,7 +425,7 @@ A API retorna alertas climáticos estruturados no campo `weatherAlert` baseados 
 ```json
 {
   "details": {
-    "wind_speed_kmh": 65.0
+    "windSpeedKmh": 65.0
   }
 }
 ```
@@ -433,7 +434,7 @@ A API retorna alertas climáticos estruturados no campo `weatherAlert` baseados 
 ```json
 {
   "details": {
-    "temperature_c": 10.5
+    "temperatureC": 10.5
   }
 }
 ```
@@ -442,11 +443,11 @@ A API retorna alertas climáticos estruturados no campo `weatherAlert` baseados 
 ```json
 {
   "details": {
-    "day_1_date": "2025-11-27",
-    "day_1_max_c": 28.0,
-    "day_2_date": "2025-11-28",
-    "day_2_max_c": 18.0,
-    "variation_c": -10.0
+    "day1Date": "2025-11-27",
+    "day1MaxC": 28.0,
+    "day2Date": "2025-11-28",
+    "day2MaxC": 18.0,
+    "variationC": -10.0
   }
 }
 ```
@@ -455,8 +456,8 @@ A API retorna alertas climáticos estruturados no campo `weatherAlert` baseados 
 ```json
 {
   "details": {
-    "weather_code": 210,
-    "rain_mm_h": 20.0
+    "weatherCode": 210,
+    "rainMmH": 20.0
   }
 }
 ```
@@ -465,7 +466,7 @@ A API retorna alertas climáticos estruturados no campo `weatherAlert` baseados 
 ```json
 {
   "details": {
-    "probability_percent": 85.0
+    "probabilityPercent": 85.0
   }
 }
 ```
@@ -491,11 +492,11 @@ weather.weatherAlert.forEach(alert => {
   
   // Exibir detalhes se disponíveis
   if (alert.details) {
-    if (alert.details.rain_mm_h) {
-      console.log(`Precipitação: ${alert.details.rain_mm_h} mm/h`);
+    if (alert.details.rainMmH) {
+      console.log(`Precipitação: ${alert.details.rainMmH} mm/h`);
     }
-    if (alert.details.wind_speed_kmh) {
-      console.log(`Vento: ${alert.details.wind_speed_kmh} km/h`);
+    if (alert.details.windSpeedKmh) {
+      console.log(`Vento: ${alert.details.windSpeedKmh} km/h`);
     }
   }
 });
@@ -1235,7 +1236,7 @@ ttl = datetime.now() + timedelta(hours=6)
 #### Open-Meteo API
 - **URL:** `https://api.open-meteo.com/v1/forecast`
 - **Cobertura:** 16 dias, dados diários
-- **Parâmetros:** `temperature_2m_max`, `temperature_2m_min`, `precipitation_sum`, `precipitation_probability_max`, `precipitation_hours`, `windspeed_10m_max`, `uv_index_max`, `sunrise`, `sunset`
+- **Parâmetros:** `temperature_2m_max`, `temperature_2m_min`, `precipitation_sum`, `precipitation_probability_max`, `precipitation_hours`, `windspeed_10m_max`, `uvIndex_max`, `sunrise`, `sunset`
 - **Uso:** `dailyForecasts` (até 16 dias)
 - **Rate limit:** Ilimitado (free tier)
 

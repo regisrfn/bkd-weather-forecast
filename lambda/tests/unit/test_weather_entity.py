@@ -92,7 +92,7 @@ def test_to_api_response_serializes_alerts():
         severity=AlertSeverity.DANGER,
         description="Tempestade",
         timestamp=datetime(2025, 1, 1, 12, tzinfo=ZoneInfo("UTC")),
-        details={"wind_speed_kmh": 80},
+        details={"windSpeedKmh": 80},
     )
     weather = Weather(
         city_id="1",

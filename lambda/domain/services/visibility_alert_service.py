@@ -30,7 +30,7 @@ class VisibilityAlertService(BaseAlertService):
                 severity=AlertSeverity.ALERT,
                 description="🌫️ ALERTA: Visibilidade reduzida",
                 timestamp=data.forecast_time,
-                details={"visibility_m": int(data.visibility_m)}
+                details={"visibilityMeters": int(data.visibility_m)}
             ))
         elif data.visibility_m < 3000:
             alerts.append(BaseAlertService.create_alert(
@@ -38,7 +38,7 @@ class VisibilityAlertService(BaseAlertService):
                 severity=AlertSeverity.WARNING,
                 description="🌫️ Visibilidade reduzida",
                 timestamp=data.forecast_time,
-                details={"visibility_m": int(data.visibility_m)}
+                details={"visibilityMeters": int(data.visibility_m)}
             ))
 
         return alerts

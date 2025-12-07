@@ -108,9 +108,9 @@ class RainAlertService:
 
         if chosen:
             code, severity = chosen
-            details = {"probability_percent": round(data.rain_prob, 1)}
+            details = {"probabilityPercent": round(data.rain_prob, 1)}
             if data.rain_1h > 0:
-                details["rain_mm_h"] = round(data.rain_1h, 1)
+                details["rainMmH"] = round(data.rain_1h, 1)
             return [
                 WeatherAlert(
                     code=code,
@@ -135,8 +135,8 @@ class RainAlertService:
                     description="🌧️ Alta probabilidade de chuva",
                     timestamp=data.forecast_time,
                     details={
-                        "probability_percent": round(data.rain_prob, 1),
-                        "rain_mm_h": round(data.rain_1h, 1),
+                        "probabilityPercent": round(data.rain_prob, 1),
+                        "rainMmH": round(data.rain_1h, 1),
                     },
                 )
             ]

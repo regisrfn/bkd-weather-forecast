@@ -75,7 +75,7 @@ def test_generate_all_alerts_deduplicates_and_sets_rain_end(monkeypatch):
                     severity=AlertSeverity.ALERT,
                     description="chuva forte",
                     timestamp=forecast_time,
-                    details={"rain_prob": rain_prob},
+                    details={"rainProb": rain_prob},
                 )
             ]
         return []
@@ -87,8 +87,8 @@ def test_generate_all_alerts_deduplicates_and_sets_rain_end(monkeypatch):
     assert len(alerts) == 1  # dedupe pelo code
     rain_alert = alerts[0]
     assert rain_alert.code == "HEAVY_RAIN"
-    assert "rain_ends_at" in rain_alert.details
-    assert rain_alert.details["rain_ends_at"].endswith("12:00:00-03:00")
+    assert "rainEndsAt" in rain_alert.details
+    assert rain_alert.details["rainEndsAt"].endswith("12:00:00-03:00")
 
 
 def test_generate_all_alerts_includes_temperature_trends(monkeypatch):
@@ -116,4 +116,3 @@ def test_generate_all_alerts_returns_empty_for_past_forecasts(monkeypatch):
 
     result = AlertsGenerator.generate_all_alerts([past_forecast], target_datetime=datetime(2024, 1, 1, tzinfo=ZoneInfo("America/Sao_Paulo")))
     assert result == []
-

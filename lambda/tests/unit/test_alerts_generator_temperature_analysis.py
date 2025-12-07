@@ -67,7 +67,7 @@ class TestAlertsGeneratorTemperatureAnalysis:
         
         temp_alerts = [a for a in result if a.code == "TEMP_DROP"]
         assert len(temp_alerts) > 0
-        assert temp_alerts[0].details["variation_c"] == -8.0
+        assert temp_alerts[0].details["variationC"] == -8.0
 
     def test_no_alerts_for_single_day(self):
         """Não deve gerar alertas de temperatura com apenas 1 dia de dados"""
@@ -119,7 +119,7 @@ class TestAlertsGeneratorTemperatureAnalysis:
         
         temp_drop = [a for a in result if a.code == "TEMP_DROP"]
         assert len(temp_drop) > 0
-        assert abs(temp_drop[0].details["variation_c"]) >= 30.0
+        assert abs(temp_drop[0].details["variationC"]) >= 30.0
 
     def test_gradual_temperature_change(self):
         """Não deve gerar alerta para mudanças graduais pequenas"""
@@ -152,7 +152,7 @@ class TestAlertsGeneratorTemperatureAnalysis:
         temp_drop = [a for a in result if a.code == "TEMP_DROP"]
         # Deve ter apenas 1 (deduplicado), com a maior variação
         assert len(temp_drop) == 1
-        assert abs(temp_drop[0].details["variation_c"]) >= 14.0
+        assert abs(temp_drop[0].details["variationC"]) >= 14.0
 
     def test_temperature_rise_severity(self):
         """Alerta TEMP_RISE deve ter severidade WARNING"""
@@ -185,7 +185,7 @@ class TestAlertsGeneratorTemperatureAnalysis:
         assert temp_drop[0].severity == AlertSeverity.INFO
 
     def test_days_between_in_details(self):
-        """Details deve incluir days_between"""
+        """Details deve incluir daysBetween"""
         now = datetime.now(ZoneInfo("America/Sao_Paulo"))
         
         forecasts = [
@@ -197,8 +197,8 @@ class TestAlertsGeneratorTemperatureAnalysis:
         
         temp_drop = [a for a in result if a.code == "TEMP_DROP"]
         assert len(temp_drop) > 0
-        assert "days_between" in temp_drop[0].details
-        assert temp_drop[0].details["days_between"] == 2
+        assert "daysBetween" in temp_drop[0].details
+        assert temp_drop[0].details["daysBetween"] == 2
 
     def test_temperature_analysis_with_naive_datetime(self):
         """Deve funcionar com datetime naive (sem timezone)"""

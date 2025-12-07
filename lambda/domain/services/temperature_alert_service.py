@@ -35,8 +35,8 @@ class TemperatureAlertService(BaseAlertService):
                 description="❄️ Neve (raro no Brasil)",
                 timestamp=data.forecast_time,
                 details=BaseAlertService.round_details({
-                    "weather_code": data.weather_code,
-                    "temperature_c": data.temperature_c
+                    "weatherCode": data.weather_code,
+                    "temperatureC": data.temperature_c
                 })
             ))
 
@@ -48,7 +48,7 @@ class TemperatureAlertService(BaseAlertService):
                     severity=AlertSeverity.DANGER,
                     description="🥶 ALERTA: Frio intenso",
                     timestamp=data.forecast_time,
-                    details=BaseAlertService.round_details({"temperature_c": data.temperature_c})
+                    details=BaseAlertService.round_details({"temperatureC": data.temperature_c})
                 ))
             elif data.temperature_c < 12:
                 alerts.append(BaseAlertService.create_alert(
@@ -56,7 +56,7 @@ class TemperatureAlertService(BaseAlertService):
                     severity=AlertSeverity.ALERT,
                     description="🧊 Frio",
                     timestamp=data.forecast_time,
-                    details=BaseAlertService.round_details({"temperature_c": data.temperature_c})
+                    details=BaseAlertService.round_details({"temperatureC": data.temperature_c})
                 ))
 
         return alerts

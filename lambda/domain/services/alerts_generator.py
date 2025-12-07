@@ -214,13 +214,12 @@ class AlertsGenerator:
                     basic_alerts.append(WeatherAlert(
                         code="HEAVY_RAIN_DAY",
                         severity=severity,
-                        description=f"🌧️ Chuva forte prevista ({precipitation:.0f}mm acumulados)",
+                        description="Chuva forte prevista",
                         timestamp=timestamp,
                         details={
                             "date": timestamp.date().isoformat(),
-                            "precipitation_mm": round(precipitation, 1),
-                            "rain_probability": round(rain_prob, 0),
-                            "intensity": round(rainfall_intensity, 1)
+                            "precipitationMm": round(precipitation, 1),
+                            "probabilityPercent": round(rain_prob, 0)
                         }
                     ))
             
@@ -234,28 +233,28 @@ class AlertsGenerator:
                     description = f"💨 Ventos fortes previstos ({wind_speed:.0f} km/h)"
                 
                 basic_alerts.append(WeatherAlert(
-                    code="STRONG_WIND_DAY",
-                    severity=severity,
-                    description=description,
-                    timestamp=timestamp,
-                    details={
-                        "date": timestamp.date().isoformat(),
-                        "wind_speed_kmh": round(wind_speed, 1)
-                    }
-                ))
+                        code="STRONG_WIND_DAY",
+                        severity=severity,
+                        description=description,
+                        timestamp=timestamp,
+                        details={
+                            "date": timestamp.date().isoformat(),
+                            "windSpeedKmh": round(wind_speed, 1)
+                        }
+                    ))
             
             # 3. EXTREME_UV - Índice UV extremo
             if uv_index >= 11:
                 basic_alerts.append(WeatherAlert(
                     code="EXTREME_UV",
-                    severity=AlertSeverity.WARNING,
-                    description=f"☀️ Índice UV extremo ({uv_index:.0f})",
-                    timestamp=timestamp,
-                    details={
-                        "date": timestamp.date().isoformat(),
-                        "uv_index": round(uv_index, 1)
-                    }
-                ))
+                        severity=AlertSeverity.WARNING,
+                        description=f"☀️ Índice UV extremo ({uv_index:.0f})",
+                        timestamp=timestamp,
+                        details={
+                            "date": timestamp.date().isoformat(),
+                            "uvIndex": round(uv_index, 1)
+                        }
+                    ))
             
             # Deduplicar mantendo timestamp mais próximo
             for alert in basic_alerts:
@@ -276,7 +275,7 @@ class AlertsGenerator:
             if daily['first_forecast'] is None:
                 daily['first_forecast'] = (forecast, timestamp)
         
-        # Adicionar rain_ends_at
+        # Adicionar rainEndsAt
         AlertsGenerator._add_rain_end_times(
             list(alerts_by_code.values()),
             [f for f, _ in next_days_forecasts]
@@ -384,7 +383,7 @@ class AlertsGenerator:
             if daily['first_forecast'] is None:
                 daily['first_forecast'] = (forecast, timestamp)
         
-        # Adicionar rain_ends_at aos alertas de chuva
+        # Adicionar rainEndsAt aos alertas de chuva
         # Extrair apenas forecasts (sem timestamps) para compatibilidade
         AlertsGenerator._add_rain_end_times(
             list(alerts_by_code.values()),
@@ -478,12 +477,12 @@ class AlertsGenerator:
                                     description=f"🌡️ Queda de temperatura ({abs(variation):.0f}°C em {days_between} {'dia' if days_between == 1 else 'dias'})",
                                     timestamp=alert_time,
                                     details={
-                                        "day_1_date": day1['date'].isoformat(),
-                                        "day_1_max_c": round(day1['max'], 1),
-                                        "day_2_date": day2['date'].isoformat(),
-                                        "day_2_max_c": round(day2['max'], 1),
-                                        "variation_c": round(variation, 1),
-                                        "days_between": days_between
+                                        "day1Date": day1['date'].isoformat(),
+                                        "day1MaxC": round(day1['max'], 1),
+                                        "day2Date": day2['date'].isoformat(),
+                                        "day2MaxC": round(day2['max'], 1),
+                                        "variationC": round(variation, 1),
+                                        "daysBetween": days_between
                                     }
                                 )
                             }
@@ -497,12 +496,12 @@ class AlertsGenerator:
                                     description=f"🌡️ Aumento de temperatura (+{variation:.0f}°C em {days_between} {'dia' if days_between == 1 else 'dias'})",
                                     timestamp=alert_time,
                                     details={
-                                        "day_1_date": day1['date'].isoformat(),
-                                        "day_1_max_c": round(day1['max'], 1),
-                                        "day_2_date": day2['date'].isoformat(),
-                                        "day_2_max_c": round(day2['max'], 1),
-                                        "variation_c": round(variation, 1),
-                                        "days_between": days_between
+                                        "day1Date": day1['date'].isoformat(),
+                                        "day1MaxC": round(day1['max'], 1),
+                                        "day2Date": day2['date'].isoformat(),
+                                        "day2MaxC": round(day2['max'], 1),
+                                        "variationC": round(variation, 1),
+                                        "daysBetween": days_between
                                     }
                                 )
                             }
@@ -522,7 +521,7 @@ class AlertsGenerator:
         forecasts: List[ForecastLike]
     ) -> None:
         """
-        Adiciona rain_ends_at aos alertas de chuva (in-place)
+        Adiciona rainEndsAt aos alertas de chuva (in-place)
         
         Args:
             alerts: Lista de alertas (modificada in-place)
@@ -549,7 +548,7 @@ class AlertsGenerator:
                 )
                 
                 if rain_end:
-                    alert.details["rain_ends_at"] = rain_end.isoformat()
+                    alert.details["rainEndsAt"] = rain_end.isoformat()
     
     @staticmethod
     def _find_rain_end(
