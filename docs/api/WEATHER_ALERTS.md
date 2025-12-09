@@ -60,14 +60,18 @@ A API de previsão do tempo inclui um sistema avançado de alertas meteorológic
 
 ### Fórmula
 
+Usa a mesma sigmoide aplicada em todas as rotas (simples e detalhada):
+
 ```
-rainfallIntensity = min(100, (rain_1h × rainProbability / 100) / 30.0 × 100)
+weight = sigmoid(prob, k=0.2, midpoint=70) normalizada para 0-1
+rainfallIntensity = min(100, (rain_1h / 30.0) × weight × 100)
 ```
 
 Onde:
-- `rain_1h`: Volume de precipitação em mm/h (da OpenWeatherMap API)
-- `rainProbability`: Probabilidade de precipitação de 0-100% (campo `pop` da API)
+- `rain_1h`: Volume de precipitação em mm/h (da Open-Meteo)
+- `prob`: Probabilidade de precipitação 0-100%
 - `30.0`: Threshold de referência (30mm/h = chuva forte)
+- `sigmoid`: Função S que reduz peso para probabilidades baixas e cresce rápido acima de 70%
 
 ### Escala de Valores
 

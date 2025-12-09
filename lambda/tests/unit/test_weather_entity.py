@@ -54,8 +54,8 @@ def test_to_api_response_converts_timezone_and_rounds():
     [
         (0.0, 100.0, 0),
         (30.0, 100.0, 100),
-        (15.0, 50.0, 25),
-        (10.0, 60.0, 20),
+        (15.0, 50.0, 1),
+        (10.0, 60.0, 4),
     ],
 )
 def test_rainfall_intensity_metric(rain_1h, rain_prob, expected):

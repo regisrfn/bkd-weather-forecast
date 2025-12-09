@@ -7,11 +7,9 @@ from zoneinfo import ZoneInfo
 from typing import List
 from enum import Enum
 
-from domain.alerts.primitives import (
-    WeatherAlert,
-    RAIN_INTENSITY_REFERENCE
-)
+from domain.alerts.primitives import WeatherAlert
 from domain.constants import WeatherCondition
+from domain.helpers.rainfall_calculator import calculate_rainfall_intensity
 
 
 class CloudCoverage(Enum):
@@ -67,24 +65,15 @@ class Weather:
         """
         Retorna intensidade de chuva composta (0-100)
         
-        Combina volume de precipitação (mm/h) e probabilidade (%) em uma métrica única:
-        - 0 pontos: Sem chuva ou volume insignificante
-        - 100 pontos: Chuva forte garantida (30mm/h a 100% probabilidade)
-        - Escala proporcional: volume × probabilidade / threshold
-        
-        Resolve o problema de "100% probabilidade mas 0mm" retornando 0 pontos,
-        pois intensidade real = volume × probabilidade.
-        
-        Threshold: 30mm/h permite melhor distribuição visual de chuvas fortes.
+        Combina volume (mm/h) e probabilidade (%) usando a mesma sigmoide
+        utilizada nas previsões horárias/diárias, garantindo consistência entre
+        rotas simples e detalhada.
         """
-        if self.rain_1h == 0:
-            return 0
-        
-        # Calcula intensidade composta: volume × probabilidade normalizado
-        composite_intensity = (self.rain_1h * self.rain_probability / 100.0) / RAIN_INTENSITY_REFERENCE * 100.0
-        
-        # Limita em 100 e arredonda para inteiro
-        return round(min(100.0, composite_intensity))
+        intensity = calculate_rainfall_intensity(
+            rain_probability=self.rain_probability,
+            rain_volume=self.rain_1h
+        )
+        return int(round(intensity))
     
     @property
     def clouds_description(self) -> str:
