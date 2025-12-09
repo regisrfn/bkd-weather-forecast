@@ -31,10 +31,8 @@ flowchart LR
 | `HEAVY_RAIN` | alert | `rainfall_intensity >= 60` | idem |
 | `STORM` | alert | `rainfall_intensity >= 40` **e** `rain_prob >= 70` | idem |
 | `RAIN_EXPECTED` | info | `rain_prob >= 90` **e** `rain_1h >= 0.3` quando intensidade < 1 | `probabilityPercent`, `rainMmH` |
-| `HEAVY_RAIN_DAY` | warning/alert | Acumulado diário > 20 mm e intensidade efetiva >= 25; severidade `alert` se > 50 mm | `date`, `precipitationMm`, `probabilityPercent` |
 | `STRONG_WIND` | alert | `wind_speed >= 50 km/h` | `windSpeedKmh` |
 | `MODERATE_WIND` | info | `wind_speed >= 30 km/h` | `windSpeedKmh` |
-| `STRONG_WIND_DAY` | warning/alert | Vento diário > 40/60 km/h (wind_speed_max) | `date`, `windSpeedKmh` |
 | `LOW_VISIBILITY` | warning/alert | `< 3000 m` (warning) ou `< 1000 m` (alert) | `visibilityMeters` |
 | `SNOW` | info | Códigos de neve ou `temperature_c < 2` com precipitação | `temperatureC`, `weatherCode` |
 | `COLD` | alert | `temperature_c < 12°C` | `temperatureC` |
@@ -45,7 +43,7 @@ flowchart LR
 
 ## Cálculo de intensidade de chuva
 - **Composta**: `(rain_volume_mm_h / 30) * sigmoid(prob, k=0.2, midpoint=70) * 100`, capado em 100.
-- Usada para classificar chuva (DRIZZLE → STORM) e para detectar `HEAVY_RAIN_DAY`.
+- Usada para classificar chuva (DRIZZLE → STORM).
 - `rainEndsAt` é adicionado para alertas de chuva quando existem 2h consecutivas sem chuva após o pico.
 
 ## Estratégia de cobertura

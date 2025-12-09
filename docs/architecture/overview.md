@@ -904,10 +904,6 @@ class AlertsGenerator:
         
         # 2. Alertas diárias (próximos 7 dias)
         for daily in daily_forecasts[:days_ahead]:
-            # Acumulado de chuva diário
-            if daily.precipitation_mm > 50:
-                alerts.append(self.rain_service.create_daily_alert(daily))
-            
             # Temperatura extrema
             if daily.temp_min < 5 or daily.temp_max > 40:
                 alerts.append(self.temp_service.create_alert(daily))
@@ -922,12 +918,11 @@ class AlertsGenerator:
 
 **Tipos de alertas:**
 - `DRIZZLE`, `LIGHT_RAIN`, `MODERATE_RAIN`, `HEAVY_RAIN`, `STORM`
-- `STRONG_WIND`, `DANGEROUS_WIND`
+- `STRONG_WIND`, `MODERATE_WIND`
 - `LOW_VISIBILITY`
-- `COLD_WARNING`, `EXTREME_COLD`, `HEAT_WARNING`
+- `COLD`, `VERY_COLD`
 - `EXTREME_UV`
-- `HEAVY_RAIN_DAY` (acumulado diário >50mm)
-- `TEMPERATURE_RISING`, `TEMPERATURE_FALLING` (tendências)
+- `TEMP_DROP`, `TEMP_RISE` (tendências)
 
 ---
 
