@@ -3,9 +3,8 @@ Configurações centralizadas da aplicação
 """
 import os
 
-# API de Clima (OpenWeatherMap)
-OPENWEATHER_API_KEY = os.environ.get('OPENWEATHER_API_KEY', '')
-OPENWEATHER_BASE_URL = 'https://api.openweathermap.org/data/2.5/weather'
+# API de Clima (Open-Meteo não requer chave)
+OPENMETEO_BASE_URL = 'https://api.open-meteo.com/v1'
 
 # Cidade central (Ribeirão do Sul)
 CENTER_CITY_ID = '3543204'

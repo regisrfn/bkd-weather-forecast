@@ -88,7 +88,7 @@ class TestExceptionHandlerService:
         """REGRA: WeatherDataNotFoundException deve retornar 404"""
         ex = WeatherDataNotFoundException(
             message="Weather data not found for city 3451682",
-            details={"city_id": "3451682", "provider": "OpenWeather", "status": "unavailable"}
+            details={"city_id": "3451682", "provider": "OpenMeteo", "status": "unavailable"}
         )
         response = ExceptionHandlerService.handle_weather_data_not_found(ex)
         
@@ -98,7 +98,7 @@ class TestExceptionHandlerService:
         body = json.loads(response.body)
         assert body["error"] == "Weather data not found"
         assert "3451682" in body["message"]
-        assert body["details"]["provider"] == "OpenWeather"
+        assert body["details"]["provider"] == "OpenMeteo"
     
     def test_handle_value_error(self):
         """REGRA: ValueError deve retornar 400 com mensagem de validação"""

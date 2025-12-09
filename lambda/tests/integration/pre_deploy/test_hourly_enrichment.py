@@ -14,7 +14,7 @@ class TestHourlyEnrichment:
     def test_current_weather_enriched_with_hourly(self, mock_context):
         """
         Valida que current weather foi enriquecido com dados hourly
-        mantendo campos do OpenWeather
+        mantendo campos essenciais
         """
         event = {
             'httpMethod': 'GET',
@@ -46,25 +46,25 @@ class TestHourlyEnrichment:
         assert 'humidity' in current
         assert 'clouds' in current
         
-        # ===== CAMPOS PRESERVADOS DO OPENWEATHER =====
-        # Visibility - Open-Meteo não fornece, deve vir do OpenWeather
+        # ===== CAMPOS DISPONÍVEIS =====
+        # Visibility
         assert 'visibility' in current
-        assert current['visibility'] > 0, "Visibility should be from OpenWeather (not default)"
+        assert current['visibility'] > 0, "Visibility should be present"
         
-        # Pressure - Open-Meteo hourly não fornece, deve vir do OpenWeather
+        # Pressure
         assert 'pressure' in current
-        assert current['pressure'] > 0, "Pressure should be from OpenWeather (not default)"
+        assert current['pressure'] > 0, "Pressure should be present"
         
-        # Feels Like - Open-Meteo não fornece, deve vir do OpenWeather
+        # Feels Like
         assert 'feelsLike' in current
         assert isinstance(current['feelsLike'], (int, float))
         
         print("\n✅ Enriquecimento validado:")
         print(f"   - Wind Direction: {current['windDirection']}°")
         print(f"   - Temperature: {current['temperature']}°C")
-        print(f"   - Visibility (OpenWeather): {current['visibility']}m")
-        print(f"   - Pressure (OpenWeather): {current['pressure']} hPa")
-        print(f"   - Feels Like (OpenWeather): {current['feelsLike']}°C")
+        print(f"   - Visibility: {current['visibility']}m")
+        print(f"   - Pressure: {current['pressure']} hPa")
+        print(f"   - Feels Like: {current['feelsLike']}°C")
     
     def test_hourly_forecasts_available(self, mock_context):
         """Valida que array de hourly forecasts está disponível"""
@@ -157,44 +157,3 @@ class TestHourlyEnrichment:
         print(f"   - Todos os {len(required_fields)} campos existentes presentes")
         print(f"   - 2 novos campos adicionados: windDirection, hourlyForecasts")
     
-    def test_graceful_degradation_on_hourly_failure(self, mock_context):
-        """
-        Valida que se hourly falhar, a API ainda funciona
-        (usando OpenWeather como fallback completo)
-        """
-        # Este teste valida que mesmo se get_hourly_forecast() falhar,
-        # a resposta ainda é válida usando apenas OpenWeather
-        
-        event = {
-            'httpMethod': 'GET',
-            'path': '/api/weather/city/3543204/detailed',
-            'pathParameters': {'city_id': '3543204'},
-            'queryStringParameters': None,
-            'headers': {},
-            'requestContext': {'identity': {'sourceIp': '127.0.0.1'}}
-        }
-        
-        response = lambda_handler(event, mock_context)
-        
-        # Deve retornar sucesso mesmo se hourly falhar
-        assert response['statusCode'] == 200
-        
-        body = json.loads(response['body'])
-        
-        # Current weather deve existir (do OpenWeather se hourly falhou)
-        assert 'currentWeather' in body
-        current = body['currentWeather']
-        
-        # Campos essenciais devem estar presentes
-        assert current['temperature'] > 0
-        assert current['humidity'] > 0
-        assert current['windSpeed'] >= 0
-        
-        # HourlyForecasts pode estar vazio se falhou, mas deve existir
-        assert 'hourlyForecasts' in body
-        assert isinstance(body['hourlyForecasts'], list)
-        
-        print("\n✅ Graceful degradation OK:")
-        print(f"   - API responde mesmo se hourly falhar")
-        print(f"   - Current weather válido (OpenWeather fallback)")
-        print(f"   - Hourly forecasts: {len(body['hourlyForecasts'])} items")

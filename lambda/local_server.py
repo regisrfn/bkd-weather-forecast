@@ -232,13 +232,8 @@ def internal_error(error):
 
 
 if __name__ == '__main__':
-    # Verificar variáveis de ambiente necessárias
-    required_env_vars = ['OPENWEATHER_API_KEY']
-    missing_vars = [var for var in required_env_vars if not os.environ.get(var)]
-    
-    if missing_vars:
-        print(f"⚠️  AVISO: Variáveis de ambiente faltando: {', '.join(missing_vars)}")
-        print("Certifique-se de que o arquivo .env está configurado corretamente\n")
+    # Open-Meteo não requer API key, mas mantemos aviso genérico
+    missing_vars: list[str] = []
     
     port = int(os.environ.get('PORT', 8000))
     host = os.environ.get('HOST', '0.0.0.0')

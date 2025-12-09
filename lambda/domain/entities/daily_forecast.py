@@ -14,8 +14,8 @@ class DailyForecast:
     """
     Entidade de Previsão Diária Estendida
     
-    Representa dados meteorológicos agregados por dia com informações
-    complementares às previsões horárias do OpenWeather.
+    Representa dados meteorológicos agregados por dia complementares
+    às previsões horárias do Open-Meteo.
     """
     date: str  # Formato YYYY-MM-DD
     temp_min: float  # Temperatura mínima (°C)

@@ -28,8 +28,6 @@ def city_repository():
 def weather_provider():
     provider = MagicMock()
     provider.provider_name = "MockProvider"
-    provider.supports_current_weather = True
-    provider.get_current_weather = AsyncMock()
     provider.get_hourly_forecast = AsyncMock()
     provider.get_daily_forecast = AsyncMock()
     return provider
@@ -164,4 +162,3 @@ async def test_execute_propagates_provider_error(use_case, city_repository, weat
 
     with pytest.raises(RuntimeError):
         await use_case.execute(sample_city.id)
-

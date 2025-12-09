@@ -186,10 +186,10 @@ async def test_get_city_weather_with_date(http_client: httpx.AsyncClient, brazil
     forecast_dt = datetime.fromisoformat(data['timestamp'].replace('Z', '+00:00'))
     requested_dt = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
     
-    # OpenWeather fornece previsões a cada 3 horas
+    # Open-Meteo fornece previsões de hora em hora
     time_diff_hours = abs((forecast_dt.replace(tzinfo=None) - requested_dt).total_seconds() / 3600)
-    assert time_diff_hours <= 3, \
-        f"Forecast time should be within 3 hours of requested time, got {time_diff_hours:.1f}h"
+    assert time_diff_hours <= 1.1, \
+        f"Forecast time should be within 1 hour of requested time, got {time_diff_hours:.1f}h"
     
     # Validar que a previsão está dentro do range de 5 dias
     now = datetime.now()
@@ -198,8 +198,8 @@ async def test_get_city_weather_with_date(http_client: httpx.AsyncClient, brazil
         f"Forecast should be within 5 days from now"
     
     # Validar que a previsão não é no passado
-    assert forecast_dt.replace(tzinfo=None) >= now - timedelta(hours=3), \
-        f"Forecast should not be in the past (considering 3h tolerance)"
+    assert forecast_dt.replace(tzinfo=None) >= now - timedelta(hours=1), \
+        f"Forecast should not be in the past (considering hourly tolerance)"
     
     # Validar campos de temperatura
     assert 'tempMin' in data and 'tempMax' in data, \
@@ -321,7 +321,7 @@ async def test_get_detailed_forecast_with_hourly_data(http_client: httpx.AsyncCl
         "Cloud cover should be 0-100%"
     
     assert isinstance(first_hourly['weatherCode'], int), \
-        "Weather code should be integer (WMO code)"
+        "Weather code should be integer"
     
     assert isinstance(first_hourly['description'], str), \
         "Description should be string"
@@ -346,19 +346,19 @@ async def test_get_detailed_forecast_with_hourly_data(http_client: httpx.AsyncCl
     assert 0 <= current['windDirection'] <= 360, \
         "Current windDirection should be 0-360 degrees"
     
-    # Campos preservados do OpenWeather
+    # Campos essenciais
     assert 'visibility' in current, \
-        "Current weather should preserve visibility from OpenWeather"
+        "Current weather should include visibility"
     assert 'pressure' in current, \
-        "Current weather should preserve pressure from OpenWeather"
+        "Current weather should include pressure"
     assert 'feelsLike' in current, \
-        "Current weather should preserve feelsLike from OpenWeather"
+        "Current weather should include feelsLike"
     
     print(f"✓ Current weather enriched with hourly data:")
     print(f"  - Wind direction: {current['windDirection']}° (from Open-Meteo hourly)")
-    print(f"  - Visibility: {current['visibility']}m (from OpenWeather)")
-    print(f"  - Pressure: {current['pressure']}hPa (from OpenWeather)")
-    print(f"  - Feels like: {current['feelsLike']}°C (from OpenWeather)")
+    print(f"  - Visibility: {current['visibility']}m")
+    print(f"  - Pressure: {current['pressure']}hPa")
+    print(f"  - Feels like: {current['feelsLike']}°C")
     
     # ===== VALIDAR BACKWARD COMPATIBILITY =====
     # Todos os campos antigos devem estar presentes

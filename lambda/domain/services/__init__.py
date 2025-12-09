@@ -2,7 +2,6 @@
 Domain Services - Serviços de lógica de negócio pura (sem conhecimento de APIs externas)
 
 IMPORTANTE: Mappers de APIs externas → domain entities pertencem à infrastructure!
-- infrastructure/providers/openweather/mappers/openweather_data_mapper.py
 - infrastructure/providers/openmeteo/mappers/openmeteo_data_mapper.py
 """
 

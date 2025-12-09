@@ -36,7 +36,7 @@ class WeatherAlertOrchestrator:
         """
         Gera alertas climáticos baseado em múltiplos parâmetros
         
-        Sistema proprietário: não depende de weather_code externo (WMO/OW).
+        Sistema proprietário: não depende de weather_code externo.
         Alertas gerados apenas via thresholds de métricas reais.
         
         Retorna apenas UM alerta por code, priorizando pelo timestamp mais próximo.

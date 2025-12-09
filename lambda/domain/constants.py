@@ -7,11 +7,7 @@ import os
 
 class API:
     """Constantes de APIs externas"""
-    
-    # OpenWeather One Call API 3.0
-    OPENWEATHER_BASE_URL = "https://api.openweathermap.org/data/3.0"
-    OPENWEATHER_API_KEY = os.environ.get('OPENWEATHER_API_KEY', '')
-    
+
     # Open-Meteo
     OPENMETEO_BASE_URL = "https://api.open-meteo.com/v1"
     
@@ -32,12 +28,10 @@ class Cache:
     ENABLED = os.environ.get('CACHE_ENABLED', 'true').lower() in ('true', '1', 'yes')
     
     # TTLs por tipo de dado (segundos)
-    TTL_OPENWEATHER = 10800  # 3 horas
     TTL_OPENMETEO_DAILY = 10800  # 3 horas (dados diários menos voláteis)
     TTL_OPENMETEO_HOURLY = 3600  # 1 hora (current e hourly)
     
     # Prefixos de chave
-    PREFIX_OPENWEATHER = ""  # sem prefixo (compatibilidade)
     PREFIX_OPENMETEO_DAILY = "openmeteo_"
     PREFIX_OPENMETEO_HOURLY = "openmeteo_hourly_"
     
@@ -58,58 +52,7 @@ class Weather:
     TEMP_EXTREME_COLD = 5.0  # °C
     TEMP_EXTREME_HOT = 35.0  # °C
     TEMP_VARIATION_THRESHOLD = 8.0  # °C entre dias
-    
-    # Códigos WMO (Open-Meteo)
-    WMO_CLEAR = {0}
-    WMO_PARTLY_CLOUDY = {1, 2, 3}
-    WMO_FOG = {45, 48}
-    WMO_DRIZZLE = {51, 53, 55, 56, 57}
-    WMO_RAIN = {61, 63, 65, 66, 67}
-    WMO_SNOW = {71, 73, 75, 77, 85, 86}
-    WMO_RAIN_SHOWERS = {80, 81, 82}
-    WMO_THUNDERSTORM = {95, 96, 99}
-    
-    # Códigos OpenWeather
-    OW_THUNDERSTORM = range(200, 300)  # 2xx
-    OW_DRIZZLE = range(300, 400)  # 3xx
-    OW_RAIN = range(500, 600)  # 5xx
-    OW_SNOW = range(600, 700)  # 6xx
-    OW_ATMOSPHERE = range(700, 800)  # 7xx (neblina, fumaça)
-    OW_CLEAR = {800}
-    OW_CLOUDS = range(801, 900)  # 80x
-    
-    # Mapeamento WMO -> Descrição PT-BR
-    WMO_DESCRIPTIONS = {
-        0: "Céu limpo",
-        1: "Principalmente limpo",
-        2: "Parcialmente nublado",
-        3: "Nublado",
-        45: "Neblina",
-        48: "Nevoeiro com geada",
-        51: "Garoa leve",
-        53: "Garoa moderada",
-        55: "Garoa intensa",
-        56: "Garoa congelante leve",
-        57: "Garoa congelante intensa",
-        61: "Chuva leve",
-        63: "Chuva moderada",
-        65: "Chuva forte",
-        66: "Chuva congelante leve",
-        67: "Chuva congelante forte",
-        71: "Neve leve",
-        73: "Neve moderada",
-        75: "Neve forte",
-        77: "Grãos de neve",
-        80: "Pancadas de chuva leves",
-        81: "Pancadas de chuva moderadas",
-        82: "Pancadas de chuva fortes",
-        85: "Pancadas de neve leves",
-        86: "Pancadas de neve fortes",
-        95: "Tempestade",
-        96: "Tempestade com granizo leve",
-        99: "Tempestade com granizo forte"
-    }
-    
+
     # Thresholds de intensidade de chuva (mm/h)
     RAIN_INTENSITY_LIGHT = 2.5
     RAIN_INTENSITY_MODERATE = 7.6
@@ -124,7 +67,7 @@ class WeatherCondition:
     """
     Sistema proprietário de códigos meteorológicos
     Baseado em métricas reais (rainfall_intensity, precipitação, vento, temperatura, nuvens)
-    ao invés de depender de códigos WMO ou OpenWeather
+    ao invés de depender de códigos externos
     """
     
     # Céu limpo e nuvens (100-399)

@@ -32,9 +32,8 @@ Executados **antes** do build e deploy na AWS. Validam:
 
 **O que valida:**
 - Lambda handler funciona corretamente
-- Integração com OpenWeather API
 - Integração com Open-Meteo API (daily + hourly)
-- Enriquecimento híbrido de dados
+- Extração de current a partir do hourly
 - Cache DynamoDB (TTL 1h para hourly, 6h para daily)
 - Tratamento de erros
 
@@ -45,10 +44,9 @@ Executados **antes** do build e deploy na AWS. Validam:
 - ✅ Graceful degradation (funciona se hourly falhar)
 
 **O que valida:**
-- Enriquecimento preserva campos OpenWeather (visibility, pressure, feels_like)
+- Enriquecimento mantém campos essenciais (visibility, pressure, feels_like)
 - Wind direction de Open-Meteo hourly (0-360°)
 - Cálculos diários (rain accumulation, temp extremes)
-- API não quebra se hourly data falhar
 
 ### Post-Deploy (`post_deploy/`)
 

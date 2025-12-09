@@ -1,10 +1,6 @@
-"""
-Weather Provider Port - Interface genérica para provedores climáticos
-Desacopla domínio de implementações concretas (OpenWeather, OpenMeteo, etc)
-"""
+"""Weather Provider Port - Interface genérica para provedores climáticos"""
 from abc import ABC, abstractmethod
-from typing import Optional, List
-from datetime import datetime
+from typing import List
 
 from domain.entities.weather import Weather
 from domain.entities.daily_forecast import DailyForecast
@@ -13,39 +9,11 @@ from domain.entities.hourly_forecast import HourlyForecast
 
 class IWeatherProvider(ABC):
     """
-    Interface genérica para provedores de dados meteorológicos
-    
-    Qualquer provider (OpenWeather, OpenMeteo, WeatherAPI, etc) deve implementar
-    esta interface para ser usado pela aplicação.
+    Interface genérica para provedores de dados meteorológicos.
+    A aplicação passou a usar apenas Open-Meteo, mas mantemos a interface
+    para facilitar troca futura de fonte.
     """
-    
-    @abstractmethod
-    async def get_current_weather(
-        self,
-        latitude: float,
-        longitude: float,
-        city_id: str,
-        city_name: str,
-        target_datetime: Optional[datetime] = None
-    ) -> Weather:
-        """
-        Busca dados meteorológicos atuais ou para datetime específico
-        
-        Args:
-            latitude: Latitude da localização
-            longitude: Longitude da localização
-            city_id: ID único da cidade (para cache)
-            city_name: Nome da cidade (para exibição)
-            target_datetime: Datetime específico (None = mais próximo disponível)
-        
-        Returns:
-            Weather entity com dados meteorológicos
-        
-        Raises:
-            ProviderException: Se o provider falhar
-        """
-        pass
-    
+
     @abstractmethod
     async def get_daily_forecast(
         self,
@@ -99,23 +67,5 @@ class IWeatherProvider(ABC):
     @property
     @abstractmethod
     def provider_name(self) -> str:
-        """Nome do provider (ex: 'OpenWeather', 'OpenMeteo')"""
-        pass
-    
-    @property
-    @abstractmethod
-    def supports_current_weather(self) -> bool:
-        """Se o provider suporta dados atuais"""
-        pass
-    
-    @property
-    @abstractmethod
-    def supports_daily_forecast(self) -> bool:
-        """Se o provider suporta previsões diárias"""
-        pass
-    
-    @property
-    @abstractmethod
-    def supports_hourly_forecast(self) -> bool:
-        """Se o provider suporta previsões horárias"""
+        """Nome do provider (ex: 'OpenMeteo')"""
         pass

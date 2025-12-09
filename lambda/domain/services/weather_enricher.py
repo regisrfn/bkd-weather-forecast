@@ -1,7 +1,4 @@
-"""
-Weather Enricher - Enriquece Weather entities com dados de múltiplas fontes
-Centraliza lógica de merge OpenWeather + OpenMeteo
-"""
+"""Weather Enricher - Enriquece Weather entities com dados horários mais precisos"""
 from typing import List, Optional
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -26,15 +23,15 @@ class WeatherEnricher:
         target_datetime: Optional[datetime] = None
     ) -> Weather:
         """
-        Enriquece Weather do OpenWeather com dados hourly do OpenMeteo
+        Enriquece Weather base com dados hourly do OpenMeteo
         
         ESTRATÉGIA:
-        1. Mantém TODOS dados do OpenWeather (visibility, pressure, feels_like)
+        1. Mantém dados já presentes (visibility, pressure, feels_like)
         2. Substitui apenas dados que OpenMeteo tem mais precisos na hora exata
         3. Merge de alertas sem duplicatas
         
         Args:
-            base_weather: Weather do OpenWeather (base completa)
+            base_weather: Weather base já calculado
             hourly_forecasts: Lista de HourlyForecast do OpenMeteo
             target_datetime: Datetime alvo (None = agora)
         
@@ -78,7 +75,7 @@ class WeatherEnricher:
         if enriched_timestamp.tzinfo is None:
             enriched_timestamp = enriched_timestamp.replace(tzinfo=brasil_tz)
         
-        # Criar Weather enriquecido mantendo dados do OpenWeather
+        # Criar Weather enriquecido mantendo dados já disponíveis
         enriched = Weather(
             city_id=base_weather.city_id,
             city_name=base_weather.city_name,
@@ -93,7 +90,7 @@ class WeatherEnricher:
             clouds=float(closest_forecast.cloud_cover),
             weather_code=closest_forecast.weather_code,
             description=closest_forecast.description,
-            # Dados mantidos do OpenWeather (OpenMeteo não fornece)
+            # Dados mantidos do provider base (OpenMeteo não fornece)
             feels_like=base_weather.feels_like,
             pressure=base_weather.pressure,
             visibility=base_weather.visibility,

@@ -26,7 +26,6 @@ def city_repository():
 def weather_provider():
     provider = MagicMock()
     provider.provider_name = "MockProvider"
-    provider.get_current_weather = AsyncMock()
     provider.get_hourly_forecast = AsyncMock()
     provider.get_daily_forecast = AsyncMock()
     return provider

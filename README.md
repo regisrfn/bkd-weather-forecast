@@ -15,9 +15,9 @@ API Backend em Python para previsões meteorológicas com **Clean Architecture**
 source .venv/bin/activate
 pip install -r lambda/requirements.txt
 
-# 2. Configurar .env
+# 2. Configurar .env (opcional)
 cp .env.example .env
-nano .env  # Adicionar OPENWEATHER_API_KEY
+# Open-Meteo não requer API key; ajuste apenas variáveis de cache/AWS se necessário
 
 # 3. Executar testes
 pytest lambda/tests/ -v

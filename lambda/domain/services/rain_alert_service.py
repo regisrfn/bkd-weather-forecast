@@ -1,6 +1,6 @@
 """
 Serviço de domínio para geração de alertas de chuva
-Centraliza regras baseadas em rainfall_intensity, probabilidade e códigos WMO/OWM.
+Centraliza regras baseadas em rainfall_intensity e probabilidade de chuva.
 """
 from __future__ import annotations
 
@@ -24,31 +24,6 @@ INTENSITY_THRESHOLDS = {
     "HEAVY_MIN": 60,       # 60+ -> chuva forte
 }
 
-# Severidade mínima sugerida por códigos (WMO e OpenWeather)
-# Usado como piso quando não há volume ou intensidade relevante.
-CODE_SEVERITY_FLOOR = {
-    # WMO rain showers
-    80: ("LIGHT_RAIN", AlertSeverity.INFO),
-    81: ("MODERATE_RAIN", AlertSeverity.WARNING),
-    82: ("HEAVY_RAIN", AlertSeverity.ALERT),
-    # WMO thunderstorms
-    95: ("STORM", AlertSeverity.DANGER),
-    96: ("STORM", AlertSeverity.DANGER),
-    99: ("STORM", AlertSeverity.DANGER),
-}
-
-
-def _owm_floor(code: int) -> Optional[Tuple[str, AlertSeverity]]:
-    """Mapeia códigos OpenWeather para severidade mínima."""
-    if 200 <= code < 300:
-        return ("STORM", AlertSeverity.DANGER)
-    if code in [502, 503, 504, 522, 531]:
-        return ("HEAVY_RAIN", AlertSeverity.ALERT)
-    if code in [500, 501, 511, 520, 521]:
-        return ("LIGHT_RAIN", AlertSeverity.INFO)
-    return None
-
-
 @dataclass(frozen=True)
 class RainAlertInput:
     weather_code: int  # Mantido para compatibilidade, mas não usado mais
@@ -62,11 +37,6 @@ class RainAlertService:
     """Gera alertas de chuva com base em intensidade composta e códigos."""
 
     @staticmethod
-    def _code_floor(code: int) -> Optional[Tuple[str, AlertSeverity]]:
-        if code in CODE_SEVERITY_FLOOR:
-            return CODE_SEVERITY_FLOOR[code]
-        return _owm_floor(code)
-
     @staticmethod
     def _classify_by_intensity(intensity: float) -> Optional[Tuple[str, AlertSeverity]]:
         if intensity >= INTENSITY_THRESHOLDS["HEAVY_MIN"]:
@@ -78,15 +48,6 @@ class RainAlertService:
         if intensity >= INTENSITY_THRESHOLDS["DRIZZLE_MIN"]:
             return ("DRIZZLE", AlertSeverity.INFO)
         return None
-
-    @staticmethod
-    def _is_rain_code(code: int) -> bool:
-        return (
-            code in CODE_SEVERITY_FLOOR
-            or 200 <= code < 300
-            or 300 <= code < 400
-            or 500 <= code < 600
-        )
 
     @staticmethod
     def generate_alerts(data: RainAlertInput) -> List[WeatherAlert]:

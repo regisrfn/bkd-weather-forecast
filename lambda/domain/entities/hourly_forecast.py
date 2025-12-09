@@ -28,7 +28,7 @@ class HourlyForecast:
     uv_index: Optional[float] = None  # Índice UV (0-11+)
     is_day: Optional[int] = None  # 1 = dia, 0 = noite
     apparent_temperature: Optional[float] = None  # Sensação térmica da API (°C)
-    weather_code: int = 0  # WMO weather code
+    weather_code: int = 0  # Código proprietário calculado na entidade
     description: str = ""  # Descrição em português do weather_code
     
     def __post_init__(self):

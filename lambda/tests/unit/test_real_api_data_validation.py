@@ -6,7 +6,6 @@ import pytest
 import json
 from pathlib import Path
 from datetime import datetime
-from zoneinfo import ZoneInfo
 
 
 @pytest.fixture
@@ -15,72 +14,6 @@ def real_api_data():
     fixtures_path = Path(__file__).parent.parent / "fixtures" / "real_api_data.json"
     with open(fixtures_path) as f:
         return json.load(f)
-
-
-class TestOpenWeatherRealData:
-    """Testes com dados reais do OpenWeather"""
-    
-    def test_openweather_has_required_fields(self, real_api_data):
-        """REGRA: Response do OpenWeather deve ter todos os campos obrigatórios"""
-        ow = real_api_data["openweather_current"]["response"]
-        
-        required_fields = [
-            "temperature", "humidity", "windSpeed", "windDirection",
-            "rainfallProbability", "description", "feelsLike",
-            "pressure", "visibility", "clouds", "timestamp"
-        ]
-        
-        for field in required_fields:
-            assert field in ow, f"Campo obrigatório '{field}' ausente no OpenWeather"
-    
-    def test_openweather_temperature_is_reasonable(self, real_api_data):
-        """REGRA: Temperatura deve estar em range razoável para Brasil (-10°C a 50°C)"""
-        ow = real_api_data["openweather_current"]["response"]
-        temp = ow["temperature"]
-        
-        assert -10 <= temp <= 50, f"Temperatura fora do range razoável: {temp}°C"
-    
-    def test_openweather_humidity_is_percentage(self, real_api_data):
-        """REGRA: Umidade deve estar entre 0 e 100%"""
-        ow = real_api_data["openweather_current"]["response"]
-        humidity = ow["humidity"]
-        
-        assert 0 <= humidity <= 100, f"Umidade fora do range: {humidity}%"
-    
-    def test_openweather_wind_speed_is_positive(self, real_api_data):
-        """REGRA: Velocidade do vento deve ser não-negativa"""
-        ow = real_api_data["openweather_current"]["response"]
-        wind_speed = ow["windSpeed"]
-        
-        assert wind_speed >= 0, f"Velocidade do vento negativa: {wind_speed}"
-    
-    def test_openweather_wind_direction_is_valid(self, real_api_data):
-        """REGRA: Direção do vento deve estar entre 0 e 360 graus"""
-        ow = real_api_data["openweather_current"]["response"]
-        wind_dir = ow["windDirection"]
-        
-        assert 0 <= wind_dir <= 360, f"Direção do vento inválida: {wind_dir}°"
-    
-    def test_openweather_clouds_is_percentage(self, real_api_data):
-        """REGRA: Cobertura de nuvens deve estar entre 0 e 100%"""
-        ow = real_api_data["openweather_current"]["response"]
-        clouds = ow["clouds"]
-        
-        assert 0 <= clouds <= 100, f"Cobertura de nuvens fora do range: {clouds}%"
-    
-    def test_openweather_visibility_is_reasonable(self, real_api_data):
-        """REGRA: Visibilidade deve estar entre 0 e 10000m (10km)"""
-        ow = real_api_data["openweather_current"]["response"]
-        visibility = ow["visibility"]
-        
-        assert 0 <= visibility <= 20000, f"Visibilidade fora do range: {visibility}m"
-    
-    def test_openweather_pressure_is_reasonable(self, real_api_data):
-        """REGRA: Pressão atmosférica deve estar entre 950 e 1050 hPa"""
-        ow = real_api_data["openweather_current"]["response"]
-        pressure = ow["pressure"]
-        
-        assert 950 <= pressure <= 1050, f"Pressão fora do range: {pressure} hPa"
 
 
 class TestOpenMeteoRealData:
@@ -160,64 +93,22 @@ class TestOpenMeteoRealData:
             assert diff_hours == 1, f"Timestamps não sequenciais: {current} -> {next_ts}"
 
 
-class TestCrossProviderConsistency:
-    """Testes de consistência entre providers"""
-    
-    def test_temperatures_are_similar_between_providers(self, real_api_data):
-        """REGRA: Temperaturas de providers diferentes devem ser similares (±10°C)"""
-        ow_temp = real_api_data["openweather_current"]["response"]["temperature"]
-        
-        # Pegar primeira hora do Open-Meteo
-        om_hourly = real_api_data["openmeteo_hourly"]["forecasts"][0]
-        om_temp = om_hourly["temperature"]
-        
-        diff = abs(ow_temp - om_temp)
-        assert diff <= 10, f"Temperaturas muito diferentes: OW={ow_temp}°C, OM={om_temp}°C (diff={diff})"
-    
-    def test_wind_speeds_are_similar_between_providers(self, real_api_data):
-        """REGRA: Velocidades do vento devem ser similares (±20 km/h)"""
-        ow_wind = real_api_data["openweather_current"]["response"]["windSpeed"]
-        om_wind = real_api_data["openmeteo_hourly"]["forecasts"][0]["windSpeed"]
-        
-        diff = abs(ow_wind - om_wind)
-        assert diff <= 20, f"Ventos muito diferentes: OW={ow_wind}, OM={om_wind} (diff={diff})"
-    
-    def test_metadata_has_correct_city_info(self, real_api_data):
-        """REGRA: Metadata deve conter informações corretas da cidade"""
-        metadata = real_api_data["metadata"]
-        city = metadata["city"]
-        
-        # Verificar que cidade existe e tem campos necessários
-        assert "name" in city
-        assert "state" in city
-        assert "city_id" in city
-        assert city["state"] == "SP"
-        
-        # Coordenadas devem estar no estado de SP
-        assert -25 <= city["latitude"] <= -20
-        assert -54 <= city["longitude"] <= -44
-
-
 class TestDataQuality:
     """Testes de qualidade dos dados"""
     
     def test_no_null_values_in_critical_fields(self, real_api_data):
         """REGRA: Campos críticos nunca devem ser null"""
-        ow = real_api_data["openweather_current"]["response"]
+        om_hourly = real_api_data["openmeteo_hourly"]["forecasts"]
+        first_forecast = om_hourly[0]
         
         critical_fields = ["temperature", "humidity", "windSpeed", "timestamp"]
         
         for field in critical_fields:
-            value = ow.get(field)
+            value = first_forecast.get(field)
             assert value is not None, f"Campo crítico '{field}' é null"
     
     def test_no_negative_humidity(self, real_api_data):
         """REGRA: Umidade nunca deve ser negativa"""
-        # OpenWeather
-        ow_humidity = real_api_data["openweather_current"]["response"]["humidity"]
-        assert ow_humidity >= 0, "OpenWeather humidity negativa"
-        
-        # Open-Meteo hourly
         om_hourly = real_api_data["openmeteo_hourly"]["forecasts"]
         for forecast in om_hourly[:5]:
             assert forecast["humidity"] >= 0, f"Open-Meteo humidity negativa em {forecast['timestamp']}"
@@ -241,16 +132,10 @@ class TestDataQuality:
     
     def test_weather_codes_are_valid(self, real_api_data):
         """REGRA: Códigos meteorológicos devem estar em ranges válidos"""
-        # OpenWeather: 200-900
-        ow_code = real_api_data["openweather_current"]["response"].get("weatherCode")
-        if ow_code is not None:
-            assert 200 <= ow_code <= 900, f"Weather code OW inválido: {ow_code}"
-        
-        # Open-Meteo WMO: 0-99
         om_hourly = real_api_data["openmeteo_hourly"]["forecasts"]
         for forecast in om_hourly[:5]:
             code = forecast["weatherCode"]
-            assert 0 <= code <= 99, f"Weather code OM inválido: {code}"
+            assert code >= 0, f"Weather code inválido: {code}"
 
 
 class TestBoundaryValues:

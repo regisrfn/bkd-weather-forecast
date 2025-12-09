@@ -18,7 +18,6 @@ from domain.entities.daily_forecast import DailyForecast
 from domain.entities.hourly_forecast import HourlyForecast
 from domain.entities.weather import Weather
 from domain.exceptions import CityNotFoundException
-from domain.services import weather_enricher
 from domain.services import alerts_generator
 
 
@@ -89,49 +88,35 @@ def city_repository():
 
 
 @pytest.fixture
-def providers():
-    current = MagicMock()
-    current.provider_name = "CurrentProvider"
-    current.get_current_weather = AsyncMock()
-
-    daily = MagicMock()
-    daily.provider_name = "DailyProvider"
-    daily.get_daily_forecast = AsyncMock()
-
-    hourly = MagicMock()
-    hourly.provider_name = "HourlyProvider"
-    hourly.get_hourly_forecast = AsyncMock()
-
-    return current, daily, hourly
+def weather_provider():
+    provider = MagicMock()
+    provider.provider_name = "OpenMeteoMock"
+    provider.get_daily_forecast = AsyncMock()
+    provider.get_hourly_forecast = AsyncMock()
+    return provider
 
 
-def _build_use_case(city_repository, providers):
-    current, daily, hourly = providers
+def _build_use_case(city_repository, weather_provider):
     return GetCityDetailedForecastUseCase(
         city_repository=city_repository,
-        current_weather_provider=current,
-        daily_forecast_provider=daily,
-        hourly_forecast_provider=hourly,
+        weather_provider=weather_provider,
     )
 
 
 @pytest.mark.asyncio
-async def test_execute_success_enriches_and_merges_alerts(city_repository, providers):
+async def test_execute_success_enriches_and_merges_alerts(city_repository, weather_provider):
     """
     Testa que o use case:
-    - Chama os providers (apenas hourly e daily, não mais current)
+    - Chama os providers hourly e daily
     - Retorna ExtendedForecast com dados
     - Inclui daily e hourly forecasts
     """
     city_repository.get_by_id.return_value = _make_city()
 
-    current_provider, daily_provider, hourly_provider = providers
+    weather_provider.get_daily_forecast.return_value = _make_daily()
+    weather_provider.get_hourly_forecast.return_value = _make_hourly()
 
-    # Configure all async methods (agora apenas daily e hourly são chamados)
-    daily_provider.get_daily_forecast.return_value = _make_daily()
-    hourly_provider.get_hourly_forecast.return_value = _make_hourly()
-
-    use_case = _build_use_case(city_repository, providers)
+    use_case = _build_use_case(city_repository, weather_provider)
     result = await use_case.execute("3543204")
 
     # Verificar estrutura do resultado
@@ -141,40 +126,23 @@ async def test_execute_success_enriches_and_merges_alerts(city_repository, provi
     assert len(result.daily_forecasts) > 0
     assert len(result.hourly_forecasts) > 0
     
-    # Verificar que apenas hourly e daily foram chamados (current_weather não é mais chamado)
-    current_provider.get_current_weather.assert_not_called()
-    daily_provider.get_daily_forecast.assert_called_once()
-    hourly_provider.get_hourly_forecast.assert_called_once()
+    weather_provider.get_daily_forecast.assert_called_once()
+    weather_provider.get_hourly_forecast.assert_called_once()
 
 
 @pytest.mark.asyncio
-async def test_execute_continues_without_daily_data(monkeypatch, city_repository, providers):
+async def test_execute_continues_without_daily_data(monkeypatch, city_repository, weather_provider):
     city_repository.get_by_id.return_value = _make_city()
-    current_provider, daily_provider, hourly_provider = providers
+    weather_provider.get_daily_forecast.side_effect = RuntimeError("daily boom")
+    weather_provider.get_hourly_forecast.return_value = _make_hourly()
 
-    current_provider.get_current_weather.return_value = _make_weather()
-    daily_provider.get_daily_forecast.side_effect = RuntimeError("daily boom")
-    hourly_provider.get_hourly_forecast.return_value = _make_hourly()
-
-    def mock_enrich(base_weather, hourly_forecasts, target_datetime=None):
-        return base_weather
-    
-    monkeypatch.setattr(
-        weather_enricher.WeatherEnricher,
-        "enrich_with_hourly_data",
-        mock_enrich,
-    )
-    
-    def mock_alerts(forecasts, target_datetime=None, days_limit=7):
-        return []
-    
     monkeypatch.setattr(
         alerts_generator.AlertsGenerator,
-        "generate_alerts_next_days",
-        mock_alerts,
+        "generate_alerts_for_weather",
+        AsyncMock(return_value=[]),
     )
 
-    use_case = _build_use_case(city_repository, providers)
+    use_case = _build_use_case(city_repository, weather_provider)
     result = await use_case.execute("3543204")
 
     assert result.extended_available is False
@@ -183,10 +151,9 @@ async def test_execute_continues_without_daily_data(monkeypatch, city_repository
 
 
 @pytest.mark.asyncio
-async def test_execute_raises_when_city_missing(city_repository, providers):
+async def test_execute_raises_when_city_missing(city_repository, weather_provider):
     city_repository.get_by_id.return_value = None
-    use_case = _build_use_case(city_repository, providers)
+    use_case = _build_use_case(city_repository, weather_provider)
 
     with pytest.raises(CityNotFoundException):
         await use_case.execute("0000000")
-

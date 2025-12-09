@@ -16,7 +16,7 @@ class ICacheRepository(Protocol):
             city_id: ID da cidade
             
         Returns:
-            Dados completos da API OpenWeather ou None se não encontrado/expirado
+            Dados completos da API de clima ou None se não encontrado/expirado
         """
         ...
     
@@ -26,7 +26,7 @@ class ICacheRepository(Protocol):
         
         Args:
             city_id: ID da cidade
-            data: Resposta completa da API OpenWeather (JSON)
+            data: Resposta completa da API de clima (JSON)
             ttl_seconds: Tempo de vida em segundos (padrão: 3 horas = 10800s)
             
         Returns:

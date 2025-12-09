@@ -1,7 +1,4 @@
-"""
-Async Use Case: Get City Detailed Forecast
-Refatorado para usar One Call API 3.0 com estratégia híbrida para 16 dias
-"""
+"""Async Use Case: Get City Detailed Forecast usando somente Open-Meteo"""
 import asyncio
 from typing import Optional, List
 from datetime import datetime
@@ -11,7 +8,6 @@ from domain.entities.extended_forecast import ExtendedForecast
 from domain.entities.daily_forecast import DailyForecast
 from domain.exceptions import CityNotFoundException, CoordinatesNotFoundException
 from application.ports.output.weather_provider_port import IWeatherProvider
-from domain.services.weather_enricher import WeatherEnricher
 from domain.services.alerts_generator import AlertsGenerator
 from application.ports.output.city_repository_port import ICityRepository
 from infrastructure.adapters.output.providers.openmeteo.openmeteo_provider import OpenMeteoProvider
@@ -32,14 +28,10 @@ class GetCityDetailedForecastUseCase:
     def __init__(
         self,
         city_repository: ICityRepository,
-        current_weather_provider: IWeatherProvider,
-        daily_forecast_provider: IWeatherProvider,
-        hourly_forecast_provider: IWeatherProvider
+        weather_provider: IWeatherProvider
     ):
         self.city_repository = city_repository
-        self.current_weather_provider = current_weather_provider
-        self.daily_forecast_provider = daily_forecast_provider
-        self.hourly_forecast_provider = hourly_forecast_provider
+        self.weather_provider = weather_provider
     
     @tracer.wrap(resource="use_case.async_get_city_detailed_forecast")
     async def execute(
@@ -80,16 +72,14 @@ class GetCityDetailedForecastUseCase:
             "Fetching detailed forecast",
             city_id=city_id,
             city_name=city.name,
-            current_provider=self.current_weather_provider.provider_name,
-            daily_provider=self.daily_forecast_provider.provider_name,
-            hourly_provider=self.hourly_forecast_provider.provider_name
+            provider=self.weather_provider.provider_name
         )
         
         # Execute TWO API calls in parallel (ASYNC - sem GIL)
         # Strategy: Open-Meteo ONLY - Fetch once, reuse data
         try:
             # Task 1: Hourly forecasts (168h = 7 dias, reutilizado para tudo)
-            hourly_task = self.hourly_forecast_provider.get_hourly_forecast(
+            hourly_task = self.weather_provider.get_hourly_forecast(
                 latitude=city.latitude,
                 longitude=city.longitude,
                 city_id=city.id,
@@ -97,7 +87,7 @@ class GetCityDetailedForecastUseCase:
             )
             
             # Task 2: Daily forecasts (16 dias para resposta da API)
-            daily_task = self.daily_forecast_provider.get_daily_forecast(
+            daily_task = self.weather_provider.get_daily_forecast(
                 latitude=city.latitude,
                 longitude=city.longitude,
                 city_id=city.id,

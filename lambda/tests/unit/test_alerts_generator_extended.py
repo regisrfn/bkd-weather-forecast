@@ -172,7 +172,7 @@ class TestAlertsGeneratorEdgeCases:
             wind_direction=180,
             rain_probability=100,
             precipitation=50.0,  # Chuva intensa
-            weather_code=95  # WMO code para tempestade
+            weather_code=95  # Código de tempestade
         )
         
         alerts = AlertsGenerator.generate_all_alerts([forecast], target_datetime=now)

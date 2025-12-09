@@ -185,7 +185,7 @@ class TestOpenMeteoDataMapper:
         assert result.wind_direction == 180
         assert result.rain_probability == 80.0
         assert result.rain_1h == 2.5
-        # Description is generated from WMO code 61
+        # Description is generated from weather code 61
         assert 'Garoa' in result.description or 'chuva' in result.description.lower()
         assert result.clouds == 60.0
         # Weather code may be translated by the system

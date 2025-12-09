@@ -14,7 +14,6 @@ class TestSettings:
     """Tests for Settings configuration"""
     
     @patch.dict(os.environ, {
-        'OPENWEATHER_API_KEY': 'test_api_key_123',
         'AWS_REGION': 'us-east-1',
         'CACHE_TABLE_NAME': 'test-weather-cache',
         'CACHE_TTL_SECONDS': '1800',
@@ -28,7 +27,6 @@ class TestSettings:
         from shared.config import settings
         importlib.reload(settings)
         
-        assert settings.OPENWEATHER_API_KEY == 'test_api_key_123'
         assert settings.AWS_REGION == 'us-east-1'
         assert settings.CACHE_TABLE_NAME == 'test-weather-cache'
         assert settings.CACHE_TTL_SECONDS == 1800
@@ -39,8 +37,8 @@ class TestSettings:
         """Test that constants are defined"""
         from shared.config import settings
         
-        assert hasattr(settings, 'OPENWEATHER_BASE_URL')
-        assert settings.OPENWEATHER_BASE_URL == 'https://api.openweathermap.org/data/2.5/weather'
+        assert hasattr(settings, 'OPENMETEO_BASE_URL')
+        assert settings.OPENMETEO_BASE_URL == 'https://api.open-meteo.com/v1'
         
         assert hasattr(settings, 'CENTER_CITY_ID')
         assert settings.CENTER_CITY_ID == '3543204'
@@ -94,4 +92,3 @@ class TestSettings:
         assert settings.CACHE_TTL_SECONDS == 10800
         assert settings.CACHE_ENABLED == True
         assert settings.CORS_ORIGIN == '*'
-

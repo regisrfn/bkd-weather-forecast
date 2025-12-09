@@ -9,8 +9,14 @@ from typing import List
 
 from domain.alerts.primitives import AlertSeverity, WeatherAlert
 from domain.services.base_alert_service import BaseAlertService
+from domain.constants import WeatherCondition
 
-WMO_SNOW_CODES = {71, 73, 75, 77, 85, 86}
+# Compatibilidade: aceitar tanto códigos proprietários (900+) quanto antigos (600-699)
+SNOW_CODES = {
+    WeatherCondition.LIGHT_SNOW,
+    WeatherCondition.MODERATE_SNOW,
+    WeatherCondition.HEAVY_SNOW,
+}
 
 
 @dataclass(frozen=True)
@@ -28,7 +34,10 @@ class TemperatureAlertService(BaseAlertService):
         alerts: List[WeatherAlert] = []
 
         # Neve
-        if 600 <= data.weather_code < 700 or data.weather_code in WMO_SNOW_CODES:
+        if (
+            data.weather_code in SNOW_CODES
+            or 600 <= data.weather_code < 700  # compatibilidade com códigos legados
+        ):
             alerts.append(BaseAlertService.create_alert(
                 code="SNOW",
                 severity=AlertSeverity.INFO,

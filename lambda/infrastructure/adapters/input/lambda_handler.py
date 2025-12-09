@@ -26,7 +26,7 @@ from domain.exceptions import (
 # Infrastructure Layer - Adapters
 from infrastructure.adapters.input.exception_handler_service import ExceptionHandlerService
 from infrastructure.adapters.output.municipalities_repository import get_repository
-from infrastructure.adapters.output.providers.weather_provider_factory import get_weather_provider_factory, ProviderStrategy
+from infrastructure.adapters.output.providers.weather_provider_factory import get_weather_provider_factory
 
 # Shared Layer - Utilities
 from shared.config.settings import DEFAULT_RADIUS
@@ -133,8 +133,8 @@ def get_city_weather_route(city_id: str):
     
     # Get city repository e weather provider via factory
     city_repository = get_repository()
-    factory = get_weather_provider_factory(strategy=ProviderStrategy.OPENMETEO_ONLY)
-    weather_provider = factory.get_current_weather_provider()
+    factory = get_weather_provider_factory()
+    weather_provider = factory.get_weather_provider()
     
     # Execute async use case
     async def execute_async():
@@ -162,7 +162,7 @@ def get_city_detailed_forecast_route(city_id: str):
     GET /api/weather/city/{cityId}/detailed?date=2025-11-20&time=15:00
     
     Returns detailed forecast with extended data:
-    - Current weather (OpenWeather API)
+    - Current weather (extraído do hourly Open-Meteo)
     - Daily forecasts for 16 days (Open-Meteo API)
     - UV index, sunrise/sunset, precipitation hours
     
@@ -184,19 +184,15 @@ def get_city_detailed_forecast_route(city_id: str):
     
     # Get city repository e providers via factory
     city_repository = get_repository()
-    factory = get_weather_provider_factory(strategy=ProviderStrategy.OPENMETEO_ONLY)
-    current_provider = factory.get_current_weather_provider()
-    daily_provider = factory.get_daily_forecast_provider()
-    hourly_provider = factory.get_hourly_forecast_provider()
+    factory = get_weather_provider_factory()
+    weather_provider = factory.get_weather_provider()
     
     # Execute async use case
     async def execute_async():
         # Execute use case (ASYNC with asyncio.gather for parallel calls)
         use_case = GetCityDetailedForecastUseCase(
             city_repository=city_repository,
-            current_weather_provider=current_provider,
-            daily_forecast_provider=daily_provider,
-            hourly_forecast_provider=hourly_provider
+            weather_provider=weather_provider
         )
         extended_forecast = await use_case.execute(city_id, target_datetime)
         
@@ -250,8 +246,8 @@ def post_regional_weather_route():
     
     # Get city repository e weather provider via factory
     city_repository = get_repository()
-    factory = get_weather_provider_factory(strategy=ProviderStrategy.OPENMETEO_ONLY)
-    weather_provider = factory.get_current_weather_provider()
+    factory = get_weather_provider_factory()
+    weather_provider = factory.get_weather_provider()
     
     # Execute async use case
     async def execute_async():

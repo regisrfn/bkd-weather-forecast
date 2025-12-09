@@ -1,6 +1,6 @@
 """
 Extended Forecast Entity - Entidade agregada para previsões detalhadas
-Combina dados atuais (OpenWeather) com previsões estendidas (Open-Meteo)
+Usa apenas dados do Open-Meteo (current extraído do hourly + daily estendido)
 """
 from dataclasses import dataclass, field
 from typing import List, Optional
@@ -14,10 +14,9 @@ class ExtendedForecast:
     """
     Entidade Agregada de Previsão Estendida
     
-    Consolida informações atuais detalhadas (OpenWeather) com
-    previsões diárias de até 16 dias (Open-Meteo) e previsões
-    horárias de até 7 dias (168 horas) para fornecer uma visão
-    completa das condições meteorológicas.
+    Consolida informações atuais extraídas do forecast horário e
+    previsões diárias de até 16 dias (Open-Meteo) para fornecer uma
+    visão completa das condições meteorológicas.
     """
     city_id: str
     city_name: str

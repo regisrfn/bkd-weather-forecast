@@ -70,18 +70,6 @@ class OpenMeteoProvider(IWeatherProvider):
     def provider_name(self) -> str:
         return "OpenMeteo"
     
-    @property
-    def supports_current_weather(self) -> bool:
-        return True  # Via hourly data
-    
-    @property
-    def supports_daily_forecast(self) -> bool:
-        return True
-    
-    @property
-    def supports_hourly_forecast(self) -> bool:
-        return True
-    
     @staticmethod
     def extract_current_weather_from_hourly(
         hourly_forecasts: List[HourlyForecast],
@@ -182,47 +170,6 @@ class OpenMeteoProvider(IWeatherProvider):
             temp_min=temp_min,
             temp_max=temp_max,
             rain_accumulated_day=rain_accumulated_day
-        )
-    
-    @tracer.wrap(resource="openmeteo.get_current_weather")
-    async def get_current_weather(
-        self,
-        latitude: float,
-        longitude: float,
-        city_id: str,
-        city_name: str,
-        target_datetime: Optional[datetime] = None,
-        include_daily_alerts: bool = False  # Compatibilidade com interface
-    ) -> Weather:
-        """
-        OpenMeteo fornece dados atuais via hourly forecast
-        Busca forecast hourly e extrai hora mais próxima
-        Também busca temperaturas min/max do dia
-        """
-        # Buscar hourly e daily em paralelo
-        hourly_task = self.get_hourly_forecast(
-            latitude=latitude,
-            longitude=longitude,
-            city_id=city_id,
-            hours=168  # 7 dias para garantir que temos a hora solicitada
-        )
-        
-        daily_task = self.get_daily_forecast(
-            latitude=latitude,
-            longitude=longitude,
-            city_id=city_id,
-            days=1  # Apenas o dia atual para pegar min/max
-        )
-        
-        hourly_forecasts, daily_forecasts = await asyncio.gather(hourly_task, daily_task)
-        
-        # Usar método estático para extrair current weather
-        return self.extract_current_weather_from_hourly(
-            hourly_forecasts=hourly_forecasts,
-            daily_forecasts=daily_forecasts,
-            city_id=city_id,
-            city_name=city_name,
-            target_datetime=target_datetime
         )
     
     @tracer.wrap(resource="openmeteo.get_daily_forecast")

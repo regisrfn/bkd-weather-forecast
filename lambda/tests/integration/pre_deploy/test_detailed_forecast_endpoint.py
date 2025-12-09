@@ -49,9 +49,9 @@ class TestDetailedForecastEndpoint:
         assert 'windSpeed' in current
         assert 'windDirection' in current, "Should contain wind direction"
         assert 'timestamp' in current
-        assert 'visibility' in current, "Should preserve OpenWeather visibility"
-        assert 'pressure' in current, "Should preserve OpenWeather pressure"
-        assert 'feelsLike' in current, "Should preserve OpenWeather feels_like"
+        assert 'visibility' in current, "Should include visibility"
+        assert 'pressure' in current, "Should include pressure"
+        assert 'feelsLike' in current, "Should include feels_like"
         
         # Validar tipos e ranges
         assert isinstance(current['windDirection'], int), "windDirection should be int"
@@ -176,4 +176,3 @@ class TestDetailedForecastEndpoint:
         body = json.loads(response['body'])
         assert 'dailyForecasts' in body
         assert len(body['dailyForecasts']) > 0
-
