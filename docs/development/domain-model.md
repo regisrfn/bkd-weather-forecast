@@ -1,6 +1,36 @@
 # Modelo de Domínio
 
-## Entidades principais
+## Índice
+- [Visão Geral](#visão-geral)
+- [Entidades Principais](#entidades-principais)
+- [Objetos de Valor](#objetos-de-valor)
+- [Constantes e Classificadores](#constantes-e-classificadores)
+- [Serviços de Domínio](#serviços-de-domínio)
+- [Casos de Uso](#casos-de-uso)
+- [Repositórios e Providers](#repositórios-e-providers)
+- [Cálculos e Fórmulas](#cálculos-e-fórmulas)
+- [Serialização para API](#serialização-para-api)
+- [Diagramas de Relacionamento](#diagramas-de-relacionamento)
+
+---
+
+## Visão Geral
+
+O domínio da aplicação BKD Weather Forecast é modelado seguindo princípios de **Domain-Driven Design (DDD)**:
+- **Entidades:** objetos com identidade única (City, Weather)
+- **Value Objects:** objetos imutáveis sem identidade (Temperature, Coordinates)
+- **Domain Services:** lógica de negócio que não pertence a uma entidade específica
+- **Aggregates:** clusters de entidades e VOs com raiz agregada
+
+**Linguagem Ubíqua (Ubiquitous Language):**
+- **Município/City:** unidade geográfica brasileira (IBGE)
+- **Previsão/Forecast:** dados meteorológicos futuros (hourly ou daily)
+- **Alerta/Alert:** notificação de condição meteorológica relevante
+- **Intensidade de Chuva/Rainfall Intensity:** métrica proprietária 0-100
+
+---
+
+## Entidades Principais
 | Entidade | Campos-chave | Responsabilidade |
 |----------|--------------|------------------|
 | `City` (`domain/entities/city.py`) | `id`, `name`, `state`, `region`, `latitude`, `longitude` | Identifica município (IBGE). Possui `has_coordinates()` e conversões `to_dict`/`to_api_response`. |
@@ -44,3 +74,96 @@
 ## Serialização para API
 - `Weather.to_api_response()` e equivalentes em `HourlyForecast`/`DailyForecast` convertem para snake_case -> camelCase, arredondam valores e garantem timezone `America/Sao_Paulo`.
 - Alertas usam `WeatherAlert.to_dict()` com `code`, `severity`, `description`, `timestamp` e `details` opcionais.
+
+---
+
+## Diagramas de Relacionamento
+
+### Diagrama de Classes - Entidades Core
+
+```mermaid
+classDiagram
+    class City {
+        +String id
+        +String name
+        +String state
+        +String region
+        +Coordinates coordinates
+        +has_coordinates() bool
+        +to_dict() dict
+        +to_api_response() dict
+    }
+    
+    class Coordinates {
+        +float latitude
+        +float longitude
+        +distance_to(other: Coordinates) float
+        +validate()
+    }
+    
+    class Weather {
+        +String city_id
+        +String city_name
+        +datetime timestamp
+        +float temperature
+        +float humidity
+        +float wind_speed
+        +int rainfall_intensity
+        +List~WeatherAlert~ weather_alerts
+        +int weather_code
+        +String description
+        +calculate_rainfall_intensity()
+        +classify_weather_condition()
+        +to_api_response() dict
+    }
+    
+    class WeatherAlert {
+        +String code
+        +String severity
+        +String description
+        +datetime timestamp
+        +dict details
+        +to_dict() dict
+    }
+    
+    class HourlyForecast {
+        +datetime timestamp
+        +float temperature
+        +float precipitation
+        +int rainfall_intensity
+        +int weather_code
+        +String description
+        +to_api_response() dict
+    }
+    
+    class DailyForecast {
+        +date date
+        +float temp_min
+        +float temp_max
+        +float precipitation_mm
+        +int rainfall_intensity
+        +String uv_risk_level
+        +String uv_risk_color
+        +daylight_hours property
+        +wind_direction_arrow property
+        +to_api_response() dict
+    }
+    
+    class ExtendedForecast {
+        +String city_id
+        +String city_name
+        +Weather current_weather
+        +List~DailyForecast~ daily_forecasts
+        +List~HourlyForecast~ hourly_forecasts
+        +bool extended_available
+        +to_api_response() dict
+    }
+    
+    City "1" --> "1" Coordinates
+    Weather "1" --> "*" WeatherAlert
+    ExtendedForecast "1" --> "1" Weather
+    ExtendedForecast "1" --> "*" DailyForecast
+    ExtendedForecast "1" --> "*" HourlyForecast
+```
+
+Para mais exemplos de código e detalhes completos sobre as regras de negócio, consulte os arquivos da camada de domínio em `lambda/domain/`.
