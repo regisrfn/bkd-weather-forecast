@@ -75,3 +75,15 @@ module "api_gateway" {
   
   tags = local.tags
 }
+
+module "lambda_warmup" {
+  count  = var.enable_warmup_cron ? 1 : 0
+  source = "./modules/warmup"
+
+  rule_name_prefix   = "${var.project_name}-${var.environment}"
+  schedule_expression = var.warmup_schedule_expression
+  warmup_path         = "/api/warmup"
+  function_arn        = module.lambda.function_arn
+  function_name       = module.lambda.function_name
+  tags                = local.tags
+}

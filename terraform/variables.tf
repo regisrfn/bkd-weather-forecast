@@ -42,6 +42,18 @@ variable "lambda_environment_variables" {
   }
 }
 
+variable "enable_warmup_cron" {
+  description = "Habilita cron do EventBridge para manter a Lambda aquecida"
+  type        = bool
+  default     = false
+}
+
+variable "warmup_schedule_expression" {
+  description = "Expressão de agendamento para o cron de warmup (EventBridge)"
+  type        = string
+  default     = "rate(5 minutes)"
+}
+
 variable "log_retention_days" {
   description = "Número de dias para retenção dos logs no CloudWatch"
   type        = number
