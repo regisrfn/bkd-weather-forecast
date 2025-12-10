@@ -4,7 +4,7 @@ Presentation Layer: gerencia requisições HTTP e delega para use cases
 """
 import json
 import asyncio
-from datetime import datetime, timezone
+from datetime import datetime
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, CORSConfig
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
@@ -63,19 +63,6 @@ app.exception_handler(Exception)(exception_service.handle_unexpected_error)
 # =============================
 # Routes (Async execution with sync wrappers for AWS Powertools compatibility)
 # =============================
-
-@app.get("/api/warmup")
-def warmup_route():
-    """
-    GET /api/warmup
-
-    Warmup leve para manter o container aquecido sem chamar provedores externos.
-    """
-    return {
-        "status": "ok",
-        "timestamp": datetime.now(timezone.utc).isoformat()  # horário em UTC com tzinfo
-    }
-
 
 @app.get("/api/cities/neighbors/<city_id>")
 def get_neighbors_route(city_id: str):
