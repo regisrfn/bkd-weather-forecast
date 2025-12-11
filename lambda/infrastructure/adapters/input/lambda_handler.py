@@ -4,6 +4,7 @@ Presentation Layer: gerencia requisições HTTP e delega para use cases
 """
 import json
 import asyncio
+import threading
 from datetime import datetime
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, CORSConfig
 from aws_lambda_powertools.utilities.typing import LambdaContext
@@ -13,6 +14,7 @@ from application.use_cases.get_neighbor_cities_use_case import AsyncGetNeighborC
 from application.use_cases.get_city_weather_use_case import AsyncGetCityWeatherUseCase
 from application.use_cases.get_regional_weather_use_case import GetRegionalWeatherUseCase
 from application.use_cases.get_city_detailed_forecast_use_case import GetCityDetailedForecastUseCase
+from application.use_cases.get_municipality_mesh_use_case import GetMunicipalityMeshUseCase
 
 # Domain Layer - Exceptions
 from domain.exceptions import (
@@ -20,13 +22,16 @@ from domain.exceptions import (
     CoordinatesNotFoundException,
     InvalidRadiusException,
     InvalidDateTimeException,
-    WeatherDataNotFoundException
+    WeatherDataNotFoundException,
+    GeoDataNotFoundException,
+    GeoProviderException
 )
 
 # Infrastructure Layer - Adapters
 from infrastructure.adapters.input.exception_handler_service import ExceptionHandlerService
 from infrastructure.adapters.output.municipalities_repository import get_repository
 from infrastructure.adapters.output.providers.weather_provider_factory import get_weather_provider_factory
+from infrastructure.adapters.output.providers.ibge import get_ibge_geo_provider
 
 # Shared Layer - Utilities
 from shared.config.settings import DEFAULT_RADIUS
@@ -43,6 +48,7 @@ app = APIGatewayRestResolver(cors=CORSConfig(allow_origin="*"))
 # Global Event Loop (persistente entre invocações Lambda)
 # =============================
 _global_event_loop = None
+_event_loop_lock = threading.Lock()
 
 # =============================
 # Exception Handlers (Delegados para ExceptionHandlerService)
@@ -55,6 +61,8 @@ app.exception_handler(CoordinatesNotFoundException)(exception_service.handle_coo
 app.exception_handler(InvalidRadiusException)(exception_service.handle_invalid_radius)
 app.exception_handler(InvalidDateTimeException)(exception_service.handle_invalid_datetime)
 app.exception_handler(WeatherDataNotFoundException)(exception_service.handle_weather_data_not_found)
+app.exception_handler(GeoDataNotFoundException)(exception_service.handle_geo_data_not_found)
+app.exception_handler(GeoProviderException)(exception_service.handle_geo_provider_error)
 app.exception_handler(ValueError)(exception_service.handle_value_error)
 app.exception_handler(Exception)(exception_service.handle_unexpected_error)
 
@@ -106,6 +114,33 @@ def get_neighbors_route(city_id: str):
     }
     
     return response
+
+
+@app.get("/api/geo/municipalities/<city_id>")
+def get_municipality_mesh_route(city_id: str):
+    """
+    GET /api/geo/municipalities/{cityId}
+    
+    Proxy para malha GeoJSON do IBGE com cache de 7 dias
+    Retorna exatamente o mesmo GeoJSON do IBGE
+    """
+    # Validate city ID
+    CityIdValidator.validate(city_id)
+
+    # Use repository para validar existência
+    city_repository = get_repository()
+    geo_provider = get_ibge_geo_provider()
+
+    async def execute_async():
+        use_case = GetMunicipalityMeshUseCase(
+            city_repository=city_repository,
+            geo_provider=geo_provider
+        )
+        return await use_case.execute(city_id)
+
+    mesh = run_async(execute_async())
+
+    return mesh
 
 
 @app.get("/api/weather/city/<city_id>")
@@ -296,7 +331,9 @@ def lambda_handler(event, context: LambdaContext):
     
     Available routes:
     - GET  /api/cities/neighbors/{cityId}?radius=50
+    - GET  /api/geo/municipalities/{cityId}
     - GET  /api/weather/city/{cityId}?date=2025-11-20&time=15:00
+    - GET  /api/weather/city/{cityId}/detailed?date=2025-11-20&time=15:00
     - POST /api/weather/regional?date=2025-11-20&time=15:00
     
     Datetime parameters (optional):
@@ -372,4 +409,17 @@ def run_async(coro):
         Resultado da coroutine
     """
     loop = get_or_create_event_loop()
-    return loop.run_until_complete(coro)
+
+    # Serializa acesso ao loop global para evitar RuntimeError em chamadas concorrentes
+    with _event_loop_lock:
+        if loop.is_running():
+            # Fallback para cenário local com múltiplas threads (Flask): usar loop dedicado
+            temp_loop = asyncio.new_event_loop()
+            try:
+                asyncio.set_event_loop(temp_loop)
+                return temp_loop.run_until_complete(coro)
+            finally:
+                temp_loop.close()
+                asyncio.set_event_loop(loop)
+
+        return loop.run_until_complete(coro)

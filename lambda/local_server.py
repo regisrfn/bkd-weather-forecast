@@ -16,6 +16,7 @@ Como usar:
 
 Endpoints disponíveis:
     GET  http://localhost:8000/api/cities/neighbors/{cityId}?radius=50
+    GET  http://localhost:8000/api/geo/municipalities/{cityId}
     GET  http://localhost:8000/api/weather/city/{cityId}?date=2025-11-20&time=15:00
     GET  http://localhost:8000/api/weather/city/{cityId}/detailed?date=2025-11-20&time=15:00
     POST http://localhost:8000/api/weather/regional?date=2025-11-20&time=15:00
@@ -37,6 +38,22 @@ from lambda_function import lambda_handler
 app = Flask(__name__)
 # Habilitar CORS para todos os endpoints e origens (desenvolvimento local)
 CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
+
+def _cors_headers():
+    """Headers CORS padrão para respostas locais"""
+    return {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+        "Access-Control-Max-Age": "86400",
+    }
+
+@app.after_request
+def add_cors_headers(response):
+    """Garante CORS em todas as respostas, incluindo falhas"""
+    for key, value in _cors_headers().items():
+        response.headers[key] = value
+    return response
 
 class MockLambdaContext:
     """Mock do contexto Lambda para testes locais"""
@@ -118,7 +135,7 @@ def lambda_to_flask_response(lambda_response):
 def get_neighbors(city_id):
     """GET /api/cities/neighbors/{cityId}?radius=50"""
     if request.method == 'OPTIONS':
-        return '', 200
+        return ('', 200, _cors_headers())
     
     # Construir path com city_id
     original_path = request.path
@@ -140,7 +157,7 @@ def get_neighbors(city_id):
 def get_city_weather(city_id):
     """GET /api/weather/city/{cityId}?date=2025-11-20&time=15:00"""
     if request.method == 'OPTIONS':
-        return '', 200
+        return ('', 200, _cors_headers())
     
     # Construir path com city_id
     original_path = request.path
@@ -158,11 +175,30 @@ def get_city_weather(city_id):
     return lambda_to_flask_response(response)
 
 
+@app.route('/api/geo/municipalities/<city_id>', methods=['GET', 'OPTIONS'])
+def get_municipality_mesh(city_id):
+    """GET /api/geo/municipalities/{cityId}"""
+    if request.method == 'OPTIONS':
+        return ('', 200, _cors_headers())
+
+    original_path = request.path
+    flask_request_copy = request
+    flask_request_copy.path = original_path
+
+    event = flask_to_lambda_event(flask_request_copy)
+    event['pathParameters'] = {'city_id': city_id}
+
+    context = MockLambdaContext()
+    response = lambda_handler(event, context)
+
+    return lambda_to_flask_response(response)
+
+
 @app.route('/api/weather/city/<city_id>/detailed', methods=['GET', 'OPTIONS'])
 def get_city_detailed_forecast(city_id):
     """GET /api/weather/city/{cityId}/detailed?date=2025-11-20&time=15:00"""
     if request.method == 'OPTIONS':
-        return '', 200
+        return ('', 200, _cors_headers())
     
     # Construir path com city_id
     original_path = request.path
@@ -184,7 +220,7 @@ def get_city_detailed_forecast(city_id):
 def post_regional_weather():
     """POST /api/weather/regional?date=2025-11-20&time=15:00"""
     if request.method == 'OPTIONS':
-        return '', 200
+        return ('', 200, _cors_headers())
     
     # Converter para evento Lambda
     event = flask_to_lambda_event(request)
@@ -194,6 +230,11 @@ def post_regional_weather():
     response = lambda_handler(event, context)
     
     return lambda_to_flask_response(response)
+
+# Catch-all OPTIONS para qualquer rota /api/* (evita 404 em preflight)
+@app.route('/api/<path:any_path>', methods=['OPTIONS'])
+def catch_all_options(any_path):
+    return ('', 200, _cors_headers())
 
 
 @app.route('/health', methods=['GET'])
@@ -214,6 +255,7 @@ def not_found(error):
         'message': f"Route {request.path} not found",
         'available_routes': [
             'GET /api/cities/neighbors/{cityId}',
+            'GET /api/geo/municipalities/{cityId}',
             'GET /api/weather/city/{cityId}',
             'GET /api/weather/city/{cityId}/detailed',
             'POST /api/weather/regional',
@@ -237,6 +279,8 @@ if __name__ == '__main__':
     
     port = int(os.environ.get('PORT', 8000))
     host = os.environ.get('HOST', '0.0.0.0')
+    debug_mode = os.environ.get('DEBUG', 'false').lower() in ('true', '1', 'yes')
+    use_reloader = os.environ.get('USE_RELOADER', 'false').lower() in ('true', '1', 'yes')
     
     print("=" * 70)
     print("🚀 Servidor Local - Weather Forecast API")
@@ -244,6 +288,7 @@ if __name__ == '__main__':
     print(f"\n📍 Rodando em: http://{host}:{port}")
     print("\n📋 Endpoints disponíveis:")
     print(f"   • GET  http://localhost:{port}/api/cities/neighbors/{{cityId}}?radius=50")
+    print(f"   • GET  http://localhost:{port}/api/geo/municipalities/{{cityId}}")
     print(f"   • GET  http://localhost:{port}/api/weather/city/{{cityId}}?date=2025-11-20&time=15:00")
     print(f"   • GET  http://localhost:{port}/api/weather/city/{{cityId}}/detailed?date=2025-11-20&time=15:00")
     print(f"   • POST http://localhost:{port}/api/weather/regional?date=2025-11-20&time=15:00")
@@ -256,6 +301,6 @@ if __name__ == '__main__':
     app.run(
         host=host,
         port=port,
-        debug=True,
-        use_reloader=True
+        debug=debug_mode,
+        use_reloader=use_reloader
     )

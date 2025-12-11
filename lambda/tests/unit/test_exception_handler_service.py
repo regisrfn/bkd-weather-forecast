@@ -10,7 +10,9 @@ from domain.exceptions import (
     CoordinatesNotFoundException,
     InvalidRadiusException,
     InvalidDateTimeException,
-    WeatherDataNotFoundException
+    WeatherDataNotFoundException,
+    GeoDataNotFoundException,
+    GeoProviderException
 )
 
 
@@ -200,3 +202,35 @@ class TestExceptionHandlerService:
         body = json.loads(response.body)
         assert body["details"]["reason"] == "timeout"
         assert "provider" not in body["details"]
+
+    def test_handle_geo_data_not_found(self):
+        """REGRA: GeoDataNotFoundException deve retornar 404"""
+        ex = GeoDataNotFoundException(
+            message="Geo data not found",
+            details={"city_id": "1234567"}
+        )
+        response = ExceptionHandlerService.handle_geo_data_not_found(ex)
+
+        assert response.status_code == 404
+        assert response.content_type == "application/json"
+
+        body = json.loads(response.body)
+        assert body["type"] == "GeoDataNotFoundException"
+        assert body["error"] == "Geo data not found"
+        assert body["details"]["city_id"] == "1234567"
+
+    def test_handle_geo_provider_error(self):
+        """REGRA: GeoProviderException deve retornar 502"""
+        ex = GeoProviderException(
+            message="IBGE service unavailable",
+            details={"status": 503, "provider": "IBGE"}
+        )
+        response = ExceptionHandlerService.handle_geo_provider_error(ex)
+
+        assert response.status_code == 502
+        assert response.content_type == "application/json"
+
+        body = json.loads(response.body)
+        assert body["type"] == "GeoProviderException"
+        assert body["error"] == "IBGE provider error"
+        assert body["details"]["status"] == 503

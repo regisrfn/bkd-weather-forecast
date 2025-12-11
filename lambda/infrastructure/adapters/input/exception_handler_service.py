@@ -12,6 +12,8 @@ from domain.exceptions import (
     InvalidRadiusException,
     InvalidDateTimeException,
     WeatherDataNotFoundException,
+    GeoDataNotFoundException,
+    GeoProviderException,
     DomainException
 )
 
@@ -93,6 +95,36 @@ class ExceptionHandlerService:
             content_type="application/json",
             body=json.dumps({
                 "error": "Weather data not found",
+                "message": str(ex),
+                "details": ex.details
+            })
+        )
+
+    @staticmethod
+    def handle_geo_data_not_found(ex: GeoDataNotFoundException) -> Response:
+        """Handle 404 - Geo data not available"""
+        logger.warning("Geo data not found", error=str(ex), details=ex.details)
+        return Response(
+            status_code=404,
+            content_type="application/json",
+            body=json.dumps({
+                "type": "GeoDataNotFoundException",
+                "error": "Geo data not found",
+                "message": str(ex),
+                "details": ex.details
+            })
+        )
+
+    @staticmethod
+    def handle_geo_provider_error(ex: GeoProviderException) -> Response:
+        """Handle 502 - Upstream IBGE error"""
+        logger.error("IBGE provider error", error=str(ex), details=ex.details, exc_info=True)
+        return Response(
+            status_code=502,
+            content_type="application/json",
+            body=json.dumps({
+                "type": "GeoProviderException",
+                "error": "IBGE provider error",
                 "message": str(ex),
                 "details": ex.details
             })

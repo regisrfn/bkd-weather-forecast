@@ -10,6 +10,7 @@ class API:
 
     # Open-Meteo
     OPENMETEO_BASE_URL = "https://api.open-meteo.com/v1"
+    IBGE_MESH_BASE_URL = "https://servicodados.ibge.gov.br/api/v3/malhas/municipios"
     
     # Timeouts e limites HTTP
     HTTP_TIMEOUT_TOTAL = 8  # segundos (reduzido para permitir retries dentro de 10s)
@@ -30,10 +31,12 @@ class Cache:
     # TTLs por tipo de dado (segundos)
     TTL_OPENMETEO_DAILY = 10800  # 3 horas (dados diários menos voláteis)
     TTL_OPENMETEO_HOURLY = 3600  # 1 hora (current e hourly)
-    
+    TTL_IBGE_MESH = 604800  # 7 dias
+
     # Prefixos de chave
     PREFIX_OPENMETEO_DAILY = "openmeteo_"
     PREFIX_OPENMETEO_HOURLY = "openmeteo_hourly_"
+    PREFIX_IBGE_MESH = "ibge_mesh_"
     
     # Batch operations
     BATCH_SIZE = 25  # limite DynamoDB

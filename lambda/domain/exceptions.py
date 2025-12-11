@@ -35,3 +35,13 @@ class InvalidDateTimeException(DomainException):
 class WeatherDataNotFoundException(DomainException):
     """Raised when weather data is not available"""
     pass
+
+
+class GeoDataNotFoundException(DomainException):
+    """Raised when IBGE geo data is not available"""
+    pass
+
+
+class GeoProviderException(DomainException):
+    """Raised when IBGE provider fails unexpectedly"""
+    pass

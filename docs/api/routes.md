@@ -2,6 +2,7 @@
 
 ## Sumário rápido
 - `GET /api/cities/neighbors/{cityId}?radius=50` — retorna cidade central + vizinhas dentro do raio.
+- `GET /api/geo/municipalities/{cityId}` — proxy do GeoJSON do IBGE com cache (TTL 7 dias).
 - `GET /api/weather/city/{cityId}?date=YYYY-MM-DD&time=HH:MM` — clima atual/projetado para a data/hora alvo.
 - `GET /api/weather/city/{cityId}/detailed?...` — previsão detalhada (current extraído do hourly + daily 16 dias + hourly 48h).
 - `POST /api/weather/regional?...` — clima em paralelo para múltiplas cidades (lista no corpo).
@@ -25,6 +26,10 @@ flowchart TD
 - Corpo da rota regional: `{ "cityIds": ["3543204", "3550506", ...] }`.
 
 Erros de validação são convertidos por `ExceptionHandlerService` em JSON com `type`, `error`, `message` e `details`.
+
+### GeoJSON (IBGE)
+- Rota `GET /api/geo/municipalities/{cityId}` devolve exatamente o GeoJSON da API do IBGE.
+- Cache DynamoDB com TTL de 7 dias (`ibge_mesh_{cityId}`) para reduzir chamadas ao IBGE.
 
 ## Respostas e campos
 ### Weather (usado em city e regional)
@@ -61,6 +66,9 @@ Erros de validação são convertidos por `ExceptionHandlerService` em JSON com 
 ## Exemplos de chamadas
 - **Clima da cidade**  
   `GET /api/weather/city/3543204?date=2025-12-01&time=15:00`
+
+- **GeoJSON do município (cache 7d)**  
+  `GET /api/geo/municipalities/3543204`
 
 - **Previsão detalhada**  
   `GET /api/weather/city/3543204/detailed?date=2025-12-01`
