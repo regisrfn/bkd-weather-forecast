@@ -209,6 +209,30 @@ async def test_get_city_weather_with_date(http_client: httpx.AsyncClient, brazil
 
 
 @pytest.mark.asyncio
+async def test_get_geo_municipality(http_client: httpx.AsyncClient):
+    """Testa rota GET /api/geo/municipalities/{cityId} (proxy IBGE)"""
+    response = await http_client.get(
+        f"{API_BASE_URL}/api/geo/municipalities/{TEST_CITY_ID}"
+    )
+
+    assert response.status_code == 200, \
+        f"Expected 200, got {response.status_code}: {response.text}"
+
+    body = response.json()
+
+    assert isinstance(body, dict)
+    assert body.get('type') in ('FeatureCollection', 'Feature')
+    assert 'access-control-allow-origin' in response.headers
+
+    if body.get('type') == 'FeatureCollection':
+        assert 'features' in body
+        assert isinstance(body['features'], list)
+        assert len(body['features']) > 0
+    else:
+        assert 'geometry' in body
+
+
+@pytest.mark.asyncio
 async def test_get_city_detailed_forecast(http_client: httpx.AsyncClient):
     """Testa rota GET /api/weather/city/{cityId}/detailed"""
     response = await http_client.get(
