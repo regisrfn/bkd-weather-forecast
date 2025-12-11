@@ -30,7 +30,7 @@ resource "aws_iam_role_policy_attachment" "api_gateway_cloudwatch" {
 resource "aws_api_gateway_account" "main" {
   count               = var.enable_access_logs ? 1 : 0
   cloudwatch_role_arn = aws_iam_role.api_gateway_cloudwatch[0].arn
-  
+
   depends_on = [aws_iam_role_policy_attachment.api_gateway_cloudwatch]
 }
 
@@ -116,6 +116,27 @@ resource "aws_api_gateway_resource" "cities_neighbors_id" {
   path_part   = "{cityId}"
 }
 
+# /api/geo
+resource "aws_api_gateway_resource" "geo" {
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  parent_id   = aws_api_gateway_resource.api.id
+  path_part   = "geo"
+}
+
+# /api/geo/municipalities
+resource "aws_api_gateway_resource" "geo_municipalities" {
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  parent_id   = aws_api_gateway_resource.geo.id
+  path_part   = "municipalities"
+}
+
+# /api/geo/municipalities/{cityId}
+resource "aws_api_gateway_resource" "geo_municipalities_id" {
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  parent_id   = aws_api_gateway_resource.geo_municipalities.id
+  path_part   = "{cityId}"
+}
+
 # ============================================================================
 # MÉTODOS E INTEGRAÇÕES
 # ============================================================================
@@ -143,7 +164,7 @@ resource "aws_api_gateway_method" "weather_city_get" {
   resource_id   = aws_api_gateway_resource.weather_city_id.id
   http_method   = "GET"
   authorization = "NONE"
-  
+
   request_parameters = {
     "method.request.path.cityId" = true
   }
@@ -164,7 +185,7 @@ resource "aws_api_gateway_method" "weather_city_detailed_get" {
   resource_id   = aws_api_gateway_resource.weather_city_detailed.id
   http_method   = "GET"
   authorization = "NONE"
-  
+
   request_parameters = {
     "method.request.path.cityId" = true
   }
@@ -202,7 +223,7 @@ resource "aws_api_gateway_method" "cities_neighbors_get" {
   resource_id   = aws_api_gateway_resource.cities_neighbors_id.id
   http_method   = "GET"
   authorization = "NONE"
-  
+
   request_parameters = {
     "method.request.path.cityId" = true
   }
@@ -212,6 +233,27 @@ resource "aws_api_gateway_integration" "cities_neighbors_get" {
   rest_api_id             = aws_api_gateway_rest_api.main.id
   resource_id             = aws_api_gateway_resource.cities_neighbors_id.id
   http_method             = aws_api_gateway_method.cities_neighbors_get.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = var.lambda_invoke_arn
+}
+
+# GET /api/geo/municipalities/{cityId}
+resource "aws_api_gateway_method" "geo_municipalities_get" {
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  resource_id   = aws_api_gateway_resource.geo_municipalities_id.id
+  http_method   = "GET"
+  authorization = "NONE"
+
+  request_parameters = {
+    "method.request.path.cityId" = true
+  }
+}
+
+resource "aws_api_gateway_integration" "geo_municipalities_get" {
+  rest_api_id             = aws_api_gateway_rest_api.main.id
+  resource_id             = aws_api_gateway_resource.geo_municipalities_id.id
+  http_method             = aws_api_gateway_method.geo_municipalities_get.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = var.lambda_invoke_arn
@@ -486,6 +528,59 @@ resource "aws_api_gateway_integration_response" "cities_neighbors_options" {
   depends_on = [aws_api_gateway_method_response.cities_neighbors_options]
 }
 
+# OPTIONS /api/geo/municipalities/{cityId}
+resource "aws_api_gateway_method" "geo_municipalities_options" {
+  count         = var.enable_cors ? 1 : 0
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  resource_id   = aws_api_gateway_resource.geo_municipalities_id.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "geo_municipalities_options" {
+  count       = var.enable_cors ? 1 : 0
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.geo_municipalities_id.id
+  http_method = aws_api_gateway_method.geo_municipalities_options[0].http_method
+  type        = "MOCK"
+
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+resource "aws_api_gateway_method_response" "geo_municipalities_options" {
+  count       = var.enable_cors ? 1 : 0
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.geo_municipalities_id.id
+  http_method = aws_api_gateway_method.geo_municipalities_options[0].http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Max-Age"       = true
+  }
+}
+
+resource "aws_api_gateway_integration_response" "geo_municipalities_options" {
+  count       = var.enable_cors ? 1 : 0
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.geo_municipalities_id.id
+  http_method = aws_api_gateway_method.geo_municipalities_options[0].http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'${var.cors_allowed_headers}'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Max-Age"       = "'86400'"
+  }
+
+  depends_on = [aws_api_gateway_method_response.geo_municipalities_options]
+}
+
 # ============================================================================
 # RECURSO PROXY (FALLBACK PARA ROTAS NÃO MAPEADAS)
 # ============================================================================
@@ -546,12 +641,14 @@ resource "aws_api_gateway_deployment" "main" {
     aws_api_gateway_integration.weather_city_detailed_get,
     aws_api_gateway_integration.weather_regional_post,
     aws_api_gateway_integration.cities_neighbors_get,
+    aws_api_gateway_integration.geo_municipalities_get,
     # CORS integrations
     aws_api_gateway_integration_response.health_options,
     aws_api_gateway_integration_response.weather_city_options,
     aws_api_gateway_integration_response.weather_city_detailed_options,
     aws_api_gateway_integration_response.weather_regional_options,
     aws_api_gateway_integration_response.cities_neighbors_options,
+    aws_api_gateway_integration_response.geo_municipalities_options,
     # Proxy fallback
     aws_api_gateway_integration.lambda_proxy,
     aws_api_gateway_integration.lambda_root
@@ -579,12 +676,16 @@ resource "aws_api_gateway_deployment" "main" {
       aws_api_gateway_resource.cities_neighbors_id.id,
       aws_api_gateway_method.cities_neighbors_get.id,
       aws_api_gateway_integration.cities_neighbors_get.id,
+      aws_api_gateway_resource.geo_municipalities_id.id,
+      aws_api_gateway_method.geo_municipalities_get.id,
+      aws_api_gateway_integration.geo_municipalities_get.id,
       # CORS integration responses (para forçar redeploy quando headers mudarem)
       var.enable_cors ? aws_api_gateway_integration_response.health_options[0].id : "",
       var.enable_cors ? aws_api_gateway_integration_response.weather_city_options[0].id : "",
       var.enable_cors ? aws_api_gateway_integration_response.weather_city_detailed_options[0].id : "",
       var.enable_cors ? aws_api_gateway_integration_response.weather_regional_options[0].id : "",
       var.enable_cors ? aws_api_gateway_integration_response.cities_neighbors_options[0].id : "",
+      var.enable_cors ? aws_api_gateway_integration_response.geo_municipalities_options[0].id : "",
       # Proxy fallback
       aws_api_gateway_resource.proxy.id,
       aws_api_gateway_method.proxy.id,
@@ -624,14 +725,14 @@ resource "aws_api_gateway_stage" "main" {
   }
 
   tags = var.tags
-  
+
   depends_on = [aws_api_gateway_account.main]
 }
 
 # Gateway Responses para incluir CORS em respostas 4XX/5XX (timeouts/erros)
 resource "aws_api_gateway_gateway_response" "default_4xx" {
-  count        = var.enable_cors ? 1 : 0
-  rest_api_id  = aws_api_gateway_rest_api.main.id
+  count         = var.enable_cors ? 1 : 0
+  rest_api_id   = aws_api_gateway_rest_api.main.id
   response_type = "DEFAULT_4XX"
 
   response_parameters = {
@@ -642,8 +743,8 @@ resource "aws_api_gateway_gateway_response" "default_4xx" {
 }
 
 resource "aws_api_gateway_gateway_response" "default_5xx" {
-  count        = var.enable_cors ? 1 : 0
-  rest_api_id  = aws_api_gateway_rest_api.main.id
+  count         = var.enable_cors ? 1 : 0
+  rest_api_id   = aws_api_gateway_rest_api.main.id
   response_type = "DEFAULT_5XX"
 
   response_parameters = {
