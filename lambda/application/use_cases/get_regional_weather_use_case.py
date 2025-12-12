@@ -5,14 +5,18 @@ Refatorado para usar providers desacoplados com batch optimization
 import asyncio
 from typing import Optional, List
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from ddtrace import tracer
 
+from domain.entities.daily_forecast import DailyForecast
+from domain.entities.hourly_forecast import HourlyForecast
 from domain.entities.weather import Weather
 from domain.exceptions import CityNotFoundException, CoordinatesNotFoundException
 from application.ports.output.weather_provider_port import IWeatherProvider
 from domain.services.alerts_generator import AlertsGenerator
 from application.ports.input.get_regional_weather_port import IGetRegionalWeatherUseCase
 from application.ports.output.city_repository_port import ICityRepository
+from domain.value_objects.daily_aggregated_metrics import DailyAggregatedMetrics
 from infrastructure.adapters.output.providers.openmeteo.openmeteo_provider import OpenMeteoProvider
 from shared.config.logger_config import get_logger
 
@@ -224,5 +228,77 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
         
         if alerts:
             object.__setattr__(weather, 'weather_alert', alerts)
+
+        daily_aggregates = self._build_daily_aggregates(
+            hourly_forecasts=hourly_forecasts if hourly_forecasts else [],
+            daily_forecasts=daily_forecasts if daily_forecasts else [],
+            target_datetime=target_datetime
+        )
+        if daily_aggregates:
+            weather.daily_aggregates = daily_aggregates
         
         return weather
+
+    def _build_daily_aggregates(
+        self,
+        hourly_forecasts: List[HourlyForecast],
+        daily_forecasts: List[DailyForecast],
+        target_datetime: Optional[datetime]
+    ) -> Optional[DailyAggregatedMetrics]:
+        """
+        Calcula métricas agregadas para o dia alvo (chuva, intensidade e vento)
+        """
+        if not hourly_forecasts and not daily_forecasts:
+            return None
+
+        target_dt = target_datetime or datetime.now(tz=ZoneInfo("America/Sao_Paulo"))
+        if target_dt.tzinfo is None:
+            target_dt = target_dt.replace(tzinfo=ZoneInfo("America/Sao_Paulo"))
+        target_date = target_dt.date().isoformat()
+
+        hourly_for_day = [
+            forecast for forecast in hourly_forecasts
+            if forecast.timestamp.startswith(target_date)
+        ]
+
+        rain_volume = sum(f.precipitation for f in hourly_for_day) if hourly_for_day else 0.0
+        rain_intensity_max = max((float(f.rainfall_intensity) for f in hourly_for_day), default=0.0)
+        rain_probability_max = max((float(f.precipitation_probability) for f in hourly_for_day), default=0.0)
+        wind_speed_max_hourly = max((float(f.wind_speed) for f in hourly_for_day), default=0.0)
+
+        daily_match = next(
+            (d for d in daily_forecasts if d.date == target_date),
+            None
+        )
+
+        temp_min = daily_match.temp_min if daily_match else 0.0
+        temp_max = daily_match.temp_max if daily_match else 0.0
+
+        if daily_match:
+            rain_volume = max(rain_volume, daily_match.precipitation_mm)
+            rain_intensity_max = max(rain_intensity_max, float(daily_match.rainfall_intensity))
+            rain_probability_max = max(rain_probability_max, float(daily_match.rain_probability))
+            wind_speed_max = max(wind_speed_max_hourly, float(daily_match.wind_speed_max))
+        else:
+            wind_speed_max = wind_speed_max_hourly
+
+        metrics = DailyAggregatedMetrics(
+            date=target_date,
+            rain_volume=rain_volume,
+            rain_intensity_max=rain_intensity_max,
+            rain_probability_max=rain_probability_max,
+            wind_speed_max=wind_speed_max,
+            temp_min=temp_min,
+            temp_max=temp_max
+        )
+        logger.info(
+            "Daily aggregates calculados",
+            date=target_date,
+            rain_volume=metrics.rain_volume,
+            rain_intensity_max=metrics.rain_intensity_max,
+            rain_probability_max=metrics.rain_probability_max,
+            wind_speed_max=metrics.wind_speed_max,
+            temp_min=metrics.temp_min,
+            temp_max=metrics.temp_max
+        )
+        return metrics

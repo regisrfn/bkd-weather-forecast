@@ -4,12 +4,13 @@ Weather Entity - Entidade de domínio que representa dados meteorológicos
 from dataclasses import dataclass, field
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from typing import List
+from typing import List, Optional
 from enum import Enum
 
 from domain.alerts.primitives import WeatherAlert
 from domain.constants import WeatherCondition
 from domain.helpers.rainfall_calculator import calculate_rainfall_intensity
+from domain.value_objects.daily_aggregated_metrics import DailyAggregatedMetrics
 
 
 class CloudCoverage(Enum):
@@ -44,6 +45,7 @@ class Weather:
     temp_min: float = 0.0  # Temperatura mínima (°C)
     temp_max: float = 0.0  # Temperatura máxima (°C)
     is_day: bool = True  # True = dia, False = noite
+    daily_aggregates: Optional[DailyAggregatedMetrics] = None  # Métricas agregadas por dia
     
     def __post_init__(self):
         """Auto-classificação usando sistema proprietário de códigos"""
@@ -110,7 +112,7 @@ class Weather:
         else:
             timestamp_brasil = self.timestamp.replace(tzinfo=ZoneInfo("UTC")).astimezone(brasil_tz)
         
-        return {
+        response = {
             'cityId': self.city_id,
             'cityName': self.city_name,
             'timestamp': timestamp_brasil.isoformat(),  # Agora em horário Brasil
@@ -134,3 +136,8 @@ class Weather:
             'tempMax': round(self.temp_max, 1),
             'isDay': self.is_day
         }
+        
+        if self.daily_aggregates:
+            response['dailyAggregates'] = self.daily_aggregates.to_api_response()
+
+        return response
