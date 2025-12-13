@@ -36,23 +36,39 @@ class DailyForecast:
     
     def __post_init__(self):
         """Auto-classificação usando sistema proprietário de códigos"""
-        if self.weather_code == 0 or self.description == "":
-            # Para daily forecast, usar temperatura média
-            temp_avg = (self.temp_min + self.temp_max) / 2
-            # Precipitação por hora (se houver horas de chuva)
-            precip_per_hour = self.precipitation_mm / self.precipitation_hours if self.precipitation_hours > 0 else 0
-            
-            code, desc = WeatherCondition.classify_weather_condition(
-                rainfall_intensity=self.rainfall_intensity,
-                precipitation=precip_per_hour,
-                wind_speed=self.wind_speed_max,
-                clouds=50.0,  # Estimativa para daily (não disponível)
-                visibility=10000.0,  # Default para daily
-                temperature=temp_avg,
-                rain_probability=self.rain_probability
-            )
-            object.__setattr__(self, 'weather_code', code)
-            object.__setattr__(self, 'description', desc)
+        self._update_weather_summary()
+
+    def _update_weather_summary(self, force: bool = False) -> None:
+        """
+        Atualiza weather_code/description usando regras proprietárias
+        
+        Args:
+            force: Se True recalcula mesmo que já exista valor
+        """
+        if not force and self.weather_code != 0 and self.description:
+            return
+
+        temp_avg = (self.temp_min + self.temp_max) / 2
+        precip_per_hour = self.precipitation_mm / self.precipitation_hours if self.precipitation_hours > 0 else 0
+
+        code, desc = WeatherCondition.classify_weather_condition(
+            rainfall_intensity=self.rainfall_intensity,
+            precipitation=precip_per_hour,
+            wind_speed=self.wind_speed_max,
+            clouds=50.0,  # Estimativa para daily (não disponível)
+            visibility=10000.0,  # Default para daily
+            temperature=temp_avg,
+            rain_probability=self.rain_probability
+        )
+        object.__setattr__(self, 'weather_code', code)
+        object.__setattr__(self, 'description', desc)
+
+    def update_rainfall_intensity(self, rainfall_intensity: float) -> None:
+        """
+        Ajusta rainfall_intensity e reclassifica o resumo do clima
+        """
+        object.__setattr__(self, 'rainfall_intensity', rainfall_intensity)
+        self._update_weather_summary(force=True)
     
     @property
     def daylight_hours(self) -> float:

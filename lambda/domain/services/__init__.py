@@ -7,6 +7,7 @@ IMPORTANTE: Mappers de APIs externas → domain entities pertencem à infrastruc
 
 from domain.services.alerts_generator import AlertsGenerator
 from domain.services.weather_enricher import WeatherEnricher
+from domain.services.daily_forecast_enricher import DailyForecastEnricher
 
 # Manter imports de services de alertas existentes
 from domain.services.rain_alert_service import RainAlertService
@@ -17,6 +18,7 @@ from domain.services.temperature_alert_service import TemperatureAlertService
 __all__ = [
     'AlertsGenerator',
     'WeatherEnricher',
+    'DailyForecastEnricher',
     'RainAlertService',
     'WindAlertService',
     'VisibilityAlertService',

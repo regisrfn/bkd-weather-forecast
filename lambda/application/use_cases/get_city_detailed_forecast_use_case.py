@@ -9,6 +9,7 @@ from domain.entities.daily_forecast import DailyForecast
 from domain.exceptions import CityNotFoundException, CoordinatesNotFoundException
 from application.ports.output.weather_provider_port import IWeatherProvider
 from domain.services.alerts_generator import AlertsGenerator
+from domain.services.daily_forecast_enricher import DailyForecastEnricher
 from application.ports.output.city_repository_port import ICityRepository
 from infrastructure.adapters.output.providers.openmeteo.openmeteo_provider import OpenMeteoProvider
 from shared.config.logger_config import get_logger
@@ -120,6 +121,13 @@ class GetCityDetailedForecastUseCase:
             if not daily_forecasts:
                 logger.warning("No daily forecasts available")
                 extended_available = False
+
+            # Enriquecer daily forecasts com intensidade máxima horária quando disponível
+            if daily_forecasts and hourly_forecasts_full:
+                daily_forecasts = DailyForecastEnricher.apply_hourly_rainfall_intensity(
+                    daily_forecasts=daily_forecasts,
+                    hourly_forecasts=hourly_forecasts_full
+                )
             
             # Extrair current weather dos dados hourly já buscados (sem nova chamada)
             current_weather = OpenMeteoProvider.extract_current_weather_from_hourly(

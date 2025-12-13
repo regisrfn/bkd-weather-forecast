@@ -48,12 +48,12 @@ def _make_weather() -> Weather:
 def _make_daily() -> list[DailyForecast]:
     return [
         DailyForecast(
-            date="2025-11-28",
+            date="2025-11-27",
             temp_min=20.0,
             temp_max=30.0,
             precipitation_mm=2.0,
             rain_probability=20.0,
-                rainfall_intensity=0.0,
+            rainfall_intensity=12.0,
             wind_speed_max=15.0,
             wind_direction=90,
             uv_index=7.5,
@@ -71,7 +71,7 @@ def _make_hourly() -> list[HourlyForecast]:
             temperature=27.0,
             precipitation=0.2,
             precipitation_probability=15,
-            rainfall_intensity=0.0,
+            rainfall_intensity=55.0,
             humidity=55,
             wind_speed=10.0,
             wind_direction=180,
@@ -125,6 +125,7 @@ async def test_execute_success_enriches_and_merges_alerts(city_repository, weath
     assert result.extended_available is True
     assert len(result.daily_forecasts) > 0
     assert len(result.hourly_forecasts) > 0
+    assert result.daily_forecasts[0].rainfall_intensity == pytest.approx(55.0)
     
     weather_provider.get_daily_forecast.assert_called_once()
     weather_provider.get_hourly_forecast.assert_called_once()
