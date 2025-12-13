@@ -14,18 +14,21 @@ class DailyForecastEnricher:
     """
 
     @staticmethod
-    def apply_hourly_rainfall_intensity(
+    def enrich_with_hourly_data(
         daily_forecasts: List[DailyForecast],
         hourly_forecasts: List[HourlyForecast]
     ) -> List[DailyForecast]:
         """
-        Propaga o maior rainfall_intensity horário para cada dia correspondente
-        mantendo o valor diário original quando não houver dado horário.
+        Propaga dados horários para o daily:
+        - rainfallIntensity máximo do dia
+        - precipitationHours baseado em horas com rainfall_intensity > 1
+          (usa o valor calculado das horas quando disponível, evitando inflar com estimativas diárias)
         """
         if not daily_forecasts or not hourly_forecasts:
             return daily_forecasts
 
         intensity_by_date: dict[str, float] = defaultdict(float)
+        precip_hours_by_date: dict[str, float] = defaultdict(float)
 
         for forecast in hourly_forecasts:
             # timestamp formato ISO: YYYY-MM-DDTHH:MM
@@ -40,18 +43,28 @@ class DailyForecastEnricher:
 
             if intensity > intensity_by_date[date_key]:
                 intensity_by_date[date_key] = intensity
+            if intensity > 1:
+                precip_hours_by_date[date_key] += 1.0
 
-        if not intensity_by_date:
+        if not intensity_by_date and not precip_hours_by_date:
             return daily_forecasts
 
         for daily in daily_forecasts:
-            if daily.date not in intensity_by_date:
-                continue
+            date = daily.date
+            has_intensity = date in intensity_by_date
+            has_precip_hours = date in precip_hours_by_date
 
-            enriched_intensity = max(
-                float(daily.rainfall_intensity),
-                intensity_by_date[daily.date]
-            )
-            daily.update_rainfall_intensity(enriched_intensity)
+            if has_precip_hours:
+                computed_hours = precip_hours_by_date[date]
+                # Preferir horas derivadas das horas quando > 0 (mais preciso que a estimativa diária)
+                if computed_hours > 0:
+                    daily.update_precipitation_hours(computed_hours)
+
+            if has_intensity:
+                enriched_intensity = max(
+                    float(daily.rainfall_intensity),
+                    intensity_by_date[date]
+                )
+                daily.update_rainfall_intensity(enriched_intensity)
 
         return daily_forecasts

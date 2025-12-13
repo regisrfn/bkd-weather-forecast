@@ -69,6 +69,14 @@ class DailyForecast:
         """
         object.__setattr__(self, 'rainfall_intensity', rainfall_intensity)
         self._update_weather_summary(force=True)
+
+    def update_precipitation_hours(self, precipitation_hours: float) -> None:
+        """
+        Atualiza horas de precipitação e reclassifica o resumo do clima
+        """
+        safe_hours = max(0.0, precipitation_hours)
+        object.__setattr__(self, 'precipitation_hours', safe_hours)
+        self._update_weather_summary(force=True)
     
     @property
     def daylight_hours(self) -> float:

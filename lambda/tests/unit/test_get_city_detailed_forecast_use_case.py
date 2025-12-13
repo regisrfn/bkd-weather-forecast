@@ -59,7 +59,7 @@ def _make_daily() -> list[DailyForecast]:
             uv_index=7.5,
             sunrise="06:00",
             sunset="18:00",
-            precipitation_hours=1.0,
+            precipitation_hours=0.0,
         )
     ]
 
@@ -126,6 +126,7 @@ async def test_execute_success_enriches_and_merges_alerts(city_repository, weath
     assert len(result.daily_forecasts) > 0
     assert len(result.hourly_forecasts) > 0
     assert result.daily_forecasts[0].rainfall_intensity == pytest.approx(55.0)
+    assert result.daily_forecasts[0].precipitation_hours == pytest.approx(1.0)
     
     weather_provider.get_daily_forecast.assert_called_once()
     weather_provider.get_hourly_forecast.assert_called_once()

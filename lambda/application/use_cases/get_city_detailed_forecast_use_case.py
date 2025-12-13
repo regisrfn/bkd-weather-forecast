@@ -124,7 +124,7 @@ class GetCityDetailedForecastUseCase:
 
             # Enriquecer daily forecasts com intensidade máxima horária quando disponível
             if daily_forecasts and hourly_forecasts_full:
-                daily_forecasts = DailyForecastEnricher.apply_hourly_rainfall_intensity(
+                daily_forecasts = DailyForecastEnricher.enrich_with_hourly_data(
                     daily_forecasts=daily_forecasts,
                     hourly_forecasts=hourly_forecasts_full
                 )
