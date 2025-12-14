@@ -17,7 +17,6 @@ from domain.services.alerts_generator import AlertsGenerator
 from application.ports.input.get_regional_weather_port import IGetRegionalWeatherUseCase
 from application.ports.output.city_repository_port import ICityRepository
 from domain.value_objects.daily_aggregated_metrics import DailyAggregatedMetrics
-from infrastructure.adapters.output.providers.openmeteo.openmeteo_provider import OpenMeteoProvider
 from shared.config.logger_config import get_logger
 
 logger = get_logger(child=True)
@@ -210,7 +209,7 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
         hourly_forecasts, daily_forecasts = await asyncio.gather(hourly_task, daily_task)
         
         # Extrair current weather dos dados hourly já buscados
-        weather = OpenMeteoProvider.extract_current_weather_from_hourly(
+        weather = self.weather_provider.extract_current_weather_from_hourly(
             hourly_forecasts=hourly_forecasts,
             daily_forecasts=daily_forecasts if daily_forecasts else None,
             city_id=city.id,

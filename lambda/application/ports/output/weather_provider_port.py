@@ -1,6 +1,7 @@
 """Weather Provider Port - Interface genérica para provedores climáticos"""
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
+from datetime import datetime
 
 from domain.entities.weather import Weather
 from domain.entities.daily_forecast import DailyForecast
@@ -61,6 +62,21 @@ class IWeatherProvider(ABC):
         
         Raises:
             ProviderException: Se o provider falhar
+        """
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def extract_current_weather_from_hourly(
+        hourly_forecasts: List[HourlyForecast],
+        daily_forecasts: Optional[List[DailyForecast]],
+        city_id: str,
+        city_name: str,
+        target_datetime: Optional[datetime] = None
+    ) -> Weather:
+        """
+        Converte dados horários já obtidos em um Weather atual.
+        Implementação default fica no adapter que sabe transformar os dados.
         """
         pass
     

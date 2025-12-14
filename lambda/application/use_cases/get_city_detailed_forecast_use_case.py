@@ -11,7 +11,6 @@ from application.ports.output.weather_provider_port import IWeatherProvider
 from domain.services.alerts_generator import AlertsGenerator
 from domain.services.daily_forecast_enricher import DailyForecastEnricher
 from application.ports.output.city_repository_port import ICityRepository
-from infrastructure.adapters.output.providers.openmeteo.openmeteo_provider import OpenMeteoProvider
 from shared.config.logger_config import get_logger
 
 logger = get_logger(child=True)
@@ -130,7 +129,7 @@ class GetCityDetailedForecastUseCase:
                 )
             
             # Extrair current weather dos dados hourly já buscados (sem nova chamada)
-            current_weather = OpenMeteoProvider.extract_current_weather_from_hourly(
+            current_weather = self.weather_provider.extract_current_weather_from_hourly(
                 hourly_forecasts=hourly_forecasts_full,
                 daily_forecasts=daily_forecasts if daily_forecasts else None,
                 city_id=city.id,

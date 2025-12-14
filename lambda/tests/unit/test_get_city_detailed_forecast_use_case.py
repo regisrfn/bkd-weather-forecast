@@ -11,6 +11,7 @@ import pytest
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
+from infrastructure.adapters.output.providers.openmeteo.openmeteo_provider import OpenMeteoProvider
 from application.use_cases.get_city_detailed_forecast_use_case import GetCityDetailedForecastUseCase
 from domain.alerts.primitives import WeatherAlert, AlertSeverity
 from domain.entities.city import City
@@ -93,6 +94,7 @@ def weather_provider():
     provider.provider_name = "OpenMeteoMock"
     provider.get_daily_forecast = AsyncMock()
     provider.get_hourly_forecast = AsyncMock()
+    provider.extract_current_weather_from_hourly = OpenMeteoProvider.extract_current_weather_from_hourly
     return provider
 
 
