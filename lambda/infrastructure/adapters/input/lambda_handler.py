@@ -308,13 +308,48 @@ def post_regional_weather_route():
 
 
 # =============================
-# Lambda Handler (100% ASYNC)
+# Warm-up helpers
 # =============================
+
+@tracer.wrap(resource="lambda_handler.warmup_init")
+def warmup_init():
+    """
+    Prepara dependências pesadas para reuso em warm starts.
+    """
+    try:
+        # Garantir loop global e carregar singletons síncronos
+        get_or_create_event_loop()
+        weather_factory = get_weather_provider_factory()
+        weather_provider = weather_factory.get_weather_provider()
+        geo_provider = get_ibge_geo_provider()
+        get_repository()
+    except Exception as exc:  # pragma: no cover - best-effort
+        logger.warning("Warm-up init sync step failed", error=str(exc))
+        return
+
+    async def preload_async():
+        # Criar sessão HTTP e cliente DynamoDB compartilhados
+        providers = [weather_provider, geo_provider]
+        for provider in providers:
+            session_manager = getattr(provider, "session_manager", None)
+            if session_manager:
+                await session_manager.get_session()
+
+            cache = getattr(provider, "cache", None)
+            client_manager = getattr(cache, "client_manager", None) if cache else None
+            if cache and cache.is_enabled() and client_manager:
+                await client_manager.get_client()
+
+    try:
+        run_async(preload_async())
+    except Exception as exc:  # pragma: no cover - best-effort
+        logger.warning("Warm-up init async step failed", error=str(exc))
+
 
 @tracer.wrap(resource="lambda_handler.handle_warmup_ping")
 def handle_warmup_ping(event):
     """
-    Warm-up short-circuit for EventBridge scheduled pings.
+    Warm-up short-circuit para pings agendados (EventBridge/cron).
     """
     if not isinstance(event, dict):
         return None
@@ -322,7 +357,8 @@ def handle_warmup_ping(event):
     if not (event.get("warmup") or event.get("source") == "aws.events"):
         return None
 
-    logger.info("Warm-up ping received")
+    logger.info("Warm-up ping recebido")
+    warmup_init()
     return {
         "statusCode": 200,
         "headers": {
@@ -331,6 +367,11 @@ def handle_warmup_ping(event):
         },
         "body": json.dumps({"ok": True, "warmup": True})
     }
+
+
+# =============================
+# Lambda Handler (100% ASYNC)
+# =============================
 
 
 @logger.inject_lambda_context()
