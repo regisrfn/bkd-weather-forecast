@@ -27,6 +27,12 @@ variable "memory_size" {
   default     = 256
 }
 
+variable "reserved_concurrent_executions" {
+  description = "Concorrência reservada para a Lambda (null para ilimitado)"
+  type        = number
+  default     = null
+}
+
 variable "description" {
   description = "Descrição da função Lambda"
   type        = string
@@ -81,6 +87,24 @@ variable "aws_region" {
   description = "Região AWS para o recurso DynamoDB"
   type        = string
   default     = "sa-east-1"
+}
+
+variable "warmup_enabled" {
+  description = "Habilita regra EventBridge para warm-up da Lambda"
+  type        = bool
+  default     = true
+}
+
+variable "warmup_schedule" {
+  description = "Agendamento do warm-up (cron ou rate)"
+  type        = string
+  default     = "rate(5 minutes)"
+}
+
+variable "warmup_concurrency" {
+  description = "Número de invocações paralelas por execução do warm-up"
+  type        = number
+  default     = 1
 }
 
 # Datadog Configuration

@@ -39,6 +39,10 @@ module "lambda" {
   runtime              = "python3.13"
   timeout              = var.lambda_timeout
   memory_size          = var.lambda_memory_size
+  reserved_concurrent_executions = var.lambda_reserved_concurrency
+  warmup_enabled       = coalesce(var.lambda_warmup_enabled, var.enable_warmup_cron)
+  warmup_schedule      = coalesce(var.lambda_warmup_schedule, var.warmup_schedule_expression)
+  warmup_concurrency   = coalesce(var.lambda_warmup_concurrency, var.warmup_concurrency)
   description          = "Lambda function for ${var.project_name}"
   source_dir           = "${path.module}/../lambda"
   environment_variables = var.lambda_environment_variables

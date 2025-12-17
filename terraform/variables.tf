@@ -34,6 +34,30 @@ variable "lambda_memory_size" {
   default     = 256
 }
 
+variable "lambda_reserved_concurrency" {
+  description = "Concorrência reservada da Lambda (null para ilimitado)"
+  type        = number
+  default     = null
+}
+
+variable "lambda_warmup_enabled" {
+  description = "Habilita warm-up via EventBridge (override de enable_warmup_cron)"
+  type        = bool
+  default     = null
+}
+
+variable "lambda_warmup_schedule" {
+  description = "Agendamento do warm-up (cron ou rate) (override de warmup_schedule_expression)"
+  type        = string
+  default     = null
+}
+
+variable "lambda_warmup_concurrency" {
+  description = "Invocações paralelas por execução do warm-up (override de warmup_concurrency)"
+  type        = number
+  default     = null
+}
+
 variable "lambda_environment_variables" {
   description = "Variáveis de ambiente para a função Lambda"
   type        = map(string)
@@ -70,6 +94,24 @@ variable "cache_table_name" {
   description = "Nome da tabela DynamoDB para cache (opcional, se null cache é desabilitado)"
   type        = string
   default     = null
+}
+
+variable "enable_warmup_cron" {
+  description = "Ativa/desativa warm-up (compatibilidade com tfvars existente)"
+  type        = bool
+  default     = true
+}
+
+variable "warmup_schedule_expression" {
+  description = "Agenda do warm-up (compatibilidade com tfvars existente)"
+  type        = string
+  default     = "rate(5 minutes)"
+}
+
+variable "warmup_concurrency" {
+  description = "Invocações paralelas por execução do warm-up (compatibilidade com tfvars existente)"
+  type        = number
+  default     = 1
 }
 
 # Datadog Configuration

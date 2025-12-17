@@ -8,6 +8,7 @@ import threading
 from datetime import datetime
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, CORSConfig
 from aws_lambda_powertools.utilities.typing import LambdaContext
+from ddtrace import tracer
 
 # Application Layer - Use Cases (ASYNC)
 from application.use_cases.get_neighbor_cities_use_case import AsyncGetNeighborCitiesUseCase
@@ -310,6 +311,28 @@ def post_regional_weather_route():
 # Lambda Handler (100% ASYNC)
 # =============================
 
+@tracer.wrap(resource="lambda_handler.handle_warmup_ping")
+def handle_warmup_ping(event):
+    """
+    Warm-up short-circuit for EventBridge scheduled pings.
+    """
+    if not isinstance(event, dict):
+        return None
+
+    if not (event.get("warmup") or event.get("source") == "aws.events"):
+        return None
+
+    logger.info("Warm-up ping received")
+    return {
+        "statusCode": 200,
+        "headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+        },
+        "body": json.dumps({"ok": True, "warmup": True})
+    }
+
+
 @logger.inject_lambda_context()
 def lambda_handler(event, context: LambdaContext):
     """
@@ -341,6 +364,10 @@ def lambda_handler(event, context: LambdaContext):
     - time: HH:MM (ex: 15:00)
     - If omitted, returns next available forecast
     """
+    warmup_response = handle_warmup_ping(event)
+    if warmup_response:
+        return warmup_response
+
     # Extrair IP de origem e session_id
     headers = event.get('headers', {}) or {}
     request_context = event.get('requestContext', {}) or {}

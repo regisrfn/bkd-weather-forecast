@@ -101,6 +101,7 @@ resource "aws_lambda_function" "main" {
   timeout         = var.timeout
   memory_size     = var.memory_size
   description     = var.description
+  reserved_concurrent_executions = var.reserved_concurrent_executions
   
   # Datadog Lambda Layers (Python + Extension)
   layers = [
