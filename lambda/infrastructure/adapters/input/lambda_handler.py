@@ -17,6 +17,7 @@ from application.use_cases.get_city_weather_use_case import AsyncGetCityWeatherU
 from application.use_cases.get_regional_weather_use_case import GetRegionalWeatherUseCase
 from application.use_cases.get_city_detailed_forecast_use_case import GetCityDetailedForecastUseCase
 from application.use_cases.get_municipality_mesh_use_case import GetMunicipalityMeshUseCase
+from application.services.cache_service import CacheService
 
 # Domain Layer - Exceptions
 from domain.exceptions import (
@@ -34,6 +35,7 @@ from infrastructure.adapters.input.exception_handler_service import ExceptionHan
 from infrastructure.adapters.output.municipalities_repository import get_repository
 from infrastructure.adapters.output.providers.weather_provider_factory import get_weather_provider_factory
 from infrastructure.adapters.output.providers.ibge import get_ibge_geo_provider
+from infrastructure.adapters.output.cache.async_dynamodb_cache import get_async_cache
 
 # Shared Layer - Utilities
 from shared.config.settings import DEFAULT_RADIUS
@@ -338,13 +340,16 @@ def post_regional_weather_route():
     city_repository = get_repository()
     factory = get_weather_provider_factory()
     weather_provider = factory.get_weather_provider()
+    cache_repository = get_async_cache()
+    cache_service = CacheService(cache_repository)
     
     # Execute async use case
     async def execute_async():
         # Execute use case (ASYNC with asyncio.gather)
         use_case = GetRegionalWeatherUseCase(
             city_repository=city_repository,
-            weather_provider=weather_provider
+            weather_provider=weather_provider,
+            cache_service=cache_service
         )
         weather_list = await use_case.execute(city_ids, target_datetime)
         

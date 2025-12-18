@@ -16,6 +16,7 @@ from application.use_cases.get_regional_weather_use_case import GetRegionalWeath
 from domain.entities.city import City
 from domain.entities.weather import Weather
 from domain.exceptions import CoordinatesNotFoundException
+from application.services.cache_service import CacheService
 
 
 @pytest.fixture
@@ -36,8 +37,16 @@ def weather_provider():
 
 
 @pytest.fixture
-def use_case(city_repository, weather_provider):
-    return GetRegionalWeatherUseCase(city_repository, weather_provider)
+def cache_service():
+    service = MagicMock(spec=CacheService)
+    service.prefetch = AsyncMock(return_value={})
+    service.persist_many = AsyncMock()
+    return service
+
+
+@pytest.fixture
+def use_case(city_repository, weather_provider, cache_service):
+    return GetRegionalWeatherUseCase(city_repository, weather_provider, cache_service)
 
 
 def _make_city(city_id: str, lat: float, lon: float) -> City:

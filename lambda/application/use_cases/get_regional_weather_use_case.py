@@ -18,6 +18,7 @@ from domain.services.alerts_generator import AlertsGenerator
 from application.ports.input.get_regional_weather_port import IGetRegionalWeatherUseCase
 from application.ports.output.city_repository_port import ICityRepository
 from domain.value_objects.daily_aggregated_metrics import DailyAggregatedMetrics
+from application.services.cache_service import CacheService
 from shared.config.logger_config import get_logger
 
 logger = get_logger(child=True)
@@ -37,10 +38,12 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
     def __init__(
         self,
         city_repository: ICityRepository,
-        weather_provider: IWeatherProvider
+        weather_provider: IWeatherProvider,
+        cache_service: Optional[CacheService] = None
     ):
         self.city_repository = city_repository
         self.weather_provider = weather_provider
+        self.cache_service = cache_service
     
     @tracer.wrap(resource="use_case.async_regional_weather")
     async def execute(
@@ -70,7 +73,7 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
             target_date=target_datetime.isoformat() if target_datetime else "next_available"
         )
 
-        prefetched_hourly, prefetched_daily = await self._prefetch_openmeteo_cache(city_ids)
+        prefetched_hourly, prefetched_daily = await self._prefetch_weather_cache(city_ids)
         hourly_writes: Dict[str, Any] = {}
         daily_writes: Dict[str, Any] = {}
         
@@ -85,10 +88,7 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
         )
 
         # Persist cache writes em batch para reduzir chamadas ao DynamoDB
-        await asyncio.gather(
-            self._batch_set_openmeteo_cache(hourly_writes, Cache.TTL_OPENMETEO_HOURLY),
-            self._batch_set_openmeteo_cache(daily_writes, Cache.TTL_OPENMETEO_DAILY)
-        )
+        await self._persist_weather_cache(hourly_writes, daily_writes)
         
         # Calculate success rate
         success_rate = (len(weather_data) / len(city_ids) * 100) if city_ids else 0
@@ -359,45 +359,30 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
         )
         return metrics
 
-    async def _prefetch_openmeteo_cache(
+    async def _prefetch_weather_cache(
         self,
         city_ids: List[str]
     ) -> tuple[Dict[str, Any], Dict[str, Any]]:
-        """
-        Pré-carrega cache hourly/daily em batch para reduzir chamadas ao DynamoDB
-        """
-        cache = getattr(self.weather_provider, "cache", None)
-        if not cache or not cache.is_enabled() or not city_ids:
+        """Delegates cache prefetch to cache service when available."""
+        if not self.cache_service:
             return {}, {}
-
-        batch_get = getattr(cache, "batch_get", None)
-        if not batch_get or not asyncio.iscoroutinefunction(batch_get):
-            return {}, {}
-
         hourly_keys = [f"{Cache.PREFIX_OPENMETEO_HOURLY}{city_id}" for city_id in city_ids]
         daily_keys = [f"{Cache.PREFIX_OPENMETEO_DAILY}{city_id}" for city_id in city_ids]
-
         hourly_result, daily_result = await asyncio.gather(
-            batch_get(hourly_keys),
-            batch_get(daily_keys)
+            self.cache_service.prefetch(hourly_keys),
+            self.cache_service.prefetch(daily_keys)
         )
-
         return hourly_result or {}, daily_result or {}
 
-    async def _batch_set_openmeteo_cache(
+    async def _persist_weather_cache(
         self,
-        items: Dict[str, Any],
-        ttl_seconds: int
+        hourly_writes: Dict[str, Any],
+        daily_writes: Dict[str, Any]
     ) -> None:
-        """
-        Salva dados no cache em batch (usa TTL específico por tipo)
-        """
-        cache = getattr(self.weather_provider, "cache", None)
-        if not cache or not cache.is_enabled() or not items:
+        """Persists cache writes through the cache service."""
+        if not self.cache_service:
             return
-
-        batch_set = getattr(cache, "batch_set", None)
-        if not batch_set or not asyncio.iscoroutinefunction(batch_set):
-            return
-
-        await batch_set(items, ttl_seconds=ttl_seconds)
+        await self.cache_service.persist_many([
+            (hourly_writes, Cache.TTL_OPENMETEO_HOURLY),
+            (daily_writes, Cache.TTL_OPENMETEO_DAILY),
+        ])
