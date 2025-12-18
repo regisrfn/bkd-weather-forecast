@@ -1,7 +1,7 @@
 """Open-Meteo Provider - Implementação do provider para Open-Meteo API"""
 
 import asyncio
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 from datetime import datetime
 from ddtrace import tracer
 import aiohttp
@@ -178,7 +178,9 @@ class OpenMeteoProvider(IWeatherProvider):
         latitude: float,
         longitude: float,
         city_id: str,
-        days: int = 16
+        days: int = 16,
+        prefetched_data: Optional[Dict[str, Any]] = None,
+        cache_writes: Optional[Dict[str, Any]] = None
     ) -> List[DailyForecast]:
         """
         Busca previsões diárias do Open-Meteo
@@ -196,7 +198,9 @@ class OpenMeteoProvider(IWeatherProvider):
         
         # 🔍 Tentar cache primeiro
         data = None
-        if self.cache and self.cache.is_enabled():
+        if prefetched_data is not None:
+            data = prefetched_data.get(cache_key)
+        elif self.cache and self.cache.is_enabled():
             data = await self.cache.get(cache_key)
         
         # 📡 Cache MISS: chamar API
@@ -249,7 +253,10 @@ class OpenMeteoProvider(IWeatherProvider):
             
             # 💾 Salvar no cache
             if self.cache and self.cache.is_enabled():
-                await self.cache.set(cache_key, data, ttl_seconds=Cache.TTL_OPENMETEO_DAILY)
+                if cache_writes is not None:
+                    cache_writes[cache_key] = data
+                else:
+                    await self.cache.set(cache_key, data, ttl_seconds=Cache.TTL_OPENMETEO_DAILY)
         
         # 🔄 Processar dados usando mapper de infrastructure
         return OpenMeteoDataMapper.map_daily_response_to_forecasts(data)
@@ -260,7 +267,9 @@ class OpenMeteoProvider(IWeatherProvider):
         latitude: float,
         longitude: float,
         city_id: str,
-        hours: int = 168
+        hours: int = 168,
+        prefetched_data: Optional[Dict[str, Any]] = None,
+        cache_writes: Optional[Dict[str, Any]] = None
     ) -> List[HourlyForecast]:
         """
         Busca previsões horárias do Open-Meteo
@@ -275,7 +284,9 @@ class OpenMeteoProvider(IWeatherProvider):
         
         # 🔍 Tentar cache primeiro
         data = None
-        if self.cache and self.cache.is_enabled():
+        if prefetched_data is not None:
+            data = prefetched_data.get(cache_key)
+        elif self.cache and self.cache.is_enabled():
             data = await self.cache.get(cache_key)
         
         # 📡 Cache MISS: chamar API
@@ -329,7 +340,10 @@ class OpenMeteoProvider(IWeatherProvider):
             
             # 💾 Salvar no cache
             if self.cache and self.cache.is_enabled():
-                await self.cache.set(cache_key, data, ttl_seconds=Cache.TTL_OPENMETEO_HOURLY)
+                if cache_writes is not None:
+                    cache_writes[cache_key] = data
+                else:
+                    await self.cache.set(cache_key, data, ttl_seconds=Cache.TTL_OPENMETEO_HOURLY)
         
         # 🔄 Processar dados usando mapper de infrastructure
         return OpenMeteoDataMapper.map_hourly_response_to_forecasts(data, max_hours=hours)

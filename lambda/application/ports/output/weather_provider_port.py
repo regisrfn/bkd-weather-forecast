@@ -21,7 +21,9 @@ class IWeatherProvider(ABC):
         latitude: float,
         longitude: float,
         city_id: str,
-        days: int = 16
+        days: int = 16,
+        prefetched_data: Optional[dict] = None,
+        cache_writes: Optional[dict] = None
     ) -> List[DailyForecast]:
         """
         Busca previsões diárias
@@ -46,7 +48,9 @@ class IWeatherProvider(ABC):
         latitude: float,
         longitude: float,
         city_id: str,
-        hours: int = 168
+        hours: int = 168,
+        prefetched_data: Optional[dict] = None,
+        cache_writes: Optional[dict] = None
     ) -> List[HourlyForecast]:
         """
         Busca previsões horárias

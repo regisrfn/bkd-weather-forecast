@@ -30,6 +30,8 @@ def weather_provider():
     provider.get_hourly_forecast = AsyncMock()
     provider.get_daily_forecast = AsyncMock()
     provider.extract_current_weather_from_hourly = OpenMeteoProvider.extract_current_weather_from_hourly
+    provider.cache = MagicMock()
+    provider.cache.is_enabled.return_value = False  # desabilita cache para testes unitários
     return provider
 
 
@@ -103,12 +105,12 @@ async def test_execute_returns_only_successful_results(use_case, city_repository
     # Mock para retornar dados válidos sempre que chamado
     # Cada cidade que não falhar no repositório receberá esses dados
     # Forçar falha apenas na cidade 2
-    async def mock_hourly(latitude, longitude, city_id, hours):
+    async def mock_hourly(latitude, longitude, city_id, hours, **kwargs):
         if city_id == "2":
             raise RuntimeError("provider failure")
         return [sample_hourly]
     
-    async def mock_daily(latitude, longitude, city_id, days):
+    async def mock_daily(latitude, longitude, city_id, days, **kwargs):
         if city_id == "2":
             raise RuntimeError("provider failure")
         return [sample_daily]
@@ -180,8 +182,14 @@ async def test_execute_sets_daily_aggregates(use_case, city_repository, weather_
         precipitation_hours=4.0
     )
 
-    weather_provider.get_hourly_forecast = AsyncMock(return_value=hourly_forecasts)
-    weather_provider.get_daily_forecast = AsyncMock(return_value=[daily_forecast])
+    async def mock_hourly(*args, **kwargs):
+        return hourly_forecasts
+
+    async def mock_daily(*args, **kwargs):
+        return [daily_forecast]
+
+    weather_provider.get_hourly_forecast = AsyncMock(side_effect=mock_hourly)
+    weather_provider.get_daily_forecast = AsyncMock(side_effect=mock_daily)
 
     target_dt = datetime(2025, 11, 27, 10, 0, tzinfo=ZoneInfo("America/Sao_Paulo"))
     result = await use_case.execute(["9"], target_dt)

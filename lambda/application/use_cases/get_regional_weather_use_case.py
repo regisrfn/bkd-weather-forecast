@@ -3,7 +3,7 @@ Use Case: Get Regional Weather Data
 Refatorado para usar providers desacoplados com batch optimization
 """
 import asyncio
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from ddtrace import tracer
@@ -12,6 +12,7 @@ from domain.entities.daily_forecast import DailyForecast
 from domain.entities.hourly_forecast import HourlyForecast
 from domain.entities.weather import Weather
 from domain.exceptions import CityNotFoundException, CoordinatesNotFoundException
+from domain.constants import Cache
 from application.ports.output.weather_provider_port import IWeatherProvider
 from domain.services.alerts_generator import AlertsGenerator
 from application.ports.input.get_regional_weather_port import IGetRegionalWeatherUseCase
@@ -68,9 +69,26 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
             provider=self.weather_provider.provider_name,
             target_date=target_datetime.isoformat() if target_datetime else "next_available"
         )
+
+        prefetched_hourly, prefetched_daily = await self._prefetch_openmeteo_cache(city_ids)
+        hourly_writes: Dict[str, Any] = {}
+        daily_writes: Dict[str, Any] = {}
         
         # Fetch all cities in parallel
-        weather_data = await self._fetch_all_cities(city_ids, target_datetime)
+        weather_data = await self._fetch_all_cities(
+            city_ids=city_ids,
+            target_datetime=target_datetime,
+            prefetched_hourly=prefetched_hourly,
+            prefetched_daily=prefetched_daily,
+            hourly_writes=hourly_writes,
+            daily_writes=daily_writes
+        )
+
+        # Persist cache writes em batch para reduzir chamadas ao DynamoDB
+        await asyncio.gather(
+            self._batch_set_openmeteo_cache(hourly_writes, Cache.TTL_OPENMETEO_HOURLY),
+            self._batch_set_openmeteo_cache(daily_writes, Cache.TTL_OPENMETEO_DAILY)
+        )
         
         # Calculate success rate
         success_rate = (len(weather_data) / len(city_ids) * 100) if city_ids else 0
@@ -87,7 +105,11 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
     async def _fetch_all_cities(
         self,
         city_ids: List[str],
-        target_datetime: Optional[datetime] = None
+        target_datetime: Optional[datetime],
+        prefetched_hourly: Dict[str, Any],
+        prefetched_daily: Dict[str, Any],
+        hourly_writes: Dict[str, Any],
+        daily_writes: Dict[str, Any]
     ) -> List[Weather]:
         """
         Fetch weather data para todas cidades em paralelo
@@ -95,6 +117,10 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
         Args:
             city_ids: IDs das cidades
             target_datetime: Datetime alvo
+            prefetched_hourly: cache pré-carregado para hourly
+            prefetched_daily: cache pré-carregado para daily
+            hourly_writes: buffer para batch set hourly
+            daily_writes: buffer para batch set daily
         
         Returns:
             Lista de Weather entities (apenas sucessos)
@@ -106,7 +132,11 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
             self._fetch_single_city_with_semaphore(
                 city_id,
                 target_datetime,
-                semaphore
+                semaphore,
+                prefetched_hourly,
+                prefetched_daily,
+                hourly_writes,
+                daily_writes
             )
             for city_id in city_ids
         ]
@@ -137,7 +167,11 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
         self,
         city_id: str,
         target_datetime: Optional[datetime],
-        semaphore: asyncio.Semaphore
+        semaphore: asyncio.Semaphore,
+        prefetched_hourly: Dict[str, Any],
+        prefetched_daily: Dict[str, Any],
+        hourly_writes: Dict[str, Any],
+        daily_writes: Dict[str, Any]
     ) -> Weather:
         """
         Fetch weather para uma cidade com semaphore
@@ -146,6 +180,10 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
             city_id: ID da cidade
             target_datetime: Datetime alvo
             semaphore: Semaphore para controle de concorrência
+            prefetched_hourly: cache pré-carregado para hourly
+            prefetched_daily: cache pré-carregado para daily
+            hourly_writes: buffer para batch set hourly
+            daily_writes: buffer para batch set daily
         
         Returns:
             Weather entity
@@ -155,12 +193,23 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
         """
         async with semaphore:
             # Delay de 50ms entre requests para evitar rate limiting
-            return await self._fetch_single_city(city_id, target_datetime)
+            return await self._fetch_single_city(
+                city_id,
+                target_datetime,
+                prefetched_hourly,
+                prefetched_daily,
+                hourly_writes,
+                daily_writes
+            )
     
     async def _fetch_single_city(
         self,
         city_id: str,
-        target_datetime: Optional[datetime]
+        target_datetime: Optional[datetime],
+        prefetched_hourly: Dict[str, Any],
+        prefetched_daily: Dict[str, Any],
+        hourly_writes: Dict[str, Any],
+        daily_writes: Dict[str, Any]
     ) -> Weather:
         """
         Fetch weather para uma cidade
@@ -168,6 +217,10 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
         Args:
             city_id: ID da cidade
             target_datetime: Datetime alvo
+            prefetched_hourly: cache pré-carregado para hourly
+            prefetched_daily: cache pré-carregado para daily
+            hourly_writes: buffer para batch set hourly
+            daily_writes: buffer para batch set daily
         
         Returns:
             Weather entity
@@ -196,14 +249,18 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
             latitude=city.latitude,
             longitude=city.longitude,
             city_id=city.id,
-            hours=168  # 7 dias - usado para current weather + alertas
+            hours=168,  # 7 dias - usado para current weather + alertas
+            prefetched_data=prefetched_hourly,
+            cache_writes=hourly_writes
         )
         
         daily_task = self.weather_provider.get_daily_forecast(
             latitude=city.latitude,
             longitude=city.longitude,
             city_id=city.id,
-            days=16  # 16 dias para consistência de cache entre rotas
+            days=16,  # 16 dias para consistência de cache entre rotas
+            prefetched_data=prefetched_daily,
+            cache_writes=daily_writes
         )
         
         hourly_forecasts, daily_forecasts = await asyncio.gather(hourly_task, daily_task)
@@ -301,3 +358,46 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
             temp_max=metrics.temp_max
         )
         return metrics
+
+    async def _prefetch_openmeteo_cache(
+        self,
+        city_ids: List[str]
+    ) -> tuple[Dict[str, Any], Dict[str, Any]]:
+        """
+        Pré-carrega cache hourly/daily em batch para reduzir chamadas ao DynamoDB
+        """
+        cache = getattr(self.weather_provider, "cache", None)
+        if not cache or not cache.is_enabled() or not city_ids:
+            return {}, {}
+
+        batch_get = getattr(cache, "batch_get", None)
+        if not batch_get or not asyncio.iscoroutinefunction(batch_get):
+            return {}, {}
+
+        hourly_keys = [f"{Cache.PREFIX_OPENMETEO_HOURLY}{city_id}" for city_id in city_ids]
+        daily_keys = [f"{Cache.PREFIX_OPENMETEO_DAILY}{city_id}" for city_id in city_ids]
+
+        hourly_result, daily_result = await asyncio.gather(
+            batch_get(hourly_keys),
+            batch_get(daily_keys)
+        )
+
+        return hourly_result or {}, daily_result or {}
+
+    async def _batch_set_openmeteo_cache(
+        self,
+        items: Dict[str, Any],
+        ttl_seconds: int
+    ) -> None:
+        """
+        Salva dados no cache em batch (usa TTL específico por tipo)
+        """
+        cache = getattr(self.weather_provider, "cache", None)
+        if not cache or not cache.is_enabled() or not items:
+            return
+
+        batch_set = getattr(cache, "batch_set", None)
+        if not batch_set or not asyncio.iscoroutinefunction(batch_set):
+            return
+
+        await batch_set(items, ttl_seconds=ttl_seconds)
