@@ -119,12 +119,14 @@ resource "aws_lambda_function" "main" {
         DD_SERVICE            = var.function_name
         DD_ENV                = var.datadog_env
         DD_VERSION            = var.datadog_version
+        # Observabilidade ligada
         DD_TRACE_ENABLED      = "true"
         DD_LOGS_INJECTION     = "true"
         DD_LAMBDA_HANDLER     = "infrastructure.adapters.input.lambda_handler.lambda_handler"
         DD_SERVICE_MAPPING    = "dynamodb:weather-cache"
         DD_FLUSH_TO_LOG       = "false"
         DD_SERVERLESS_LOGS_ENABLED = "true"
+        DD_SERVERLESS_FLUSH_STRATEGY = "periodically,60000"
       }
     )
   }
