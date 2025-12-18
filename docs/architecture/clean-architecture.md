@@ -145,7 +145,7 @@ class Weather:
 
 - **Output Ports** (`application/ports/output/`)
   - Definem contratos para providers e repositórios
-  - Ex: `WeatherProviderPort`, `CityRepositoryPort`, `CacheRepositoryPort`
+  - Ex: `WeatherProviderPort`, `CityRepositoryPort`, `AsyncCacheRepositoryPort`
 
 - **DTOs** (`application/dtos/`)
   - `requests.py`: objetos de requisição
@@ -200,7 +200,7 @@ class AsyncGetCityWeatherUseCase:
   - `MunicipalitiesRepository`: carrega e indexa municípios do JSON
   
 - **Cache** (`cache/`)
-  - `AsyncDynamoDBCache`: implementa `CacheRepositoryPort` com TTLs
+  - `AsyncDynamoDBCache`: implementa `AsyncCacheRepositoryPort` com TTLs
 
 - **HTTP Managers** (`http/`)
   - `AiohttpSessionManager`: gerencia pool de conexões aiohttp

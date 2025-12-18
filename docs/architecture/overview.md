@@ -94,7 +94,7 @@ def lambda_handler(event, context):
 - **Output Ports** (`application/ports/output/`): abstraem providers e repositórios
   - `WeatherProviderPort`: contrato para providers meteorológicos
   - `CityRepositoryPort`: contrato para repositório de municípios
-  - `CacheRepositoryPort`: contrato para cache distribuído
+  - `AsyncCacheRepositoryPort`: contrato para cache distribuído assíncrono
 
 ---
 
@@ -150,7 +150,7 @@ def lambda_handler(event, context):
   - Singleton reutilizado entre invocações
 
 **Cache** (`cache/`):
-- **`AsyncDynamoDBCache`**: implementa `CacheRepositoryPort`
+- **`AsyncDynamoDBCache`**: implementa `AsyncCacheRepositoryPort`
   - Get/Set assíncrono com aioboto3
   - TTL automático por tipo de dado
   - Batch operations para rotas regionais
@@ -201,7 +201,7 @@ lambda/
 │   │   └── output/                 # Contratos de saída (providers/repos)
 │   │       ├── weather_provider_port.py
 │   │       ├── city_repository_port.py
-│   │       └── cache_repository_port.py
+│   │       └── async_cache_repository_port.py
 │   └── dtos/
 │       ├── requests.py             # DTOs de requisição
 │       └── responses.py            # DTOs de resposta
