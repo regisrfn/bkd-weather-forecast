@@ -48,6 +48,7 @@ O domínio da aplicação BKD Weather Forecast é modelado seguindo princípios 
 - `domain/constants.py` concentra thresholds de alertas (`Weather.WIND_SPEED_WARNING/DANGER`, `RAIN_INTENSITY_*`, `TEMP_EXTREME_*`), limites geográficos (`Geo.MIN/MAX_RADIUS`, `CENTER_CITY_*`) e códigos proprietários de condição (`WeatherCondition` 100–999).
 - `WeatherCondition.classify_weather_condition(...)` usa intensidade de chuva, precipitação, vento, nuvens, visibilidade e temperatura para devolver `(code, description)` consistente entre hourly/daily/weather.
 - `App` define defaults de previsão (`FORECAST_DAYS_DEFAULT=16`, `FORECAST_HOURS_DEFAULT=168`) e timezone.
+- **Tabela de códigos de clima:** ver [`docs/development/weather-codes.md`](weather-codes.md) para a lista completa (100–999) com descrições e prioridades.
 
 ## Serviços de domínio
 - `WeatherAlertOrchestrator`: fachada que agrupa serviços de chuva, vento, visibilidade e temperatura, deduplicando alertas.
