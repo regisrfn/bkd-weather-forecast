@@ -221,7 +221,9 @@ class OpenMeteoProvider(IWeatherProvider):
                     'uv_index_max',
                     'sunrise',
                     'sunset',
-                    'precipitation_hours'
+                    'precipitation_hours',
+                    'cloudcover_mean',
+                    'weather_code'
                 ]),
                 'timezone': 'America/Sao_Paulo',
                 'forecast_days': days

@@ -87,6 +87,7 @@ class OpenMeteoDataMapper:
         sunrise = daily.get('sunrise', [])
         sunset = daily.get('sunset', [])
         precip_hours = daily.get('precipitation_hours', [])
+        cloud_cover_mean = daily.get('cloudcover_mean', [])
         
         forecasts = []
         
@@ -113,6 +114,7 @@ class OpenMeteoDataMapper:
                     sunrise=sunrise[i] if i < len(sunrise) else "06:00",
                     sunset=sunset[i] if i < len(sunset) else "18:00",
                     precip_hours=precip_hours[i] if i < len(precip_hours) else 0.0,
+                    cloud_cover_mean=cloud_cover_mean[i] if i < len(cloud_cover_mean) else None,
                     apparent_temp_min=apparent_temp_min[i] if i < len(apparent_temp_min) else None,
                     apparent_temp_max=apparent_temp_max[i] if i < len(apparent_temp_max) else None
                 )

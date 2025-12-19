@@ -29,6 +29,8 @@ class DailyForecast:
     sunrise: str  # Horário do nascer do sol (HH:MM)
     sunset: str  # Horário do pôr do sol (HH:MM)
     precipitation_hours: float  # Horas de precipitação esperadas (0-24h)
+    clouds: Optional[float] = None  # Cobertura de nuvens estimada (0-100%)
+    visibility: Optional[float] = None  # Visibilidade estimada (metros)
     apparent_temp_min: Optional[float] = None  # Sensação térmica mínima (°C)
     apparent_temp_max: Optional[float] = None  # Sensação térmica máxima (°C)
     weather_code: int = 0  # Código proprietário da condição climática
@@ -50,13 +52,15 @@ class DailyForecast:
 
         temp_avg = (self.temp_min + self.temp_max) / 2
         precip_per_hour = self.precipitation_mm / self.precipitation_hours if self.precipitation_hours > 0 else 0
+        clouds_value = self.clouds if self.clouds is not None else 50.0
+        visibility_value = self.visibility if self.visibility is not None else 10000.0
 
         code, desc = WeatherCondition.classify_weather_condition(
             rainfall_intensity=self.rainfall_intensity,
             precipitation=precip_per_hour,
             wind_speed=self.wind_speed_max,
-            clouds=50.0,  # Estimativa para daily (não disponível)
-            visibility=10000.0,  # Default para daily
+            clouds=clouds_value,
+            visibility=visibility_value,
             temperature=temp_avg,
             rain_probability=self.rain_probability
         )
@@ -76,6 +80,16 @@ class DailyForecast:
         """
         safe_hours = max(0.0, precipitation_hours)
         object.__setattr__(self, 'precipitation_hours', safe_hours)
+        self._update_weather_summary(force=True)
+    
+    def update_clouds_visibility(self, clouds: Optional[float], visibility: Optional[float]) -> None:
+        """
+        Atualiza nuvens/visibilidade estimadas e reclassifica o resumo do clima
+        """
+        if clouds is not None:
+            object.__setattr__(self, 'clouds', max(0.0, min(100.0, clouds)))
+        if visibility is not None:
+            object.__setattr__(self, 'visibility', max(0.0, visibility))
         self._update_weather_summary(force=True)
     
     @property
@@ -182,6 +196,10 @@ class DailyForecast:
             'weatherCode': self.weather_code,
             'description': self.description
         }
+
+        # Cobertura de nuvens média (se disponível)
+        if self.clouds is not None:
+            response['cloudCover'] = round(self.clouds, 1)
         
         # Adicionar apparent temperatures se disponíveis
         if self.apparent_temp_min is not None:
@@ -204,6 +222,7 @@ class DailyForecast:
         sunrise: str,
         sunset: str,
         precip_hours: float,
+        cloud_cover_mean: Optional[float] = None,
         apparent_temp_min: Optional[float] = None,
         apparent_temp_max: Optional[float] = None
     ) -> 'DailyForecast':
@@ -221,6 +240,7 @@ class DailyForecast:
             sunrise: Nascer do sol (ISO 8601)
             sunset: Pôr do sol (ISO 8601)
             precip_hours: Horas de precipitação
+            cloud_cover_mean: Cobertura média de nuvens diária (0-100) se disponível
         
         Returns:
             Nova instância de DailyForecast
@@ -251,6 +271,7 @@ class DailyForecast:
             sunrise=sunrise_time,
             sunset=sunset_time,
             precipitation_hours=precip_hours,
+            clouds=cloud_cover_mean,
             apparent_temp_min=apparent_temp_min,
             apparent_temp_max=apparent_temp_max
         )
