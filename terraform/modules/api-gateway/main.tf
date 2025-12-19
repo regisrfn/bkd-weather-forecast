@@ -1,6 +1,6 @@
 # IAM Role para API Gateway acessar CloudWatch Logs
 resource "aws_iam_role" "api_gateway_cloudwatch" {
-  count = var.enable_access_logs ? 1 : 0
+  count = (var.enable_access_logs || var.enable_execution_logs) ? 1 : 0
   name  = "${var.api_name}-apigw-cloudwatch-role"
 
   assume_role_policy = jsonencode({
@@ -21,14 +21,14 @@ resource "aws_iam_role" "api_gateway_cloudwatch" {
 
 # Policy attachment para CloudWatch Logs
 resource "aws_iam_role_policy_attachment" "api_gateway_cloudwatch" {
-  count      = var.enable_access_logs ? 1 : 0
+  count      = (var.enable_access_logs || var.enable_execution_logs) ? 1 : 0
   role       = aws_iam_role.api_gateway_cloudwatch[0].name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
 }
 
 # Configuração da conta API Gateway para CloudWatch Logs
 resource "aws_api_gateway_account" "main" {
-  count               = var.enable_access_logs ? 1 : 0
+  count               = (var.enable_access_logs || var.enable_execution_logs) ? 1 : 0
   cloudwatch_role_arn = aws_iam_role.api_gateway_cloudwatch[0].arn
 
   depends_on = [aws_iam_role_policy_attachment.api_gateway_cloudwatch]
@@ -718,6 +718,7 @@ resource "aws_api_gateway_stage" "main" {
         httpMethod     = "$context.httpMethod"
         resourcePath   = "$context.resourcePath"
         status         = "$context.status"
+        integrationError = "$context.integrationErrorMessage"
         protocol       = "$context.protocol"
         responseLength = "$context.responseLength"
       })
@@ -727,6 +728,23 @@ resource "aws_api_gateway_stage" "main" {
   tags = var.tags
 
   depends_on = [aws_api_gateway_account.main]
+}
+
+# Execution logs (stage-wide settings)
+resource "aws_api_gateway_method_settings" "all" {
+  count = var.enable_execution_logs ? 1 : 0
+
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  stage_name  = aws_api_gateway_stage.main.stage_name
+  method_path = "*/*"
+
+  settings {
+    logging_level      = "ERROR"
+    data_trace_enabled = false
+    metrics_enabled    = false
+  }
+
+  depends_on = [aws_api_gateway_stage.main]
 }
 
 # Gateway Responses para incluir CORS em respostas 4XX/5XX (timeouts/erros)

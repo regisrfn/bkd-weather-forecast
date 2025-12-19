@@ -43,6 +43,12 @@ variable "enable_access_logs" {
   default     = false
 }
 
+variable "enable_execution_logs" {
+  description = "Habilitar execution logs do API Gateway no CloudWatch (INFO/ERROR)"
+  type        = bool
+  default     = false
+}
+
 variable "enable_cors" {
   description = "Habilitar CORS para a API"
   type        = bool

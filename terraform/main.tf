@@ -74,6 +74,7 @@ module "api_gateway" {
   lambda_invoke_arn     = module.lambda.invoke_arn
   lambda_function_name  = module.lambda.function_name
   enable_access_logs    = var.enable_api_gateway_logs
+  enable_execution_logs = var.enable_execution_logs
   enable_cors           = var.enable_cors
   log_retention_days    = var.log_retention_days
   
