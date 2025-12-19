@@ -227,11 +227,12 @@ class WeatherCondition:
             return (WeatherCondition.HAZE, WeatherCondition.HAZE_DESC)
         
         # PRIORIDADE 7: Cobertura de nuvens (sem precipitação)
+        # Ajuste para evitar classificar poucas nuvens como "parcialmente nublado"
         if clouds >= 85:
             return (WeatherCondition.OVERCAST, WeatherCondition.OVERCAST_DESC)
-        elif clouds >= 50:
+        elif clouds >= 60:
             return (WeatherCondition.CLOUDY, WeatherCondition.CLOUDY_DESC)
-        elif clouds >= 20:
+        elif clouds >= 30:
             return (WeatherCondition.PARTLY_CLOUDY, WeatherCondition.PARTLY_CLOUDY_DESC)
         else:
             return (WeatherCondition.CLEAR, WeatherCondition.CLEAR_DESC)
