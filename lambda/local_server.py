@@ -17,6 +17,8 @@ Como usar:
 Endpoints disponíveis:
     GET  http://localhost:8000/api/cities/neighbors/{cityId}?radius=50
     GET  http://localhost:8000/api/geo/municipalities/{cityId}
+    POST http://localhost:8000/api/geo/municipalities
+         Body: { "cityIds": ["3543204", "3550506"] }
     GET  http://localhost:8000/api/weather/city/{cityId}?date=2025-11-20&time=15:00
     GET  http://localhost:8000/api/weather/city/{cityId}/detailed?date=2025-11-20&time=15:00
     POST http://localhost:8000/api/weather/regional?date=2025-11-20&time=15:00
@@ -216,6 +218,20 @@ def get_city_detailed_forecast(city_id):
     return lambda_to_flask_response(response)
 
 
+@app.route('/api/geo/municipalities', methods=['POST', 'OPTIONS'])
+def post_municipality_meshes():
+    """POST /api/geo/municipalities"""
+    if request.method == 'OPTIONS':
+        return ('', 200, _cors_headers())
+
+    event = flask_to_lambda_event(request)
+
+    context = MockLambdaContext()
+    response = lambda_handler(event, context)
+
+    return lambda_to_flask_response(response)
+
+
 @app.route('/api/weather/regional', methods=['POST', 'OPTIONS'])
 def post_regional_weather():
     """POST /api/weather/regional?date=2025-11-20&time=15:00"""
@@ -256,6 +272,7 @@ def not_found(error):
         'available_routes': [
             'GET /api/cities/neighbors/{cityId}',
             'GET /api/geo/municipalities/{cityId}',
+            'POST /api/geo/municipalities',
             'GET /api/weather/city/{cityId}',
             'GET /api/weather/city/{cityId}/detailed',
             'POST /api/weather/regional',
@@ -289,6 +306,7 @@ if __name__ == '__main__':
     print("\n📋 Endpoints disponíveis:")
     print(f"   • GET  http://localhost:{port}/api/cities/neighbors/{{cityId}}?radius=50")
     print(f"   • GET  http://localhost:{port}/api/geo/municipalities/{{cityId}}")
+    print(f"   • POST http://localhost:{port}/api/geo/municipalities")
     print(f"   • GET  http://localhost:{port}/api/weather/city/{{cityId}}?date=2025-11-20&time=15:00")
     print(f"   • GET  http://localhost:{port}/api/weather/city/{{cityId}}/detailed?date=2025-11-20&time=15:00")
     print(f"   • POST http://localhost:{port}/api/weather/regional?date=2025-11-20&time=15:00")

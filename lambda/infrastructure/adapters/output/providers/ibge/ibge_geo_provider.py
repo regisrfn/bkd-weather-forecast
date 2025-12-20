@@ -102,6 +102,52 @@ class IbgeGeoProvider(IGeoProvider):
 
         return mesh
 
+    @tracer.wrap(resource="ibge.get_municipality_meshes")
+    async def get_municipality_meshes(self, city_ids: list[str]) -> Dict[str, Any]:
+        """
+        Busca malhas de múltiplos municípios em paralelo reaproveitando cache
+        """
+        if not city_ids:
+            return {}
+
+        unique_ids = list(dict.fromkeys(city_ids))
+        semaphore = asyncio.Semaphore(30)
+
+        async def fetch_mesh(city_id: str):
+            async with semaphore:
+                try:
+                    mesh = await self.get_municipality_mesh(city_id)
+                    return city_id, mesh
+                except GeoDataNotFoundException as ex:
+                    logger.warning("IBGE mesh não encontrada", city_id=city_id, error=str(ex))
+                except GeoProviderException as ex:
+                    logger.warning("Falha ao buscar malha do IBGE", city_id=city_id, error=str(ex))
+                except Exception as ex:
+                    logger.warning("Erro inesperado ao buscar malha do IBGE", city_id=city_id, error=str(ex))
+                return None
+
+        results = await asyncio.gather(
+            *(fetch_mesh(city_id) for city_id in unique_ids),
+            return_exceptions=True
+        )
+
+        meshes: Dict[str, Any] = {}
+        for result in results:
+            if isinstance(result, tuple):
+                city_id, mesh = result
+                if mesh:
+                    meshes[city_id] = mesh
+            elif isinstance(result, Exception):
+                logger.warning("Erro de batch IBGE", error=str(result))
+
+        logger.info(
+            "Batch de malhas IBGE concluído",
+            solicitadas=len(unique_ids),
+            retornadas=len(meshes)
+        )
+
+        return meshes
+
 
 # Singleton factory (reutilizado entre invocações Lambda)
 _geo_provider_instance: Optional[IbgeGeoProvider] = None

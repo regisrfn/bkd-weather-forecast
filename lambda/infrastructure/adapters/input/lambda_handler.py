@@ -17,6 +17,7 @@ from application.use_cases.get_city_weather_use_case import AsyncGetCityWeatherU
 from application.use_cases.get_regional_weather_use_case import GetRegionalWeatherUseCase
 from application.use_cases.get_city_detailed_forecast_use_case import GetCityDetailedForecastUseCase
 from application.use_cases.get_municipality_mesh_use_case import GetMunicipalityMeshUseCase
+from application.use_cases.get_municipality_meshes_use_case import GetMunicipalityMeshesUseCase
 from application.services.cache_service import CacheService
 
 # Domain Layer - Exceptions
@@ -198,6 +199,39 @@ def get_municipality_mesh_route(city_id: str):
     mesh = run_async(execute_async())
 
     return mesh
+
+
+@app.post("/api/geo/municipalities")
+def post_municipality_meshes_route():
+    """
+    POST /api/geo/municipalities
+    Body: { "cityIds": ["3543204", "3550506"] }
+
+    Retorna malhas GeoJSON para múltiplos municípios em uma única chamada
+    """
+    body = app.current_event.json_body or {}
+    city_ids = body.get("cityIds", [])
+
+    if not isinstance(city_ids, list):
+        raise ValueError("cityIds must be an array")
+
+    validated_ids: list[str] = []
+    for city_id in city_ids:
+        validated_ids.append(CityIdValidator.validate(str(city_id)))
+
+    city_repository = get_repository()
+    geo_provider = get_ibge_geo_provider()
+
+    async def execute_async():
+        use_case = GetMunicipalityMeshesUseCase(
+            city_repository=city_repository,
+            geo_provider=geo_provider
+        )
+        return await use_case.execute(validated_ids)
+
+    meshes = run_async(execute_async())
+
+    return meshes
 
 
 @app.get("/api/weather/city/<city_id>")
