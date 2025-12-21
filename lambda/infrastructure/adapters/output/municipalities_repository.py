@@ -43,8 +43,6 @@ class MunicipalitiesRepository(ICityRepository):
         if self._data is not None:
             return  # Já carregado
         
-        print(f"📂 Carregando banco de municípios de {self.json_path}...")
-        
         with open(self.json_path, 'r', encoding='utf-8') as f:
             self._data = json.load(f)
         
@@ -59,9 +57,6 @@ class MunicipalitiesRepository(ICityRepository):
                 self._index_by_state[state] = []
             self._index_by_state[state].append(m)
         
-        print(f"✅ {len(self._data)} municípios carregados")
-        print(f"📊 {len(self._index_by_state)} estados indexados")
-        print(f"💾 Municípios com coordenadas: {len([m for m in self._data if m.get('latitude')])}")
     
     def _dict_to_entity(self, data: Dict) -> City:
         """Converte dict para entidade City"""
