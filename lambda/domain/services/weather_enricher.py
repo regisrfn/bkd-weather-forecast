@@ -6,9 +6,7 @@ from zoneinfo import ZoneInfo
 from domain.entities.weather import Weather
 from domain.entities.hourly_forecast import HourlyForecast
 from domain.constants import App
-from shared.config.logger_config import get_logger
-
-logger = get_logger(child=True)
+from shared.config.logger_config import logger
 
 
 class WeatherEnricher:

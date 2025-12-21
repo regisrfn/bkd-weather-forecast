@@ -12,9 +12,6 @@ from application.ports.input.get_neighbor_cities_port import IGetNeighborCitiesU
 from application.ports.output.city_repository_port import ICityRepository
 from shared.utils.haversine import calculate_distance
 from shared.utils.validators import RadiusValidator
-from shared.config.logger_config import get_logger
-
-logger = get_logger(child=True)
 
 
 class AsyncGetNeighborCitiesUseCase(IGetNeighborCitiesUseCase):

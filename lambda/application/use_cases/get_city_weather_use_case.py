@@ -13,9 +13,6 @@ from application.ports.output.weather_provider_port import IWeatherProvider
 from domain.services.alerts_generator import AlertsGenerator
 from application.ports.input.get_city_weather_port import IGetCityWeatherUseCase
 from application.ports.output.city_repository_port import ICityRepository
-from shared.config.logger_config import get_logger
-
-logger = get_logger(child=True)
 
 
 class AsyncGetCityWeatherUseCase(IGetCityWeatherUseCase):
@@ -97,11 +94,5 @@ class AsyncGetCityWeatherUseCase(IGetCityWeatherUseCase):
         
         if alerts:
             object.__setattr__(weather, 'weather_alert', alerts)
-        
-        logger.info(
-            "Weather fetched successfully",
-            city_id=city_id,
-            provider=self.weather_provider.provider_name
-        )
         
         return weather

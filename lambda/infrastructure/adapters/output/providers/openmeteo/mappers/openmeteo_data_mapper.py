@@ -11,9 +11,7 @@ from domain.entities.hourly_forecast import HourlyForecast
 from domain.entities.weather import Weather
 from domain.helpers.rainfall_calculator import calculate_rainfall_intensity
 from domain.constants import Weather as WeatherConstants
-from shared.config.logger_config import get_logger
-
-logger = get_logger(child=True)
+from shared.config.logger_config import logger
 
 
 def calculate_feels_like(temp: float, humidity: float, wind_speed: float) -> float:

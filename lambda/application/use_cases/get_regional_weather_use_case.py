@@ -19,9 +19,6 @@ from application.ports.input.get_regional_weather_port import IGetRegionalWeathe
 from application.ports.output.city_repository_port import ICityRepository
 from domain.value_objects.daily_aggregated_metrics import DailyAggregatedMetrics
 from application.services.cache_service import CacheService
-from shared.config.logger_config import get_logger
-
-logger = get_logger(child=True)
 
 
 class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
@@ -66,13 +63,6 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
         Returns:
             List[Weather]: Dados meteorológicos (apenas sucessos)
         """
-        logger.info(
-            "Iniciando busca regional",
-            total_cities=len(city_ids),
-            provider=self.weather_provider.provider_name,
-            target_date=target_datetime.isoformat() if target_datetime else "next_available"
-        )
-
         prefetched_hourly, prefetched_daily = await self._prefetch_weather_cache(city_ids)
         hourly_writes: Dict[str, Any] = {}
         daily_writes: Dict[str, Any] = {}
@@ -89,16 +79,6 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
 
         # Persist cache writes em batch para reduzir chamadas ao DynamoDB
         await self._persist_weather_cache(hourly_writes, daily_writes)
-        
-        # Calculate success rate
-        success_rate = (len(weather_data) / len(city_ids) * 100) if city_ids else 0
-        
-        logger.info(
-            "Busca regional concluída",
-            processed=len(weather_data),
-            requested=len(city_ids),
-            success_rate=f"{success_rate:.1f}%"
-        )
         
         return weather_data
     
@@ -151,16 +131,6 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
         ]
         
         # Log errors
-        errors = [
-            result for result in results
-            if isinstance(result, Exception)
-        ]
-        if errors:
-            logger.warning(
-                f"Failed to fetch {len(errors)} cities",
-                error_count=len(errors)
-            )
-        
         return weather_data
     
     async def _fetch_single_city_with_semaphore(
@@ -346,16 +316,6 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
             wind_speed_max=wind_speed_max,
             temp_min=temp_min,
             temp_max=temp_max
-        )
-        logger.info(
-            "Daily aggregates calculados",
-            date=target_date,
-            rain_volume=metrics.rain_volume,
-            rain_intensity_max=metrics.rain_intensity_max,
-            rain_probability_max=metrics.rain_probability_max,
-            wind_speed_max=metrics.wind_speed_max,
-            temp_min=metrics.temp_min,
-            temp_max=metrics.temp_max
         )
         return metrics
 

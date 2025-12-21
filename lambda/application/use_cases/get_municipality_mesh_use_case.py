@@ -6,9 +6,6 @@ from ddtrace import tracer
 from application.ports.output.city_repository_port import ICityRepository
 from application.ports.output.geo_provider_port import IGeoProvider
 from domain.exceptions import CityNotFoundException, GeoDataNotFoundException
-from shared.config.logger_config import get_logger
-
-logger = get_logger(child=True)
 
 
 class GetMunicipalityMeshUseCase:
@@ -51,11 +48,5 @@ class GetMunicipalityMeshUseCase:
                 "Geo data not found",
                 details={"city_id": city_id}
             )
-
-        logger.info(
-            "GeoJSON carregado com sucesso",
-            city_id=city_id,
-            provider=self.geo_provider.provider_name
-        )
 
         return mesh

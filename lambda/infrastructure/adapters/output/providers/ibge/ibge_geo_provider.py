@@ -13,9 +13,7 @@ from domain.constants import API, Cache
 from domain.exceptions import GeoDataNotFoundException, GeoProviderException
 from infrastructure.adapters.output.cache.async_dynamodb_cache import AsyncDynamoDBCache, get_async_cache
 from infrastructure.adapters.output.http.aiohttp_session_manager import get_aiohttp_session_manager
-from shared.config.logger_config import get_logger
-
-logger = get_logger(child=True)
+from shared.config.logger_config import logger
 
 
 class IbgeGeoProvider(IGeoProvider):

@@ -18,9 +18,7 @@ from datetime import datetime as dt
 from zoneinfo import ZoneInfo
 
 from application.ports.output.weather_provider_port import IWeatherProvider
-from shared.config.logger_config import get_logger
-
-logger = get_logger(child=True)
+from shared.config.logger_config import logger
 from domain.entities.weather import Weather
 from domain.entities.daily_forecast import DailyForecast
 from domain.entities.hourly_forecast import HourlyForecast

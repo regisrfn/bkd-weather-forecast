@@ -6,9 +6,6 @@ import asyncio
 from typing import Dict, Any, List, Optional, Tuple
 
 from application.ports.output.async_cache_repository_port import IAsyncCacheRepository
-from shared.config.logger_config import get_logger
-
-logger = get_logger(child=True)
 
 
 class CacheService:
@@ -54,4 +51,3 @@ class CacheService:
         if tasks:
             await asyncio.gather(*tasks)
             total_items = sum(len(items) for items, _ in batches)
-            logger.debug("Cache batches persisted", batches=len(tasks), total_items=total_items)

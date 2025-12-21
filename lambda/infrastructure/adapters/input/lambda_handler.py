@@ -42,10 +42,7 @@ from infrastructure.adapters.output.cache.async_dynamodb_cache import get_async_
 from shared.config.settings import DEFAULT_RADIUS
 from shared.utils.datetime_parser import DateTimeParser
 from shared.utils.validators import RadiusValidator, CityIdValidator
-from shared.config.logger_config import get_logger
-
-# Configurar Logger com service name do DD_SERVICE
-logger = get_logger()
+from shared.config.logger_config import logger
 
 app = APIGatewayRestResolver(cors=CORSConfig(allow_origin="*"))
 
@@ -112,7 +109,7 @@ def run_async(coro):
 # Exception Handlers (Delegados para ExceptionHandlerService)
 # =============================
 
-exception_service = ExceptionHandlerService()
+exception_service = ExceptionHandlerService(logger)
 
 app.exception_handler(CityNotFoundException)(exception_service.handle_city_not_found)
 app.exception_handler(CoordinatesNotFoundException)(exception_service.handle_coordinates_not_found)
@@ -170,6 +167,13 @@ def get_neighbors_route(city_id: str):
         'centerCity': result['centerCity'].to_api_response(),
         'neighbors': [n.to_api_response() for n in result['neighbors']]
     }
+
+    logger.info(
+        f"Vizinhos calculados para city_id={city_id} radius={radius}km neighbors={len(response['neighbors'])}",
+        city_id=city_id,
+        radius_km=radius,
+        neighbors=len(response['neighbors'])
+    )
     
     return response
 
@@ -197,6 +201,11 @@ def get_municipality_mesh_route(city_id: str):
         return await use_case.execute(city_id)
 
     mesh = run_async(execute_async())
+    logger.info(
+        f"Malha municipal carregada para city_id={city_id}",
+        city_id=city_id,
+        provider=geo_provider.provider_name
+    )
 
     return mesh
 
@@ -230,6 +239,15 @@ def post_municipality_meshes_route():
         return await use_case.execute(validated_ids)
 
     meshes = run_async(execute_async())
+    requested = len(validated_ids)
+    returned = len(meshes)
+    success_rate = (returned / requested * 100) if requested else 0.0
+    logger.info(
+        f"Malhas IBGE processadas - solicitadas={requested} retornadas={returned} success_rate={success_rate:.1f}%",
+        solicitadas=requested,
+        retornadas=returned,
+        success_rate=success_rate
+    )
 
     return meshes
 
@@ -278,6 +296,13 @@ def get_city_weather_route(city_id: str):
     
     # Convert to API format
     response = weather.to_api_response()
+    target_str = target_datetime.isoformat() if target_datetime else "next_available"
+    logger.info(
+        f"Clima recuperado para city_id={city_id} data={target_str} provider={weather_provider.provider_name}",
+        city_id=city_id,
+        provider=weather_provider.provider_name,
+        target_datetime=target_str
+    )
     
     return response
 
@@ -329,6 +354,19 @@ def get_city_detailed_forecast_route(city_id: str):
     
     # Convert to API format
     response = extended_forecast.to_api_response()
+    target_str = target_datetime.isoformat() if target_datetime else "next_available"
+    hourly_hours = len(extended_forecast.hourly_forecasts or [])
+    forecast_days = len(extended_forecast.daily_forecasts or [])
+    alerts_total = len(getattr(extended_forecast.current_weather, 'weather_alert', []) or [])
+    logger.info(
+        f"Previsão detalhada gerada para city_id={city_id} data={target_str} extended_available={extended_forecast.extended_available} forecast_days={forecast_days} hourly_hours={hourly_hours} alerts={alerts_total}",
+        city_id=city_id,
+        target_datetime=target_str,
+        extended_available=extended_forecast.extended_available,
+        forecast_days=forecast_days,
+        hourly_hours=hourly_hours,
+        alerts=alerts_total
+    )
     
     return response
 
@@ -394,6 +432,20 @@ def post_regional_weather_route():
     
     # Convert to API format
     response = [weather.to_api_response() for weather in weather_list]
+    requested = len(city_ids)
+    processed = len(weather_list)
+    failed = requested - processed if requested >= processed else 0
+    success_rate = (processed / requested * 100) if requested else 0.0
+    target_str = target_datetime.isoformat() if target_datetime else "next_available"
+    logger.info(
+        f"Previsão regional processada - requested={requested} processed={processed} failed={failed} success_rate={success_rate:.1f}% provider={weather_provider.provider_name} target={target_str}",
+        requested=requested,
+        processed=processed,
+        failed=failed,
+        success_rate=success_rate,
+        provider=weather_provider.provider_name,
+        target_datetime=target_str
+    )
     
     return response
 
@@ -466,13 +518,25 @@ def lambda_handler(event, context: LambdaContext):
     request_context = event.get('requestContext', {}) or {}
     identity = request_context.get('identity', {}) or {}
     
+    request_id = getattr(context, 'aws_request_id', 'N/A')
+    session_id = headers.get('x-session-id', 'N/A')
+    source_ip = identity.get('sourceIp', 'N/A')
+    route_path = event.get('path', 'N/A')
+    http_method = event.get('httpMethod', 'N/A')
+
+    logger.append_keys(
+        request_id=request_id,
+        session_id=session_id,
+        source_ip=source_ip,
+        route=route_path,
+        http_method=http_method,
+    )
+
     logger.info(
-        "Requisição Lambda recebida",
-        rota=event.get('path', 'N/A'),
-        metodo=event.get('httpMethod', 'N/A'),
-        request_id=getattr(context, 'aws_request_id', 'N/A'),
-        source_ip=identity.get('sourceIp', 'N/A'),
-        session_id=headers.get('x-session-id', 'N/A')
+        f"Requisição Lambda recebida - {http_method} {route_path}",
+        request_id=request_id,
+        source_ip=source_ip,
+        session_id=session_id,
     )
     
     response = app.resolve(event, context)
@@ -488,7 +552,7 @@ def lambda_handler(event, context: LambdaContext):
     
     status_code = response.get('statusCode', 'N/A')
     logger.info(
-        "Requisição Lambda concluída",
+        f"Requisição Lambda concluída - status={status_code}",
         status_code=status_code,
         sucesso=status_code == 200
     )

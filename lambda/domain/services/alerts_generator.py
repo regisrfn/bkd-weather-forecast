@@ -11,9 +11,7 @@ from domain.alerts.primitives import WeatherAlert, AlertSeverity
 from domain.constants import Weather as WeatherConstants, App
 from domain.helpers.rainfall_calculator import calculate_rainfall_intensity
 from domain.services.weather_alert_orchestrator import WeatherAlertOrchestrator
-from shared.config.logger_config import get_logger
-
-logger = get_logger(child=True)
+from shared.config.logger_config import logger
 
 
 class ForecastLike(Protocol):

@@ -7,9 +7,6 @@ from ddtrace import tracer
 from application.ports.output.city_repository_port import ICityRepository
 from application.ports.output.geo_provider_port import IGeoProvider
 from domain.exceptions import CityNotFoundException
-from shared.config.logger_config import get_logger
-
-logger = get_logger(child=True)
 
 
 class GetMunicipalityMeshesUseCase:
@@ -51,13 +48,5 @@ class GetMunicipalityMeshesUseCase:
             )
 
         meshes = await self.geo_provider.get_municipality_meshes(unique_ids)
-
-        success_rate = (len(meshes) / len(unique_ids) * 100) if unique_ids else 0
-        logger.info(
-            "Batch de malhas IBGE processado",
-            solicitadas=len(unique_ids),
-            retornadas=len(meshes),
-            success_rate=f"{success_rate:.1f}%"
-        )
 
         return meshes
