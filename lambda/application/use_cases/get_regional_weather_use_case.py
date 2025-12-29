@@ -287,9 +287,14 @@ class GetRegionalWeatherUseCase(IGetRegionalWeatherUseCase):
             if forecast.timestamp.startswith(target_date)
         ]
 
-        rain_volume = sum(f.precipitation for f in hourly_for_day) if hourly_for_day else 0.0
+        rainy_hours = [
+            forecast for forecast in hourly_for_day
+            if float(forecast.rainfall_intensity) >= 1
+        ]
+
+        rain_volume = sum(f.precipitation for f in rainy_hours) if rainy_hours else 0.0
         rain_intensity_max = max((float(f.rainfall_intensity) for f in hourly_for_day), default=0.0)
-        rain_probability_max = max((float(f.precipitation_probability) for f in hourly_for_day), default=0.0)
+        rain_probability_max = max((float(f.precipitation_probability) for f in rainy_hours), default=0.0)
         wind_speed_max_hourly = max((float(f.wind_speed) for f in hourly_for_day), default=0.0)
 
         daily_match = next(
