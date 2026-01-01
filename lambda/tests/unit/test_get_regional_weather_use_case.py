@@ -213,3 +213,52 @@ async def test_execute_sets_daily_aggregates(use_case, city_repository, weather_
     assert aggregates.wind_speed_max == pytest.approx(25.0)
     assert aggregates.temp_min == pytest.approx(18.0)
     assert aggregates.temp_max == pytest.approx(32.0)
+
+
+@pytest.mark.asyncio
+async def test_daily_aggregates_rounding_matches_detailed_route(use_case, city_repository, weather_provider):
+    from domain.entities.hourly_forecast import HourlyForecast
+    from domain.entities.daily_forecast import DailyForecast
+
+    city_repository.get_by_id.return_value = _make_city("11", -10, -50)
+
+    hourly_forecasts = [
+        HourlyForecast(
+            timestamp="2026-01-26T09:00:00",
+            temperature=22.0,
+            precipitation=0.3,
+            precipitation_probability=50,
+            rainfall_intensity=0.6,  # valor baixo que deve arredondar para 1
+            humidity=70,
+            wind_speed=5.0,
+            wind_direction=90,
+            cloud_cover=10
+        )
+    ]
+
+    daily_forecast = DailyForecast(
+        date="2026-01-26",
+        temp_min=20.0,
+        temp_max=28.0,
+        precipitation_mm=0.5,
+        rain_probability=40.0,
+        rainfall_intensity=0.4,
+        wind_speed_max=12.0,
+        wind_direction=100,
+        uv_index=5.0,
+        sunrise="06:00:00",
+        sunset="18:00:00",
+        precipitation_hours=0.5
+    )
+
+    weather_provider.get_hourly_forecast = AsyncMock(return_value=hourly_forecasts)
+    weather_provider.get_daily_forecast = AsyncMock(return_value=[daily_forecast])
+
+    target_dt = datetime(2026, 1, 26, 9, 0, tzinfo=ZoneInfo("America/Sao_Paulo"))
+    result = await use_case.execute(["11"], target_dt)
+
+    aggregates = result[0].daily_aggregates
+    assert aggregates is not None
+
+    api_response = aggregates.to_api_response()
+    assert api_response["rainIntensityMax"] == 1

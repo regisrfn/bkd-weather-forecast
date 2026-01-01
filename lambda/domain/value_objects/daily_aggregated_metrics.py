@@ -22,7 +22,7 @@ class DailyAggregatedMetrics:
         return {
             'date': self.date,
             'rainVolume': round(self.rain_volume, 1),
-            'rainIntensityMax': int(round(self.rain_intensity_max, 1)),
+            'rainIntensityMax': int(round(self.rain_intensity_max)),
             'rainProbabilityMax': round(self.rain_probability_max, 1),
             'windSpeedMax': round(self.wind_speed_max, 1),
             'tempMin': round(self.temp_min, 1),
