@@ -12,6 +12,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../.
 
 from domain.alerts.primitives import AlertSeverity, WeatherAlert
 from domain.entities.weather import Weather
+from domain.constants import WeatherCondition
 
 
 def test_to_api_response_converts_timezone_and_rounds():
@@ -108,3 +109,22 @@ def test_to_api_response_serializes_alerts():
 
     resp = weather.to_api_response()
     assert resp["weatherAlert"] == [alert.to_dict()]
+
+
+def test_weather_code_drizzle_with_intensity_rounding():
+    weather = Weather(
+        city_id="3543204",
+        city_name="Ribeirão do Sul",
+        timestamp=datetime.now(tz=ZoneInfo("America/Sao_Paulo")),
+        temperature=20.0,
+        humidity=80.0,
+        wind_speed=5.0,
+        rain_probability=70.0,
+        rain_1h=0.6,  # ~1 de intensidade composta
+        visibility=10000.0,
+        clouds=90.0
+    )
+
+    assert weather.rainfall_intensity == 1  # arredondado
+    assert weather.weather_code == WeatherCondition.LIGHT_DRIZZLE
+    assert "Garoa" in weather.description

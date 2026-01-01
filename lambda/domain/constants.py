@@ -171,68 +171,74 @@ class WeatherCondition:
         Returns:
             Tupla (código, descrição)
         """
+        intensity_value = int(round(float(rainfall_intensity or 0.0)))
+        precipitation_value = float(precipitation or 0.0)
+        wind_speed_value = float(wind_speed or 0.0)
+        clouds_value = float(clouds or 0.0)
+        visibility_value = float(visibility or 10000.0)
+        temperature_value = float(temperature or 0.0)
         
         # PRIORIDADE 1: Tempestade (alta intensidade + vento forte)
-        if rainfall_intensity >= 40 and wind_speed >= 30:
-            if rainfall_intensity >= 70 or wind_speed >= 60:
+        if intensity_value >= 40 and wind_speed_value >= 30:
+            if intensity_value >= 70 or wind_speed_value >= 60:
                 return (WeatherCondition.STORM_SEVERE, WeatherCondition.STORM_SEVERE_DESC)
-            elif rainfall_intensity >= 55 or wind_speed >= 45:
+            elif intensity_value >= 55 or wind_speed_value >= 45:
                 return (WeatherCondition.STORM_HEAVY, WeatherCondition.STORM_HEAVY_DESC)
-            elif rainfall_intensity >= 45:
+            elif intensity_value >= 45:
                 return (WeatherCondition.STORM_MODERATE, WeatherCondition.STORM_MODERATE_DESC)
             else:
                 return (WeatherCondition.STORM_LIGHT, WeatherCondition.STORM_LIGHT_DESC)
         
         # PRIORIDADE 2: Chuva (baseada em rainfall_intensity - métrica composta)
-        if rainfall_intensity >= 25:
-            if rainfall_intensity >= 60:
+        if intensity_value >= 25:
+            if intensity_value >= 60:
                 return (WeatherCondition.VERY_HEAVY_RAIN, WeatherCondition.VERY_HEAVY_RAIN_DESC)
-            elif rainfall_intensity >= 40:
+            elif intensity_value >= 40:
                 return (WeatherCondition.HEAVY_RAIN, WeatherCondition.HEAVY_RAIN_DESC)
-            elif rainfall_intensity >= 30:
+            elif intensity_value >= 30:
                 return (WeatherCondition.MODERATE_RAIN, WeatherCondition.MODERATE_RAIN_DESC)
             else:
                 return (WeatherCondition.LIGHT_RAIN, WeatherCondition.LIGHT_RAIN_DESC)
         
         # PRIORIDADE 3: Garoa (rainfall_intensity baixo mas presente)
-        # Requer: rainfall_intensity entre 5 e 25 (chuva leve mas detectável)
-        if rainfall_intensity >= 5:
-            if rainfall_intensity >= 15:
+        # Requer: rainfall_intensity entre 1 e 25 (chuva leve mas detectável)
+        if intensity_value >= 1:
+            if intensity_value >= 15:
                 return (WeatherCondition.HEAVY_DRIZZLE, WeatherCondition.HEAVY_DRIZZLE_DESC)
-            elif rainfall_intensity >= 10:
+            elif intensity_value >= 10:
                 return (WeatherCondition.MODERATE_DRIZZLE, WeatherCondition.MODERATE_DRIZZLE_DESC)
             else:
                 return (WeatherCondition.LIGHT_DRIZZLE, WeatherCondition.LIGHT_DRIZZLE_DESC)
         
         # PRIORIDADE 4: Neblina/Fog (baixa visibilidade)
-        if visibility < 3000:
-            if visibility < 500:
+        if visibility_value < 3000:
+            if visibility_value < 500:
                 return (WeatherCondition.FOG_HEAVY, WeatherCondition.FOG_HEAVY_DESC)
-            elif visibility < 1000:
+            elif visibility_value < 1000:
                 return (WeatherCondition.FOG, WeatherCondition.FOG_DESC)
             else:
                 return (WeatherCondition.FOG_LIGHT, WeatherCondition.FOG_LIGHT_DESC)
         
         # PRIORIDADE 5: Neve (temperatura baixa + precipitação)
-        if temperature < 2 and precipitation > 0:
-            if precipitation >= 10:
+        if temperature_value < 2 and precipitation_value > 0:
+            if precipitation_value >= 10:
                 return (WeatherCondition.HEAVY_SNOW, WeatherCondition.HEAVY_SNOW_DESC)
-            elif precipitation >= 2.5:
+            elif precipitation_value >= 2.5:
                 return (WeatherCondition.MODERATE_SNOW, WeatherCondition.MODERATE_SNOW_DESC)
             else:
                 return (WeatherCondition.LIGHT_SNOW, WeatherCondition.LIGHT_SNOW_DESC)
         
         # PRIORIDADE 6: Névoa seca (visibilidade reduzida sem chuva)
-        if visibility < 5000 and precipitation == 0:
+        if visibility_value < 5000 and precipitation_value == 0:
             return (WeatherCondition.HAZE, WeatherCondition.HAZE_DESC)
         
         # PRIORIDADE 7: Cobertura de nuvens (sem precipitação)
         # Ajuste para evitar classificar poucas nuvens como "parcialmente nublado"
-        if clouds >= 85:
+        if clouds_value >= 85:
             return (WeatherCondition.OVERCAST, WeatherCondition.OVERCAST_DESC)
-        elif clouds >= 60:
+        elif clouds_value >= 60:
             return (WeatherCondition.CLOUDY, WeatherCondition.CLOUDY_DESC)
-        elif clouds >= 30:
+        elif clouds_value >= 30:
             return (WeatherCondition.PARTLY_CLOUDY, WeatherCondition.PARTLY_CLOUDY_DESC)
         else:
             return (WeatherCondition.CLEAR, WeatherCondition.CLEAR_DESC)

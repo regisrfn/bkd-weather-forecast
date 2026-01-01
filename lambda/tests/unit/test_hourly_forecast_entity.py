@@ -8,6 +8,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../'))
 
 import pytest
 from domain.entities.hourly_forecast import HourlyForecast
+from domain.constants import WeatherCondition
 
 
 class TestHourlyForecastEntity:
@@ -130,3 +131,23 @@ class TestHourlyForecastEntity:
             weather_code=1
         )
         assert forecast_west.wind_direction == 360
+
+    def test_weather_code_aligns_with_rainfall_intensity_rounding(self):
+        """Se rainfallIntensity arredonda para 1, código deve sinalizar garoa"""
+        forecast = HourlyForecast(
+            timestamp="2026-01-26T09:00:00",
+            temperature=22.0,
+            precipitation=0.6,
+            precipitation_probability=70,
+            rainfall_intensity=0.6,  # arredonda para 1
+            humidity=70,
+            wind_speed=5.0,
+            wind_direction=90,
+            cloud_cover=90,
+            weather_code=0,
+            description=""
+        )
+
+        assert forecast.weather_code == WeatherCondition.LIGHT_DRIZZLE
+        assert "Garoa" in forecast.description
+        assert forecast.to_api_response()["rainfallIntensity"] == 1
